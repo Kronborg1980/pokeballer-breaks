@@ -139,7 +139,7 @@
             color: var(--text-primary);
         }
 
-        input[type="text"], input[type="password"], input[type="number"], input[type="url"] {
+        input[type="text"], input[type="password"], input[type="number"], input[type="url"], input[type="file"] {
             width: 100%;
             padding: 14px;
             margin-bottom: 20px;
@@ -280,6 +280,8 @@
                 <input type="number" id="item-stock" placeholder="e.g., 10">
                 <label for="item-google-form-link">Google Form Link</label>
                 <input type="url" id="item-google-form-link" placeholder="https://forms.gle/your-link">
+                <label for="item-image">Item Image</label>
+                <input type="file" id="item-image" accept="image/*">
                 <button onclick="addItem()">Add New Item</button>
                 <h4 style="margin-top: 30px; margin-bottom: 15px; font-weight: 600; text-shadow: var(--text-glow);">Current Items</h4>
                 <ul id="item-list" class="item-list"></ul>
@@ -307,7 +309,7 @@
             </div>
 
             <div class="nav-links">
-                <a href="/index.html">Back to Store</a>
+                <a href="https://kronborg1980.github.io/pokeballer-breaks/">Back to Store</a>
                 <button onclick="logout()" class="logout-btn">Logout</button>
             </div>
         </div>
@@ -452,6 +454,7 @@
             const price = parseFloat(document.getElementById('item-price').value);
             const stock = parseInt(document.getElementById('item-stock').value);
             const googleFormLink = document.getElementById('item-google-form-link').value;
+            const imageInput = document.getElementById('item-image');
             const spinner = document.getElementById('items-spinner');
             spinner.classList.add('show');
 
@@ -461,12 +464,34 @@
                 return;
             }
 
+            let imageBase64 = '';
+            if (imageInput.files && imageInput.files[0]) {
+                const file = imageInput.files[0];
+                if (file.size > 2 * 1024 * 1024) { // 2MB limit
+                    alert('Image file is too large. Please upload an image smaller than 2MB.');
+                    spinner.classList.remove('show');
+                    return;
+                }
+                try {
+                    imageBase64 = await new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(reader.result);
+                        reader.onerror = reject;
+                        reader.readAsDataURL(file);
+                    });
+                } catch (error) {
+                    alert('Error reading image file. Please try another image.');
+                    spinner.classList.remove('show');
+                    return;
+                }
+            }
+
             try {
                 console.log('Adding item:', { name, price, stock });
                 const response = await fetch(`${API_URL}/items`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, description, price, stock, googleFormLink })
+                    body: JSON.stringify({ name, description, price, stock, googleFormLink, image: imageBase64 })
                 });
                 if (!response.ok) {
                     const text = await response.text();
@@ -481,6 +506,7 @@
                     document.getElementById('item-price').value = '';
                     document.getElementById('item-stock').value = '';
                     document.getElementById('item-google-form-link').value = '';
+                    document.getElementById('item-image').value = '';
                 } else {
                     alert(data.error || 'Couldn’t add item. Try again!');
                 }
@@ -513,7 +539,7 @@
                     itemList.innerHTML = '';
                     items.forEach(item => {
                         const li = document.createElement('li');
-                        li.textContent = `${item.name} - Stock: ${item.stock} - Form: ${item.googleFormLink}`;
+                        li.textContent = `${item.name} - Stock: ${item.stock} - Form: ${item.googleFormLink}${item.image ? ' - Has Image' : ''}`;
                         itemList.appendChild(li);
                     });
                     spinner.classList.remove('show');
