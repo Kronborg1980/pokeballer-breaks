@@ -248,6 +248,14 @@
             box-shadow: var(--neon-glow);
         }
 
+        .item-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: var(--neon-glow);
+        }
+
         footer {
             text-align: center;
             padding: 40px 20px;
@@ -339,7 +347,10 @@
                             actionHtml = `<div class="out-of-stock">Out of Stock</div>`;
                         }
 
+                        const imageHtml = item.image ? `<img src="${item.image}" alt="${item.name}" class="item-image">` : '';
+
                         itemDiv.innerHTML = `
+                            ${imageHtml}
                             <h3>${item.name}</h3>
                             <p class="description">${item.description}</p>
                             <div class="item-details">
