@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PokeBaller Mike's Bundle Breaks</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-accent: #4169E1; /* Suicune Blue */
+            --secondary-accent: #9370DB; /* Aurora Purple */
+            --light-background: #0a0f12; /* Deep black */
+            --card-background: #1f2a3c; /* Dark card */
+            --text-primary: #ffffff;
+            --text-secondary: #b0bec5;
+            --card-border: #4169E1;
+            --card-shadow: 0px 12px 35px rgba(0, 0, 0, 0.6);
+            --card-hover-shadow: 0px 18px 45px rgba(65, 105, 225, 0.8);
+            --neon-glow: 0 0 15px #4169E1, inset 0 0 15px #4169E1;
+            --text-glow: 0 0 8px #9370DB, 0 0 15px #9370DB;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            background: #0a0f12;
+            color: var(--text-primary);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(65, 105, 225, 0.3), rgba(147, 112, 219, 0.3));
+            opacity: 0.4;
+            z-index: -1;
+            animation: aurora 10s infinite alternate;
+        }
+
+        body::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://img.pokemondb.net/sprites/scarlet-violet/normal/suicune.png') no-repeat center center/cover;
+            opacity: 0.1;
+            z-index: -1;
+            animation: pulse 6s infinite ease-in-out;
+        }
+
+        @keyframes aurora {
+            0% { filter: hue-rotate(0deg) brightness(1); }
+            100% { filter: hue-rotate(90deg) brightness(1.4); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.1; }
+            50% { transform: scale(1.05); opacity: 0.15; }
+            100% { transform: scale(1); opacity: 0.1; }
+        }
+
+        header {
+            background-color: var(--card-background);
+            padding: 20px 30px;
+            text-align: center;
+            border-bottom: 3px solid var(--card-border);
+            box-shadow: var(--neon-glow);
+            position: relative;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 3px solid var(--primary-accent);
+            border-radius: 0 0 12px 12px;
+            box-shadow: var(--neon-glow);
+            z-index: -1;
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -1px;
+            text-shadow: var(--text-glow);
+            color: var(--primary-accent);
+        }
+
+        .header-logo {
+            max-width: 180px;
+            margin-bottom: 10px;
+            filter: drop-shadow(var(--text-glow));
+            transition: transform 0.3s ease, filter 0.3s ease;
+        }
+
+        .header-logo:hover {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 20px #9370DB);
+        }
+
+        main {
+            padding: 50px 20px;
+        }
+
+        .store-intro {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 50px auto;
+        }
+
+        .store-intro h2 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin: 0 0 10px 0;
+            text-shadow: var(--text-glow);
+            color: var(--secondary-accent);
+        }
+
+        .store-intro p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .store-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .item-card {
+            background: var(--card-background);
+            border: 3px solid var(--primary-accent);
+            border-radius: 16px;
+            box-shadow: var(--card-shadow), var(--neon-glow);
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .item-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(65, 105, 225, 0.3), transparent);
+            opacity: 0.4;
+            transform: rotate(45deg);
+            z-index: -1;
+            animation: pulse 6s infinite ease-in-out;
+        }
+
+        .item-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: var(--card-hover-shadow), 0 0 30px #9370DB;
+        }
+
+        .item-card h3 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin: 0 0 10px 0;
+            color: var(--primary-accent);
+            text-shadow: var(--text-glow);
+        }
+
+        .item-card .description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            flex-grow: 1;
+            margin-bottom: 20px;
+        }
+
+        .item-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .item-price {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--primary-accent);
+            text-shadow: var(--text-glow);
+        }
+
+        .item-stock {
+            background-color: #34495e;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            box-shadow: var(--neon-glow);
+        }
+
+        .action-button {
+            display: block;
+            background: linear-gradient(45deg, var(--primary-accent), var(--secondary-accent));
+            color: white;
+            padding: 15px;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 12px;
+            margin-top: 25px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: var(--neon-glow);
+        }
+
+        .action-button:hover {
+            background: linear-gradient(45deg, #0056b3, #7B68EE);
+            transform: scale(1.05);
+            box-shadow: 0 0 25px #9370DB, inset 0 0 25px #9370DB;
+        }
+
+        .out-of-stock {
+            text-align: center;
+            margin-top: 25px;
+            padding: 15px;
+            border-radius: 12px;
+            background-color: #34495e;
+            color: var(--text-secondary);
+            font-weight: 600;
+            box-shadow: var(--neon-glow);
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            font-size: 1rem;
+            color: var(--text-secondary);
+            text-shadow: var(--text-glow);
+        }
+
+        .loading-spinner {
+            display: none;
+            width: 50px;
+            height: 50px;
+            border: 6px solid #4169E1;
+            border-top: 6px solid #9370DB;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        .loading-spinner.show {
+            display: block;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="https://img.pokemondb.net/sprites/scarlet-violet/normal/suicune.png" alt="Suicune Logo" class="header-logo">
+        <h1>PokeBaller Mike's</h1>
+    </header>
+
+    <main>
+        <div class="store-intro">
+            <h2>Available Breaks</h2>
+            <p>Browse our current selection of bundle breaks. Click on any available item to sign up via the form.</p>
+        </div>
+        <div id="store-content" class="store-container">
+            <div class="loading-spinner" id="loading-spinner"></div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 PokeBaller Mike's Bundle Breaks. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        const API_URL = 'https://pokeballer-worker.kronborgnielsen.workers.dev/api';
+        const MAX_RETRIES = 3;
+        const RETRY_DELAY = 1000;
+
+        async function loadItems() {
+            const spinner = document.getElementById('loading-spinner');
+            spinner.classList.add('show');
+            for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+                try {
+                    console.log(`Trying to get items (attempt ${attempt}) from ${API_URL}/items`);
+                    const response = await fetch(`${API_URL}/items`, {
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    console.log(`Attempt ${attempt}: Got response with status ${response.status}`);
+                    if (!response.ok) {
+                        const text = await response.text();
+                        console.error(`Attempt ${attempt}: Bad response: ${text.slice(0, 100)}...`);
+                        throw new Error(`Problem with server! Status: ${response.status}`);
+                    }
+                    const items = await response.json();
+                    console.log('Got items:', items);
+                    const storeContent = document.getElementById('store-content');
+                    storeContent.innerHTML = '';
+
+                    if (items.length === 0) {
+                        storeContent.innerHTML = '<p>No items right now. Check back soon!</p>';
+                        spinner.classList.remove('show');
+                        return;
+                    }
+
+                    items.forEach(item => {
+                        const itemDiv = document.createElement('div');
+                        itemDiv.className = 'item-card';
+
+                        let actionHtml = '';
+                        if (item.stock > 0 && item.googleFormLink) {
+                            actionHtml = `<a href="${item.googleFormLink}" target="_blank" class="action-button">Sign Up</a>`;
+                        } else {
+                            actionHtml = `<div class="out-of-stock">Out of Stock</div>`;
+                        }
+
+                        itemDiv.innerHTML = `
+                            <h3>${item.name}</h3>
+                            <p class="description">${item.description}</p>
+                            <div class="item-details">
+                                <span class="item-price">$${item.price.toFixed(2)}</span>
+                                <span class="item-stock">Stock: ${item.stock}</span>
+                            </div>
+                            ${actionHtml}
+                        `;
+                        storeContent.appendChild(itemDiv);
+                    });
+                    spinner.classList.remove('show');
+                    return;
+                } catch (error) {
+                    console.error(`Attempt ${attempt} failed:`, error);
+                    if (attempt === MAX_RETRIES) {
+                        document.getElementById('store-content').innerHTML = '<p>Sorry, we can’t load the items. Please try refreshing or check the server setup.</p>';
+                        spinner.classList.remove('show');
+                        return;
+                    }
+                    await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadItems);
+    </script>
+</body>
+</html>

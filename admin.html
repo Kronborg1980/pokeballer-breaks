@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PBM Breaks - Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-accent: #4169E1;
+            --secondary-accent: #9370DB;
+            --light-background: #0a0f12;
+            --card-background: #1f2a3c;
+            --text-primary: #ffffff;
+            --text-secondary: #b0bec5;
+            --card-border: #4169E1;
+            --card-shadow: 0px 12px 35px rgba(0, 0, 0, 0.6);
+            --neon-glow: 0 0 15px #4169E1, inset 0 0 15px #4169E1;
+            --text-glow: 0 0 8px #9370DB, 0 0 15px #9370DB;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #0a0f12;
+            color: var(--text-primary);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(65, 105, 225, 0.3), rgba(147, 112, 219, 0.3));
+            opacity: 0.4;
+            z-index: -1;
+            animation: aurora 10s infinite alternate;
+        }
+
+        body::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://img.pokemondb.net/sprites/scarlet-violet/normal/suicune.png') no-repeat center center/cover;
+            opacity: 0.1;
+            z-index: -1;
+            animation: pulse 6s infinite ease-in-out;
+        }
+
+        @keyframes aurora {
+            0% { filter: hue-rotate(0deg) brightness(1); }
+            100% { filter: hue-rotate(90deg) brightness(1.4); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.1; }
+            50% { transform: scale(1.05); opacity: 0.15; }
+            100% { transform: scale(1); opacity: 0.1; }
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 40px auto;
+        }
+
+        .admin-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .admin-header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            text-shadow: var(--text-glow);
+            color: var(--primary-accent);
+        }
+
+        .admin-logo {
+            max-width: 180px;
+            margin-bottom: 10px;
+            filter: drop-shadow(var(--text-glow));
+            transition: transform 0.3s ease, filter 0.3s ease;
+        }
+
+        .admin-logo:hover {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 20px #9370DB);
+        }
+
+        .section-card {
+            background: var(--card-background);
+            border: 3px solid var(--primary-accent);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: var(--card-shadow), var(--neon-glow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(65, 105, 225, 0.3), transparent);
+            opacity: 0.4;
+            transform: rotate(45deg);
+            z-index: -1;
+            animation: pulse 6s infinite ease-in-out;
+        }
+
+        .section-card h2, .section-card h3 {
+            font-weight: 600;
+            font-size: 1.3rem;
+            margin-top: 0;
+            margin-bottom: 25px;
+            text-shadow: var(--text-glow);
+            color: var(--secondary-accent);
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        input[type="text"], input[type="password"], input[type="number"], input[type="url"] {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 20px;
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            box-sizing: border-box;
+            font-size: 1rem;
+            background-color: #34495e;
+            color: var(--text-primary);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary-accent);
+            box-shadow: 0 0 0 4px rgba(65, 105, 225, 0.3), var(--neon-glow);
+        }
+
+        button {
+            width: 100%;
+            background: linear-gradient(45deg, var(--primary-accent), var(--secondary-accent));
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: var(--neon-glow);
+        }
+
+        button:hover {
+            background: linear-gradient(45deg, #0056b3, #7B68EE);
+            box-shadow: 0 0 25px #9370DB, inset 0 0 25px #9370DB;
+        }
+
+        .item-list { list-style: none; padding: 0; }
+        .item-list li {
+            padding: 12px 15px;
+            border: 1px solid var(--card-border);
+            margin-bottom: 8px;
+            border-radius: 8px;
+            background-color: #34495e;
+            box-shadow: var(--neon-glow);
+            color: var(--text-primary);
+        }
+
+        .nav-links {
+            text-align: center;
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-links button, .nav-links a {
+            flex-grow: 1;
+            text-decoration: none;
+            padding: 15px;
+            border-radius: 12px;
+            font-weight: 600;
+            color: white;
+            display: inline-block;
+            box-shadow: var(--neon-glow);
+        }
+
+        .nav-links .logout-btn {
+            background: linear-gradient(45deg, #333, #555);
+        }
+
+        .nav-links .logout-btn:hover {
+            background: linear-gradient(45deg, #111, #333);
+            box-shadow: 0 0 25px #333;
+        }
+
+        .nav-links a {
+            background: linear-gradient(45deg, var(--text-secondary), #999);
+        }
+
+        .nav-links a:hover {
+            background: linear-gradient(45deg, #555, #777);
+            box-shadow: 0 0 25px #999;
+        }
+
+        #login-section { display: block; }
+        #admin-section { display: none; }
+
+        .loading-spinner {
+            display: none;
+            width: 50px;
+            height: 50px;
+            border: 6px solid #4169E1;
+            border-top: 6px solid #9370DB;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        .loading-spinner.show {
+            display: block;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="admin-header">
+            <img src="https://img.pokemondb.net/sprites/scarlet-violet/normal/suicune.png" alt="Suicune Logo" class="admin-logo">
+            <h1>Admin Dashboard</h1>
+        </div>
+
+        <div id="login-section">
+            <div class="section-card">
+                <h2>Login</h2>
+                <label for="login-username">Username</label>
+                <input type="text" id="login-username" placeholder="Enter username">
+                <label for="login-password">Password</label>
+                <input type="password" id="login-password" placeholder="Enter password">
+                <button onclick="login()">Login</button>
+                <div class="loading-spinner" id="login-spinner"></div>
+            </div>
+        </div>
+
+        <div id="admin-section">
+            <div class="section-card">
+                <h3>Manage Items</h3>
+                <label for="item-name">Item Name</label>
+                <input type="text" id="item-name" placeholder="e.g., Paldean Fates Booster Box">
+                <label for="item-description">Description</label>
+                <input type="text" id="item-description" placeholder="Short description of the item">
+                <label for="item-price">Price</label>
+                <input type="number" id="item-price" placeholder="e.g., 99.99" step="0.01">
+                <label for="item-stock">Stock</label>
+                <input type="number" id="item-stock" placeholder="e.g., 10">
+                <label for="item-google-form-link">Google Form Link</label>
+                <input type="url" id="item-google-form-link" placeholder="https://forms.gle/your-link">
+                <button onclick="addItem()">Add New Item</button>
+                <h4 style="margin-top: 30px; margin-bottom: 15px; font-weight: 600; text-shadow: var(--text-glow);">Current Items</h4>
+                <ul id="item-list" class="item-list"></ul>
+                <div class="loading-spinner" id="items-spinner"></div>
+            </div>
+
+            <div class="section-card">
+                <h3>Account Settings</h3>
+                <label for="current-username">Current Username</label>
+                <input type="text" id="current-username" placeholder="Your current username">
+                <label for="new-username">New Username (Optional)</label>
+                <input type="text" id="new-username" placeholder="Enter new username">
+                <label for="new-password">New Password (Optional)</label>
+                <input type="password" id="new-password" placeholder="Enter new password">
+                <button onclick="updateCredentials()">Update Credentials</button>
+            </div>
+
+            <div class="section-card">
+                <h3>Add New Admin</h3>
+                <label for="new-admin-username">New Admin Username</label>
+                <input type="text" id="new-admin-username" placeholder="Username for the new admin">
+                <label for="new-admin-password">New Admin Password</label>
+                <input type="password" id="new-admin-password" placeholder="A secure password">
+                <button onclick="addAdmin()">Add Admin</button>
+            </div>
+
+            <div class="nav-links">
+                <a href="/index.html">Back to Store</a>
+                <button onclick="logout()" class="logout-btn">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://pokeballer-worker.kronborgnielsen.workers.dev/api';
+        const MAX_RETRIES = 3;
+        const RETRY_DELAY = 1000;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('adminToken')) {
+                document.getElementById('login-section').style.display = 'none';
+                document.getElementById('admin-section').style.display = 'block';
+                loadItems();
+            }
+        });
+
+        async function login() {
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+            const spinner = document.getElementById('login-spinner');
+            spinner.classList.add('show');
+
+            if (!username || !password) {
+                alert('Please enter both username and password.');
+                spinner.classList.remove('show');
+                return;
+            }
+
+            for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+                try {
+                    console.log(`Trying to log in (attempt ${attempt}) to ${API_URL}/login`);
+                    const response = await fetch(`${API_URL}/login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username, password })
+                    });
+                    console.log(`Attempt ${attempt}: Got response with status ${response.status}`);
+                    if (!response.ok) {
+                        const text = await response.text();
+                        console.error(`Attempt ${attempt}: Bad response: ${text.slice(0, 100)}...`);
+                        throw new Error(`Problem with server! Status: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    console.log('Login response:', data);
+
+                    if (data.success) {
+                        localStorage.setItem('adminToken', 'loggedIn');
+                        document.getElementById('login-section').style.display = 'none';
+                        document.getElementById('admin-section').style.display = 'block';
+                        loadItems();
+                        spinner.classList.remove('show');
+                        return;
+                    } else {
+                        alert(data.error || 'Wrong username or password. Try again!');
+                        spinner.classList.remove('show');
+                        return;
+                    }
+                } catch (error) {
+                    console.error(`Attempt ${attempt} failed:`, error);
+                    if (attempt === MAX_RETRIES) {
+                        alert(`Couldn’t log in after ${MAX_RETRIES} tries. Check your Worker address or internet connection.`);
+                        spinner.classList.remove('show');
+                        return;
+                    }
+                    await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+                }
+            }
+        }
+
+        async function updateCredentials() {
+            const currentUsername = document.getElementById('current-username').value;
+            const newUsername = document.getElementById('new-username').value;
+            const newPassword = document.getElementById('new-password').value;
+
+            try {
+                console.log('Updating username or password:', { currentUsername, newUsername });
+                const response = await fetch(`${API_URL}/credentials`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: currentUsername, newUsername, newPassword })
+                });
+                if (!response.ok) {
+                    const text = await response.text();
+                    console.error(`Update error: Status ${response.status}, Response: ${text.slice(0, 100)}...`);
+                    throw new Error(`Problem with server! Status: ${response.status}`);
+                }
+                const data = await response.json();
+                if (data.success) {
+                    alert('Username or password updated!');
+                    document.getElementById('current-username').value = '';
+                    document.getElementById('new-username').value = '';
+                    document.getElementById('new-password').value = '';
+                } else {
+                    alert(data.error || 'Couldn’t update. Try again!');
+                }
+            } catch (error) {
+                console.error('Update error:', error);
+                alert('Something went wrong updating your account. Check the server setup.');
+            }
+        }
+
+        async function addAdmin() {
+            const newUsername = document.getElementById('new-admin-username').value;
+            const newPassword = document.getElementById('new-admin-password').value;
+
+            if (!newUsername || !newPassword) {
+                alert('Please enter both a username and password for the new admin.');
+                return;
+            }
+
+            try {
+                console.log('Adding new admin:', { newUsername });
+                const response = await fetch(`${API_URL}/admins`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ newUsername, newPassword })
+                });
+                if (!response.ok) {
+                    const text = await response.text();
+                    console.error(`Add admin error: Status ${response.status}, Response: ${text.slice(0, 100)}...`);
+                    throw new Error(`Problem with server! Status: ${response.status}`);
+                }
+                const data = await response.json();
+                if (data.success) {
+                    alert('New admin added!');
+                    document.getElementById('new-admin-username').value = '';
+                    document.getElementById('new-admin-password').value = '';
+                } else {
+                    alert(data.error || 'Couldn’t add admin. Try again!');
+                }
+            } catch (error) {
+                console.error('Add admin error:', error);
+                alert('Something went wrong adding the admin. Check the server setup.');
+            }
+        }
+
+        async function addItem() {
+            const name = document.getElementById('item-name').value;
+            const description = document.getElementById('item-description').value;
+            const price = parseFloat(document.getElementById('item-price').value);
+            const stock = parseInt(document.getElementById('item-stock').value);
+            const googleFormLink = document.getElementById('item-google-form-link').value;
+            const spinner = document.getElementById('items-spinner');
+            spinner.classList.add('show');
+
+            if (!name || !description || isNaN(price) || isNaN(stock) || !googleFormLink) {
+                alert('Please fill out all item fields (name, description, price, stock, and form link).');
+                spinner.classList.remove('show');
+                return;
+            }
+
+            try {
+                console.log('Adding item:', { name, price, stock });
+                const response = await fetch(`${API_URL}/items`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, description, price, stock, googleFormLink })
+                });
+                if (!response.ok) {
+                    const text = await response.text();
+                    console.error(`Add item error: Status ${response.status}, Response: ${text.slice(0, 100)}...`);
+                    throw new Error(`Problem with server! Status: ${response.status}`);
+                }
+                const data = await response.json();
+                if (data.success) {
+                    loadItems();
+                    document.getElementById('item-name').value = '';
+                    document.getElementById('item-description').value = '';
+                    document.getElementById('item-price').value = '';
+                    document.getElementById('item-stock').value = '';
+                    document.getElementById('item-google-form-link').value = '';
+                } else {
+                    alert(data.error || 'Couldn’t add item. Try again!');
+                }
+            } catch (error) {
+                console.error('Add item error:', error);
+                alert('Something went wrong adding the item. Check the server setup.');
+            } finally {
+                spinner.classList.remove('show');
+            }
+        }
+
+        async function loadItems() {
+            const spinner = document.getElementById('items-spinner');
+            spinner.classList.add('show');
+            for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+                try {
+                    console.log(`Trying to get items (attempt ${attempt}) from ${API_URL}/items`);
+                    const response = await fetch(`${API_URL}/items`, {
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    console.log(`Attempt ${attempt}: Got response with status ${response.status}`);
+                    if (!response.ok) {
+                        const text = await response.text();
+                        console.error(`Attempt ${attempt}: Bad response: ${text.slice(0, 100)}...`);
+                        throw new Error(`Problem with server! Status: ${response.status}`);
+                    }
+                    const items = await response.json();
+                    console.log('Got items:', items);
+                    const itemList = document.getElementById('item-list');
+                    itemList.innerHTML = '';
+                    items.forEach(item => {
+                        const li = document.createElement('li');
+                        li.textContent = `${item.name} - Stock: ${item.stock} - Form: ${item.googleFormLink}`;
+                        itemList.appendChild(li);
+                    });
+                    spinner.classList.remove('show');
+                    return;
+                } catch (error) {
+                    console.error(`Attempt ${attempt} failed:`, error);
+                    if (attempt === MAX_RETRIES) {
+                        alert(`Couldn’t load items after ${MAX_RETRIES} tries. Check the server setup.`);
+                        spinner.classList.remove('show');
+                        return;
+                    }
+                    await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+                }
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('adminToken');
+            document.getElementById('login-section').style.display = 'block';
+            document.getElementById('admin-section').style.display = 'none';
+            document.getElementById('login-username').value = '';
+            document.getElementById('login-password').value = '';
+        }
+    </script>
+</body>
+</html>
