@@ -191,6 +191,35 @@
             align-items: center;
         }
 
+        .item-info {
+            flex-grow: 1;
+            margin-right: 10px;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .edit-btn {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+            min-width: 50px;
+        }
+
+        .edit-btn:hover {
+            background: linear-gradient(45deg, #45a049, #388E3C);
+            box-shadow: 0 0 15px rgba(76, 175, 80, 0.8);
+        }
+
         .delete-btn {
             background: linear-gradient(45deg, #ff4444, #cc0000);
             color: white;
@@ -302,9 +331,9 @@
                 <input type="number" id="item-stock" placeholder="e.g., 10">
                 <label for="item-google-form-link">Google Form Link</label>
                 <input type="url" id="item-google-form-link" placeholder="https://forms.gle/your-link">
-                <label for="item-image">Item Image</label>
+                <label for="item-image">Item Image (optional for updates)</label>
                 <input type="file" id="item-image" accept="image/*">
-                <button onclick="addItem()">Add New Item</button>
+                <button id="submit-item-btn" onclick="submitItem()">Add New Item</button>
                 <h4 style="margin-top: 30px; margin-bottom: 15px; font-weight: 600; text-shadow: var(--text-glow);">Current Items</h4>
                 <ul id="item-list" class="item-list"></ul>
                 <div class="loading-spinner" id="items-spinner"></div>
@@ -341,6 +370,9 @@
         const API_URL = 'https://pokeballer-worker.kronborgnielsen.workers.dev/api';
         const MAX_RETRIES = 3;
         const RETRY_DELAY = 1000;
+
+        let editingId = null;
+        let currentImage = '';
 
         document.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('adminToken')) {
@@ -470,7 +502,29 @@
             }
         }
 
-        async function addItem() {
+        function clearForm() {
+            document.getElementById('item-name').value = '';
+            document.getElementById('item-description').value = '';
+            document.getElementById('item-price').value = '';
+            document.getElementById('item-stock').value = '';
+            document.getElementById('item-google-form-link').value = '';
+            document.getElementById('item-image').value = '';
+        }
+
+        function editItem(item) {
+            editingId = item.id;
+            currentImage = item.image || '';
+            document.getElementById('item-name').value = item.name;
+            document.getElementById('item-description').value = item.description;
+            document.getElementById('item-price').value = item.price;
+            document.getElementById('item-stock').value = item.stock;
+            document.getElementById('item-google-form-link').value = item.googleFormLink;
+            document.getElementById('item-image').value = ''; // Can't prefill file input
+            const btn = document.getElementById('submit-item-btn');
+            btn.textContent = 'Update Item';
+        }
+
+        async function submitItem() {
             const name = document.getElementById('item-name').value;
             const description = document.getElementById('item-description').value;
             const price = parseFloat(document.getElementById('item-price').value);
@@ -506,35 +560,40 @@
                     spinner.classList.remove('show');
                     return;
                 }
+            } else if (editingId) {
+                imageBase64 = currentImage;
             }
 
             try {
-                console.log('Adding item:', { name, price, stock });
-                const response = await fetch(`${API_URL}/items`, {
-                    method: 'POST',
+                const body = { name, description, price, stock, googleFormLink, image: imageBase64 };
+                const url = editingId ? `${API_URL}/items/${editingId}` : `${API_URL}/items`;
+                const method = editingId ? 'PUT' : 'POST';
+
+                console.log(`${method}ing item:`, { name, price, stock });
+                const response = await fetch(url, {
+                    method,
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, description, price, stock, googleFormLink, image: imageBase64 })
+                    body: JSON.stringify(body)
                 });
                 if (!response.ok) {
                     const text = await response.text();
-                    console.error(`Add item error: Status ${response.status}, Response: ${text.slice(0, 100)}...`);
+                    console.error(`${method} error: Status ${response.status}, Response: ${text.slice(0, 100)}...`);
                     throw new Error(`Problem with server! Status: ${response.status}`);
                 }
                 const data = await response.json();
                 if (data.success) {
                     loadItems();
-                    document.getElementById('item-name').value = '';
-                    document.getElementById('item-description').value = '';
-                    document.getElementById('item-price').value = '';
-                    document.getElementById('item-stock').value = '';
-                    document.getElementById('item-google-form-link').value = '';
-                    document.getElementById('item-image').value = '';
+                    clearForm();
+                    editingId = null;
+                    currentImage = '';
+                    const btn = document.getElementById('submit-item-btn');
+                    btn.textContent = 'Add New Item';
                 } else {
-                    alert(data.error || 'Couldn’t add item. Try again!');
+                    alert(data.error || `Couldn’t ${editingId ? 'update' : 'add'} item. Try again!`);
                 }
             } catch (error) {
-                console.error('Add item error:', error);
-                alert('Something went wrong adding the item. Check the server setup.');
+                console.error(`${method} error:`, error);
+                alert(`Something went wrong ${editingId ? 'updating' : 'adding'} the item. Check the server setup.`);
             } finally {
                 spinner.classList.remove('show');
             }
@@ -586,13 +645,22 @@
                     items.forEach(item => {
                         const li = document.createElement('li');
                         const itemInfo = document.createElement('span');
+                        itemInfo.className = 'item-info';
                         itemInfo.textContent = `${item.name} - Stock: ${item.stock} - Form: ${item.googleFormLink}${item.image ? ' - Has Image' : ''}`;
+                        const buttonContainer = document.createElement('div');
+                        buttonContainer.className = 'button-container';
+                        const editBtn = document.createElement('button');
+                        editBtn.textContent = 'Edit';
+                        editBtn.className = 'edit-btn';
+                        editBtn.onclick = () => editItem(item);
                         const deleteBtn = document.createElement('button');
                         deleteBtn.textContent = 'Delete';
                         deleteBtn.className = 'delete-btn';
                         deleteBtn.onclick = () => deleteItem(item.id);
+                        buttonContainer.appendChild(editBtn);
+                        buttonContainer.appendChild(deleteBtn);
                         li.appendChild(itemInfo);
-                        li.appendChild(deleteBtn);
+                        li.appendChild(buttonContainer);
                         itemList.appendChild(li);
                     });
                     spinner.classList.remove('show');
