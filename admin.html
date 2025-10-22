@@ -522,6 +522,7 @@
             document.getElementById('item-image').value = ''; // Can't prefill file input
             const btn = document.getElementById('submit-item-btn');
             btn.textContent = 'Update Item';
+            btn.onclick = submitItem; // Ensure it's bound
         }
 
         async function submitItem() {
@@ -560,7 +561,7 @@
                     spinner.classList.remove('show');
                     return;
                 }
-            } else if (editingId) {
+            } else if (editingId && !imageInput.files.length) {
                 imageBase64 = currentImage;
             }
 
