@@ -3,35 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PBM Breaks</title>
+    <title>PBM Breaks - Pokémon Center</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Press+Start+2P:wght@400&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-accent: #4169E1; /* Suicune Blue */
-            --secondary-accent: #9370DB; /* Aurora Purple */
-            --tertiary-accent: #00BFFF; /* Crystal Water Blue */
-            --light-background: #0a0f12; /* Deep black */
-            --card-background: #1f2a3c; /* Dark card */
+            /* Pokémon-themed Palette */
+            --primary-accent: #4169E1;   /* Suicune Blue (Still focus) */
+            --secondary-accent: #F08030; /* Charizard Orange */
+            --tertiary-accent: #78C850;   /* Gardevoir Green */
+            --poke-red: #FF0000;         /* Pokéball Red */
+            --poke-yellow: #FFDE00;       /* Pokémon Yellow */
+            --poke-blue: #3B4CCA;         /* Pokémon Blue */
+            
+            --page-background: #0a0f12;   /* Deep black */
+            --card-background: #1f2a3c;   /* Dark card */
             --text-primary: #ffffff;
             --text-secondary: #b0bec5;
-            --card-border: #4169E1;
+            --card-border: var(--poke-blue);
             --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-            --card-hover-shadow: 0 8px 30px rgba(65, 105, 225, 0.3);
-            --subtle-glow: 0 0 8px rgba(65, 105, 225, 0.3);
-            --text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-            --water-ripple: radial-gradient(circle, rgba(0, 191, 255, 0.1), transparent);
+            --card-hover-shadow: 0 8px 30px rgba(240, 128, 48, 0.3); /* Charizard glow */
+            --text-shadow-poke: 2px 2px 0 var(--poke-blue);
         }
+
         body {
             font-family: 'Inter', sans-serif;
             margin: 0;
-            background: linear-gradient(135deg, #0a0f12 0%, #1a2330 100%);
+            background: linear-gradient(135deg, var(--page-background) 0%, #1a2330 100%);
             color: var(--text-primary);
             position: relative;
             overflow-x: hidden;
             line-height: 1.6;
         }
+
+        /* Suicune background, slightly more visible */
         body::before {
             content: '';
             position: absolute;
@@ -45,22 +51,95 @@
                     45deg,
                     transparent,
                     transparent 20px,
-                    rgba(65, 105, 225, 0.02) 20px,
-                    rgba(65, 105, 225, 0.02) 40px
+                    rgba(65, 105, 225, 0.04) 20px,
+                    rgba(65, 105, 225, 0.04) 40px
                 );
-            opacity: 0.08;
-            z-index: -1;
+            opacity: 0.1; /* Increased opacity */
+            z-index: -2;
             animation: subtle-pulse 15s infinite ease-in-out;
         }
+
         @keyframes subtle-pulse {
-            0% { opacity: 0.08; transform: scale(1); }
-            50% { opacity: 0.12; transform: scale(1.02); }
-            100% { opacity: 0.08; transform: scale(1); }
+            0% { opacity: 0.1; transform: scale(1); }
+            50% { opacity: 0.15; transform: scale(1.02); }
+            100% { opacity: 0.1; transform: scale(1); }
         }
+
         @keyframes fade-in {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        
+        /* Animation for decorative sprites */
+        @keyframes sprite-bob {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+            100% { transform: translateY(0); }
+        }
+
+        /* Container for new Pokémon sprites */
+        .pokemon-decorators {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none; /* Allows clicking through them */
+            overflow: hidden;
+        }
+
+        .deco-sprite {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            image-rendering: pixelated; /* Keeps the pixel art sharp */
+            animation: sprite-bob 4s infinite ease-in-out;
+            opacity: 0.7;
+        }
+
+        /* Positioning the new sprites */
+        .deco-charizard {
+            top: 15vh;
+            right: 5vw;
+            width: 100px; /* Bigger! */
+            height: 100px;
+            animation-duration: 3.5s;
+        }
+        .deco-lapras {
+            top: 40vh;
+            left: 3vw;
+            width: 90px;
+            height: 90px;
+            animation-duration: 5s;
+        }
+        .deco-gardevoir {
+            top: 70vh;
+            right: 8vw;
+            animation-duration: 4.2s;
+        }
+        .deco-pinsir {
+            bottom: 15vh;
+            left: 25vw;
+            animation-duration: 3.8s;
+            opacity: 0.6;
+        }
+        .deco-cubone {
+            bottom: 10vh;
+            left: 8vw;
+            width: 60px;
+            height: 60px;
+            animation-duration: 4.5s;
+        }
+        .deco-magikarp {
+            top: 20vh;
+            left: 15vw;
+            width: 60px;
+            height: 60px;
+            animation-duration: 2.5s; /* Faster bob */
+            opacity: 0.8;
+        }
+
         header {
             background-color: var(--card-background);
             padding: 30px;
@@ -69,55 +148,70 @@
             box-shadow: var(--card-shadow);
             position: relative;
         }
+
         header h1 {
             font-family: 'Press Start 2P', cursive;
             font-size: 1.6rem;
             font-weight: 400;
             margin: 0;
             letter-spacing: 2px;
-            text-shadow: var(--text-shadow);
-            color: var(--primary-accent);
+            color: var(--poke-yellow); /* Pokémon Yellow */
+            text-shadow: var(--text-shadow-poke); /* Pokémon Blue Shadow */
         }
+
         .header-logo {
             max-width: 150px;
             margin-bottom: 15px;
             filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
             transition: transform 0.3s ease;
         }
+
         .header-logo:hover {
             transform: scale(1.05);
         }
+
         main {
             padding: 60px 20px;
             max-width: 1200px;
             margin: 0 auto;
+            position: relative; /* Needed for z-index stacking */
+            z-index: 1;
         }
+
         .store-intro {
             text-align: center;
             max-width: 700px;
             margin: 0 auto 60px auto;
             animation: fade-in 1s ease-out;
+            background: rgba(10, 15, 18, 0.7); /* Slight dark background */
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
         }
+
         .store-intro h2 {
             font-family: 'Press Start 2P', cursive;
             font-size: 1.8rem;
             font-weight: 400;
             margin: 0 0 20px 0;
             letter-spacing: 2px;
-            text-shadow: var(--text-shadow);
-            color: var(--secondary-accent);
+            color: var(--secondary-accent); /* Charizard Orange */
+            text-shadow: 2px 2px 0 #000;
         }
+
         .store-intro p {
             font-size: 1.1rem;
             color: var(--text-secondary);
             margin: 0;
         }
+
         .store-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 30px;
             margin-top: 20px;
         }
+
         .item-card {
             background: var(--card-background);
             border: 1px solid var(--card-border);
@@ -132,9 +226,11 @@
             animation: fade-in 0.8s ease-out forwards;
             opacity: 0;
         }
+
         .item-card:nth-child(1) { animation-delay: 0.1s; }
         .item-card:nth-child(2) { animation-delay: 0.2s; }
         .item-card:nth-child(3) { animation-delay: 0.3s; }
+
         .item-card::before {
             content: '';
             position: absolute;
@@ -142,12 +238,15 @@
             left: 0;
             width: 100%;
             height: 4px;
+            /* Suicune Blue -> Charizard Orange */
             background: linear-gradient(90deg, var(--primary-accent), var(--secondary-accent));
         }
+
         .item-card:hover {
             transform: translateY(-5px);
-            box-shadow: var(--card-hover-shadow);
+            box-shadow: var(--card-hover-shadow); /* Charizard Orange Glow */
         }
+
         .item-card h3 {
             font-family: 'Inter', sans-serif;
             font-size: 1.4rem;
@@ -156,25 +255,29 @@
             color: var(--text-primary);
             text-shadow: none;
         }
+
         .item-card .description {
             color: var(--text-secondary);
             margin-bottom: 20px;
             flex-grow: 1;
         }
+
         .item-details {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-top: auto;
             padding-top: 20px;
-            border-top: 1px solid rgba(65, 105, 225, 0.3);
+            border-top: 1px solid rgba(59, 76, 202, 0.3); /* Poké Blue border */
         }
+
         .item-price {
             font-size: 1.5rem;
             font-weight: 600;
-            color: var(--primary-accent);
+            color: var(--tertiary-accent); /* Gardevoir Green */
             text-shadow: none;
         }
+
         .item-stock {
             background-color: rgba(52, 73, 94, 0.8);
             padding: 6px 12px;
@@ -184,9 +287,10 @@
             color: var(--text-secondary);
             border: 1px solid var(--card-border);
         }
+
         .action-button {
             display: block;
-            background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+            background: linear-gradient(135deg, var(--poke-red), var(--secondary-accent)); /* Red to Orange */
             color: white;
             padding: 12px 20px;
             text-align: center;
@@ -196,13 +300,16 @@
             font-weight: 500;
             font-size: 1rem;
             transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-            box-shadow: 0 2px 10px rgba(65, 105, 225, 0.3);
+            box-shadow: 0 2px 10px rgba(255, 0, 0, 0.3); /* Red glow */
+            border: 1px solid #fff;
         }
+
         .action-button:hover {
-            background: linear-gradient(135deg, #5a8dee, #a68fd8);
+            background: linear-gradient(135deg, #ff3333, #f09040);
             transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(65, 105, 225, 0.4);
+            box-shadow: 0 4px 15px rgba(255, 0, 0, 0.4);
         }
+
         .out-of-stock {
             text-align: center;
             margin-top: 20px;
@@ -213,6 +320,7 @@
             font-weight: 500;
             border: 1px solid rgba(147, 112, 219, 0.3);
         }
+
         .item-image {
             max-width: 100%;
             height: auto;
@@ -222,9 +330,11 @@
             border: 1px solid rgba(0, 191, 255, 0.2);
             transition: box-shadow 0.3s ease;
         }
+
         .item-image:hover {
             box-shadow: 0 4px 15px rgba(0, 191, 255, 0.3);
         }
+
         footer {
             text-align: center;
             padding: 40px 20px;
@@ -233,7 +343,10 @@
             background-color: var(--card-background);
             margin-top: 60px;
             border-top: 1px solid var(--card-border);
+            position: relative;
+            z-index: 1;
         }
+
         .loading-spinner {
             display: none;
             width: 40px;
@@ -244,9 +357,11 @@
             animation: spin 1s linear infinite;
             margin: 40px auto;
         }
+
         .loading-spinner.show {
             display: block;
         }
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
@@ -254,61 +369,86 @@
     </style>
 </head>
 <body>
+    
+    <div class="pokemon-decorators">
+        <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/charizard.gif" alt="Charizard" class="deco-sprite deco-charizard">
+        <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/lapras.gif" alt="Lapras" class="deco-sprite deco-lapras">
+        <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/gardevoir.gif" alt="Gardevoir" class="deco-sprite deco-gardevoir">
+        <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/pinsir.gif" alt="Pinsir" class="deco-sprite deco-pinsir">
+        <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/cubone.gif" alt="Cubone" class="deco-sprite deco-cubone">
+        <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/magikarp.gif" alt="Magikarp" class="deco-sprite deco-magikarp">
+    </div>
+    
     <header>
         <img src="https://img.pokemondb.net/sprites/scarlet-violet/normal/suicune.png" alt="Suicune Logo" class="header-logo">
         <h1>PBM Breaks</h1>
     </header>
+
     <main>
         <div class="store-intro">
             <h2>Available Breaks</h2>
-            <p>Browse our current selection of bundle breaks. Click on any available item to sign up via the form.</p>
+            <p>Welcome, Trainer! Browse our current selection of bundle breaks. Click on any available item to sign up!</p>
         </div>
+        
         <div id="store-content" class="store-container">
             <div class="loading-spinner" id="loading-spinner"></div>
         </div>
     </main>
+
     <footer>
-        <p>&copy; 2025 PBM Breaks. All Rights Reserved.</p>
+        <p>&copy; 2025 PBM Breaks. All Rights Reserved. Not affiliated with Nintendo or The Pokémon Company.</p>
     </footer>
+
     <script>
         const API_URL = 'https://pokeballer-worker.kronborgnielsen.workers.dev/api';
         const MAX_RETRIES = 3;
         const RETRY_DELAY = 1000;
+
         async function loadItems() {
             const spinner = document.getElementById('loading-spinner');
             spinner.classList.add('show');
+            
             for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
                 try {
                     console.log(`Trying to get items (attempt ${attempt}) from ${API_URL}/items`);
                     const response = await fetch(`${API_URL}/items`, {
                         headers: { 'Content-Type': 'application/json' }
                     });
+                    
                     console.log(`Attempt ${attempt}: Got response with status ${response.status}`);
+                    
                     if (!response.ok) {
                         const text = await response.text();
                         console.error(`Attempt ${attempt}: Bad response: ${text.slice(0, 100)}...`);
                         throw new Error(`Problem with server! Status: ${response.status}`);
                     }
+                    
                     const items = await response.json();
                     console.log('Got items:', items);
+                    
                     const storeContent = document.getElementById('store-content');
-                    storeContent.innerHTML = '';
+                    storeContent.innerHTML = ''; // Clear spinner
+                    
                     if (items.length === 0) {
-                        storeContent.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No items right now. Check back soon!</p>';
+                        storeContent.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No items right now. Check back soon, Trainer!</p>';
                         spinner.classList.remove('show');
                         return;
                     }
+                    
                     items.forEach((item, index) => {
                         const itemDiv = document.createElement('div');
                         itemDiv.className = 'item-card';
                         itemDiv.style.animationDelay = `${(index + 1) * 0.1}s`;
+                        
                         let actionHtml = '';
                         if (item.stock > 0 && item.googleFormLink) {
-                            actionHtml = `<a href="${item.googleFormLink}" target="_blank" class="action-button">Sign Up</a>`;
+                            actionHtml = `<a href="${item.googleFormLink}" target="_blank" class="action-button">Sign Up!</a>`;
                         } else {
-                            actionHtml = `<div class="out-of-stock">Out of Stock</div>`;
+                            actionHtml = `<div class="out-of-stock">Sold Out!</div>`;
                         }
+                        
                         const imageHtml = item.image ? `<img src="${item.image}" alt="${item.name}" class="item-image">` : '';
+                        
                         itemDiv.innerHTML = `
                             ${imageHtml}
                             <h3>${item.name}</h3>
@@ -321,8 +461,10 @@
                         `;
                         storeContent.appendChild(itemDiv);
                     });
+                    
                     spinner.classList.remove('show');
                     return;
+
                 } catch (error) {
                     console.error(`Attempt ${attempt} failed:`, error);
                     if (attempt === MAX_RETRIES) {
@@ -334,6 +476,7 @@
                 }
             }
         }
+
         document.addEventListener('DOMContentLoaded', loadItems);
     </script>
 </body>
