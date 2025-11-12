@@ -122,9 +122,9 @@
             text-align: center;
             border-bottom: 2px solid var(--suicune-blue);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+            position: relative; /* Changed from sticky */
+            /* z-index: 1000;  Removed */
+            /* top: 0;         Removed */
             backdrop-filter: blur(8px); /* Frosted glass effect */
             -webkit-backdrop-filter: blur(8px);
         }
@@ -352,7 +352,7 @@
             border-top: 2px solid var(--suicune-blue);
             box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.3);
             position: relative;
-            z-index: 1000;
+            /* z-index: 1000; Removed */
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
         }
@@ -448,7 +448,8 @@
 </head>
 <body>
     <div class="pokemon-art-container">
-        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/006.png" alt="Charizard Artwork" class="pokemon-art art-charizard">
+        
+<img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/006.png" alt="Charizard Artwork" class="pokemon-art art-charizard">
         <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/131.png" alt="Lapras Artwork" class="pokemon-art art-lapras">
         <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/282.png" alt="Gardevoir Artwork" class="pokemon-art art-gardevoir">
         <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/127.png" alt="Pinsir Artwork" class="pokemon-art art-pinsir">
