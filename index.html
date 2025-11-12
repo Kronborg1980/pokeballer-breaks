@@ -3,41 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PBM Breaks - Pokémon Center</title>
+    <title>PBM Breaks - Pokémon League Store</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Press+Start+2P:wght@400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Pokémon-themed Palette */
-            --primary-accent: #4169E1;   /* Suicune Blue (Still focus) */
-            --secondary-accent: #F08030; /* Charizard Orange */
-            --tertiary-accent: #78C850;   /* Gardevoir Green */
-            --poke-red: #FF0000;         /* Pokéball Red */
-            --poke-yellow: #FFDE00;       /* Pokémon Yellow */
-            --poke-blue: #3B4CCA;         /* Pokémon Blue */
-            
-            --page-background: #0a0f12;   /* Deep black */
-            --card-background: #1f2a3c;   /* Dark card */
-            --text-primary: #ffffff;
-            --text-secondary: #b0bec5;
-            --card-border: var(--poke-blue);
-            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-            --card-hover-shadow: 0 8px 30px rgba(240, 128, 48, 0.3); /* Charizard glow */
-            --text-shadow-poke: 2px 2px 0 var(--poke-blue);
+            /* Professional Pokémon Palette */
+            --suicune-blue: #4169E1;
+            --crystal-aqua: #00BFFF;
+            --dark-background: #0D1117; /* GitHub Dark variant */
+            --card-surface: #161B22;
+            --text-light: #E6EDF3;
+            --text-muted: #8B949E;
+            --accent-glow: rgba(65, 105, 225, 0.5); /* Suicune glow */
+            --hover-border: #89CFF0; /* Light blue for subtle highlight */
+            --button-gradient-start: #FF6B6B; /* Poké Red (subtle) */
+            --button-gradient-end: #F08030; /* Charizard Orange */
+            --success-green: #28A745;
+            --error-red: #DC3545;
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Montserrat', sans-serif;
             margin: 0;
-            background: linear-gradient(135deg, var(--page-background) 0%, #1a2330 100%);
-            color: var(--text-primary);
+            background: var(--dark-background);
+            color: var(--text-light);
             position: relative;
             overflow-x: hidden;
             line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-image: 
+                url('https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png'), /* Suicune larger image */
+                radial-gradient(circle at top left, rgba(0, 191, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at bottom right, rgba(65, 105, 225, 0.1) 0%, transparent 50%);
+            background-repeat: no-repeat, no-repeat, no-repeat;
+            background-position: right -10% bottom -15%, top left, bottom right;
+            background-size: 50%, 80%, 80%; /* Suicune takes up half screen */
+            background-attachment: fixed;
         }
 
-        /* Suicune background, slightly more visible */
+        /* Subtle ripple animation for background water effect */
+        @keyframes water-ripple {
+            0% { transform: scale(0.95) rotate(0deg); opacity: 0.08; }
+            50% { transform: scale(1.05) rotate(3deg); opacity: 0.12; }
+            100% { transform: scale(0.95) rotate(0deg); opacity: 0.08; }
+        }
+
         body::before {
             content: '';
             position: absolute;
@@ -46,147 +60,127 @@
             width: 100%;
             height: 100%;
             background: 
-                url('https://img.pokemondb.net/sprites/scarlet-violet/normal/suicune.png') no-repeat center bottom / cover,
+                linear-gradient(rgba(13, 17, 23, 0.9), rgba(13, 17, 23, 0.9)),
                 repeating-linear-gradient(
                     45deg,
                     transparent,
-                    transparent 20px,
-                    rgba(65, 105, 225, 0.04) 20px,
-                    rgba(65, 105, 225, 0.04) 40px
+                    transparent 30px,
+                    rgba(65, 105, 225, 0.02) 30px,
+                    rgba(65, 105, 225, 0.02) 60px
                 );
-            opacity: 0.1; /* Increased opacity */
-            z-index: -2;
-            animation: subtle-pulse 15s infinite ease-in-out;
+            z-index: -1;
+            animation: water-ripple 20s infinite ease-in-out;
         }
 
-        @keyframes subtle-pulse {
-            0% { opacity: 0.1; transform: scale(1); }
-            50% { opacity: 0.15; transform: scale(1.02); }
-            100% { opacity: 0.1; transform: scale(1); }
+        /* Improved Fade-in for content */
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: translateY(20px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
-        @keyframes fade-in {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        /* Animation for decorative sprites */
-        @keyframes sprite-bob {
-            0% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
-            100% { transform: translateY(0); }
+        /* Animation for integrated Pokémon artwork */
+        @keyframes float-animation {
+            0% { transform: translateY(0px) translateX(0px); }
+            50% { transform: translateY(-10px) translateX(5px); }
+            100% { transform: translateY(0px) translateX(0px); }
         }
 
-        /* Container for new Pokémon sprites */
-        .pokemon-decorators {
+        .pokemon-art-container {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: -1;
-            pointer-events: none; /* Allows clicking through them */
-            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -2; /* Below the main content and the Suicune background */
         }
 
-        .deco-sprite {
+        .pokemon-art {
             position: absolute;
-            width: 80px;
-            height: 80px;
-            image-rendering: pixelated; /* Keeps the pixel art sharp */
-            animation: sprite-bob 4s infinite ease-in-out;
-            opacity: 0.7;
+            opacity: 0.4;
+            filter: grayscale(30%) brightness(1.2) contrast(1.1) drop-shadow(0 0 10px rgba(0, 191, 255, 0.4));
+            animation: float-animation 8s infinite ease-in-out;
+            transition: all 0.5s ease;
+        }
+        .pokemon-art:hover {
+            filter: grayscale(0%) brightness(1.1) contrast(1.2) drop-shadow(0 0 15px rgba(0, 191, 255, 0.6));
+            opacity: 0.6;
+            animation-play-state: paused;
         }
 
-        /* Positioning the new sprites */
-        .deco-charizard {
-            top: 15vh;
-            right: 5vw;
-            width: 100px; /* Bigger! */
-            height: 100px;
-            animation-duration: 3.5s;
-        }
-        .deco-lapras {
-            top: 40vh;
-            left: 3vw;
-            width: 90px;
-            height: 90px;
-            animation-duration: 5s;
-        }
-        .deco-gardevoir {
-            top: 70vh;
-            right: 8vw;
-            animation-duration: 4.2s;
-        }
-        .deco-pinsir {
-            bottom: 15vh;
-            left: 25vw;
-            animation-duration: 3.8s;
-            opacity: 0.6;
-        }
-        .deco-cubone {
-            bottom: 10vh;
-            left: 8vw;
-            width: 60px;
-            height: 60px;
-            animation-duration: 4.5s;
-        }
-        .deco-magikarp {
-            top: 20vh;
-            left: 15vw;
-            width: 60px;
-            height: 60px;
-            animation-duration: 2.5s; /* Faster bob */
-            opacity: 0.8;
-        }
+        .art-charizard { top: 10%; left: 5%; width: 200px; transform: scaleX(-1); animation-duration: 9s; }
+        .art-lapras { bottom: 5%; left: 10%; width: 220px; animation-duration: 10s; }
+        .art-gardevoir { top: 45%; right: 8%; width: 180px; animation-duration: 7s; }
+        .art-pinsir { top: 75%; left: 30%; width: 150px; opacity: 0.3; animation-duration: 8s; }
+        .art-cubone { top: 25%; right: 20%; width: 100px; animation-duration: 6s; }
+        .art-magikarp { bottom: 20%; right: 30%; width: 90px; opacity: 0.5; transform: scaleX(-1); animation-duration: 5s; }
+
 
         header {
-            background-color: var(--card-background);
-            padding: 30px;
+            background-color: var(--card-surface);
+            padding: 30px 20px;
             text-align: center;
-            border-bottom: 2px solid var(--card-border);
-            box-shadow: var(--card-shadow);
-            position: relative;
+            border-bottom: 2px solid var(--suicune-blue);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(8px); /* Frosted glass effect */
+            -webkit-backdrop-filter: blur(8px);
         }
 
         header h1 {
             font-family: 'Press Start 2P', cursive;
-            font-size: 1.6rem;
+            font-size: 2rem;
             font-weight: 400;
             margin: 0;
-            letter-spacing: 2px;
-            color: var(--poke-yellow); /* Pokémon Yellow */
-            text-shadow: var(--text-shadow-poke); /* Pokémon Blue Shadow */
+            letter-spacing: 3px;
+            color: var(--crystal-aqua);
+            text-shadow: 4px 4px var(--suicune-blue), 6px 6px #000;
+            animation: pulse-text 2s infinite alternate;
+        }
+
+        @keyframes pulse-text {
+            from { text-shadow: 4px 4px var(--suicune-blue), 6px 6px #000; }
+            to { text-shadow: 4px 4px var(--hover-border), 6px 6px var(--suicune-blue); }
         }
 
         .header-logo {
-            max-width: 150px;
+            max-width: 180px;
             margin-bottom: 15px;
-            filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
-            transition: transform 0.3s ease;
+            filter: drop-shadow(0 0 15px var(--accent-glow));
+            transition: transform 0.4s ease-in-out;
         }
 
         .header-logo:hover {
-            transform: scale(1.05);
+            transform: scale(1.1) rotate(-5deg);
         }
 
         main {
-            padding: 60px 20px;
+            flex-grow: 1;
+            padding: 80px 20px;
             max-width: 1200px;
             margin: 0 auto;
-            position: relative; /* Needed for z-index stacking */
+            position: relative;
             z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .store-intro {
             text-align: center;
-            max-width: 700px;
-            margin: 0 auto 60px auto;
-            animation: fade-in 1s ease-out;
-            background: rgba(10, 15, 18, 0.7); /* Slight dark background */
-            padding: 20px;
-            border-radius: 12px;
-            border: 1px solid var(--card-border);
+            max-width: 800px;
+            margin: 0 auto 80px auto;
+            background: var(--card-surface);
+            padding: 30px 40px;
+            border-radius: 15px;
+            border: 1px solid var(--suicune-blue);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4), var(--accent-glow);
+            animation: fadeInScale 1s ease-out forwards;
+            opacity: 0;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
         }
 
         .store-intro h2 {
@@ -194,42 +188,48 @@
             font-size: 1.8rem;
             font-weight: 400;
             margin: 0 0 20px 0;
-            letter-spacing: 2px;
-            color: var(--secondary-accent); /* Charizard Orange */
-            text-shadow: 2px 2px 0 #000;
+            letter-spacing: 1px;
+            color: var(--button-gradient-start);
+            text-shadow: 2px 2px #000;
         }
 
         .store-intro p {
-            font-size: 1.1rem;
-            color: var(--text-secondary);
+            font-size: 1.15rem;
+            color: var(--text-muted);
             margin: 0;
+            max-width: 600px;
+            line-height: 1.8;
         }
 
         .store-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 30px;
-            margin-top: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 40px;
+            width: 100%;
         }
 
         .item-card {
-            background: var(--card-background);
-            border: 1px solid var(--card-border);
-            border-radius: 12px;
-            box-shadow: var(--card-shadow);
-            padding: 25px;
+            background: var(--card-surface);
+            border: 1px solid var(--suicune-blue);
+            border-radius: 15px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            padding: 30px;
             display: flex;
             flex-direction: column;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
             position: relative;
             overflow: hidden;
-            animation: fade-in 0.8s ease-out forwards;
+            animation: fadeInScale 0.8s ease-out forwards;
             opacity: 0;
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
         }
 
-        .item-card:nth-child(1) { animation-delay: 0.1s; }
-        .item-card:nth-child(2) { animation-delay: 0.2s; }
-        .item-card:nth-child(3) { animation-delay: 0.3s; }
+        .item-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 25px var(--hover-border);
+            border-color: var(--hover-border);
+        }
 
         .item-card::before {
             content: '';
@@ -237,29 +237,29 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 4px;
-            /* Suicune Blue -> Charizard Orange */
-            background: linear-gradient(90deg, var(--primary-accent), var(--secondary-accent));
+            height: 5px;
+            background: linear-gradient(90deg, var(--suicune-blue), var(--crystal-aqua), var(--button-gradient-end));
+            transform: translateX(-100%);
+            transition: transform 0.5s ease-out;
         }
-
-        .item-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--card-hover-shadow); /* Charizard Orange Glow */
+        .item-card:hover::before {
+            transform: translateX(0%);
         }
 
         .item-card h3 {
-            font-family: 'Inter', sans-serif;
-            font-size: 1.4rem;
-            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
             margin: 0 0 15px 0;
-            color: var(--text-primary);
-            text-shadow: none;
+            color: var(--text-light);
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
         }
 
         .item-card .description {
-            color: var(--text-secondary);
-            margin-bottom: 20px;
+            color: var(--text-muted);
+            margin-bottom: 25px;
             flex-grow: 1;
+            font-size: 1rem;
         }
 
         .item-details {
@@ -267,95 +267,105 @@
             justify-content: space-between;
             align-items: center;
             margin-top: auto;
-            padding-top: 20px;
-            border-top: 1px solid rgba(59, 76, 202, 0.3); /* Poké Blue border */
+            padding-top: 25px;
+            border-top: 1px solid rgba(65, 105, 225, 0.3);
         }
 
         .item-price {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--tertiary-accent); /* Gardevoir Green */
-            text-shadow: none;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--crystal-aqua);
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
         }
 
         .item-stock {
-            background-color: rgba(52, 73, 94, 0.8);
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: var(--text-secondary);
-            border: 1px solid var(--card-border);
+            background-color: rgba(0, 191, 255, 0.2);
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-light);
+            border: 1px solid var(--crystal-aqua);
         }
 
         .action-button {
             display: block;
-            background: linear-gradient(135deg, var(--poke-red), var(--secondary-accent)); /* Red to Orange */
+            background: linear-gradient(135deg, var(--button-gradient-start), var(--button-gradient-end));
             color: white;
-            padding: 12px 20px;
+            padding: 15px 25px;
             text-align: center;
             text-decoration: none;
-            border-radius: 8px;
-            margin-top: 20px;
-            font-weight: 500;
-            font-size: 1rem;
-            transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-            box-shadow: 0 2px 10px rgba(255, 0, 0, 0.3); /* Red glow */
-            border: 1px solid #fff;
+            border-radius: 10px;
+            margin-top: 25px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: background 0.4s ease, transform 0.4s ease, box-shadow 0.4s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+            border: none;
+            cursor: pointer;
+            letter-spacing: 0.5px;
         }
 
         .action-button:hover {
-            background: linear-gradient(135deg, #ff3333, #f09040);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(255, 0, 0, 0.4);
+            background: linear-gradient(135deg, #FF8A8A, #F5A66B);
+            transform: translateY(-4px) scale(1.01);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.6);
         }
 
         .out-of-stock {
             text-align: center;
-            margin-top: 20px;
-            padding: 12px;
-            border-radius: 8px;
-            background-color: rgba(52, 73, 94, 0.8);
-            color: var(--text-secondary);
-            font-weight: 500;
+            margin-top: 25px;
+            padding: 15px;
+            border-radius: 10px;
+            background-color: rgba(52, 73, 94, 0.5);
+            color: var(--text-muted);
+            font-weight: 600;
             border: 1px solid rgba(147, 112, 219, 0.3);
+            font-size: 1.1rem;
         }
 
         .item-image {
             max-width: 100%;
-            height: auto;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(0, 191, 255, 0.2);
-            transition: box-shadow 0.3s ease;
+            height: 200px; /* Fixed height for consistency */
+            object-fit: contain; /* Ensures image fits without cropping */
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4), 0 0 10px rgba(0, 191, 255, 0.2);
+            border: 1px solid rgba(0, 191, 255, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background-color: rgba(0, 0, 0, 0.1); /* Slight background for transparent images */
+            padding: 10px;
         }
 
         .item-image:hover {
-            box-shadow: 0 4px 15px rgba(0, 191, 255, 0.3);
+            transform: scale(1.03);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 191, 255, 0.4);
         }
 
         footer {
             text-align: center;
             padding: 40px 20px;
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            background-color: var(--card-background);
-            margin-top: 60px;
-            border-top: 1px solid var(--card-border);
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            background-color: var(--card-surface);
+            margin-top: auto; /* Pushes footer to bottom */
+            border-top: 2px solid var(--suicune-blue);
+            box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.3);
             position: relative;
-            z-index: 1;
+            z-index: 1000;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
         }
 
         .loading-spinner {
             display: none;
-            width: 40px;
-            height: 40px;
-            border: 4px solid rgba(65, 105, 225, 0.3);
-            border-top: 4px solid var(--primary-accent);
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(65, 105, 225, 0.4);
+            border-top: 5px solid var(--crystal-aqua);
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin: 40px auto;
+            margin: 60px auto;
         }
 
         .loading-spinner.show {
@@ -366,28 +376,95 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.5rem;
+            }
+            .store-intro h2 {
+                font-size: 1.4rem;
+            }
+            .store-intro p {
+                font-size: 1rem;
+            }
+            .item-card {
+                padding: 20px;
+            }
+            .item-card h3 {
+                font-size: 1.3rem;
+            }
+            .item-price {
+                font-size: 1.4rem;
+            }
+            .action-button {
+                font-size: 1rem;
+                padding: 12px 20px;
+            }
+            .pokemon-art {
+                width: 120px;
+                opacity: 0.2;
+            }
+            .art-charizard { top: 5%; left: -5%; }
+            .art-lapras { bottom: 0%; left: 0%; }
+            .art-gardevoir { top: 60%; right: -5%; }
+            .art-pinsir { top: 80%; left: 50%; }
+            .art-cubone { top: 15%; right: 10%; }
+            .art-magikarp { bottom: 10%; right: 15%; }
+
+            body {
+                background-size: 70%, 80%, 80%; /* Suicune larger on smaller screens */
+                background-position: right -20% bottom -10%, top left, bottom right;
+            }
+        }
+        @media (max-width: 480px) {
+            header h1 {
+                font-size: 1.2rem;
+            }
+            .header-logo {
+                max-width: 120px;
+            }
+            .store-intro {
+                padding: 20px;
+                margin-bottom: 40px;
+            }
+            .store-intro h2 {
+                font-size: 1.2rem;
+            }
+            main {
+                padding: 40px 15px;
+            }
+            .store-container {
+                grid-template-columns: 1fr;
+            }
+            .item-image {
+                height: 150px;
+            }
+            .pokemon-art {
+                display: none; /* Hide decorative art on very small screens to avoid clutter */
+            }
+        }
     </style>
 </head>
 <body>
-    
-    <div class="pokemon-decorators">
-        <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/charizard.gif" alt="Charizard" class="deco-sprite deco-charizard">
-        <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/lapras.gif" alt="Lapras" class="deco-sprite deco-lapras">
-        <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/gardevoir.gif" alt="Gardevoir" class="deco-sprite deco-gardevoir">
-        <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/pinsir.gif" alt="Pinsir" class="deco-sprite deco-pinsir">
-        <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/cubone.gif" alt="Cubone" class="deco-sprite deco-cubone">
-        <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/magikarp.gif" alt="Magikarp" class="deco-sprite deco-magikarp">
+    <div class="pokemon-art-container">
+        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/006.png" alt="Charizard Artwork" class="pokemon-art art-charizard">
+        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/131.png" alt="Lapras Artwork" class="pokemon-art art-lapras">
+        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/282.png" alt="Gardevoir Artwork" class="pokemon-art art-gardevoir">
+        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/127.png" alt="Pinsir Artwork" class="pokemon-art art-pinsir">
+        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/104.png" alt="Cubone Artwork" class="pokemon-art art-cubone">
+        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/129.png" alt="Magikarp Artwork" class="pokemon-art art-magikarp">
     </div>
     
     <header>
-        <img src="https://img.pokemondb.net/sprites/scarlet-violet/normal/suicune.png" alt="Suicune Logo" class="header-logo">
-        <h1>PBM Breaks</h1>
+        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" alt="Suicune Logo" class="header-logo">
+        <h1>PBM BREAKS</h1>
     </header>
 
     <main>
         <div class="store-intro">
-            <h2>Available Breaks</h2>
-            <p>Welcome, Trainer! Browse our current selection of bundle breaks. Click on any available item to sign up!</p>
+            <h2>Welcome to the Pokémon League Store!</h2>
+            <p>Your ultimate destination for curated Pokémon TCG breaks and exclusive bundles. Discover rare cards and complete your collection with fellow trainers!</p>
         </div>
         
         <div id="store-content" class="store-container">
@@ -430,7 +507,7 @@
                     storeContent.innerHTML = ''; // Clear spinner
                     
                     if (items.length === 0) {
-                        storeContent.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No items right now. Check back soon, Trainer!</p>';
+                        storeContent.innerHTML = '<p style="text-align: center; color: var(--text-muted); font-size: 1.2rem;">No new breaks scheduled at the moment, Trainer. Check back soon!</p>';
                         spinner.classList.remove('show');
                         return;
                     }
@@ -442,15 +519,18 @@
                         
                         let actionHtml = '';
                         if (item.stock > 0 && item.googleFormLink) {
-                            actionHtml = `<a href="${item.googleFormLink}" target="_blank" class="action-button">Sign Up!</a>`;
+                            actionHtml = `<a href="${item.googleFormLink}" target="_blank" class="action-button">Join Break!</a>`;
                         } else {
-                            actionHtml = `<div class="out-of-stock">Sold Out!</div>`;
+                            actionHtml = `<div class="out-of-stock">Break Full!</div>`;
                         }
                         
-                        const imageHtml = item.image ? `<img src="${item.image}" alt="${item.name}" class="item-image">` : '';
-                        
+                        // Placeholder images if item.image is missing or broken.
+                        // You can find high-quality images for each specific item if needed.
+                        const defaultImage = "https://assets.pokemon.com/assets/cms2/img/misc/trading-card-games/cards/tcg_default_card.png";
+                        const itemImageUrl = item.image ? item.image : defaultImage;
+
                         itemDiv.innerHTML = `
-                            ${imageHtml}
+                            <img src="${itemImageUrl}" alt="${item.name}" class="item-image">
                             <h3>${item.name}</h3>
                             <p class="description">${item.description}</p>
                             <div class="item-details">
@@ -468,7 +548,7 @@
                 } catch (error) {
                     console.error(`Attempt ${attempt} failed:`, error);
                     if (attempt === MAX_RETRIES) {
-                        document.getElementById('store-content').innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Sorry, we can’t load the items. Please try refreshing or check the server setup.</p>';
+                        document.getElementById('store-content').innerHTML = '<p style="text-align: center; color: var(--error-red); font-size: 1.2rem;">Failed to retrieve break information. Please try refreshing or contact support.</p>';
                         spinner.classList.remove('show');
                         return;
                     }
