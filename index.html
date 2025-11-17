@@ -21,37 +21,51 @@
 
         * { margin:0; padding:0; box-sizing:border-box; }
 
-        body {
+        html, body {
+            height: 100%;
             font-family: 'Inter', sans-serif;
             background: var(--bg);
             color: var(--text);
-            min-height: 100vh;
             overflow-x: hidden;
-            position: relative;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(0,238,255,0.12) 0%, transparent 50%),
-                radial-gradient(circle at 90% 80%, rgba(157,78,221,0.12) 0%, transparent 50%),
-                radial-gradient(circle at 50% 50%, rgba(0,255,157,0.06) 0%, transparent 70%);
         }
 
-        /* Keep only subtle orbs for performance */
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0,238,255,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 90% 80%, rgba(157,78,221,0.1) 0%, transparent 50%);
+        }
+
+        /* Only light orbs - no heavy blur on Edge */
         .orb {
             position: absolute;
             border-radius: 50%;
             background: radial-gradient(circle, var(--accent), transparent);
-            filter: blur(60px);
-            opacity: 0.25;
+            opacity: 0.2;
             pointer-events: none;
+            filter: blur(40px);
         }
         .orb:nth-child(1){width:600px;height:600px;top:-10%;left:-10%;}
         .orb:nth-child(2){width:800px;height:800px;bottom:-20%;right:-15%;}
         .orb:nth-child(3){width:500px;height:500px;top:25%;right:10%;}
 
-        header { text-align: center; padding: 3.5rem 1rem 5rem; position: relative; overflow: hidden; }
-        .header-glow { position: absolute; inset: 0; background: conic-gradient(from 90deg at 50% 20%, #00eeff, #9d4edd, #00ff9d, #00eeff); filter: blur(100px); opacity: 0.6; animation: rotate 25s infinite linear; }
+        header {
+            text-align: center;
+            padding: 3.5rem 1rem 4.5rem;
+            position: relative;
+        }
+        .header-glow {
+            position: absolute;
+            inset: 0;
+            background: conic-gradient(from 90deg at 50% 20%, #00eeff, #9d4edd, #00ff9d, #00eeff);
+            opacity: 0.5;
+            animation: rotate 30s infinite linear;
+        }
         @keyframes rotate { to { transform: rotate(360deg); } }
-        .header-logo { width: 170px; filter: drop-shadow(0 0 40px var(--accent)); animation: levitate 6s infinite ease-in-out; }
-        @keyframes levitate { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+        .header-logo { width: 170px; filter: drop-shadow(0 0 30px var(--accent)); animation: levitate 6s infinite ease-in-out; }
+        @keyframes levitate { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
 
         h1 {
             font-size: 5.5rem;
@@ -61,27 +75,41 @@
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 70px rgba(0,238,255,0.6);
             margin-top: 1rem;
         }
 
-        main { max-width: 1600px; margin: 0 auto; padding: 0 1rem 6rem; position: relative; z-index: 2; }
+        main {
+            flex: 1;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 1rem 4rem;
+            position: relative;
+            z-index: 2;
+        }
 
-        .store-intro { text-align: center; padding: 4rem 2rem; margin-bottom: 5rem; background: linear-gradient(135deg, rgba(26,26,46,0.9), rgba(18,18,31,0.95)); border-radius: 36px; border: 2px solid rgba(0,238,255,0.4); box-shadow: 0 25px 80px rgba(0,0,0,0.6); backdrop-filter: blur(18px); }
+        .store-intro {
+            text-align: center;
+            padding: 4rem 2rem;
+            margin-bottom: 4rem;
+            background: linear-gradient(135deg, rgba(26,26,46,0.9), rgba(18,18,31,0.95));
+            border-radius: 36px;
+            border: 2px solid rgba(0,238,255,0.4);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            backdrop-filter: blur(12px);
+        }
         .store-intro h2 { font-size: 4rem; font-weight: 900; background: linear-gradient(120deg, var(--electric), var(--accent), var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .store-intro p { font-size: 1.35rem; color: var(--text2); max-width: 850px; margin: 1.2rem auto 0; line-height: 1.8; }
 
-        /* YOUTUBE SECTION — NOW BLAZING FAST (thumbnails only) */
-        .youtube-section { margin: 7rem 0; }
+        /* YOUTUBE - FAST THUMBNAILS */
+        .youtube-section { margin: 5rem 0; }
         .youtube-title {
             font-size: 4.8rem;
             font-weight: 900;
             text-align: center;
-            margin-bottom: 3.5rem;
+            margin-bottom: 3rem;
             background: linear-gradient(90deg, #ff0080, #00eeff, #00ff9d);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 50px rgba(0,238,255,0.7);
         }
         .youtube-grid {
             display: grid;
@@ -91,7 +119,6 @@
             background: rgba(18,18,31,0.5);
             border-radius: 36px;
             border: 1px solid rgba(0,238,255,0.25);
-            backdrop-filter: blur(12px);
         }
         .yt-video {
             position: relative;
@@ -99,47 +126,36 @@
             overflow: hidden;
             background: var(--card);
             border: 2px solid transparent;
-            transition: all 0.4s ease;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+            transition: all 0.35s ease;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
             cursor: pointer;
         }
-        .yt-video:hover { transform: translateY(-20px) scale(1.04); border-color: var(--accent); box-shadow: 0 30px 80px rgba(0,238,255,0.4); }
-        
-        /* Thumbnail + Play button = 10x faster */
-        .yt-thumb {
-            width: 100%;
-            height: 220px;
-            object-fit: cover;
-            display: block;
-        }
+        .yt-video:hover { transform: translateY(-18px) scale(1.04); border-color: var(--accent); box-shadow: 0 30px 70px rgba(0,238,255,0.35); }
+        .yt-thumb { width: 100%; height: 220px; object-fit: cover; display: block; }
         .play-button {
             position: absolute;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            width: 80px; height: 80px;
+            width: 70px; height: 70px;
             background: rgba(0,0,0,0.7);
             border: 4px solid white;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 36px;
+            font-size: 32px;
             color: white;
-            backdrop-filter: blur(10px);
             transition: all 0.3s;
         }
         .yt-video:hover .play-button { transform: translate(-50%, -50%) scale(1.2); background: var(--accent); }
-
-        .yt-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 1.8rem 1.4rem 1.4rem; background: linear-gradient(to top, rgba(10,10,21,0.95), transparent); backdrop-filter: blur(10px); }
+        .yt-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 1.8rem 1.4rem 1.4rem; background: linear-gradient(to top, rgba(10,10,21,0.95), transparent); }
         .yt-title { font-size: 1.2rem; font-weight: 800; color: var(--text); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-
-        .upcoming-badge { position: absolute; top: 16px; left: 16px; background: linear-gradient(135deg, #ff006e, #ff8c00); color: white; padding: 0.5rem 1.2rem; border-radius: 50px; font-weight: 900; font-size: 0.9rem; box-shadow: 0 0 30px rgba(255,0,110,0.7); animation: badgePulse 2s infinite; z-index: 10; }
+        .upcoming-badge { position: absolute; top: 16px; left: 16px; background: linear-gradient(135deg, #ff006e, #ff8c00); color: white; padding: 0.5rem 1.2rem; border-radius: 50px; font-weight: 900; font-size: 0.9rem; box-shadow: 0 0 25px rgba(255,0,110,0.7); animation: badgePulse 2s infinite; }
         .live-now { background: linear-gradient(90deg, #ff0000, #ff0066) !important; animation: livePulse 1.5s infinite !important; }
         @keyframes badgePulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.1); } }
-        @keyframes livePulse { 0%,100% { box-shadow: 0 0 30px #ff0000; } 50% { box-shadow: 0 0 60px #ff0000; } }
+        @keyframes livePulse { 0%,100% { box-shadow: 0 0 25px #ff0000; } 50% { box-shadow: 0 0 55px #ff0000; } }
 
-        /* Store & footer unchanged (already fast) */
-        .store-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 2.8rem; margin-top: 5rem; }
+        .store-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 2.8rem; margin-top: 4rem; }
         .item-card { background: var(--card); border-radius: 30px; overflow: hidden; border: 1px solid rgba(0,238,255,0.2); transition: all 0.4s ease; box-shadow: 0 18px 45px rgba(0,0,0,0.5); display: flex; flex-direction: column; }
         .item-card:hover { transform: translateY(-18px) scale(1.03); border-color: var(--accent); box-shadow: 0 35px 90px rgba(0,238,255,0.35); }
         .item-image { width: 100%; height: 290px; object-fit: cover; transition: transform 0.6s ease; loading: lazy; }
@@ -155,12 +171,21 @@
         .action-button:hover { transform: translateY(-5px); box-shadow: 0 22px 55px rgba(0,238,255,0.6); background: linear-gradient(135deg, #00ffff, #d946ef); }
         .out-of-stock { background: rgba(255,77,77,0.25); color: #ff6b6b; border: 2px solid #ff4444; }
 
-        footer { padding: 2.2rem 1rem; text-align: center; color: #666; border-top: 1px solid rgba(0,238,255,0.15); background: rgba(10,10,21,0.98); backdrop-filter: blur(10px); font-size: 0.9rem; }
+        /* FIXED FOOTER - NO MORE BLANK SPACE */
+        footer {
+            margin-top: auto;
+            padding: 2rem 1rem;
+            text-align: center;
+            color: #666;
+            background: rgba(10,10,21,0.98);
+            border-top: 1px solid rgba(0,238,255,0.15);
+            font-size: 0.9rem;
+        }
         footer p:last-child { font-size: 0.78rem; color: #555; margin-top: 0.4rem; }
 
-        #lightbox-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.97); backdrop-filter: blur(30px); justify-content: center; align-items: center; z-index: 1000; cursor: zoom-out; }
+        #lightbox-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.97); backdrop-filter: blur(20px); justify-content: center; align-items: center; z-index: 1000; cursor: zoom-out; }
         #lightbox-overlay.show { display: flex; }
-        #lightbox-image { max-width: 96vw; max-height: 96vh; border-radius: 30px; border: 5px solid var(--accent); box-shadow: 0 0 110px rgba(0,238,255,0.7); }
+        #lightbox-image { max-width: 96vw; max-height: 96vh; border-radius: 30px; border: 5px solid var(--accent); box-shadow: 0 0 100px rgba(0,238,255,0.7); }
 
         @media (max-width: 768px) {
             h1, .youtube-title { font-size: 3.8rem; }
@@ -193,6 +218,7 @@
         <div id="store-content" class="store-container"></div>
     </main>
 
+    <!-- Footer now perfectly hugs the bottom -->
     <footer>
         <p>© 2025 PBM Breaks. All Rights Reserved.</p>
         <p>Not affiliated with Nintendo or The Pokémon Company</p>
@@ -223,7 +249,6 @@
             } catch { container.innerHTML = '<p style="grid-column:1/-1;color:#ff4444;text-align:center;">Failed to load — refresh!</p>'; }
         }
 
-        // FASTEST YOUTUBE LOADER EVER (thumbnails + click-to-play)
         async function loadYouTubeVideos() {
             const container = document.getElementById('youtube-videos');
             container.innerHTML = '<div style="grid-column:1/-1;padding:5rem;color:var(--accent);font-size:1.8rem;">Loading latest videos...</div>';
