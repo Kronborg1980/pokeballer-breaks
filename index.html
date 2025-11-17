@@ -3,648 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PBM Breaks - Pokémon League Store</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <title>PBM Breaks - Live Pokémon Breaks</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Professional Pokémon Palette */
-            --suicune-blue: #4169E1;
-            --crystal-aqua: #00BFFF;
-            --dark-background: #0D1117; /* GitHub Dark variant */
-            --card-surface: #161B22;
-            --text-light: #E6EDF3;
-            --text-muted: #8B949E;
-            --accent-glow: rgba(65, 105, 225, 0.5); /* Suicune glow */
-            --hover-border: #89CFF0; /* Light blue for subtle highlight */
-            --button-gradient-start: #FF6B6B; /* Poké Red (subtle) */
-            --button-gradient-end: #F08030; /* Charizard Orange */
-            --success-green: #28A745;
-            --error-red: #DC3545;
+            --suicune-blue: #4169E1; --crystal-aqua: #00BFFF; --dark-bg: #0D1117; --card: #161B22;
+            --text: #E6EDF3; --muted: #8B949E; --glow: rgba(65,105,225,0.5); --red: #FF6B6B; --orange: #F08030;
         }
-
-        body {
-            font-family: 'Montserrat', sans-serif;
-            margin: 0;
-            background: var(--dark-background);
-            color: var(--text-light);
-            position: relative;
-            overflow-x: hidden;
-            line-height: 1.6;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            background-image: 
-                url('https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png'), /* Suicune larger image */
-                radial-gradient(circle at top left, rgba(0, 191, 255, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at bottom right, rgba(65, 105, 225, 0.1) 0%, transparent 50%);
-            background-repeat: no-repeat, no-repeat, no-repeat;
-            background-position: right -10% bottom -15%, top left, bottom right;
-            background-size: 50%, 80%, 80%; /* Suicune takes up half screen */
-            background-attachment: fixed;
-        }
-
-        /* Subtle ripple animation for background water effect */
-        @keyframes water-ripple {
-            0% { transform: scale(0.95) rotate(0deg); opacity: 0.08; }
-            50% { transform: scale(1.05) rotate(3deg); opacity: 0.12; }
-            100% { transform: scale(0.95) rotate(0deg); opacity: 0.08; }
-        }
-
-        body::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                linear-gradient(rgba(13, 17, 23, 0.9), rgba(13, 17, 23, 0.9)),
-                repeating-linear-gradient(
-                    45deg,
-                    transparent,
-                    transparent 30px,
-                    rgba(65, 105, 225, 0.02) 30px,
-                    rgba(65, 105, 225, 0.02) 60px
-                );
-            z-index: -1;
-            animation: water-ripple 20s infinite ease-in-out;
-        }
-
-        /* Improved Fade-in for content */
-        @keyframes fadeInScale {
-            from { opacity: 0; transform: translateY(20px) scale(0.98); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-
-        /* Animation for integrated Pokémon artwork */
-        @keyframes float-animation {
-            0% { transform: translateY(0px) translateX(0px); }
-            50% { transform: translateY(-10px) translateX(5px); }
-            100% { transform: translateY(0px) translateX(0px); }
-        }
-
-        .pokemon-art-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: -2; /* Below the main content and the Suicune background */
-        }
-
-        .pokemon-art {
-            position: absolute;
-            opacity: 0.4;
-            filter: grayscale(30%) brightness(1.2) contrast(1.1) drop-shadow(0 0 10px rgba(0, 191, 255, 0.4));
-            animation: float-animation 8s infinite ease-in-out;
-            transition: all 0.5s ease;
-        }
-        .pokemon-art:hover {
-            filter: grayscale(0%) brightness(1.1) contrast(1.2) drop-shadow(0 0 15px rgba(0, 191, 255, 0.6));
-            opacity: 0.6;
-            animation-play-state: paused;
-        }
-
-        .art-charizard { top: 10%; left: 5%; width: 200px; transform: scaleX(-1); animation-duration: 9s; }
-        .art-lapras { bottom: 5%; left: 10%; width: 220px; animation-duration: 10s; }
-        .art-gardevoir { top: 45%; right: 8%; width: 180px; animation-duration: 7s; }
-        .art-pinsir { top: 75%; left: 30%; width: 150px; opacity: 0.3; animation-duration: 8s; }
-        .art-cubone { top: 25%; right: 20%; width: 100px; animation-duration: 6s; }
-        .art-magikarp { bottom: 20%; right: 30%; width: 90px; opacity: 0.5; transform: scaleX(-1); animation-duration: 5s; }
-
-
-        header {
-            background-color: var(--card-surface);
-            padding: 30px 20px;
-            text-align: center;
-            border-bottom: 2px solid var(--suicune-blue);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            position: relative; /* Changed from sticky */
-            backdrop-filter: blur(8px); /* Frosted glass effect */
-            -webkit-backdrop-filter: blur(8px);
-        }
-
-        header h1 {
-            font-family: 'Press Start 2P', cursive;
-            font-size: 2rem;
-            font-weight: 400;
-            margin: 0;
-            letter-spacing: 3px;
-            color: var(--crystal-aqua);
-            text-shadow: 4px 4px var(--suicune-blue), 6px 6px #000;
-            animation: pulse-text 2s infinite alternate;
-        }
-
-        @keyframes pulse-text {
-            from { text-shadow: 4px 4px var(--suicune-blue), 6px 6px #000; }
-            to { text-shadow: 4px 4px var(--hover-border), 6px 6px var(--suicune-blue); }
-        }
-
-        .header-logo {
-            max-width: 180px;
-            margin-bottom: 15px;
-            filter: drop-shadow(0 0 15px var(--accent-glow));
-            transition: transform 0.4s ease-in-out;
-        }
-
-        .header-logo:hover {
-            transform: scale(1.1) rotate(-5deg);
-        }
-
-        main {
-            flex-grow: 1;
-            padding: 80px 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .store-intro {
-            text-align: center;
-            max-width: 800px;
-            margin: 0 auto 80px auto;
-            background: var(--card-surface);
-            padding: 30px 40px;
-            border-radius: 15px;
-            border: 1px solid var(--suicune-blue);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4), var(--accent-glow);
-            animation: fadeInScale 1s ease-out forwards;
-            opacity: 0;
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-        }
-
-        .store-intro h2 {
-            font-family: 'Press Start 2P', cursive;
-            font-size: 1.8rem;
-            font-weight: 400;
-            margin: 0 0 20px 0;
-            letter-spacing: 1px;
-            color: var(--button-gradient-start);
-            text-shadow: 2px 2px #000;
-        }
-
-        .store-intro p {
-            font-size: 1.15rem;
-            color: var(--text-muted);
-            margin: 0;
-            max-width: 600px;
-            line-height: 1.8;
-        }
-
-        .store-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 40px;
-            width: 100%;
-        }
-
-        .item-card {
-            background: var(--card-surface);
-            border: 1px solid var(--suicune-blue);
-            border-radius: 15px;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-            padding: 30px;
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
-            position: relative;
-            overflow: hidden;
-            animation: fadeInScale 0.8s ease-out forwards;
-            opacity: 0;
-            backdrop-filter: blur(3px);
-            -webkit-backdrop-filter: blur(3px);
-        }
-
-        .item-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 25px var(--hover-border);
-            border-color: var(--hover-border);
-        }
-
-        .item-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: linear-gradient(90deg, var(--suicune-blue), var(--crystal-aqua), var(--button-gradient-end));
-            transform: translateX(-100%);
-            transition: transform 0.5s ease-out;
-        }
-        .item-card:hover::before {
-            transform: translateX(0%);
-        }
-
-        .item-card h3 {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin: 0 0 15px 0;
-            color: var(--text-light);
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
-        }
-
-        .item-card .description {
-            color: var(--text-muted);
-            margin-bottom: 25px;
-            flex-grow: 1;
-            font-size: 1rem;
-        }
-
-        .item-details {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: auto;
-            padding-top: 25px;
-            border-top: 1px solid rgba(65, 105, 225, 0.3);
-        }
-
-        .item-price {
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: var(--crystal-aqua);
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
-        }
-
-        .item-stock {
-            background-color: rgba(0, 191, 255, 0.2);
-            padding: 8px 15px;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: var(--text-light);
-            border: 1px solid var(--crystal-aqua);
-        }
-
-        .action-button {
-            display: block;
-            background: linear-gradient(135deg, var(--button-gradient-start), var(--button-gradient-end));
-            color: white;
-            padding: 15px 25px;
-            text-align: center;
-            text-decoration: none;
-            border-radius: 10px;
-            margin-top: 25px;
-            font-weight: 600;
-            font-size: 1.1rem;
-            transition: background 0.4s ease, transform 0.4s ease, box-shadow 0.4s ease;
-            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
-            border: none;
-            cursor: pointer;
-            letter-spacing: 0.5px;
-        }
-
-        .action-button:hover {
-            background: linear-gradient(135deg, #FF8A8A, #F5A66B);
-            transform: translateY(-4px) scale(1.01);
-            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.6);
-        }
-
-        .out-of-stock {
-            text-align: center;
-            margin-top: 25px;
-            padding: 15px;
-            border-radius: 10px;
-            background-color: rgba(52, 73, 94, 0.5);
-            color: var(--text-muted);
-            font-weight: 600;
-            border: 1px solid rgba(147, 112, 219, 0.3);
-            font-size: 1.1rem;
-        }
-
-        .item-image {
-            max-width: 100%;
-            height: 200px; /* Fixed height for consistency */
-            object-fit: contain; /* Ensures image fits without cropping */
-            border-radius: 10px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4), 0 0 10px rgba(0, 191, 255, 0.2);
-            border: 1px solid rgba(0, 191, 255, 0.3);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            background-color: rgba(0, 0, 0, 0.1); /* Slight background for transparent images */
-            padding: 10px;
-        }
-
-        .item-image:hover {
-            transform: scale(1.03);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 191, 255, 0.4);
-            cursor: pointer; /* <-- NEW: Added cursor to show it's clickable */
-        }
-
-        footer {
-            text-align: center;
-            padding: 40px 20px;
-            font-size: 0.95rem;
-            color: var(--text-muted);
-            background-color: var(--card-surface);
-            margin-top: auto; /* Pushes footer to bottom */
-            border-top: 2px solid var(--suicune-blue);
-            box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.3);
-            position: relative;
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-        }
-
-        .loading-spinner {
-            display: none;
-            width: 50px;
-            height: 50px;
-            border: 5px solid rgba(65, 105, 225, 0.4);
-            border-top: 5px solid var(--crystal-aqua);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 60px auto;
-        }
-
-        .loading-spinner.show {
-            display: block;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* --- NEW LIGHTBOX CSS --- */
-        #lightbox-overlay {
-            display: none; /* Hidden by default */
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(13, 17, 23, 0.95); /* Use your theme's dark bg */
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            cursor: pointer;
-            animation: fadeInLightbox 0.3s ease-out;
-        }
-
-        #lightbox-overlay.show {
-            display: flex;
-        }
-
-        #lightbox-image {
-            max-width: 90vw;
-            max-height: 90vh;
-            object-fit: contain;
-            border-radius: 10px;
-            box-shadow: 0 0 50px rgba(0, 191, 255, 0.5); /* Use your accent glow */
-            border: 2px solid var(--crystal-aqua);
-            /* Add a little zoom-in animation */
-            transform: scale(0.9);
-            animation: scaleInLightbox 0.3s ease-out forwards;
-        }
-        
-        @keyframes fadeInLightbox {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        @keyframes scaleInLightbox {
-            from { opacity: 0; transform: scale(0.8); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        /* --- END NEW LIGHTBOX CSS --- */
-
-
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            header h1 {
-                font-size: 1.5rem;
-            }
-            .store-intro h2 {
-                font-size: 1.4rem;
-            }
-            .store-intro p {
-                font-size: 1rem;
-            }
-            .item-card {
-                padding: 20px;
-            }
-            .item-card h3 {
-                font-size: 1.3rem;
-            }
-            .item-price {
-                font-size: 1.4rem;
-            }
-            .action-button {
-                font-size: 1rem;
-                padding: 12px 20px;
-            }
-            .pokemon-art {
-                width: 120px;
-                opacity: 0.2;
-            }
-            .art-charizard { top: 5%; left: -5%; }
-            .art-lapras { bottom: 0%; left: 0%; }
-            .art-gardevoir { top: 60%; right: -5%; }
-            .art-pinsir { top: 80%; left: 50%; }
-            .art-cubone { top: 15%; right: 10%; }
-            .art-magikarp { bottom: 10%; right: 15%; }
-
-            body {
-                background-size: 70%, 80%, 80%; /* Suicune larger on smaller screens */
-                background-position: right -20% bottom -10%, top left, bottom right;
-            }
-        }
-        @media (max-width: 480px) {
-            header h1 {
-                font-size: 1.2rem;
-            }
-            .header-logo {
-                max-width: 120px;
-            }
-            .store-intro {
-                padding: 20px;
-                margin-bottom: 40px;
-            }
-            .store-intro h2 {
-                font-size: 1.2rem;
-            }
-            main {
-                padding: 40px 15px;
-            }
-            .store-container {
-                grid-template-columns: 1fr;
-            }
-            .item-image {
-                height: 150px;
-            }
-            .pokemon-art {
-                display: none; /* Hide decorative art on very small screens to avoid clutter */
-            }
-        }
+        body {font-family:'Montserrat',sans-serif;margin:0;background:var(--dark-bg);color:var(--text);min-height:100vh;
+            background-image:url('https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png'),
+            radial-gradient(circle at top left,rgba(0,191,255,0.1),transparent 50%),
+            radial-gradient(circle at bottom right,rgba(65,105,225,0.1),transparent 50%);
+            background-repeat:no-repeat;background-position:right -10% bottom -15%,top left,bottom right;
+            background-size:50%,80%,80%;background-attachment:fixed;overflow-x:hidden;}
+        body::before{content:'';position:absolute;inset:0;background:linear-gradient(rgba(13,17,23,0.92),rgba(13,17,23,0.92));z-index:-1;}
+        header{background:var(--card);padding:20px;text-align:center;border-bottom:3px solid var(--suicune-blue);box-shadow:0 4px 20px rgba(0,0,0,0.5);}
+        .header-logo{max-width:160px;filter:drop-shadow(0 0 20px var(--glow));transition:0.4s;}
+        .header-logo:hover{transform:scale(1.1) rotate(-5deg);}
+        h1{font-family:'Press Start 2P',cursive;font-size:2.4rem;margin:10px 0;color:var(--crystal-aqua);
+            text-shadow:4px 4px var(--suicune-blue),7px 7px #000;}
+        .hero{max-width:1300px;margin:40px auto;padding:50px 30px;background:linear-gradient(135deg,rgba(22,27,34,0.95),rgba(13,17,23,0.98));
+            border:2px solid var(--crystal-aqua);border-radius:20px;text-align:center;box-shadow:0 0 40px rgba(0,191,255,0.4);position:relative;overflow:hidden;}
+        .hero::before{content:'';position:absolute;inset:-50%;background:radial-gradient(circle,rgba(0,191,255,0.15),transparent 70%);animation:pulse 8s infinite;}
+        @keyframes pulse{0%,100%{transform:translate(20%,20%)}50%{transform:translate(-20%,-20%)}}
+        .hero-title{font-family:'Press Start 2P',cursive;font-size:2.8rem;background:linear-gradient(90deg,#FF6B6B,#F08030,#00BFFF);
+            -webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:0 0 20px;}
+        .packs{display:flex;justify-content:center;flex-wrap:wrap;gap:20px;margin:30px 0;}
+        .packs img{height:180px;border-radius:12px;box-shadow:0 0 20px rgba(0,191,255,0.4);transition:0.3s;}
+        .packs img:hover{transform:scale(1.1) rotate(3deg);}
+        .price{font-family:'Press Start 2P',cursive;font-size:3.8rem;color:#FF6B6B;text-shadow:3px 3px #000;margin:20px 0;}
+        .countdown{font-size:2.2rem;font-weight:700;color:var(--crystal-aqua);margin:20px 0;}
+        .btn{display:inline-block;background:linear-gradient(135deg,var(--red),var(--orange));color:white;padding:18px 50px;
+            border-radius:12px;font-size:1.4rem;font-weight:600;text-decoration:none;margin-top:20px;box-shadow:0 8px 25px rgba(255,107,107,0.6);transition:0.4s;}
+        .btn:hover{transform:translateY(-4px);box-shadow:0 12px 35px rgba(255,107,107,0.8);}
+        main{max-width:1300px;margin:0 auto;padding:20px;}
+        .section-title{font-family:'Press Start 2P',cursive;text-align:center;font-size:1.8rem;margin:60px 0 40px;color:var(--crystal-aqua);}
+        .store-container{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:30px;margin-bottom:80px;}
+        .item-card{background:var(--card);border:1px solid var(--suicune-blue);border-radius:15px;padding:25px;box-shadow:0 6px 20px rgba(0,0,0,0.3);transition:0.4s;}
+        .item-card:hover{transform:translateY(-10px) scale(1.03);box-shadow:0 15px 40px rgba(0,191,255,0.4);}
+        .item-image{width:100%;height:220px;object-fit:contain;border-radius:10px;margin-bottom:20px;background:rgba(0,0,0,0.1);}
+        .youtube{max-width:100%;aspect-ratio:16/9;border-radius:15px;overflow:hidden;box-shadow:0 0 30px rgba(0,191,255,0.3);margin:40px 0;}
+        .chase-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:25px;max-width:1000px;margin:0 auto 80px;}
+        .chase-card{text-align:center;background:rgba(22,27,34,0.8);padding:15px;border-radius:12px;border:1px solid var(--crystal-aqua);}
+        footer{text-align:center;padding:40px;background:var(--card);color:var(--muted);}
+        @media(max-width:768px){.hero-title{font-size:2rem;}.price{font-size:2.8rem;}.packs img{height:120px;}}
     </style>
 </head>
 <body>
-    <div class="pokemon-art-container">
-        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/006.png" alt="Charizard Artwork" class="pokemon-art art-charizard">
-        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/131.png" alt="Lapras Artwork" class="pokemon-art art-lapras">
-        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/282.png" alt="Gardevoir Artwork" class="pokemon-art art-gardevoir">
-        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/127.png" alt="Pinsir Artwork" class="pokemon-art art-pinsir">
-        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/104.png" alt="Cubone Artwork" class="pokemon-art art-cubone">
-        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/129.png" alt="Magikarp Artwork" class="pokemon-art art-magikarp">
-    </div>
-    
     <header>
-        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" alt="Suicune Logo" class="header-logo">
+        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" alt="Suicune" class="header-logo">
         <h1>PBM BREAKS</h1>
     </header>
 
+    <div class="hero" id="hero-section" style="display:none;">
+        <h2 class="hero-title" id="weekly-title"></h2>
+        <p style="font-size:1.6rem;color:#00BFFF;" id="weekly-subtitle"></p>
+        <div class="packs" id="pack-images"></div>
+        <p class="price" id="weekly-price"></p>
+        <div class="countdown" id="countdown">Loading next break...</div>
+        <a href="#" target="_blank" class="btn" id="weekly-form" style="display:none;">CLAIM SPOT NOW – $50 SHIPPED</a>
+    </div>
+
     <main>
-        <div class="store-intro">
-            <h2>Welcome to PBM Breaks!</h2>
-            <p>Get ready for live TCG pack openings and curated breaks with Pokeballer Mike! We're live on YouTube, offering exclusive bundles and the thrill of the hunt. Grab your spot and let's pull some rare cards!</p>
-        </div>
-        
-        <div id="store-content" class="store-container">
-            <div class="loading-spinner" id="loading-spinner"></div>
-        </div>
+        <h2 class="section-title">Live Stream</h2>
+        <div class="youtube"><iframe src="https://www.youtube.com/embed/CHANGE_THIS_TO_YOUR_LIVE_ID" allowfullscreen></iframe></div>
+
+        <h2 class="section-title">Available Breaks</h2>
+        <div id="store-content" class="store-container"></div>
+
+        <h2 class="section-title">This Week's Chase Cards</h2>
+        <div class="chase-grid" id="chase-cards"></div>
     </main>
 
-    <footer>
-        <p>&copy; 2025 PBM Breaks. All Rights Reserved. Not affiliated with Nintendo or The Pokémon Company.</p>
-    </footer>
-
-    <div id="lightbox-overlay">
-        <img id="lightbox-image" src="" alt="Expanded view">
-    </div>
+    <footer>© 2025 PBM Breaks • Live Every Thursday 8PM EST • Not affiliated with Nintendo/The Pokémon Company</footer>
 
     <script>
         const API_URL = 'https://pokeballer-worker.kronborgnielsen.workers.dev/api';
-        const MAX_RETRIES = 3;
-        const RETRY_DELAY = 1000;
-
-        async function loadItems() {
-            const spinner = document.getElementById('loading-spinner');
-            spinner.classList.add('show');
-            
-            for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
-                try {
-                    console.log(`Trying to get items (attempt ${attempt}) from ${API_URL}/items`);
-                    const response = await fetch(`${API_URL}/items`, {
-                        headers: { 'Content-Type': 'application/json' }
-                    });
-                    
-                    console.log(`Attempt ${attempt}: Got response with status ${response.status}`);
-                    
-                    if (!response.ok) {
-                        const text = await response.text();
-                        console.error(`Attempt ${attempt}: Bad response: ${text.slice(0, 100)}...`);
-                        throw new Error(`Problem with server! Status: ${response.status}`);
-                    }
-                    
-                    const items = await response.json();
-                    console.log('Got items:', items);
-                    
-                    const storeContent = document.getElementById('store-content');
-                    storeContent.innerHTML = ''; // Clear spinner
-                    
-                    if (items.length === 0) {
-                        storeContent.innerHTML = '<p style="text-align: center; color: var(--text-muted); font-size: 1.2rem;">No new breaks scheduled at the moment, Trainer. Check back soon!</p>';
-                        spinner.classList.remove('show');
-                        return;
-                    }
-                    
-                    items.forEach((item, index) => {
-                        const itemDiv = document.createElement('div');
-                        itemDiv.className = 'item-card';
-                        itemDiv.style.animationDelay = `${(index + 1) * 0.1}s`;
-                        
-                        let actionHtml = '';
-                        if (item.stock > 0 && item.googleFormLink) {
-                            actionHtml = `<a href="${item.googleFormLink}" target="_blank" class="action-button">Join Break!</a>`;
-                        } else {
-                            actionHtml = `<div class="out-of-stock">Break Full!</div>`;
-                        }
-                        
-                        // Placeholder images if item.image is missing or broken.
-                        // You can find high-quality images for each specific item if needed.
-                        const defaultImage = "https://assets.pokemon.com/assets/cms2/img/misc/trading-card-games/cards/tcg_default_card.png";
-                        const itemImageUrl = item.image ? item.image : defaultImage;
-
-                        itemDiv.innerHTML = `
-                            <img src="${itemImageUrl}" alt="${item.name}" class="item-image">
-                            <h3>${item.name}</h3>
-                            <p class="description">${item.description}</p>
-                            <div class="item-details">
-                                <span class="item-price">$${item.price.toFixed(2)}</span>
-                                <span class="item-stock">Stock: ${item.stock}</span>
-                            </div>
-                            ${actionHtml}
-                        `;
-                        storeContent.appendChild(itemDiv);
-                    });
-                    
-                    spinner.classList.remove('show');
-                    return;
-
-                } catch (error) {
-                    console.error(`Attempt ${attempt} failed:`, error);
-                    if (attempt === MAX_RETRIES) {
-                        document.getElementById('store-content').innerHTML = '<p style="text-align: center; color: var(--error-red); font-size: 1.2rem;">Failed to retrieve break information. Please try refreshing or contact support.</p>';
-                        spinner.classList.remove('show');
-                        return;
-                    }
-                    await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+        async function loadEverything() {
+            try {
+                const res = await fetch(`${API_URL}/items`);
+                const items = await res.json();
+                const weekly = items.find(i => i.name.toLowerCase() === "this week’s break");
+                if (weekly) {
+                    document.getElementById('hero-section').style.display = 'block';
+                    document.getElementById('weekly-title').textContent = weekly.name;
+                    document.getElementById('weekly-subtitle').textContent = "Scarlet & Violet + Mega Evolution Era MEGA MIX!";
+                    document.getElementById('weekly-price').textContent = `$${weekly.price} SHIPPED`;
+                    document.getElementById('weekly-form').href = weekly.googleFormLink;
+                    document.getElementById('weekly-form').style.display = 'inline-block';
+                    // You can add up to 6 pack URLs in description separated by comma
+                    const packUrls = weekly.description.split(',').map(u=>u.trim()).filter(Boolean);
+                    const packDiv = document.getElementById('pack-images');
+                    packDiv.innerHTML = packUrls.map(url=>`<img src="${url}" alt="pack">`).join('');
+                    // Countdown logic – put date in stock field as "2025-11-20 20:00"
+                    const countdown = document.getElementById('countdown');
+                    const target = new Date(weekly.stock + ":00-05:00").getTime(); // assumes EST
+                    const timer = setInterval(()=>{
+                        const now = new Date().getTime();
+                        const diff = target - now;
+                        if (diff <= 0) { countdown.textContent = "🔴 LIVE RIGHT NOW!"; clearInterval(timer); return; }
+                        const d = Math.floor(diff/(1000*60*60*24));
+                        const h = Math.floor((diff%(1000*60*60*24))/(1000*60*60));
+                        const m = Math.floor((diff%(1000*60*60))/(1000*60));
+                        const s = Math.floor((diff%(1000*60))/1000);
+                        countdown.textContent = `${d}d ${h}h ${m}m ${s}s`;
+                    },1000);
                 }
-            }
+                // Render normal items (exclude the weekly one)
+                const normalItems = items.filter(i => i.name.toLowerCase() !== "this week’s break");
+                const container = document.getElementById('store-content');
+                container.innerHTML = normalItems.map(item => `
+                    <div class="item-card">
+                        <img src="${item.image || 'https://assets.pokemon.com/assets/cms2/img/misc/trading-card-games/cards/tcg_default_card.png'}" class="item-image">
+                        <h3>${item.name}</h3>
+                        <p style="color:var(--muted);">${item.description}</p>
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:20px;border-top:1px solid rgba(65,105,225,0.3);">
+                            <span style="font-size:1.6rem;font-weight:700;color:var(--crystal-aqua);">$${item.price}</span>
+                            <span style="background:rgba(0,191,255,0.2);padding:8px 15px;border-radius:8px;border:1px solid var(--crystal-aqua);">${item.stock} left</span>
+                        </div>
+                        ${item.stock > 0 ? `<a href="${item.googleFormLink}" target="_blank" class="btn" style="margin-top:20px;font-size:1.1rem;padding:14px;">Join Break!</a>` 
+                        : `<div style="margin-top:20px;padding:15px;background:rgba(52,73,94,0.5);border-radius:10px;color:var(--muted);">Break Full!</div>`}
+                    </div>`).join('');
+                // Simple chase cards from weekly description if you put URLs after a |
+                if (weekly && weekly.description.includes('|')) {
+                    const chaseUrls = weekly.description.split('|')[1].split(',').map(u=>u.trim());
+                    document.getElementById('chase-cards').innerHTML = chaseUrls.map(url=>`
+                        <div class="chase-card"><img src="${url}" style="border-radius:8px;"><p>Hot Chase!</p></div>`).join('');
+                }
+            } catch(e) { console.error(e); }
         }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            // Run your existing function to load the items
-            loadItems();
-
-            /* --- NEW LIGHTBOX SCRIPT --- */
-            
-            // Get the new HTML elements
-            const lightboxOverlay = document.getElementById('lightbox-overlay');
-            const lightboxImage = document.getElementById('lightbox-image');
-            const storeContainer = document.getElementById('store-content');
-
-            // 1. Listen for clicks on the main store container
-            // This is called "event delegation" - it's efficient because it
-            // works for all .item-image elements, even ones added later.
-            storeContainer.addEventListener('click', function(event) {
-                // Check if the element that was clicked has the 'item-image' class
-                if (event.target.classList.contains('item-image')) {
-                    // Get the src and alt text from the clicked image
-                    const src = event.target.src;
-                    const alt = event.target.alt;
-                    
-                    // Set the lightbox image's src and alt
-                    lightboxImage.src = src;
-                    lightboxImage.alt = alt;
-                    
-                    // Show the overlay
-                    lightboxOverlay.classList.add('show');
-                }
-            });
-
-            // 2. Add a click listener to the overlay itself to close it
-            lightboxOverlay.addEventListener('click', function() {
-                lightboxOverlay.classList.remove('show');
-                // Reset the src so it doesn't flash the old image next time
-                lightboxImage.src = ""; 
-                lightboxImage.alt = "";
-            });
-
-            /* --- END NEW LIGHTBOX SCRIPT --- */
-        });
+        loadEverything();
     </script>
 </body>
 </html>
