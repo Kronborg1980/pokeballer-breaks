@@ -87,7 +87,7 @@
         .store-intro h2 { font-size: 4.2rem; font-weight: 900; background: linear-gradient(120deg, var(--electric), var(--accent), var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .store-intro p { font-size: 1.4rem; color: var(--text2); max-width: 900px; margin: 1.5rem auto 0; line-height: 1.9; }
 
-        /* YOUTUBE SECTION */
+        /* YOUTUBE SECTION - NOW SHOWS ONLY 3 VIDEOS */
         .youtube-section { margin: 8rem 0; position: relative; }
         .youtube-header { text-align: center; margin-bottom: 4rem; }
         .youtube-title {
@@ -128,7 +128,7 @@
         @keyframes badgePulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.1); } }
         @keyframes livePulse { 0%,100% { box-shadow: 0 0 30px #ff0000; } 50% { box-shadow: 0 0 70px #ff0000; } }
 
-        /* STORE CARDS - FIXED BUTTON OVERLAP */
+        /* STORE CARDS */
         .store-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(370px, 1fr)); gap: 3rem; margin-top: 6rem; }
         .item-card {
             background: var(--card);
@@ -149,8 +149,6 @@
         .item-details { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.8rem; padding-top: 1rem; border-top: 1px solid rgba(0,238,255,0.2); }
         .item-price { font-size: 2.6rem; font-weight: 900; color: var(--electric); text-shadow: 0 0 30px rgba(0,255,157,0.6); }
         .item-stock { background: rgba(0,238,255,0.2); color: var(--accent); padding: 0.6rem 1.2rem; border-radius: 50px; font-weight: 700; border: 1px solid var(--accent); }
-
-        /* Button now takes full width and sits cleanly at the bottom */
         .action-button, .out-of-stock {
             width: 100%;
             padding: 1.4rem;
@@ -276,11 +274,11 @@
                     const xml = new DOMParser().parseFromString(xmlText, "application/xml");
                     if (xml.querySelector("parsererror")) continue;
 
-                    const entries = Array.from(xml.querySelectorAll("entry")).slice(0, 8);
+                    const entries = Array.from(xml.querySelectorAll("entry")).slice(0, 6);
                     container.innerHTML = '';
                     let count = 0;
                     for (let entry of entries) {
-                        if (count >= 4) break;
+                        if (count >= 3) break;  // ←←← NOW ONLY 3 VIDEOS
                         const videoId = entry.querySelector("yt\\:videoId, videoId")?.textContent;
                         if (!videoId) continue;
                         const title = entry.querySelector("title")?.textContent || "Untitled";
