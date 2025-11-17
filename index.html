@@ -51,43 +51,43 @@
         .orb:nth-child(2){width:900px;height:900px;bottom:-25%;right:-20%;}
         .orb:nth-child(3){width:600px;height:600px;top:20%;right:5%;}
 
-        /* SUICUNE HERO - Perfect on all screens */
+        /* Suicune scales perfectly on every screen */
         .suicune-hero {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 80vw;
-            max-width: 700px;
-            opacity: 0.25;
-            filter: drop-shadow(0 0 70px var(--accent)) brightness(1.3);
+            width: 85vmin;
+            max-width: 900px;
+            opacity: 0.26;
+            filter: drop-shadow(0 0 80px var(--accent)) brightness(1.3);
             pointer-events: none;
             z-index: 1;
             animation: suicuneFloat 22s infinite ease-in-out;
         }
         @keyframes suicuneFloat {
             0%,100% { transform: translate(-50%, -50%) translateY(0); }
-            50% { transform: translate(-50%, -50%) translateY(-25px); }
+            50% { transform: translate(-50%, -50%) translateY(-30px); }
         }
 
         header {
             position: relative;
             text-align: center;
-            padding: 6rem 1.5rem 7rem;
+            padding: clamp(4rem, 12vw, 7rem) 1.5rem clamp(5rem, 12vw, 8rem);
             z-index: 2;
         }
 
         .header-logo {
-            width: 200px;
+            width: clamp(160px, 20vw, 220px);
             filter: drop-shadow(0 0 60px var(--accent));
             animation: levitate 7s infinite ease-in-out;
         }
         @keyframes levitate { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-25px); } }
 
         h1 {
-            font-size: 7.5rem;
+            font-size: clamp(4rem, 12vw, 7.5rem);
             font-weight: 900;
-            letter-spacing: -6px;
+            letter-spacing: -0.05em;
             background: linear-gradient(90deg, #00eeff, #ffffff, #ff00ff);
             -webkit-background-clip: text;
             background-clip: text;
@@ -107,8 +107,8 @@
 
         .store-intro {
             text-align: center;
-            padding: 5rem 2.5rem;
-            margin-bottom: 6rem;
+            padding: clamp(4rem, 10vw, 5.5rem) clamp(2rem, 6vw, 3rem);
+            margin-bottom: clamp(4rem, 10vw, 6rem);
             background: linear-gradient(135deg, rgba(26,26,46,0.94), rgba(18,18,31,0.99));
             border-radius: 48px;
             border: 3px solid rgba(0,238,255,0.5);
@@ -116,21 +116,27 @@
             backdrop-filter: blur(18px);
         }
         .store-intro h2 {
-            font-size: 4.8rem;
+            font-size: clamp(3rem, 9vw, 4.8rem);
             font-weight: 900;
             background: linear-gradient(120deg, var(--electric), var(--accent), var(--purple));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 1.2rem;
         }
-        .store-intro p { font-size: 1.5rem; color: var(--text2); max-width: 950px; margin: 0 auto; line-height: 2; }
+        .store-intro p { 
+            font-size: clamp(1.2rem, 3.5vw, 1.5rem); 
+            color: var(--text2); 
+            max-width: 950px; 
+            margin: 0 auto; 
+            line-height: 2; 
+        }
 
-        .youtube-section { margin: 8rem 0; }
+        .youtube-section { margin: clamp(5rem, 12vw, 8rem) 0; }
         .youtube-title {
-            font-size: 5.5rem;
+            font-size: clamp(3.2rem, 10vw, 5.5rem);
             font-weight: 900;
             text-align: center;
-            margin-bottom: 4.5rem;
+            margin-bottom: clamp(2.5rem, 7vw, 4.5rem);
             background: linear-gradient(90deg, #ff0080, #00eeff, #00ff9d, #ff00ff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -138,9 +144,9 @@
         }
         .youtube-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-            gap: 3.2rem;
-            padding: 2.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(min(360px, 95vw), 1fr));
+            gap: clamp(2rem, 5vw, 3.2rem);
+            padding: clamp(1.5rem, 5vw, 2.5rem);
             background: rgba(18,18,31,0.65);
             border-radius: 48px;
             border: 2px solid rgba(0,238,255,0.35);
@@ -157,30 +163,31 @@
             cursor: pointer;
         }
         .yt-video:hover { transform: translateY(-28px) scale(1.06); border-color: var(--accent); box-shadow: 0 50px 120px rgba(0,238,255,0.5); }
-        .yt-thumb { width: 100%; height: 250px; object-fit: cover; display: block; }
+        .yt-thumb { width: 100%; height: clamp(200px, 45vw, 250px); object-fit: cover; display: block; }
         .play-button {
             position: absolute;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            width: 90px; height: 90px;
+            width: clamp(70px, 15vw, 90px);
+            height: clamp(70px, 15vw, 90px);
             background: rgba(0,0,0,0.8);
             border: 6px solid white;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 42px;
+            font-size: clamp(32px, 8vw, 42px);
             color: white;
             transition: all 0.35s;
         }
         .yt-video:hover .play-button { transform: translate(-50%, -50%) scale(1.3); background: var(--accent); }
-        .yt-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 2.2rem 1.6rem 1.6rem; background: linear-gradient(to top, rgba(10,10,21,0.97), transparent); }
-        .yt-title { font-size: 1.35rem; font-weight: 800; color: var(--text); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .yt-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: clamp(1.5rem, 4vw, 2.2rem) clamp(1.2rem, 4vw, 1.6rem) clamp(1.2rem, 4vw, 1.6rem); background: linear-gradient(to top, rgba(10,10,21,0.97), transparent); }
+        .yt-title { font-size: clamp(1.1rem, 3vw, 1.35rem); font-weight: 800; color: var(--text); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         .upcoming-badge {
-            position: absolute; top: 22px; left: 22px;
+            position: absolute; top: clamp(16px, 4vw, 22px); left: clamp(16px, 4vw, 22px);
             background: linear-gradient(135deg, #ff006e, #ff8c00);
-            color: white; padding: 0.7rem 1.6rem;
-            border-radius: 50px; font-weight: 900; font-size: 1rem;
+            color: white; padding: clamp(0.5rem, 1.5vw, 0.7rem) clamp(1rem, 3vw, 1.6rem);
+            border-radius: 50px; font-weight: 900; font-size: clamp(0.85rem, 2.5vw, 1rem);
             box-shadow: 0 0 50px rgba(255,0,110,0.9);
             animation: badgePulse 2s infinite;
         }
@@ -188,69 +195,41 @@
         @keyframes badgePulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.12); } }
         @keyframes livePulse { 0%,100% { box-shadow: 0 0 35px #ff0000; } 50% { box-shadow: 0 0 80px #ff0000; } }
 
-        .store-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 3.2rem; margin-top: 5rem; }
+        .store-container { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(min(360px, 95vw), 1fr)); 
+            gap: clamp(2.5rem, 6vw, 3.2rem); 
+            margin-top: clamp(4rem, 10vw, 5rem); 
+        }
         .item-card { background: var(--card); border-radius: 38px; overflow: hidden; border: 2px solid rgba(0,238,255,0.3); transition: all 0.5s ease; box-shadow: 0 25px 65px rgba(0,0,0,0.6); display: flex; flex-direction: column; }
         .item-card:hover { transform: translateY(-25px) scale(1.05); border-color: var(--accent); box-shadow: 0 50px 130px rgba(0,238,255,0.45); }
-        .item-image { width: 100%; height: 310px; object-fit: cover; transition: transform 0.7s ease; }
+        .item-image { width: 100%; height: clamp(260px, 55vw, 310px); object-fit: cover; transition: transform 0.7s ease; }
         .item-card:hover .item-image { transform: scale(1.16); }
-        .card-content { padding: 2.5rem; background: linear-gradient(to top, var(--surface), transparent); flex-grow: 1; display: flex; flex-direction: column; }
-        .item-card h3 { font-size: 2.2rem; font-weight: 800; background: linear-gradient(90deg, var(--accent), #fff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 1.1rem; }
-        .description { color: var(--text2); margin-bottom: 1.8rem; line-height: 1.9; flex-grow: 1; }
+        .card-content { padding: clamp(2rem, 5vw, 2.5rem); background: linear-gradient(to top, var(--surface), transparent); flex-grow: 1; display: flex; flex-direction: column; }
+        .item-card h3 { font-size: clamp(1.8rem, 4.5vw, 2.2rem); font-weight: 800; background: linear-gradient(90deg, var(--accent), #fff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 1.1rem; }
+        .description { color: var(--text2); margin-bottom: 1.8rem; line-height: 1.9; flex-grow: 1; font-size: clamp(1rem, 2.5vw, 1.1rem); }
         .item-details { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding-top: 1.2rem; border-top: 1.5px solid rgba(0,238,255,0.3); }
-        .item-price { font-size: 2.9rem; font-weight: 900; color: var(--electric); text-shadow: 0 0 40px rgba(0,255,157,0.7); }
-        .item-stock { background: rgba(0,238,255,0.25); color: var(--accent); padding: 0.8rem 1.4rem; border-radius: 50px; font-weight: 700; border: 2px solid var(--accent); }
-        .action-button, .out-of-stock { width: 100%; padding: 1.6rem; text-align: center; border-radius: 28px; font-size: 1.5rem; font-weight: 800; margin-top: auto; }
-        .action-button { background: linear-gradient cac(135deg, var(--accent), var(--purple)); color: white; text-decoration: none; box-shadow: 0 18px 50px rgba(0,238,255,0.55); transition: all 0.4s; }
+        .item-price { font-size: clamp(2.2rem, 6vw, 2.9rem); font-weight: 900; color: var(--electric); text-shadow: 0 0 40px rgba(0,255,157,0.7); }
+        .item-stock { background: rgba(0,238,255,0.25); color: var(--accent); padding: clamp(0.6rem, 1.5vw, 0.8rem) clamp(1rem, 2.5vw, 1.4rem); border-radius: 50px; font-weight: 700; border: 2px solid var(--accent); font-size: clamp(0.9rem, 2.2vw, 1rem); }
+        .action-button, .out-of-stock { width: 100%; padding: clamp(1.3rem, 3.5vw, 1.6rem); text-align: center; border-radius: 28px; font-size: clamp(1.3rem, 3.8vw, 1.5rem); font-weight: 800; margin-top: auto; }
+        .action-button { background: linear-gradient(135deg, var(--accent), var(--purple)); color: white; text-decoration: none; box-shadow: 0 18px 50px rgba(0,238,255,0.55); transition: all 0.4s; }
         .action-button:hover { transform: translateY(-8px); box-shadow: 0 32px 80px rgba(0,238,255,0.75); background: linear-gradient(135deg, #00ffff, #d946ef); }
         .out-of-stock { background: rgba(255,77,77,0.3); color: #ff6b6b; border: 3px solid #ff4444; }
 
         footer {
             margin-top: auto;
-            padding: 2.5rem 1rem;
+            padding: clamp(2rem, 5vw, 2.5rem) 1rem;
             text-align: center;
             color: #777;
             background: rgba(10,10,21,0.99);
             border-top: 1.5px solid rgba(0,238,255,0.25);
-            font-size: 0.95rem;
+            font-size: clamp(0.9rem, 2.5vw, 0.95rem);
         }
         footer p:last-child { font-size: 0.82rem; color: #555; margin-top: 0.5rem; }
 
-        /* === PERFECT MOBILE RESPONSIVENESS === */
-        @media (max-width: 768px) {
-            .suicune-hero { width: 90vw; max-width: 500px; opacity: 0.2; }
-
-            header { padding: 3rem 1rem 3.5rem; }
-            .header-logo { width: 130px; }
-            h1 { font-size: 4.2rem; letter-spacing: -2px; margin-top: 1rem; }
-
-            .store-intro { padding: 3rem 1.8rem; margin-bottom: 4rem; border-radius: 36px; }
-            .store-intro h2 { font-size: 3.2rem; }
-            .store-intro p { font-size: 1.2rem; line-height: 1.8; }
-
-            .youtube-section { margin: 5rem 0; }
-            .youtube-title { font-size: 3.4rem; margin-bottom: 2.8rem; }
-            .youtube-grid { grid-template-columns: 1fr; gap: 2.2rem; padding: 1.8rem; border-radius: 36px; }
-            .yt-thumb { height: 210px; }
-            .play-button { width: 70px; height: 70px; font-size: 34px; }
-
-            .store-container { grid-template-columns: 1fr; gap: 2.8rem; margin-top: 3.5rem; }
-            .item-image { height: 260px; }
-            .card-content { padding: 2rem; }
-            .item-card h3 { font-size: 1.9rem; }
-            .item-price { font-size: 2.4rem; }
-            .action-button, .out-of-stock { padding: 1.4rem; font-size: 1.4rem; }
-        }
-
-        @media (max-width: 480px) {
-            h1 { font-size: 3.6rem; }
-            .header-logo { width: 110px; }
-            .store-intro h2 { font-size: 2.8rem; }
-            .youtube-title { font-size: 3rem; }
-            .yt-thumb { height: 190px; }
-            .item-image { height: 220px; }
-            .item-card h3 { font-size: 1.7rem; }
-            .item-price { font-size: 2.2rem; }
-        }
+        #lightbox-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.98); backdrop-filter: blur(30px); justify-content: center; align-items: center; z-index: 1000; cursor: zoom-out; }
+        #lightbox-overlay.show { display: flex; }
+        #lightbox-image { max-width: 96vw; max-height: 96vh; border-radius: 38px; border: 7px solid var(--accent); box-shadow: 0 0 150px rgba(0,238,255,0.9); }
     </style>
 </head>
 <body>
