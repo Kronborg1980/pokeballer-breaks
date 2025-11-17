@@ -52,7 +52,7 @@
             50%{transform:translate(100px,-100px) rotate(180deg);}
         }
 
-        /* Floating Pokémon silhouettes (subtle but alive) */
+        /* Floating Pokémon silhouettes */
         .float-poke {
             position: absolute;
             opacity: 0.07;
@@ -104,7 +104,7 @@
             margin-top: 1rem;
         }
 
-        main { max-width: 1400px; margin: 0 auto; padding: 0 1rem 4rem; position: relative; z-index: 2; }
+        main { max-width: 1400px; margin: 0 auto; padding: 0 1rem 6rem; position: relative; z-index: 2; }
 
         .store-intro {
             text-align: center;
@@ -249,13 +249,20 @@
             border: 1px solid #ff4444;
         }
 
+        /* FIXED FOOTER - Slim & Sexy */
         footer {
+            padding: 2rem 1rem;
             text-align: center;
-            padding: 4rem 1rem;
-            color: #888;
             font-size: 0.9rem;
-            position: relative;
-            z-index: 2;
+            color: #666;
+            border-top: 1px solid rgba(0,238,255,0.15);
+            background: linear-gradient(to top, rgba(10,10,21,0.98), transparent);
+            backdrop-filter: blur(10px);
+            margin-top: auto;
+        }
+
+        footer p {
+            margin: 0.5rem 0;
         }
 
         /* Lightbox */
@@ -284,6 +291,7 @@
             .store-intro h2 { font-size: 2.8rem; }
             .store-container { grid-template-columns: 1fr; }
             .item-card { max-width: 400px; margin: 0 auto; }
+            footer { padding: 1.5rem 1rem; }
         }
     </style>
 </head>
@@ -293,8 +301,7 @@
     <div class="orb"></div>
     <div class="orb"></div>
 
-    <!-- Floating Pokémon silhouettes (very subtle) -->
-    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/006_f2.png" class="float-poke" style="width:180px; left:5%; animation-duration:40s; animation-delay:0s;">
+    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/006_f2.png" class="float-poke" style="width:180px; left:5%; animation-duration:40s;">
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/150_f2.png" class="float-poke" style="width:220px; right:10%; animation-duration:50s; animation-delay:10s;">
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/382_f2.png" class="float-poke" style="width:160px; left:15%; animation-duration:45s; animation-delay:20s;">
 
@@ -315,8 +322,10 @@
         </div>
     </main>
 
+    <!-- Slim footer fixed -->
     <footer>
-        <p>© 2025 PBM Breaks. All Rights Reserved. Not affiliated with Nintendo or The Pokémon Company.</p>
+        <p>© 2025 PBM Breaks. All Rights Reserved.</p>
+        <p style="font-size:0.8rem; color:#555;">Not affiliated with Nintendo or The Pokémon Company</p>
     </footer>
 
     <div id="lightbox-overlay">
@@ -371,7 +380,6 @@
         document.addEventListener('DOMContentLoaded', () => {
             loadItems();
 
-            // Lightbox
             const overlay = document.getElementById('lightbox-overlay');
             const img = document.getElementById('lightbox-image');
             document.getElementById('store-content').addEventListener('click', e => {
