@@ -34,7 +34,6 @@
                 radial-gradient(circle at 50% 50%, rgba(0,255,157,0.08) 0%, transparent 70%);
         }
 
-        /* Animated floating orbs */
         .orb {
             position: absolute;
             border-radius: 50%;
@@ -52,7 +51,6 @@
             50%{transform:translate(100px,-100px) rotate(180deg);}
         }
 
-        /* Floating Pokémon silhouettes */
         .float-poke {
             position: absolute;
             opacity: 0.07;
@@ -134,6 +132,86 @@
             line-height: 1.8;
         }
 
+        /* === YOUTUBE SECTION === */
+        .youtube-section {
+            margin: 7rem auto;
+            text-align: center;
+        }
+
+        .section-title {
+            font-size: 4.2rem;
+            font-weight: 900;
+            background: linear-gradient(90deg, #0000ff, #ff00c8, #00ff9d);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 3rem;
+            text-shadow: 0 0 50px rgba(0,238,255,0.6);
+        }
+
+        .youtube-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 2.5rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .yt-video {
+            position: relative;
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            transition: all 0.4s ease;
+            border: 2px solid transparent;
+            background: var(--card);
+        }
+
+        .yt-video:hover {
+            transform: translateY(-15px) scale(1.03);
+            border-color: var(--accent);
+            box-shadow: 0 35px 90px rgba(0,238,255,0.4);
+        }
+
+        .yt-video iframe {
+            width: 100%;
+            height: 220px;
+            border: none;
+        }
+
+        .yt-video .title {
+            padding: 1.2rem;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text2);
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .upcoming-badge {
+            position: absolute;
+            top: 16px; left: 16px;
+            background: linear-gradient(135deg, #ff006e, #ff8c00);
+            color: white;
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            font-weight: 900;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            box-shadow: 0 0 30px rgba(255,0,110,0.7);
+            z-index: 10;
+            animation: pulse 2s infinite;
+        }
+
+        .live-now {
+            background: linear-gradient(90deg, #ff0000, #ff0066) !important;
+            animation: livePulse 1.5s infinite !important;
+        }
+
+        @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        @keyframes livePulse { 0%,100% { box-shadow: 0 0 20px #ff0000; } 50% { box-shadow: 0 0 50px #ff0000; } }
+
+        /* === STORE CARDS === */
         .store-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
@@ -157,7 +235,6 @@
             background: linear-gradient(135deg, rgba(0,238,255,0.15), transparent 50%);
             opacity: 0;
             transition: opacity 0.4s;
-            pointer-events: none;
         }
 
         .item-card:hover {
@@ -176,80 +253,16 @@
         }
         .item-card:hover .item-image { transform: scale(1.12); }
 
-        .card-content {
-            padding: 2rem;
-            background: linear-gradient(to top, var(--surface), transparent);
-        }
+        .card-content { padding: 2rem; background: linear-gradient(to top, var(--surface), transparent); }
+        .item-card h3 { font-size: 1.8rem; font-weight: 800; margin-bottom: 0.8rem; background: linear-gradient(90deg, var(--accent), #ffffff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .description { color: var(--text2); margin-bottom: 1.5rem; line-height: 1.7; }
+        .item-details { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .item-price { font-size: 2.4rem; font-weight: 900; color: var(--electric); text-shadow: 0 0 20px rgba(0,255,157,0.5); }
+        .item-stock { background: rgba(0,238,255,0.2); color: var(--accent); padding: 0.6rem 1.2rem; border-radius: 50px; font-weight: 700; border: 1px solid var(--accent); }
+        .action-button { width: 100%; padding: 1.2rem; background: linear-gradient(135deg, var(--accent), var(--purple)); color: white; border: none; border-radius: 20px; font-size: 1.3rem; font-weight: 800; cursor: pointer; transition: all 0.3s; box-shadow: 0 10px 30px rgba(0,238,255,0.4); }
+        .action-button:hover { transform: translateY(-5px); box-shadow: 0 20px 50px rgba(0,238,255,0.6); background: linear-gradient(135deg, #00ffff, #b14eff); }
+        .out-of-stock { background: rgba(255,77,77,0.25); color: #ff6b6b; padding: 1.2rem; border-radius: 20px; text-align: center; font-weight: 800; border: 1px solid #ff4444; }
 
-        .item-card h3 {
-            font-size: 1.8rem;
-            font-weight: 800;
-            margin-bottom: 0.8rem;
-            background: linear-gradient(90deg, var(--accent), #ffffff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .description {
-            color: var(--text2);
-            margin-bottom: 1.5rem;
-            line-height: 1.7;
-        }
-
-        .item-details {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .item-price {
-            font-size: 2.4rem;
-            font-weight: 900;
-            color: var(--electric);
-            text-shadow: 0 0 20px rgba(0,255,157,0.5);
-        }
-
-        .item-stock {
-            background: rgba(0,238,255,0.2);
-            color: var(--accent);
-            padding: 0.6rem 1.2rem;
-            border-radius: 50px;
-            font-weight: 700;
-            border: 1px solid var(--accent);
-        }
-
-        .action-button {
-            width: 100%;
-            padding: 1.2rem;
-            background: linear-gradient(135deg, var(--accent), var(--purple));
-            color: white;
-            border: none;
-            border-radius: 20px;
-            font-size: 1.3rem;
-            font-weight: 800;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 10px 30px rgba(0,238,255,0.4);
-        }
-
-        .action-button:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 50px rgba(0,238,255,0.6);
-            background: linear-gradient(135deg, #00ffff, #b14eff);
-        }
-
-        .out-of-stock {
-            background: rgba(255,77,77,0.25);
-            color: #ff6b6b;
-            padding: 1.2rem;
-            border-radius: 20px;
-            text-align: center;
-            font-weight: 800;
-            border: 1px solid #ff4444;
-        }
-
-        /* FIXED FOOTER - Slim & Sexy */
         footer {
             padding: 2rem 1rem;
             text-align: center;
@@ -261,11 +274,9 @@
             margin-top: auto;
         }
 
-        footer p {
-            margin: 0.5rem 0;
-        }
+        footer p { margin: 0.5rem 0; }
+        footer p:last-child { font-size: 0.8rem; color: #555; }
 
-        /* Lightbox */
         #lightbox-overlay {
             display: none;
             position: fixed;
@@ -278,20 +289,13 @@
             cursor: zoom-out;
         }
         #lightbox-overlay.show { display: flex; }
-        #lightbox-image {
-            max-width: 94vw;
-            max-height: 94vh;
-            border-radius: 24px;
-            border: 4px solid var(--accent);
-            box-shadow: 0 0 100px rgba(0,238,255,0.6);
-        }
+        #lightbox-image { max-width: 94vw; max-height: 94vh; border-radius: 24px; border: 4px solid var(--accent); box-shadow: 0 0 100px rgba(0,238,255,0.6); }
 
         @media (max-width: 768px) {
             h1 { font-size: 3.8rem; }
-            .store-intro h2 { font-size: 2.8rem; }
-            .store-container { grid-template-columns: 1fr; }
-            .item-card { max-width: 400px; margin: 0 auto; }
-            footer { padding: 1.5rem 1rem; }
+            .store-intro h2, .section-title { font-size: 2.8rem; }
+            .store-container, .youtube-grid { grid-template-columns: 1fr; }
+            .item-card, .yt-video { max-width: 400px; margin: 0 auto; }
         }
     </style>
 </head>
@@ -317,15 +321,22 @@
             <p>Get ready for live TCG pack openings and curated breaks with Pokeballer Mike! We're live on YouTube, offering exclusive bundles and the thrill of the hunt. Grab your spot and let's pull some rare cards!</p>
         </div>
 
+        <!-- YOUTUBE SECTION -->
+        <section class="youtube-section">
+            <h2 class="section-title">LIVE ON YOUTUBE 🔥</h2>
+            <div class="youtube-grid" id="youtube-videos">
+                <!-- Videos load automatically -->
+            </div>
+        </section>
+
         <div id="store-content" class="store-container">
-            <!-- Items load here -->
+            <!-- Store items load here -->
         </div>
     </main>
 
-    <!-- Slim footer fixed -->
     <footer>
         <p>© 2025 PBM Breaks. All Rights Reserved.</p>
-        <p style="font-size:0.8rem; color:#555;">Not affiliated with Nintendo or The Pokémon Company</p>
+        <p>Not affiliated with Nintendo or The Pokémon Company</p>
     </footer>
 
     <div id="lightbox-overlay">
@@ -334,6 +345,8 @@
 
     <script>
         const API_URL = 'https://pokeballer-worker.kronborgnielsen.workers.dev/api';
+
+        // ===== LOAD STORE ITEMS =====
         async function loadItems() {
             const container = document.getElementById('store-content');
             container.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:4rem;font-size:2rem;color:var(--accent);">Loading Breaks...</div>';
@@ -341,23 +354,19 @@
             try {
                 const res = await fetch(`${API_URL}/items`);
                 const items = await res.json();
-
                 container.innerHTML = '';
                 if (items.length === 0) {
-                    container.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#aaa;font-size:1.5rem;">No breaks right now — check back soon for the next fire drop!</p>';
+                    container.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#aaa;font-size:1.5rem;">No breaks right now — check back soon!</p>';
                     return;
                 }
-
                 items.forEach((item, i) => {
                     const card = document.createElement('div');
                     card.className = 'item-card';
                     card.style.animationDelay = `${i * 0.1}s`;
-
                     const img = item.image || 'https://assets.pokemon.com/assets/cms2/img/misc/trading-card-games/cards/tcg_default_card.png';
                     const btn = item.stock > 0 && item.googleFormLink 
                         ? `<a href="${item.googleFormLink}" target="_blank" class="action-button">JOIN BREAK!</a>`
                         : `<div class="out-of-stock">SOLD OUT</div>`;
-
                     card.innerHTML = `
                         <img src="${img}" alt="${item.name}" class="item-image">
                         <div class="card-content">
@@ -377,8 +386,51 @@
             }
         }
 
+        // ===== LOAD YOUTUBE VIDEOS (@PokeballerMike) =====
+        async function loadYouTubeVideos() {
+            const container = document.getElementById('youtube-videos');
+            container.innerHTML = '<div style="grid-column:1/-1;padding:4rem;color:var(--accent);font-size:1.5rem;">Loading latest breaks from Pokeballer Mike...</div>';
+
+            // Pokeballer Mike's real channel ID
+            const CHANNEL_ID = "UCgD2vR0dEj9QRfJNU3d2zqQ";
+
+            try {
+                const rss = `https://api.rss2json.com/v1/api.json?rss_url=https://www.youtube.com/feeds/videos.xml?channel_id=${CHANNEL_ID}`;
+                const res = await fetch(rss);
+                const data = await res.json();
+                const videos = data.items.slice(0, 8); // get more to catch upcoming ones
+
+                container.innerHTML = '';
+                let shown = 0;
+
+                for (let video of videos) {
+                    if (shown >= 4) break;
+
+                    const videoId = video.guid.split('=')[1];
+                    const isLive = video.title.includes("LIVE") || video.title.includes("live");
+                    const isUpcoming = video.title.toLowerCase().includes("premiere") || 
+                                      video.title.includes("Scheduled") || 
+                                      video.pubDate > new Date().toISOString();
+
+                    const card = document.createElement('div');
+                    card.className = 'yt-video';
+                    card.innerHTML = `
+                        ${isUpcoming || isLive ? `<div class="upcoming-badge ${isLive?'live-now':''}">${isLive?'LIVE NOW':'UPCOMING'}</div>` : ''}
+                        <iframe src="https://www.youtube.com/embed/${videoId}?rel=0" allowfullscreen loading="lazy"></iframe>
+                        <div class="title">${video.title}</div>
+                    `;
+                    container.appendChild(card);
+                    shown++;
+                }
+            } catch (e) {
+                container.innerHTML = '<div style="grid-column:1/-1;color:#ff0066;">Couldn\'t load YouTube videos 😢</div>';
+            }
+        }
+
+        // Lightbox
         document.addEventListener('DOMContentLoaded', () => {
             loadItems();
+            loadYouTubeVideos();
 
             const overlay = document.getElementById('lightbox-overlay');
             const img = document.getElementById('lightbox-image');
