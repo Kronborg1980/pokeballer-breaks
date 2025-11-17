@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PBM Breaks - Pokémon League Store</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https stored.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -66,7 +66,7 @@
             animation: suicuneFloat 22s infinite ease-in-out;
         }
         @keyframes suicuneFloat {
-            0%,100% { transform: translate(-50%, -50%) translateY(0); }
+            0%,100% { tansform: translate(-50%, -50%) translateY(0); }
             50% { transform: translate(-50%, -50%) translateY(-30px); }
         }
 
@@ -196,7 +196,10 @@
             box-shadow: 0 0 50px rgba(255,0,110,0.9);
             animation: badgePulse 2s infinite;
         }
-        .live-now { background: linear-gradient(90deg, #ff0000, #ff0066) !important; animation: livePulse 1.5s infinite !important; }
+        .live-now {
+            background: linear-gradient(90deg, #ff0000, #ff0066) !important;
+            animation: livePulse 1.5s infinite !important;
+        }
         @keyframes badgePulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.12); } }
         @keyframes livePulse { 0%,100% { box-shadow: 0 0 35px #ff0000; } 50% { box-shadow: 0 0 80px #ff0000; } }
 
@@ -228,7 +231,6 @@
             font-size: clamp(1.2rem, 4vw, 1.5rem); 
             font-weight: 800; 
             margin-top: auto;
-            /* Fixed text visibility on mobile */
             color: white !important;
             text-shadow: 0 2px 10px rgba(0,0,0,0.8);
             letter-spacing: 1px;
@@ -237,7 +239,6 @@
         .action-button:hover { transform: translateY(-8px); box-shadow: 0 32px 80px rgba(0,238,255,0.75); background: linear-gradient(135deg, #00ffff, #d946ef); }
         .out-of-stock { background: rgba(255,77,77,0.3); color: #ff6b6b !important; border: 3px solid #ff4444; }
 
-        /* Normal footer - no more blocking */
         footer {
             padding: clamp(3rem, 8vw, 4rem) 1rem 2rem;
             text-align: center;
@@ -309,6 +310,7 @@
             } catch { container.innerHTML = '<p style="text-align:center;color:#ff4444;">Failed to load — refresh!</p>'; }
         }
 
+        // PERFECT LIVE / UPCOMING DETECTION
         async function loadYouTubeVideos() {
             const container = document.getElementById('youtube-videos');
             container.innerHTML = '<div style="text-align:center;padding:5rem;color:var(--accent);font-size:1.8rem;">Loading latest videos...</div>';
@@ -332,18 +334,25 @@
                         const videoId = entry.querySelector("yt\\:videoId, videoId")?.textContent;
                         if (!videoId) continue;
                         const title = entry.querySelector("title")?.textContent || "Untitled";
-                        const isLive = title.toLowerCase().includes("live") || title.includes("🔴");
-                        const isUpcoming = title.toLowerCase().includes("premiere") || title.toLowerCase().includes("scheduled");
+
+                        // Get video page to check real status
+                        const pageUrl = `https://www.youtube.com/watch?v=${videoId}`;
+                        const pageResponse = await fetch(`https://api.allorigins.ml/raw?url=${encodeURIComponent(pageUrl)}`);
+                        const pageText = await pageResponse.text();
+
+                        const isLive = pageText.includes('"isLive":true') || pageText.includes('liveBroadcastDetails');
+                        const isUpcoming = pageText.includes('"isUpcoming":true') || pageText.includes('scheduledStartTime');
 
                         const thumb = `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`;
 
                         const card = document.createElement('div');
                         card.className = 'yt-video';
-                        card.onclick = () => window.open(`https://www.youtube.com/watch?v=${videoId}`, '_blank');
+                        card.onclick = () => window.open(pageUrl, '_blank');
                         card.innerHTML = `
                             <img src="${thumb}" alt="${title}" class="yt-thumb" loading="lazy">
                             <div class="play-button">▶</div>
-                            ${(isLive || isUpcoming) ? `<div class="upcoming-badge ${isLive?'live-now':''}">${isLive?'LIVE NOW':'UPCOMING'}</div>` : ''}
+                            ${isLive ? `<div class="upcoming-badge live-now">LIVE NOW</div>` : ''}
+                            ${!isLive && isUpcoming ? `<div class="upcoming-badge">UPCOMING</div>` : ''}
                             <div class="yt-overlay"><div class="yt-title">${title}</div></div>
                         `;
                         container.appendChild(card);
