@@ -116,7 +116,7 @@
             box-shadow: 0 35px 120px rgba(0,0,0,0.8);
             backdrop-filter: blur(18px);
         }
-        .store-middle h2 {
+        .store-intro h2 {
             font-size: clamp(2.5rem, 8vw, 4.8rem);
             font-weight: 900;
             background: linear-gradient(120deg, var(--electric), var(--accent), var(--purple));
@@ -236,7 +236,7 @@
             letter-spacing: 1px;
         }
         .action-button { background: linear-gradient(135deg, var(--accent), var(--purple)); box-shadow: 0 18px 50px rgba(0,238,255,0.55); transition: all 0.4s; }
-        .action-button:hover { transform: translateY(-8px); box-shadow: 0 32px 80px rgba(0,238,255,0.75); background: linear-gradient(135deg, #00ffff, #d946ef); }
+        .action-button:hover { transform: translateY(-8px); box-shadow: 0 32px 120px rgba(0,238,255,0.75); background: linear-gradient(135deg, #00ffff, #d946ef); }
         .out-of-stock { background: rgba(255,77,77,0.3); color: #ff6b6b !important; border: 3px solid #ff4444; }
 
         footer {
@@ -299,89 +299,96 @@
                 const items = await res.json();
                 container.innerHTML = '';
                 if (!items.length) { container.innerHTML = '<p style="text-align:center;color:#aaa;font-size:1.7rem;">No active breaks — next one soon!</p>'; return; }
-                items.forEach((item, i) => {
+                items.forEach(item => {
                     const card = document.createElement('div');
                     card.className = 'item-card';
                     const img = item.image || 'https://assets.pokemon.com/assets/cms2/img/misc/trading-card-games/cards/tcg_default_card.png';
                     const btn = item.stock > 0 && item.googleFormLink ? `<a href="${item.googleFormLink}" target="_blank" class="action-button">JOIN BREAK!</a>` : `<div class="out-of-stock">SOLD OUT</div>`;
-                    card.innerHTML = `<img src="${img}" alt="${item.name}" class="item-image" loading="lazy"><div class="card-content"><h3>${item.name}</h3><p class="description">${item.description}</p><div class="item-details"><span class="item-price">$${item.price.toFixed(2)}</span><span class="item-stock">Spots: ${item.stock}</span></div>${btn}</div>`;
+                    card.innerHTML = `<img src="${img}" alt="${item.name}" class="item-image" loading="lazy">
+                        <div class="card-content">
+                            <h3>${item.name}</h3>
+                            <p class="description">${item.description}</p>
+                            <div class="item-details">
+                                <span class="item-price">$${item.price.toFixed(2)}</span>
+                                <span class="item-stock">Spots: ${item.stock}</span>
+                            </div>
+                            ${btn}
+                        </div>`;
                     container.appendChild(card);
                 });
-            } catch { container.innerHTML = '<p style="text-align:center;color:#ff4444;">Failed to load — refresh!</p>'; }
+            } catch {
+                container.innerHTML = '<p style="text-align:center;color:#ff4444;">Failed to load — refresh!</p>';
+            }
         }
 
-        // 100% ACCURATE LIVE / UPCOMING DETECTION (no false positives)
+        // NEW & IMPROVED YOUTUBE LOADER
         async function loadYouTubeVideos() {
             const container = document.getElementById('youtube-videos');
             container.innerHTML = '<div style="text-align:center;padding:5rem;color:var(--accent);font-size:1.8rem;">Loading latest videos...</div>';
 
-            const proxies = ['https://api.allorigins.ml/raw?url=', 'https://corsproxy.io/?', 'https://thingproxy.freeboard.io/fetch/'];
-            let success = false;
+            const proxy = 'https://api.allorigins.ml/raw?url=';
 
-            for (let proxy of proxies) {
-                try {
-                    const url = `${proxy}${encodeURIComponent('https://www.youtube.com/feeds/videos.xml?channel_id=' + CHANNEL_ID)}`;
-                    const xmlText = await (await fetch(url)).text();
-                    const xml = new DOMParser().parseFromString(xmlText, "application/xml");
-                    if (xml.querySelector("parsererror")) continue;
+            try {
+                const feedUrl = `${proxy}${encodeURIComponent('https://www.youtube.com/feeds/videos.xml?channel_id=' + CHANNEL_ID)}`;
+                const xmlText = await (await fetch(feedUrl)).text();
+                const xml = new DOMParser().parseFromString(xmlText, "application/xml");
+                if (xml.querySelector("parsererror")) throw new Error("Bad feed");
 
-                    const entries = Array.from(xml.querySelectorAll("entry")).slice(0, 6);
-                    container.innerHTML = '';
-                    let count = 0;
+                const entries = Array.from(xml.querySelectorAll("entry"));
 
-                    for (let entry of entries) {
-                        if (count >= 3) break;
-                        const videoId = entry.querySelector("yt\\:videoId, videoId")?.textContent;
-                        if (!videoId) continue;
-                        const title = entry.querySelector("title")?.textContent || "Untitled";
+                let liveVideo = null;
+                let upcomingVideo = null;
+                const finishedVideos = [];
 
-                        // Use oEmbed to get real status (no API key needed)
-                        const oembedUrl = `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`;
-                        let isLive = false;
-                        let isUpcoming = false;
+                for (const entry of entries) {
+                    const videoId = entry.querySelector("yt\\:videoId, videoId")?.textContent;
+                    const title = entry.querySelector("title")?.textContent || "Untitled";
 
-                        try {
-                            const oembedResponse = await fetch(`https://api.allorigins.ml/raw?url=${encodeURIComponent(oembedUrl)}`);
-                            const oembedData = await oembedResponse.json();
-                            // oEmbed doesn't give live status, so we use a better trick:
-                            // Check if the thumbnail is a live thumbnail (contains "live" in path)
-                            const thumb = `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`;
-                            const thumbResponse = await fetch(`https://api.allorigins.ml/raw?url=${encodeURIComponent(thumb)}`, { method: 'HEAD' });
-                            const contentType = thumbResponse.headers.get('content-type');
-                            if (contentType && contentType.includes('image')) {
-                                // maxresdefault exists = not live or upcoming
-                            } else {
-                                // maxresdefault missing = live or upcoming
-                                const hqThumb = `https://i.ytimg.com/vi/${videoId}/hqdefault_live.jpg`;
-                                const hqResponse = await fetch(`https://api.allorigins.ml/raw?url=${encodeURIComponent(hqThumb)}`, { method: 'HEAD' });
-                                if (hqResponse.ok) {
-                                    isLive = true;
-                                } else {
-                                    isUpcoming = true;
-                                }
-                            }
-                        } catch (e) {}
+                    if (!videoId) continue;
 
-                        const displayThumb = isLive || isUpcoming ? `https://i.ytimg.com/vi/${videoId}/hqdefault_live.jpg` : `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`;
+                    // Check if maxresdefault.jpg exists → if not, it's live or upcoming
+                    const maxresCheck = await fetch(`${proxy}${encodeURIComponent('https://i.ytimg.com/vi/' + videoId + '/maxresdefault.jpg')}`, { method: 'HEAD' }).catch(() => ({ ok: false }));
+                    const isLiveOrUpcoming = !maxresCheck.ok;
 
-                        const card = document.createElement('div');
-                        card.className = 'yt-video';
-                        card.onclick = () => window.open(`https://www.youtube.com/watch?v=${videoId}`, '_blank');
-                        card.innerHTML = `
-                            <img src="${displayThumb}" alt="${title}" class="yt-thumb" loading="lazy">
-                            <div class="play-button">▶</div>
-                            ${isLive ? `<div class="upcoming-badge live-now">LIVE NOW</div>` : ''}
-                            ${isUpcoming ? `<div class="upcoming-badge">UPCOMING</div>` : ''}
-                            <div class="yt-overlay"><div class="yt-title">${title}</div></div>
-                        `;
-                        container.appendChild(card);
-                        count++;
+                    if (isLiveOrUpcoming) {
+                        const liveThumbCheck = await fetch(`${proxy}${encodeURIComponent('https://i.ytimg.com/vi/' + videoId + '/hqdefault_live.jpg')}`, { method: 'HEAD' }).catch(() => ({ ok: false }));
+                        const video = { videoId, title, isLive: liveThumbCheck.ok };
+                        if (video.isLive) liveVideo = video;
+                        else upcomingVideo = video;
+                    } else {
+                        finishedVideos.push({ videoId, title });
                     }
-                    if (count > 0) { success = true; break; }
-                } catch (e) {}
-            }
+                }
 
-            if (!success) {
+                const toDisplay = [];
+
+                if (liveVideo) toDisplay.push({ ...liveVideo, badge: "LIVE NOW", badgeClass: "live-now" });
+                else if (upcomingVideo) toDisplay.push({ ...upcomingVideo, badge: "UPCOMING", badgeClass: "" });
+
+                // Add up to 2 finished videos (or 3 if nothing live/upcoming)
+                const finishedCount = toDisplay.length > 0 ? 2 : 3;
+                finishedVideos.slice(0, finishedCount).forEach(v => toDisplay.push(v));
+
+                container.innerHTML = '';
+                toDisplay.slice(0, 3).forEach(video => {
+                    const thumb = video.isLive || (video.badge === "UPCOMING") 
+                        ? `https://i.ytimg.com/vi/${video.videoId}/hqdefault_live.jpg`
+                        : `https://i.ytimg.com/vi/${video.videoId}/maxresdefault.jpg`;
+
+                    const card = document.createElement('div');
+                    card.className = 'yt-video';
+                    card.onclick = () => window.open(`https://www.youtube.com/watch?v=${video.videoId}`, '_blank');
+                    card.innerHTML = `
+                        <img src="${thumb}" alt="${video.title}" class="yt-thumb" loading="lazy">
+                        <div class="play-button">Play</div>
+                        ${video.badge ? `<div class="upcoming-badge ${video.badgeClass}">${video.badge}</div>` : ''}
+                        <div class="yt-overlay"><div class="yt-title">${video.title}</div></div>
+                    `;
+                    container.appendChild(card);
+                });
+
+            } catch (err) {
+                console.error(err);
                 container.innerHTML = `<div style="text-align:center;padding:4rem;"><a href="https://www.youtube.com/@pokeballermike" target="_blank" style="color:var(--accent);font-size:1.6rem;font-weight:800;text-decoration:underline;">Watch @pokeballermike →</a></div>`;
             }
         }
@@ -391,12 +398,8 @@
             loadYouTubeVideos();
 
             const overlay = document.getElementById('lightbox-overlay');
-            const img = document.getElementById('lightbox-image');
+            const lightboxImg = document.getElementById('lightbox-image');
+
             document.getElementById('store-content').addEventListener('click', e => {
-                if (e.target.classList.contains('item-image')) { img.src = e.target.src; overlay.classList.add('show'); }
-            });
-            overlay.addEventListener('click', () => { overlay.classList.remove('show'); setTimeout(() => img.src = '', 300); });
-        });
-    </script>
-</body>
-</html>
+                if (e.target.classList.contains('item-image')) {
+                    lightboxImg.src = e.target
