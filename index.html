@@ -392,14 +392,19 @@
                 container.innerHTML = `<div style="text-align:center;padding:4rem;"><a href="https://www.youtube.com/@pokeballermike" target="_blank" style="color:var(--accent);font-size:1.6rem;font-weight:800;text-decoration:underline;">Watch @pokeballermike →</a></div>`;
             }
         }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            loadItems();
-            loadYouTubeVideos();
-
-            const overlay = document.getElementById('lightbox-overlay');
-            const lightboxImg = document.getElementById('lightbox-image');
-
-            document.getElementById('store-content').addEventListener('click', e => {
+document.getElementById('store-content').addEventListener('click', e => {
                 if (e.target.classList.contains('item-image')) {
-                    lightboxImg.src = e.target
+                    lightboxImg.src = e.target.src;
+                    overlay.classList.add('show');
+                }
+            });
+
+            overlay.addEventListener('click', () => {
+                overlay.classList.remove('show');
+                setTimeout(() => lightboxImg.src = '', 300);
+            });
+        });
+    </script>
+</body>
+</html>
+        
