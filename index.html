@@ -4,165 +4,260 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PBM Breaks - The Crystal League</title>
-   
     <link rel="icon" type="image/svg+xml" href="https://upload.wikimedia.org/wikipedia/commons/5/53/Pok%C3%A9_Ball_icon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <style>
         :root {
-            --bg-dark: #050510;
-            --accent-cyan: #00ffe7;
-            --accent-purple: #bd00ff;
-            --accent-gold: #ffd700;
-            --text-bright: #ffffff;
-            --text-dim: #c0c0e0;
-            --guardian-size: clamp(120px, 14vw, 200px);
+            --bg: #050510;
+            --cyan: #00ffe7;
+            --purple: #bd00ff;
+            --gold: #ffd700;
+            --text: #ffffff;
+            --dim: #c0c0e0;
         }
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
             font-family: 'Inter', sans-serif;
-            background: var(--bg-dark);
-            color: var(--text-bright);
+            background: var(--bg);
+            color: var(--text);
             min-height: 100vh;
             overflow-x: hidden;
-            position: relative;
         }
         body::before {
-            content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background:
-                radial-gradient(circle at 50% 50%, rgba(0,255,231,0.08) 0%, transparent 60%),
+            content:''; position:fixed; inset:0; z-index:-10;
+            background: 
+                radial-gradient(circle at 800px at 50% 30%, rgba(0,255,231,0.08), transparent 60%),
                 linear-gradient(to bottom, #050510, #0a0414);
-            z-index: -10;
         }
         .particles {
-            position: fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:-1;
+            position:fixed; inset:0; pointer-events:none; z-index:-1;
             background-image:
-                radial-gradient(circle at 20% 30%, var(--accent-cyan) 1px, transparent 2px),
-                radial-gradient(circle at 80% 70%, var(--accent-purple) 1px, transparent 2px);
+                radial-gradient(1px 1px at 20% 30%, var(--cyan), transparent),
+                radial-gradient(1px 1px at 80% 70%, var(--purple), transparent);
             background-size: 120px 120px, 180px 180px;
-            animation: particleMove 80s linear infinite; opacity: 0.35;
+            animation: drift 80s linear infinite;
+            opacity: 0.35;
         }
-        @keyframes particleMove { from { background-position:0 0,0 0; } to { background-position:0 -1200px,0 -800px; } }
+        @keyframes drift { to { background-position: 0 -1200px, 0 -800px; } }
 
         /* Pokémon Background */
         .poke-bg {
             position: fixed; pointer-events: none; z-index: -5; opacity: 0.4;
-            filter: drop-shadow(0 0 15px rgba(0,0,0,0.8));
+            filter: drop-shadow(0 0 20px #000);
             will-change: transform;
         }
-        .p-suicune { top: 50%; left: 50%; transform: translate(-50%, -50%); width: clamp(600px, 80vw, 1200px); opacity: 0.14; filter: drop-shadow(0 0 100px rgba(0,255,231,0.4)); animation: breathe 10s ease-in-out infinite; z-index: -6; }
-        .p-rayquaza { top: 0; left: 0; width: var(--guardian-size); animation: floatLeft 11s infinite; }
-        .p-charizard { top: 0; right: 0; width: var(--guardian-size); animation: floatRight 10s infinite; transform: scaleX(-1); }
-        .p-gengar { top: 50%; left: 0; transform: translateY(-50%); width: var(--guardian-size); animation: floatLeft 8s infinite 1s; }
-        .p-gardevoir { top: 50%; right: 0; transform: translateY(-50%); width: var(--guardian-size); animation: floatRight 9s infinite 2s; }
-        .p-vaporeon { bottom: 0; left: 0; width: var(--guardian-size); animation: sway 12s infinite; }
-        .p-cubone { bottom: 0; right: 0; width: calc(var(--guardian-size) * 0.9); }
-        .p-pichu { bottom: 20px; left: 55%; width: 90px; opacity: 0.45; filter: drop-shadow(0 0 20px var(--accent-gold)); animation: bounce 4s infinite; }
-        .p-magikarp { bottom: 8px; left: 50%; transform: translateX(-50%); width: 140px; opacity: 0.4; animation: flop 2.2s infinite; }
+        .p-suicune { top:50%; left:50%; transform:translate(-50%,-50%); width: clamp(600px, 80vw, 1200px); opacity:0.14; filter:drop-shadow(0 0 100px rgba(0,255,231,0.4)); animation:breathe 10s infinite; }
+        .p-rayquaza { top:0; left:0; width:clamp(120px,14vw,200px); animation:float 11s infinite; }
+        .p-charizard { top:0; right:0; width:clamp(120px,14vw,200px); animation:float 10s infinite reverse; transform:scaleX(-1); }
+        .p-gengar, .p-gardevoir, .p-vaporeon, .p-cubone { opacity:0.5; width:clamp(100px,12vw,180px); }
+        .p-pichu { bottom:20px; left:55%; width:90px; animation:bounce 4s infinite; }
+        .p-magikarp { bottom:8px; left:50%; transform:translateX(-50%); width:140px; animation:flop 2.2s infinite; }
 
-        @keyframes breathe { 0%,100% { scale:1; opacity:0.14; } 50% { scale:1.03; opacity:0.19; } }
-        @keyframes floatLeft { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
-        @keyframes floatRight { 0%,100% { transform: translateY(0) scaleX(-1); } 50% { transform: translateY(-18px) scaleX(-1); } }
-        @keyframes sway { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(4deg); } }
-        @keyframes bounce { 0%,100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-12px) rotate(6deg); } }
-        @keyframes flop { 0%,100% { transform: translateX(-50%) rotate(-12deg); } 50% { transform: translateX(-50%, -12px) rotate(12deg); } }
+        @keyframes breathe { 0%,100% {scale:1;opacity:0.14;} 50% {scale:1.03;opacity:0.19;} }
+        @keyframes float { 0%,100% {transform:translateY(0);} 50% {transform:translateY(-20px);} }
+        @keyframes bounce { 0%,100% {transform:translateY(0);} 50% {transform:translateY(-12px);} }
+        @keyframes flop { 0%,100% {transform:translateX(-50%) rotate(-12deg);} 50% {transform:translateX(-50%) translateY(-10px) rotate(12deg);} }
 
         main {
-            position: relative; z-index: 2; max-width: 1300px; margin: 0 auto; padding: 2rem;
-            border: 1px solid rgba(0,255,231,0.12);
+            max-width: 1350px;
+            margin: 2rem auto 5rem;
+            padding: 2rem;
+            border: 1px solid rgba(0,255,231,0.15);
             border-radius: 32px;
-            background: rgba(5,5,16,0.4);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 60px rgba(0,0,0,0.6);
-            margin-top: 2rem;
-            margin-bottom: 5rem;
+            background: rgba(5,5,16,0.5);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 10px 60px rgba(0,0,0,0.6);
         }
-        header { text-align: center; padding: 6rem 1rem 4rem; }
-
+        header { text-align:center; padding:6rem 1rem 4rem; }
         .header-logo {
-            width: 140px;
-            filter: drop-shadow(0 0 40px var(--accent-cyan));
-            animation: floatLeft 7s infinite ease-in-out;
+            width:140px;
+            filter:drop-shadow(0 0 40px var(--cyan));
+            animation:float 7s infinite;
         }
-
-        /* BEAUTIFUL CLEAN TITLE – LIKE YOUR IMAGE */
         h1 {
-            font-size: clamp(4.5rem, 12vw, 8rem);
-            font-weight: 900;
-            letter-spacing: -4px;
-            text-transform: uppercase;
-            background: linear-gradient(90deg, #00ffe7, #e0f9ff 30%, #ffffff 50%, #ffcaff 70%, #bd00ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 40px rgba(0,255,231,0.6), 0 0 80px rgba(189,0,255,0.4);
-            margin: 1rem 0 0 0;
-            animation: titleGlow 8s ease-in-out infinite;
+            font-size:clamp(4.5rem,12vw,8rem);
+            font-weight:900;
+            letter-spacing:-4px;
+            text-transform:uppercase;
+            background:linear-gradient(90deg,#00ffe7,#e0fffe,#ffffff,#ffcaff,#bd00ff);
+            -webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;
+            text-shadow:0 0 50px rgba(0,255,231,0.6);
+            animation:glow 8s ease-in-out infinite;
         }
-        @keyframes titleGlow {
-            0%,100% { text-shadow: 0 0 40px rgba(0,255,231,0.6), 0 0 80px rgba(189,0,255,0.3); }
-            50% { text-shadow: 0 0 50px rgba(0,255,231,0.8), 0 0 100px rgba(189,0,255,0.5); }
+        @keyframes glow {
+            0%,100% { text-shadow:0 0 40px rgba(0,255,231,0.6),0 0 80px rgba(189,0,255,0.3); }
+            50% { text-shadow:0 0 60px rgba(0,255,231,0.8),0 0 100px rgba(189,0,255,0.5); }
         }
 
-        /* PERFECT SECTION HEADERS – CRYSTAL NEON STYLE */
+        /* SECTION HEADERS */
         .section-header {
-            text-align: center;
-            margin: 4rem 0 2.5rem;
-            position: relative;
+            text-align:center;
+            margin:4rem 0 2.5rem;
+            position:relative;
         }
         .section-header::before {
-            content: '';
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60%;
-            max-width: 600px;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--accent-cyan) 20%, var(--accent-purple) 50%, var(--accent-cyan) 80%, transparent);
-            border-radius: 2px;
-            box-shadow: 0 0 20px var(--accent-cyan);
-            animation: headerLineBreath 6s ease-in-out infinite;
+            content:'';
+            position:absolute;
+            left:50%; top:50%;
+            transform:translateX(-50%);
+            width:60%; max-width:600px;
+            height:2px;
+            background:linear-gradient(90deg,transparent,var(--cyan) 20%,var(--purple) 50%,var(--cyan) 80%,transparent);
+            border-radius:2px;
+            box-shadow:0 0 20px var(--cyan);
+            animation:linePulse 6s infinite;
         }
-        @keyframes headerLineBreath {
-            0%,100% { opacity: 0.7; box-shadow: 0 0 20px var(--accent-cyan); }
-            50% { opacity: 1; box-shadow: 0 0 30px var(--accent-cyan), 0 0 40px rgba(189,0,255,0.4); }
-        }
+        @keyframes linePulse { 0%,100% {opacity:0.8;} 50% {opacity:1; box-shadow:0 0 30px var(--cyan);} }
         .section-title {
-            font-size: 1.5rem;
-            font-weight: 800;
-            letter-spacing: 6px;
-            text-transform: uppercase;
-            color: transparent;
-            background: linear-gradient(90deg, var(--accent-cyan), #ffffff, var(--accent-purple));
-            -webkit-background-clip: text;
-            text-shadow: 0 0 15px rgba(0,255,231,0.8);
-            padding: 0 2rem;
-            position: relative;
-            z-index: 1;
+            font-size:1.5rem;
+            font-weight:800;
+            letter-spacing:6px;
+            text-transform:uppercase;
+            background:linear-gradient(90deg,var(--cyan),#fff,var(--purple));
+            -webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;
+            padding:0 2rem;
+            position:relative;
+            z-index:1;
         }
 
-        /* Cards, grid, etc. (your original neon cards – unchanged & stable) */
-        .yt-container { display: grid; gap: 30px; grid-template-columns: 1fr; }
-        @media (min-width: 900px) { .yt-container { grid-template-columns: 1fr 1fr; } }
-        .neon-card-wrapper { /* your full neon card styles from before */ 
-            /* ... keeping all your original working card styles ... */
+        /* YOUTUBE CARDS – FIXED 16:9 RATIO */
+        .yt-container {
+            display:grid;
+            gap:30px;
+            grid-template-columns:1fr;
         }
-        /* (same for store-grid, buttons, etc.) */
+        @media (min-width:900px) { .yt-container { grid-template-columns:repeat(2,1fr); } }
+        .video-card {
+            position:relative;
+            border-radius:24px;
+            overflow:hidden;
+            background:rgba(20,20,35,0.8);
+            backdrop-filter:blur(20px);
+            box-shadow:0 10px 30px rgba(0,0,0,0.5);
+            transition:transform 0.4s, box-shadow 0.4s;
+            aspect-ratio:16/9; /* ← THIS FIXES THE PROPORTION */
+        }
+        .video-card:hover { transform:translateY(-10px); box-shadow:0 20px 40px rgba(0,255,231,0.3); }
+        .video-thumb {
+            width:100%;
+            height:100%;
+            object-fit:cover;
+            display:block;
+        }
+        .video-overlay {
+            position:absolute;
+            bottom:0; left:0; right:0;
+            padding:40px 24px 24px;
+            background:linear-gradient(to top, rgba(5,5,16,0.9), transparent);
+        }
+        .video-title {
+            color:white;
+            font-weight:800;
+            font-size:1.1rem;
+            text-shadow:0 2px 10px black;
+            line-height:1.3;
+        }
+        .yt-label {
+            position:absolute; top:16px; left:16px;
+            padding:8px 16px; border-radius:12px;
+            font-size:0.8rem; font-weight:900; letter-spacing:1px;
+            backdrop-filter:blur(10px);
+        }
+        .lbl-upcoming { background:rgba(255,215,0,0.95); color:#000; animation:pulse 2s infinite; }
+        .lbl-past { background:rgba(189,0,255,0.95); color:#fff; }
+        .lbl-hunt { background:rgba(0,238,255,0.95); color:#000; }
+        @keyframes pulse { 0%,100% {transform:scale(1);} 50% {transform:scale(1.05);} }
 
-        footer { text-align: center; padding: 3rem 0; color: var(--text-dim); font-size: 0.9rem; opacity: 0.8; }
+        /* STORE CARDS – FIXED SQUARE IMAGES */
+        .store-grid {
+            display:grid;
+            grid-template-columns:repeat(auto-fit, minmax(320px,1fr));
+            gap:30px;
+        }
+        .item-card {
+            position:relative;
+            border-radius:24px;
+            overflow:hidden;
+            background:rgba(20,20,35,0.8);
+            backdrop-filter:blur(20px);
+            box-shadow:0 10px 30px rgba(0,0,0,0.5);
+            transition:all 0.4s;
+        }
+        .item-card:hover { transform:translateY(-10px); box-shadow:0 20px 40px rgba(189,0,255,0.4); }
+        .item-img-box {
+            height:320px; /* ← FIXED HEIGHT */
+            overflow:hidden;
+            position:relative;
+        }
+        .item-img-box::after {
+            content:''; position:absolute; inset:0;
+            background:linear-gradient(to top, rgba(5,5,16,0.7), transparent 50%);
+        }
+        .item-img {
+            width:100%;
+            height:100%;
+            object-fit:cover; /* ← PERFECT CROPPING, NO STRETCH */
+            transition:transform 0.6s;
+        }
+        .item-card:hover .item-img { transform:scale(1.08); }
+        .type-tag {
+            position:absolute; top:16px; right:16px; z-index:2;
+            padding:6px 14px; border-radius:8px; font-size:0.8rem; font-weight:900;
+            backdrop-filter:blur(10px);
+        }
+        .tag-msrp { background:rgba(0,255,157,0.95); color:#000; }
+        .tag-bundle { background:linear-gradient(135deg,#000,#333); color:var(--gold); border:2px solid var(--gold); }
 
-        @media (max-width: 768px) {
-            h1 { font-size: 4rem; letter-spacing: -2px; }
-            .section-header::before { width: 80%; }
-            .section-title { font-size: 1.2rem; letter-spacing: 4px; }
+        .item-content { padding:1.5rem; }
+        .item-content h3 { font-size:1.4rem; font-weight:800; margin-bottom:0.5rem; }
+        .item-content p { color:var(--dim); margin-bottom:1rem; }
+        .price-row { display:flex; justify-content:space-between; align-items:center; margin:1rem 0; padding-top:1rem; border-top:1px solid rgba(255,255,255,0.1); }
+        .price { font-size:1.9rem; font-weight:900; color:var(--cyan); text-shadow:0 0 15px var(--cyan); }
+        .stock { font-size:0.9rem; background:rgba(255,255,255,0.08); padding:6px 12px; border-radius:6px; }
+
+        .buy-btn, .sold-out {
+            display:block;
+            text-align:center;
+            padding:1rem;
+            border-radius:12px;
+            font-weight:900;
+            text-transform:uppercase;
+            letter-spacing:1px;
+            text-decoration:none;
+            transition:0.3s;
+        }
+        .buy-btn {
+            background:linear-gradient(90deg,var(--cyan),var(--purple));
+            color:white;
+            box-shadow:0 10px 30px rgba(0,255,231,0.4);
+        }
+        .buy-btn:hover { transform:translateY(-3px); box-shadow:0 15px 40px rgba(189,0,255,0.6); }
+        .sold-out {
+            background:#1a1a1a;
+            color:#666;
+            cursor:not-allowed;
+        }
+
+        footer { text-align:center; padding:3rem 0; color:var(--dim); opacity:0.8; }
+
+        @media (max-width:768px) {
+            main { margin:1rem; padding:1.5rem; border-radius:24px; }
+            h1 { font-size:4rem; }
+            .yt-container { grid-template-columns:1fr; }
+            .item-img-box { height:280px; }
         }
     </style>
 </head>
 <body>
     <div class="particles"></div>
 
+    <!-- Background Pokémon -->
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="poke-bg p-suicune">
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/384.png" class="poke-bg p-rayquaza">
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/006.png" class="poke-bg p-charizard">
@@ -179,18 +274,14 @@
     </header>
 
     <main>
-        <div class="section-header">
-            <span class="section-title">CHANNEL FEED</span>
-        </div>
+        <div class="section-header"><span class="section-title">CHANNEL FEED</span></div>
         <div id="yt-container" class="yt-container">
-            <div style="color:var(--text-dim); text-align:center; grid-column:1/-1; padding: 3rem;">Loading Crystal Feed...</div>
+            <div style="text-align:center; color:var(--dim); padding:3rem; grid-column:1/-1;">Loading Crystal Feed...</div>
         </div>
 
-        <div class="section-header">
-            <span class="section-title">AVAILABLE BREAKS</span>
-        </div>
+        <div class="section-header"><span class="section-title">AVAILABLE BREAKS</span></div>
         <div class="store-grid" id="store-container">
-            <div style="color:var(--text-dim); text-align:center; padding: 3rem;">Summoning Drops...</div>
+            <div style="text-align:center; color:var(--dim); padding:3rem;">Summoning Drops...</div>
         </div>
     </main>
 
@@ -198,7 +289,6 @@
         <p>© 2025 PBM Breaks • Not affiliated with Nintendo • Crafted in the Crystal Realm</p>
     </footer>
 
-    <!-- FULL WORKING SCRIPT (fixed from last broken version) -->
     <script>
         const API_URL = 'https://pokeballer-worker.kronborgnielsen.workers.dev/api';
 
@@ -207,64 +297,60 @@
             try {
                 const res = await fetch(`${API_URL}/youtube`);
                 const text = await res.text();
-                const doc = new DOMParser().parseFromString(text, "text/xml");
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(text, "text/xml");
                 const entries = Array.from(doc.querySelectorAll("entry")).slice(0, 20);
 
-                let streamVideo = null;
-                let huntVideo = null;
+                let streamVideo = null, huntVideo = null;
 
-                for (let entry of entries) {
-                    const title = entry.querySelector("title").textContent.toLowerCase();
+                for (let e of entries) {
+                    const title = e.querySelector("title").textContent.toLowerCase();
                     if (title.includes('stream') || title.includes('live') || title.includes('break')) {
-                        const id = entry.querySelector("videoId").textContent;
-                        streamVideo = { id, title: entry.querySelector("title").textContent, badge: title.includes('upcoming') ? 'upcoming' : 'live' };
+                        streamVideo = {
+                            id: e.querySelector("videoId").textContent,
+                            title: e.querySelector("title").textContent,
+                            upcoming: title.includes('upcoming')
+                        };
                         break;
                     }
                 }
 
-                for (let entry of entries) {
-                    const title = entry.querySelector("title").textContent.toLowerCase();
-                    const id = entry.querySelector("videoId").textContent;
+                for (let e of entries) {
+                    const title = e.querySelector("title").textContent.toLowerCase();
+                    const id = e.querySelector("videoId").textContent;
                     if (!title.includes('stream') && !title.includes('live') && (!streamVideo || id !== streamVideo.id)) {
-                        huntVideo = { id, title: entry.querySelector("title").textContent };
+                        huntVideo = { id, title: e.querySelector("title").textContent };
                         break;
                     }
                 }
 
                 container.innerHTML = '';
+
                 const videos = [];
                 if (streamVideo) videos.push({ ...streamVideo, type: 'stream' });
-                if (huntVideo) videos.push({ ...huntVideo, type: 'hunt' });
-
-                if (videos.length === 0) {
-                    container.innerHTML = '<div style="text-align:center;color:#888;">No videos found</div>';
-                    return;
-                }
+                if (huntVideo) videos.push(huntVideo);
 
                 videos.forEach(v => {
                     const thumb = `https://i.ytimg.com/vi/${v.id}/maxresdefault.jpg`;
-                    let badge = '';
-                    if (v.type === 'stream') {
-                        badge = v.badge === 'upcoming'
-                            ? `<div class="yt-label lbl-upcoming">UPCOMING LIVE</div>`
-                            : `<div class="yt-label lbl-past">LATEST BREAK</div>`;
-                    } else {
-                        badge = `<div class="yt-label lbl-hunt">LATEST HUNT</div>`;
-                    }
+                    const badge = v.type === 'stream'
+                        ? (v.upcoming
+                            ? `<div class="yt-label lbl-upcoming"><i class="ph ph-clock"></i> UPCOMING</div>`
+                            : `<div class="yt-label lbl-past"><i class="ph ph-play-circle"></i> LATEST BREAK</div>`)
+                        : `<div class="yt-label lbl-hunt"><i class="ph ph-video"></i> HUNT</div>`;
 
                     container.innerHTML += `
-                        <div class="neon-card-wrapper" onclick="window.open('https://youtube.com/watch?v=${v.id}')">
-                            <div class="yt-card glass-panel">
-                                <img src="${thumb}" class="yt-thumb" loading="lazy">
-                                ${badge}
-                                <div style="position:absolute;bottom:0;left:0;right:0;padding:30px 20px;background:linear-gradient(to top,#050510,transparent);">
-                                    <div style="color:white;font-weight:800;font-size:1.1rem;text-shadow:0 2px 10px #000;">${v.title}</div>
-                                </div>
+                        <div class="video-card" onclick="window.open('https://youtube.com/watch?v=${v.id}')">
+                            <img src="${thumb}" class="video-thumb" alt="${v.title}">
+                            ${badge}
+                            <div class="video-overlay">
+                                <div class="video-title">${v.title}</div>
                             </div>
                         </div>`;
                 });
-            } catch(e) {
-                container.innerHTML = `<div style="text-align:center;grid-column:1/-1;"><a href="https://www.youtube.com/@PokeballerMike" target="_blank" class="buy-btn" style="display:inline-block;padding:1rem 2rem;margin:1rem auto;">VISIT CHANNEL</a></div>`;
+
+                if (videos.length === 0) container.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#888;padding:2rem;">No videos found</div>');
+            } catch (e) {
+                container.innerHTML = `<div style="grid-column:1/-1;text-align:center;"><a href="https://youtube.com/@PokeballerMike" target="_blank" class="buy-btn" style="display:inline-block;padding:1rem 2rem;margin:1rem;">VISIT CHANNEL</a></div>`;
             }
         }
 
@@ -277,39 +363,36 @@
 
                 container.innerHTML = '';
                 items.forEach(item => {
-                    const isBundle = item.type === 'bundle';
-                    const tagClass = isBundle ? 'tag-bundle' : 'tag-msrp';
-                    const tagText = isBundle ? '💎 BUNDLE' : '✅ MSRP';
+                    const tag = item.type === 'bundle' 
+                        ? '<div class="type-tag tag-bundle">BUNDLE</div>'
+                        : '<div class="type-tag tag-msrp">MSRP</div>';
 
-                    const btn = (item.stock > 0 && item.googleFormLink)
+                    const btn = item.stock > 0 && item.googleFormLink
                         ? `<a href="${item.googleFormLink}" target="_blank" class="buy-btn">JOIN BREAK</a>`
                         : `<div class="buy-btn sold-out">SOLD OUT</div>`;
 
                     const img = item.image || 'https://assets.pokemon.com/assets/cms2/img/misc/trading-card-games/cards/tcg_default_card.png';
 
                     container.innerHTML += `
-                        <div class="neon-card-wrapper">
-                            <div class="item-card glass-panel">
-                                <div class="type-tag ${tagClass}">${tagText}</div>
-                                <div class="item-img-box">
-                                    <img src="${img}" class="item-img" loading="lazy">
+                        <div class="item-card">
+                            ${tag}
+                            <div class="item-img-box">
+                                <img src="${img}" class="item-img" alt="${item.name}">
+                            </div>
+                            <div class="item-content">
+                                <h3>${item.name}</h3>
+                                <p>${item.description || 'High-energy Pokémon card break!'}</p>
+                                <div class="price-row">
+                                    <span class="price">$${Number(item.price).toFixed(2)}</span>
+                                    <span class="stock">${item.stock} spots left</span>
                                 </div>
-                                <div class="item-content">
-                                    <h3>${item.name}</h3>
-                                    <p>${item.description || 'High-energy Pokémon break!'}</p>
-                                    <div class="price-row">
-                                        <span class="price">$${item.price.toFixed(2)}</span>
-                                        <span class="stock">${item.stock} Spots Left</span>
-                                    </div>
-                                    ${btn}
-                                </div>
+                                ${btn}
                             </div>
                         </div>`;
                 });
-            } catch(e) { console.error('Store load failed', e); }
+            } catch (e) { console.error(e); }
         }
 
-        // Actually run the functions
         loadVideos();
         loadStore();
     </script>
