@@ -17,19 +17,20 @@
             --purple: #9d4edd;
             --text: #ffffff;
             --text2: #e0e0ff;
+            /* Badge Colors */
+            --bundle-grad: linear-gradient(135deg, #ffd700, #ff8c00);
+            --msrp-grad: linear-gradient(135deg, #00ff9d, #00b8ff);
         }
 
         * { margin:0; padding:0; box-sizing:border-box; }
 
         html, body {
-            height: auto;
             min-height: 100vh;
             font-family: 'Inter', sans-serif;
             background: var(--bg);
             color: var(--text);
             overflow-x: hidden;
             width: 100%;
-            max-width: 100vw;
         }
 
         body {
@@ -41,6 +42,7 @@
                 radial-gradient(circle at 50% 50%, rgba(0,255,157,0.07) 0%, transparent 70%);
         }
 
+        /* Visual Background Elements */
         .orb {
             position: absolute;
             border-radius: 50%;
@@ -55,8 +57,7 @@
 
         .suicune-hero {
             position: absolute;
-            top: 50%;
-            left: 50%;
+            top: 50%; left: 50%;
             transform: translate(-50%, -50%);
             width: clamp(300px, 85vw, 900px);
             opacity: 0.26;
@@ -70,6 +71,7 @@
             50% { transform: translate(-50%, -50%) translateY(-30px); }
         }
 
+        /* Header */
         header {
             position: relative;
             text-align: center;
@@ -99,9 +101,9 @@
         main {
             flex: 1;
             width: 100%;
-            max-width: 100vw;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 0 clamp(1rem, 4vw, 1.5rem);
+            padding: 0 clamp(1rem, 4vw, 2rem);
             position: relative;
             z-index: 2;
         }
@@ -116,7 +118,7 @@
             box-shadow: 0 35px 120px rgba(0,0,0,0.8);
             backdrop-filter: blur(18px);
         }
-        .store-middle h2 {
+        .store-intro h2 {
             font-size: clamp(2.5rem, 8vw, 4.8rem);
             font-weight: 900;
             background: linear-gradient(120deg, var(--electric), var(--accent), var(--purple));
@@ -132,6 +134,7 @@
             line-height: 2;
         }
 
+        /* YOUTUBE LAYOUT */
         .youtube-section { margin: clamp(5rem, 10vw, 8rem) 0; }
         .youtube-title {
             font-size: clamp(2.8rem, 9vw, 5.5rem);
@@ -143,66 +146,36 @@
             -webkit-text-fill-color: transparent;
             text-shadow: 0 0 80px rgba(0,238,255,0.9);
         }
-        .youtube-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: clamp(2rem, 5vw, 3.2rem);
-            padding: clamp(1.5rem, 4vw, 2.5rem);
-            background: rgba(18,18,31,0.65);
-            border-radius: clamp(32px, 8vw, 48px);
-            border: 2px solid rgba(0,238,255,0.35);
-            box-shadow: 0 30px 100px rgba(0,0,0,0.7);
+        .youtube-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+        @media (min-width: 1024px) {
+            .youtube-grid.has-featured { grid-template-columns: 1fr 1fr; grid-template-areas: "hero hero" "sub1 sub2"; }
+            .youtube-grid.standard-grid { grid-template-columns: repeat(3, 1fr); }
         }
-        @media (min-width: 768px) {
-            .youtube-grid { grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); }
-        }
-
         .yt-video {
-            position: relative;
-            border-radius: clamp(28px, 7vw, 36px);
-            overflow: hidden;
-            background: var(--card);
-            border: 2.5px solid transparent;
-            transition: all 0.5s ease;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.6);
-            cursor: pointer;
+            position: relative; border-radius: 24px; overflow: hidden; background: var(--card);
+            border: 2px solid rgba(255,255,255,0.1); transition: all 0.4s ease; cursor: pointer;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5); aspect-ratio: 16/9;
         }
-        .yt-video:hover { transform: translateY(-28px) scale(1.06); border-color: var(--accent); box-shadow: 0 50px 120px rgba(0,238,255,0.5); }
-        .yt-thumb { width: 100%; height: clamp(180px, 50vw, 250px); object-fit: cover; display: block; }
+        .yt-video:hover { transform: translateY(-10px) scale(1.02); border-color: var(--accent); box-shadow: 0 30px 80px rgba(0,238,255,0.3); }
+        .yt-video.featured { grid-area: hero; border: 3px solid #ff006e; box-shadow: 0 0 60px rgba(255,0,110,0.4); }
+        .yt-thumb { width: 100%; height: 100%; object-fit: cover; }
         .play-button {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: clamp(60px, 18vw, 90px);
-            height: clamp(60px, 18vw, 90px);
-            background: rgba(0,0,0,0.8);
-            border: 6px solid white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: clamp(28px, 9vw, 42px);
-            color: white;
-            transition: all 0.35s;
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 70px; height: 70px; background: rgba(0,0,0,0.7); border: 4px solid white; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-size: 30px; color: white;
+            transition: 0.3s; backdrop-filter: blur(5px);
         }
-        .yt-video:hover .play-button { transform: translate(-50%, -50%) scale(1.3); background: var(--accent); }
-        .yt-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: clamp(1.5rem, 4vw, 2.2rem); background: linear-gradient(to top, rgba(10,10,21,0.97), transparent); }
-        .yt-title { font-size: clamp(1.1rem, 3.5vw, 1.35rem); font-weight: 800; color: var(--text); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        .upcoming-badge {
-            position: absolute; top: clamp(16px, 4vw, 22px); left: clamp(16px, 4vw, 22px);
-            background: linear-gradient(135deg, #ff006e, #ff8c00);
-            color: white; padding: clamp(0.5rem, 1.5vw, 0.7rem) clamp(1rem, 3vw, 1.6rem);
-            border-radius: 50px; font-weight: 900; font-size: clamp(0.85rem, 2.5vw, 1rem);
-            box-shadow: 0 0 50px rgba(255,0,110,0.9);
-            animation: badgePulse 2s infinite;
-        }
-        .live-now {
-            background: linear-gradient(90deg, #ff0000, #ff0066) !important;
-            animation: livePulse 1.5s infinite !important;
-        }
-        @keyframes badgePulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.12); } }
-        @keyframes livePulse { 0%,100% { box-shadow: 0 0 35px #ff0000; } 50% { box-shadow: 0 0 80px #ff0000; } }
+        .yt-video.featured .play-button { width: 100px; height: 100px; font-size: 40px; background: rgba(255, 0, 110, 0.8); }
+        .yt-video:hover .play-button { transform: translate(-50%, -50%) scale(1.2); background: var(--accent); border-color:white; }
+        .yt-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 2rem; background: linear-gradient(to top, rgba(0,0,0,0.95), transparent); }
+        .yt-title { font-size: 1.2rem; font-weight: 700; color: white; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .yt-video.featured .yt-title { font-size: 2rem; font-weight: 900; }
+        .status-badge { position: absolute; top: 20px; left: 20px; padding: 8px 20px; border-radius: 50px; font-weight: 900; font-size: 0.9rem; letter-spacing: 1px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10; }
+        .badge-live { background: #ff0000; color: white; animation: pulseRed 1.5s infinite; }
+        .badge-upcoming { background: #ff8c00; color: white; }
+        @keyframes pulseRed { 0%,100% { box-shadow: 0 0 20px #ff0000; } 50% { box-shadow: 0 0 50px #ff0000; } }
 
+        /* STORE GRID */
         .store-container {
             display: grid;
             grid-template-columns: 1fr;
@@ -213,43 +186,50 @@
             .store-container { grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); }
         }
 
-        .item-card { background: var(--card); border-radius: clamp(30px, 8vw, 38px); overflow: hidden; border: 2px solid rgba(0,238,255,0.3); transition: all 0.5s ease; box-shadow: 0 25px 65px rgba(0,0,0,0.6); display: flex; flex-direction: column; }
+        .item-card { 
+            background: var(--card); 
+            border-radius: clamp(30px, 8vw, 38px); 
+            overflow: hidden; 
+            border: 2px solid rgba(0,238,255,0.3); 
+            transition: all 0.5s ease; 
+            box-shadow: 0 25px 65px rgba(0,0,0,0.6); 
+            display: flex; flex-direction: column; 
+            position: relative;
+        }
         .item-card:hover { transform: translateY(-25px) scale(1.05); border-color: var(--accent); box-shadow: 0 50px 130px rgba(0,238,255,0.45); }
         .item-image { width: 100%; height: clamp(240px, 60vw, 310px); object-fit: cover; transition: transform 0.7s ease; }
         .item-card:hover .item-image { transform: scale(1.16); }
         .card-content { padding: clamp(1.8rem, 5vw, 2.5rem); background: linear-gradient(to top, var(--surface), transparent); flex-grow: 1; display: flex; flex-direction: column; }
+        
+        /* BADGES FOR ITEMS */
+        .type-badge {
+            position: absolute; top: 20px; right: 20px; z-index: 10;
+            padding: 8px 16px; border-radius: 12px;
+            font-weight: 800; font-size: 0.9rem; letter-spacing: 0.5px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.6);
+            color: black;
+            border: 2px solid white;
+        }
+        .badge-bundle { background: var(--bundle-grad); }
+        .badge-msrp { background: var(--msrp-grad); }
+
         .item-card h3 { font-size: clamp(1.7rem, 5vw, 2.2rem); font-weight: 800; background: linear-gradient(90deg, var(--accent), #fff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 1rem; }
         .description { color: var(--text2); margin-bottom: 1.6rem; line-height: 1.9; flex-grow: 1; font-size: clamp(1rem, 2.8vw, 1.1rem); }
         .item-details { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.8rem; padding-top: 1rem; border-top: 1.5px solid rgba(0,238,255,0.3); }
         .item-price { font-size: clamp(2.1rem, 7vw, 2.9rem); font-weight: 900; color: var(--electric); text-shadow: 0 0 40px rgba(0,255,157,0.7); }
         .item-stock { background: rgba(0,238,255,0.25); color: var(--accent); padding: clamp(0.6rem, 1.5vw, 0.8rem) clamp(1rem, 2.5vw, 1.4rem); border-radius: 50px; font-weight: 700; border: 2px solid var(--accent); font-size: clamp(0.9rem, 2.2vw, 1rem); }
         .action-button, .out-of-stock { 
-            width: 100%; 
-            padding: clamp(1.2rem, 4vw, 1.6rem); 
-            text-align: center; 
-            border-radius: 28px; 
-            font-size: clamp(1.2rem, 4vw, 1.5rem); 
-            font-weight: 800; 
-            margin-top: auto;
-            color: white !important;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.8);
-            letter-spacing: 1px;
+            width: 100%; padding: clamp(1.2rem, 4vw, 1.6rem); text-align: center; border-radius: 28px; 
+            font-size: clamp(1.2rem, 4vw, 1.5rem); font-weight: 800; margin-top: auto;
+            color: white !important; text-shadow: 0 2px 10px rgba(0,0,0,0.8); letter-spacing: 1px;
+            text-decoration: none; display: block;
         }
         .action-button { background: linear-gradient(135deg, var(--accent), var(--purple)); box-shadow: 0 18px 50px rgba(0,238,255,0.55); transition: all 0.4s; }
         .action-button:hover { transform: translateY(-8px); box-shadow: 0 32px 80px rgba(0,238,255,0.75); background: linear-gradient(135deg, #00ffff, #d946ef); }
         .out-of-stock { background: rgba(255,77,77,0.3); color: #ff6b6b !important; border: 3px solid #ff4444; }
 
-        footer {
-            padding: clamp(3rem, 8vw, 4rem) 1rem 2rem;
-            text-align: center;
-            color: #777;
-            background: rgba(10,10,21,0.99);
-            border-top: 1.5px solid rgba(0,238,255,0.25);
-            font-size: clamp(0.9rem, 2.5vw, 0.95rem);
-            width: 100%;
-        }
+        footer { padding: clamp(3rem, 8vw, 4rem) 1rem 2rem; text-align: center; color: #777; background: rgba(10,10,21,0.99); border-top: 1.5px solid rgba(0,238,255,0.25); font-size: clamp(0.9rem, 2.5vw, 0.95rem); width: 100%; }
         footer p:last-child { font-size: 0.82rem; color: #555; margin-top: 0.5rem; }
-
         #lightbox-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.98); backdrop-filter: blur(30px); justify-content: center; align-items: center; z-index: 1000; cursor: zoom-out; }
         #lightbox-overlay.show { display: flex; }
         #lightbox-image { max-width: 96vw; max-height: 96vh; border-radius: 38px; border: 7px solid var(--accent); box-shadow: 0 0 150px rgba(0,238,255,0.9); }
@@ -273,7 +253,7 @@
         </div>
 
         <section class="youtube-section">
-            <h2 class="youtube-title">LIVE BREAKS ON YOUTUBE</h2>
+            <h2 class="youtube-title">LATEST BREAKS</h2>
             <div class="youtube-grid" id="youtube-videos"></div>
         </section>
 
@@ -296,100 +276,126 @@
             container.innerHTML = '<div style="text-align:center;padding:5rem;color:var(--accent);font-size:2.2rem;">Loading Breaks...</div>';
             try {
                 const res = await fetch(`${API_URL}/items`);
-                const items = await res.json();
+                let items = await res.json();
                 container.innerHTML = '';
                 if (!items.length) { container.innerHTML = '<p style="text-align:center;color:#aaa;font-size:1.7rem;">No active breaks — next one soon!</p>'; return; }
+                
+                // SORTING: NEWEST FIRST (Using createdAt if available, otherwise unordered)
+                items.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
                 items.forEach((item, i) => {
                     const card = document.createElement('div');
                     card.className = 'item-card';
+                    
                     const img = item.image || 'https://assets.pokemon.com/assets/cms2/img/misc/trading-card-games/cards/tcg_default_card.png';
                     const btn = item.stock > 0 && item.googleFormLink ? `<a href="${item.googleFormLink}" target="_blank" class="action-button">JOIN BREAK!</a>` : `<div class="out-of-stock">SOLD OUT</div>`;
-                    card.innerHTML = `<img src="${img}" alt="${item.name}" class="item-image" loading="lazy"><div class="card-content"><h3>${item.name}</h3><p class="description">${item.description}</p><div class="item-details"><span class="item-price">$${item.price.toFixed(2)}</span><span class="item-stock">Spots: ${item.stock}</span></div>${btn}</div>`;
+                    
+                    // BADGE LOGIC
+                    let badgeHtml = '';
+                    if (item.type === 'bundle') {
+                        badgeHtml = '<div class="type-badge badge-bundle">✨ BUNDLE BREAK</div>';
+                    } else {
+                        // Default to MSRP badge if type is msrp OR undefined (legacy items)
+                        badgeHtml = '<div class="type-badge badge-msrp">✅ MSRP BREAK</div>';
+                    }
+
+                    card.innerHTML = `
+                        <img src="${img}" alt="${item.name}" class="item-image" loading="lazy">
+                        ${badgeHtml}
+                        <div class="card-content">
+                            <h3>${item.name}</h3>
+                            <p class="description">${item.description}</p>
+                            <div class="item-details">
+                                <span class="item-price">$${item.price.toFixed(2)}</span>
+                                <span class="item-stock">Spots: ${item.stock}</span>
+                            </div>
+                            ${btn}
+                        </div>`;
                     container.appendChild(card);
                 });
             } catch { container.innerHTML = '<p style="text-align:center;color:#ff4444;">Failed to load — refresh!</p>'; }
         }
 
-        // 100% ACCURATE LIVE / UPCOMING DETECTION (no false positives)
         async function loadYouTubeVideos() {
             const container = document.getElementById('youtube-videos');
-            container.innerHTML = '<div style="text-align:center;padding:5rem;color:var(--accent);font-size:1.8rem;">Loading latest videos...</div>';
-
-            const proxies = ['https://api.allorigins.ml/raw?url=', 'https://corsproxy.io/?', 'https://thingproxy.freeboard.io/fetch/'];
-            let success = false;
+            container.innerHTML = '<div style="width:100%;text-align:center;color:var(--accent);">Checking YouTube...</div>';
+            
+            const proxies = ['https://api.allorigins.ml/raw?url=', 'https://corsproxy.io/?'];
+            let feedEntries = [];
 
             for (let proxy of proxies) {
                 try {
-                    const url = `${proxy}${encodeURIComponent('https://www.youtube.com/feeds/videos.xml?channel_id=' + CHANNEL_ID)}`;
+                    const url = `${proxy}${encodeURIComponent('https://www.youtube.com/feeds/videos.xml?channel_id=' + CHANNEL_ID + '&t=' + Date.now())}`;
                     const xmlText = await (await fetch(url)).text();
                     const xml = new DOMParser().parseFromString(xmlText, "application/xml");
                     if (xml.querySelector("parsererror")) continue;
-
-                    const entries = Array.from(xml.querySelectorAll("entry")).slice(0, 6);
-                    container.innerHTML = '';
-                    let count = 0;
-
-                    for (let entry of entries) {
-                        if (count >= 3) break;
-                        const videoId = entry.querySelector("yt\\:videoId, videoId")?.textContent;
-                        if (!videoId) continue;
-                        const title = entry.querySelector("title")?.textContent || "Untitled";
-
-                        // Use oEmbed to get real status (no API key needed)
-                        const oembedUrl = `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`;
-                        let isLive = false;
-                        let isUpcoming = false;
-
-                        try {
-                            const oembedResponse = await fetch(`https://api.allorigins.ml/raw?url=${encodeURIComponent(oembedUrl)}`);
-                            const oembedData = await oembedResponse.json();
-                            // oEmbed doesn't give live status, so we use a better trick:
-                            // Check if the thumbnail is a live thumbnail (contains "live" in path)
-                            const thumb = `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`;
-                            const thumbResponse = await fetch(`https://api.allorigins.ml/raw?url=${encodeURIComponent(thumb)}`, { method: 'HEAD' });
-                            const contentType = thumbResponse.headers.get('content-type');
-                            if (contentType && contentType.includes('image')) {
-                                // maxresdefault exists = not live or upcoming
-                            } else {
-                                // maxresdefault missing = live or upcoming
-                                const hqThumb = `https://i.ytimg.com/vi/${videoId}/hqdefault_live.jpg`;
-                                const hqResponse = await fetch(`https://api.allorigins.ml/raw?url=${encodeURIComponent(hqThumb)}`, { method: 'HEAD' });
-                                if (hqResponse.ok) {
-                                    isLive = true;
-                                } else {
-                                    isUpcoming = true;
-                                }
-                            }
-                        } catch (e) {}
-
-                        const displayThumb = isLive || isUpcoming ? `https://i.ytimg.com/vi/${videoId}/hqdefault_live.jpg` : `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`;
-
-                        const card = document.createElement('div');
-                        card.className = 'yt-video';
-                        card.onclick = () => window.open(`https://www.youtube.com/watch?v=${videoId}`, '_blank');
-                        card.innerHTML = `
-                            <img src="${displayThumb}" alt="${title}" class="yt-thumb" loading="lazy">
-                            <div class="play-button">▶</div>
-                            ${isLive ? `<div class="upcoming-badge live-now">LIVE NOW</div>` : ''}
-                            ${isUpcoming ? `<div class="upcoming-badge">UPCOMING</div>` : ''}
-                            <div class="yt-overlay"><div class="yt-title">${title}</div></div>
-                        `;
-                        container.appendChild(card);
-                        count++;
-                    }
-                    if (count > 0) { success = true; break; }
+                    feedEntries = Array.from(xml.querySelectorAll("entry")).slice(0, 6);
+                    if(feedEntries.length) break; 
                 } catch (e) {}
             }
 
-            if (!success) {
-                container.innerHTML = `<div style="text-align:center;padding:4rem;"><a href="https://www.youtube.com/@pokeballermike" target="_blank" style="color:var(--accent);font-size:1.6rem;font-weight:800;text-decoration:underline;">Watch @pokeballermike →</a></div>`;
+            if (!feedEntries.length) {
+                container.innerHTML = '<p>Check out the channel on YouTube!</p>';
+                return;
             }
+
+            let featuredVideo = null;
+            let regularVideos = [];
+
+            for (let entry of feedEntries) {
+                const videoId = entry.querySelector("videoId")?.textContent;
+                const title = entry.querySelector("title")?.textContent;
+                if (!videoId) continue;
+
+                let isLiveOrUpcoming = false;
+                try {
+                    const hqThumb = `https://i.ytimg.com/vi/${videoId}/hqdefault_live.jpg`;
+                    const check = await fetch(`https://api.allorigins.ml/raw?url=${encodeURIComponent(hqThumb)}`, { method: 'HEAD' });
+                    if (check.ok) isLiveOrUpcoming = true;
+                } catch(e) {}
+
+                const videoObj = { videoId, title, isLiveOrUpcoming };
+                if (isLiveOrUpcoming && !featuredVideo) {
+                    featuredVideo = videoObj;
+                } else {
+                    regularVideos.push(videoObj);
+                }
+            }
+
+            let videosToShow = [];
+            if (featuredVideo) {
+                container.className = "youtube-grid has-featured";
+                videosToShow = [featuredVideo, ...regularVideos.slice(0, 2)];
+            } else {
+                container.className = "youtube-grid standard-grid";
+                videosToShow = regularVideos.slice(0, 3);
+            }
+
+            container.innerHTML = '';
+            videosToShow.forEach((vid, index) => {
+                const isFeatured = (index === 0 && featuredVideo);
+                const thumbUrl = vid.isLiveOrUpcoming 
+                    ? `https://i.ytimg.com/vi/${vid.videoId}/hqdefault_live.jpg` 
+                    : `https://i.ytimg.com/vi/${vid.videoId}/maxresdefault.jpg`;
+
+                const card = document.createElement('div');
+                card.className = `yt-video ${isFeatured ? 'featured' : ''}`;
+                card.onclick = () => window.open(`https://www.youtube.com/watch?v=${vid.videoId}`, '_blank');
+                let badgeHTML = vid.isLiveOrUpcoming ? `<div class="status-badge badge-live">LIVE / UPCOMING</div>` : '';
+
+                card.innerHTML = `
+                    <img src="${thumbUrl}" alt="${vid.title}" class="yt-thumb" loading="lazy">
+                    ${badgeHTML}
+                    <div class="play-button">▶</div>
+                    <div class="yt-overlay"><div class="yt-title">${vid.title}</div></div>
+                `;
+                container.appendChild(card);
+            });
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             loadItems();
             loadYouTubeVideos();
-
             const overlay = document.getElementById('lightbox-overlay');
             const img = document.getElementById('lightbox-image');
             document.getElementById('store-content').addEventListener('click', e => {
