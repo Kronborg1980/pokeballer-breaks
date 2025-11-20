@@ -21,8 +21,8 @@
             --text-bright: #ffffff;
             --text-dim: #c0c0e0;
             
-            /* REDUCED SIZE for the 'Guardian' Pokemon */
-            --guardian-size: clamp(180px, 20vw, 280px);
+            /* 1. UNIFIED SIZE: All background pokemon are now roughly this size */
+            --guardian-size: clamp(220px, 18vw, 320px);
         }
 
         * { margin:0; padding:0; box-sizing:border-box; }
@@ -62,9 +62,12 @@
             z-index: -5; 
             will-change: transform; 
             transition: all 0.5s ease;
+            /* 2. UNIFIED GHOST LOOK: All side pokemon share this opacity/filter */
+            opacity: 0.35;
+            filter: drop-shadow(0 0 20px rgba(0,0,0,0.5));
         }
 
-        /* 1. SUICUNE (THE MAIN THEME) - UNTOUCHED AS REQUESTED */
+        /* SUICUNE (CENTER THEME) - Kept Special */
         .p-suicune { 
             top: 50%; left: 50%; 
             transform: translate(-50%, -50%); 
@@ -75,79 +78,59 @@
             z-index: -6;
         }
 
-        /* THE GUARDIANS 
-           Smaller size, pushed further to the edges to prevent overlap.
-        */
+        /* --- THE GRID SYSTEM (To prevent overlap) --- */
         
-        /* Zone 1: Top Left Corner */
+        /* TOP ROW (0-15% Height) */
         .p-rayquaza { 
-            top: -80px; left: -100px; 
+            top: -5vh; left: -5vw; 
             width: var(--guardian-size); 
-            opacity: 0.4; 
-            filter: drop-shadow(10px 10px 20px rgba(0,0,0,0.5));
             animation: floatLeft 10s ease-in-out infinite;
         }
-
-        /* Zone 2: Top Right Corner */
         .p-charizard { 
-            top: -60px; right: -80px; 
+            top: -5vh; right: -5vw; 
             width: var(--guardian-size); 
-            opacity: 0.4; 
-            filter: drop-shadow(-10px 10px 20px rgba(0,0,0,0.5));
             animation: floatRight 9s ease-in-out infinite;
-            transform: scaleX(-1); /* Flip to face inward */
+            transform: scaleX(-1);
         }
 
-        /* Zone 3: Middle Left Edge */
+        /* MIDDLE ROW (45-55% Height) */
         .p-gengar {
-            top: 40%; left: -90px;
+            top: 45vh; left: -4vw;
             width: var(--guardian-size);
-            opacity: 0.4;
-            filter: drop-shadow(0 0 30px rgba(138, 43, 226, 0.15));
             animation: floatLeft 7s infinite ease-in-out 1s;
         }
-
-        /* Zone 4: Middle Right Edge */
         .p-gardevoir { 
-            top: 40%; right: -90px; 
+            top: 45vh; right: -4vw; 
             width: var(--guardian-size); 
-            opacity: 0.4; 
-            filter: drop-shadow(-20px 0 30px rgba(189, 0, 255, 0.15)); 
             animation: floatRight 8s infinite 2s;
         }
 
-        /* Zone 5: Bottom Left Corner */
+        /* BOTTOM ROW (85-100% Height) */
         .p-vaporeon { 
-            bottom: -60px; left: -70px; 
+            top: 85vh; left: -3vw; 
             width: var(--guardian-size); 
-            opacity: 0.5; 
-            filter: drop-shadow(0 -10px 30px rgba(0, 238, 255, 0.1));
             animation: sway 12s ease-in-out infinite;
         }
-
-        /* Zone 6: Bottom Right Corner */
         .p-cubone { 
-            bottom: -30px; right: -20px; 
-            width: calc(var(--guardian-size) * 0.8); /* Cubone is naturally smaller */
-            opacity: 0.5; 
-            filter: drop-shadow(0 0 20px rgba(200, 180, 150, 0.15));
+            top: 85vh; right: -2vw; 
+            width: calc(var(--guardian-size) * 0.9); 
             z-index: -3;
         }
 
-        /* MASCOTS */
-        /* MOVED PICHU to top right corner */
+        /* 3. PICHU FIXES 
+           - Moved to Bottom Center (Footer area)
+           - Made larger (same variable as others)
+           - Added opacity to match the ghost theme
+        */
         .p-pichu { 
-            top: 20px; right: 30px;
-            width: 80px; opacity: 0.9; 
+            top: 90vh; 
+            left: 50%; 
+            transform: translateX(-50%);
+            width: calc(var(--guardian-size) * 0.8); /* Slightly smaller than dragons */
+            opacity: 0.35; /* Matches others now */
             filter: drop-shadow(0 0 25px var(--accent-gold));
             animation: bounce 4s infinite ease-in-out;
-            z-index: 1; 
-        }
-        
-        .p-magikarp { 
-            bottom: 20px; left: 50%; width: 140px; opacity: 0.5; 
-            filter: blur(1px); animation: flop 1.5s infinite;
-            transform: translateX(-50%);
+            z-index: -4; 
         }
 
         /* Animations */
@@ -155,8 +138,7 @@
         @keyframes floatLeft { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-15px);} }
         @keyframes floatRight { 0%,100%{transform:translateY(0) scaleX(-1);} 50%{transform:translateY(-15px) scaleX(-1);} }
         @keyframes sway { 0%,100%{transform:rotate(0deg);} 50%{transform:rotate(2deg);} }
-        @keyframes bounce { 0%,100%{transform:translateY(0) rotate(0deg);} 50%{transform:translateY(-10px) rotate(5deg);} }
-        @keyframes flop { 0%,100%{transform: translateX(-50%) rotate(-10deg);} 50%{transform: translateX(-50%) rotate(10deg) translateY(-10px);} }
+        @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0) rotate(0deg);} 50%{transform:translateX(-50%) translateY(-10px) rotate(5deg);} }
 
 
         /* --- LAYOUT --- */
@@ -241,28 +223,27 @@
         
         /* --- RESPONSIVE FIXES --- */
         @media (max-width: 1200px) {
-            /* Retreat side pokemon further on medium screens so they don't touch text */
-            .p-rayquaza { left: -140px; }
-            .p-charizard { right: -140px; }
-            .p-gengar { left: -140px; }
-            .p-gardevoir { right: -140px; }
+            /* Push them further out so they don't touch text on tablets */
+            .p-rayquaza { left: -8vw; }
+            .p-charizard { right: -8vw; }
+            .p-gengar { left: -8vw; }
+            .p-gardevoir { right: -8vw; }
         }
 
         @media (max-width: 768px) { 
-            /* Mobile: Hide the side noise to focus on Suicune & Content */
+            /* Mobile: Hide side noise, keep Suicune & Pichu */
             .p-rayquaza, .p-charizard, .p-gengar, .p-gardevoir, .p-vaporeon, .p-cubone {
                 display: none; 
             }
             
-            /* Adjust Suicune for mobile portrait */
-            .p-suicune { 
-                width: 120vw; 
-                opacity: 0.12; 
-                top: 40%;
+            .p-suicune { width: 120vw; opacity: 0.12; top: 40%; }
+            
+            /* Pichu moves to top right on mobile as a small badge */
+            .p-pichu { 
+                top: 30px; left: auto; right: 20px; 
+                transform: none;
+                width: 70px; 
             }
-
-            /* Adjust Mascots */
-            .p-pichu { width: 70px; top: 20px; right: 20px; }
             h1 { font-size: 3.5rem; } 
         }
     </style>
@@ -283,7 +264,6 @@
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/104.png" class="poke-bg p-cubone">
     
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/172.png" class="poke-bg p-pichu">
-    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/129.png" class="poke-bg p-magikarp">
 
     <header>
         <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="header-logo">
