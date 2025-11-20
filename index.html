@@ -3,416 +3,382 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PBM Breaks - The Crystal League</title>
+    <title>PBM Breaks | Crystal League</title>
     
     <link rel="icon" type="image/svg+xml" href="https://upload.wikimedia.org/wikipedia/commons/5/53/Pok%C3%A9_Ball_icon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <style>
         :root {
-            --bg-dark: #050510;
-            --card-glass: rgba(20, 20, 40, 0.6);
-            --accent-cyan: #00ffe7;
-            --accent-purple: #bd00ff;
-            --accent-gold: #ffd700;
-            --text-bright: #ffffff;
-            --text-dim: #c0c0e0;
+            --bg-deep: #030305;
+            --bg-panel: rgba(255, 255, 255, 0.03);
+            --border-glass: rgba(255, 255, 255, 0.08);
+            
+            --primary: #00f2ea; /* Cyber Cyan */
+            --secondary: #ff0055; /* Neon Red */
+            --tertiary: #bd00ff; /* Deep Purple */
+            
+            --font-head: 'Outfit', sans-serif;
+            --font-body: 'Space Grotesk', sans-serif;
         }
 
         * { margin:0; padding:0; box-sizing:border-box; }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg-dark);
-            color: var(--text-bright);
-            min-height: 100vh;
+            background-color: var(--bg-deep);
+            color: white;
+            font-family: var(--font-body);
             overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* --- GLOBAL TEXTURES --- */
+        /* Scanline effect for retro-modern vibe */
+        body::after {
+            content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 999; background-size: 100% 2px, 3px 100%; pointer-events: none;
+        }
+
+        /* --- HERO SECTION (The "Stage") --- */
+        .hero-wrapper {
             position: relative;
+            height: 85vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
         }
 
-        /* --- ATMOSPHERE --- */
-        body::before {
-            content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: 
-                radial-gradient(circle at 50% 0%, rgba(189, 0, 255, 0.15) 0%, transparent 60%),
-                radial-gradient(circle at 85% 30%, rgba(0, 255, 231, 0.1) 0%, transparent 50%),
-                linear-gradient(to bottom, #050510, #120a24);
-            z-index: -10;
+        /* Dynamic Background Glows */
+        .glow-spot {
+            position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.4; z-index: 0;
+        }
+        .glow-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: var(--tertiary); }
+        .glow-2 { bottom: -10%; right: -10%; width: 60vw; height: 60vw; background: var(--primary); }
+
+        /* --- INTEGRATED POKEMON (Masked & Blended) --- */
+        .poke-prop {
+            position: absolute;
+            pointer-events: none;
+            z-index: 1;
+            /* This mask is KEY: fades the image into the background so no hard lines */
+            -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 100%);
+            mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 100%);
+            transition: transform 0.3s ease-out;
         }
 
-        .particles {
-            position: fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:-1;
-            background-image: 
-                radial-gradient(circle at 20% 30%, var(--accent-cyan) 1px, transparent 2px),
-                radial-gradient(circle at 80% 70%, var(--accent-purple) 1px, transparent 2px);
-            background-size: 100px 100px, 150px 150px;
-            animation: particleMove 60s linear infinite; opacity: 0.3;
-        }
-        @keyframes particleMove { from{background-position:0 0,0 0} to{background-position:0 -1000px,0 -500px} }
-
-        /* --- THE POKEMON STAGE --- */
-        .poke-bg { 
-            position: fixed; 
-            pointer-events: none; 
-            z-index: -5; 
-            will-change: transform; 
-            transition: all 0.5s ease;
+        /* Rayquaza: Top Left, Desaturated to look like a statue/texture */
+        .p-rayquaza {
+            top: -5%; left: -5%; width: 50vw; max-width: 800px;
+            opacity: 0.2; filter: contrast(120%) grayscale(100%) drop-shadow(0 0 20px var(--primary));
+            mix-blend-mode: hard-light;
+            animation: breathe 10s infinite ease-in-out;
         }
 
-        /* 1. SUICUNE (The Watermark - Very faint, Center) */
-        .p-suicune { 
-            top: 40%; left: 50%; 
-            transform: translate(-50%, -50%); 
-            width: clamp(600px, 90vw, 1400px); 
-            opacity: 0.08; /* Barely visible, adds texture */
-            filter: grayscale(50%) drop-shadow(0 0 100px var(--accent-cyan));
-            animation: deepBreath 10s ease-in-out infinite; 
+        /* Charizard: Top Right, Dark silhouette */
+        .p-charizard {
+            top: -5%; right: -10%; width: 45vw; max-width: 700px;
+            opacity: 0.15; filter: grayscale(100%) contrast(150%);
+            transform: scaleX(-1); /* Face center */
         }
 
-        /* 2. RAYQUAZA (Top Left - The Ceiling) */
-        .p-rayquaza { 
-            top: -120px; left: -100px; 
-            width: clamp(500px, 50vw, 900px); 
-            opacity: 0.3; /* Transparent enough to read text over */
-            filter: drop-shadow(10px 10px 30px rgba(0,0,0,0.5));
-            animation: slither 20s ease-in-out infinite alternate;
-            z-index: -4;
+        /* Suicune: The Centerpiece, Full Color but glowing */
+        .p-suicune {
+            top: 50%; left: 50%; transform: translate(-50%, -45%);
+            width: 40vw; max-width: 600px; min-width: 300px;
+            z-index: 2; opacity: 0.9;
+            filter: drop-shadow(0 0 50px rgba(0, 242, 234, 0.3));
+            -webkit-mask-image: radial-gradient(circle, black 40%, transparent 80%);
+            mask-image: radial-gradient(circle, black 40%, transparent 80%);
         }
 
-        /* 3. CHARIZARD (Top Right - The Ceiling) */
-        .p-charizard { 
-            top: -80px; right: -120px; 
-            width: clamp(400px, 45vw, 700px); 
-            opacity: 0.25; 
-            filter: drop-shadow(-10px 10px 30px rgba(0,0,0,0.5));
-            animation: hoverFloat 8s ease-in-out infinite;
-        }
-
-        /* 4. GENGAR (Mid Left - Peeking from shadow) */
-        .p-gengar {
-            top: 50%; left: -80px;
-            width: clamp(250px, 25vw, 450px);
-            opacity: 0.4;
-            filter: drop-shadow(0 0 40px rgba(138, 43, 226, 0.2));
-            animation: spookyFloat 6s infinite ease-in-out;
-        }
-
-        /* 5. GARDEVOIR (Mid Right - Graceful) */
-        .p-gardevoir { 
-            top: 55%; right: -60px; 
-            width: clamp(250px, 25vw, 400px); 
-            opacity: 0.3; 
-            filter: drop-shadow(-20px 0 40px rgba(189, 0, 255, 0.2)); 
-            animation: hoverFloat 9s infinite 2s;
-        }
-
-        /* 6. VAPOREON (Bottom Left - Grounded) */
-        .p-vaporeon { 
-            bottom: -50px; left: -20px; 
-            width: clamp(300px, 30vw, 500px); 
-            opacity: 0.5; 
-            filter: drop-shadow(0 -10px 30px rgba(0, 238, 255, 0.15));
-            transform-origin: bottom left;
-            animation: gentleSway 12s ease-in-out infinite;
-        }
-
-        /* 7. CUBONE (Bottom Right - Grounded) */
-        .p-cubone { 
-            bottom: -20px; right: 15%; 
-            width: clamp(200px, 20vw, 350px); 
-            opacity: 0.6; 
-            filter: drop-shadow(0 0 20px rgba(200, 180, 150, 0.2));
-            z-index: -3;
-        }
-
-        /* 8. PICHU (Header Mascot - Near Title) */
-        .p-pichu { 
-            top: 110px; left: 62%; 
-            width: 100px; opacity: 0.9; 
-            filter: drop-shadow(0 0 25px var(--accent-gold));
-            animation: bounce 4s infinite ease-in-out;
-            z-index: 1; /* Sits on top */
+        /* --- TYPOGRAPHY --- */
+        .hero-content {
+            z-index: 10; text-align: center; position: relative;
         }
         
-        /* 9. MAGIKARP (Footer Mascot) */
-        .p-magikarp { 
-            bottom: 20px; left: 40%; width: 150px; opacity: 0.5; 
-            filter: blur(1px); animation: flop 1.5s infinite;
-        }
-
-        /* Animations */
-        @keyframes deepBreath { 0%,100%{scale:1; opacity:0.08;} 50%{scale:1.02; opacity:0.12;} }
-        @keyframes hoverFloat { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-20px);} }
-        @keyframes slither { 0%{transform:translate(0,0) rotate(0deg);} 100%{transform:translate(10px, 10px) rotate(1deg);} }
-        @keyframes spookyFloat { 0%,100%{transform:translateY(0) scale(1);} 50%{transform:translateY(-15px) scale(1.02);} }
-        @keyframes gentleSway { 0%,100%{transform:rotate(0deg);} 50%{transform:rotate(2deg);} }
-        @keyframes bounce { 0%,100%{transform:translateY(0) rotate(0deg);} 50%{transform:translateY(-10px) rotate(5deg);} }
-        @keyframes flop { 0%,100%{transform: rotate(-10deg) translateY(0);} 50%{transform: rotate(20deg) translateY(-20px);} }
-
-
-        /* --- LAYOUT --- */
-        main { position: relative; z-index: 2; max-width: 1300px; margin: 0 auto; padding: 0 2rem; }
-
-        header { position: relative; z-index: 2; text-align: center; padding: 6rem 1rem 3rem; }
-        .header-logo { 
-            width: 140px; filter: drop-shadow(0 0 30px var(--accent-cyan)); 
-            animation: hoverFloat 6s infinite ease-in-out;
+        .brand-pill {
+            display: inline-block; padding: 8px 16px; border-radius: 50px;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; color: var(--primary);
+            margin-bottom: 1rem; backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(0, 242, 234, 0.2);
         }
 
         h1 {
-            font-size: clamp(3.5rem, 12vw, 6rem); font-weight: 900; letter-spacing: -3px; color: white;
-            text-shadow: 0 0 30px rgba(0,238,255,0.4); margin-top: 1.5rem;
+            font-family: var(--font-head);
+            font-size: clamp(4rem, 12vw, 9rem);
+            line-height: 0.9;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -0.04em;
+            background: linear-gradient(180deg, #ffffff 0%, #a5a5a5 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
         }
-
-        .section-header { display: flex; align-items: center; gap: 1.5rem; margin: 4rem 0 2rem; }
-        .section-line { height: 2px; background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent); flex: 1; opacity: 0.5; }
-        .section-title { color: var(--accent-cyan); font-weight: 900; letter-spacing: 3px; font-size: 1.1rem; }
-
-        /* --- CARDS --- */
-        .glass-panel {
-            background: var(--card-glass); backdrop-filter: blur(20px) saturate(1.5);
-            border-radius: 24px; border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5); overflow: hidden; position: relative;
-            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-        }
-        .glass-panel:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 30px 70px rgba(0,0,0,0.6); border-color: var(--accent-cyan); }
-
-        .yt-container { display: grid; gap: 30px; grid-template-columns: 1fr; }
-        @media (min-width: 900px) { .yt-container { grid-template-columns: 1fr 1fr; } }
-
-        .yt-card { aspect-ratio: 16/9; cursor: pointer; }
-        .yt-thumb { width: 100%; height: 100%; object-fit: cover; display: block; transition: 0.5s; }
-        .yt-card:hover .yt-thumb { transform: scale(1.05); }
-
-        .yt-label {
-            position: absolute; top: 20px; left: 20px; padding: 10px 20px; border-radius: 12px;
-            font-weight: 900; font-size: 0.9rem; letter-spacing: 0.5px; z-index: 2;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5); text-transform: uppercase; display:flex; align-items:center; gap:8px;
-            backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);
-        }
-        .lbl-upcoming { background: rgba(255, 215, 0, 0.9); color: black; animation: pulse 2s infinite; }
-        .lbl-past { background: rgba(189, 0, 255, 0.9); color: white; }
-        .lbl-hunt { background: rgba(0, 238, 255, 0.9); color: black; }
-        @keyframes pulse { 0%,100% { opacity:1; scale:1; } 50% { opacity:0.8; scale:0.98; } }
-
-        .store-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 35px; }
-        .item-card { display: flex; flex-direction: column; }
         
-        .type-tag {
-            position: absolute; top: 20px; right: 20px; padding: 8px 16px; border-radius: 8px;
-            font-weight: 900; font-size: 0.85rem; z-index: 2; letter-spacing: 0.5px;
-            text-transform: uppercase; backdrop-filter: blur(10px);
+        .hero-sub {
+            font-size: clamp(1rem, 2vw, 1.5rem);
+            color: var(--text-dim); margin-top: 1rem; letter-spacing: 4px; text-transform: uppercase;
+            background: linear-gradient(90deg, transparent, black, transparent); /* Darkens BG behind text for readability */
+            padding: 0.5rem 2rem;
         }
-        .tag-msrp { background: rgba(0, 255, 157, 0.9); color: black; }
-        .tag-bundle { background: linear-gradient(135deg, #000, #333); color: var(--accent-gold); border: 2px solid var(--accent-gold); }
 
-        .item-img-box { height: 280px; overflow:hidden; position: relative; }
-        .item-img-box::after { content:''; position:absolute; bottom:0; left:0; width:100%; height:50%; background: linear-gradient(to top, var(--bg-dark), transparent); }
-        .item-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s; }
-        .item-card:hover .item-img { transform: scale(1.1) rotate(2deg); }
+        /* --- MAIN CONTENT GRID --- */
+        .content-wrapper {
+            position: relative;
+            z-index: 5;
+            max-width: 1400px;
+            margin: -100px auto 0; /* Overlap the hero */
+            padding: 0 2rem 4rem;
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 40px;
+        }
 
-        .item-content { padding: 2rem; flex: 1; display: flex; flex-direction: column; position: relative; }
-        .item-content h3 { font-size: 1.6rem; margin-bottom: 0.75rem; color: white; font-weight: 800; line-height: 1.2; }
-        .item-content p { color: var(--text-dim); font-size: 1rem; line-height: 1.6; margin-bottom: 2rem; flex: 1; }
+        /* --- SIDEBAR (The "Feed") --- */
+        .sidebar {
+            position: relative;
+        }
+        .feed-card {
+            background: rgba(10, 10, 15, 0.6);
+            border: 1px solid var(--border-glass);
+            border-radius: 24px;
+            padding: 24px;
+            backdrop-filter: blur(20px);
+            height: fit-content;
+            position: sticky; top: 20px;
+        }
         
-        .price-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-top: 1.5rem; border-top: 2px solid rgba(255,255,255,0.05); }
-        .price { font-size: 2.2rem; font-weight: 900; color: var(--accent-cyan); }
-        .stock { font-size: 0.9rem; color: var(--text-dim); background: rgba(255,255,255,0.07); padding: 6px 12px; border-radius: 6px; font-weight: 600; }
-
-        .buy-btn {
-            display: block; text-align: center; padding: 1.2rem; border-radius: 16px;
-            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
-            color: white; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 1.1rem; letter-spacing: 1px;
-            transition: 0.3s; box-shadow: 0 10px 30px rgba(0, 238, 255, 0.3); position: relative; overflow: hidden;
+        .feed-header { 
+            display: flex; align-items: center; gap: 10px; margin-bottom: 20px; 
+            border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px;
         }
-        .buy-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(189, 0, 255, 0.5); }
-        .sold-out { background: #1a1a1a; color: #555; pointer-events: none; border: 2px solid #333; box-shadow: none; }
+        .live-dot { width: 8px; height: 8px; background: var(--secondary); border-radius: 50%; box-shadow: 0 0 10px var(--secondary); animation: pulse 1s infinite; }
 
-        footer { text-align: center; padding: 8rem 0 4rem; color: var(--text-dim); font-size: 0.9rem; position: relative; z-index: 2; }
+        /* Sidebar Guardian */
+        .p-gengar {
+            position: absolute; top: -60px; left: -40px; width: 180px; z-index: 2;
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
+            transform: rotate(-10deg);
+        }
+
+        /* --- MAIN GRID (The Store) --- */
+        .main-area { display: flex; flex-direction: column; gap: 30px; }
         
-        /* --- RESPONSIVE FIXES --- */
-        @media (max-width: 1200px) {
-            .p-rayquaza { left: -200px; opacity: 0.2; }
-            .p-charizard { right: -150px; opacity: 0.2; }
+        .section-title {
+            font-family: var(--font-head); font-size: 2rem; font-weight: 700;
+            display: flex; align-items: center; gap: 15px;
+        }
+        .section-title::after { content:''; flex:1; height:1px; background: linear-gradient(90deg, var(--border-glass), transparent); }
+
+        .store-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;
         }
 
-        @media (max-width: 768px) { 
-            /* Mobile: Push them away so they dont cover text */
-            .p-rayquaza { width: 300px; left: -100px; top: 0; opacity: 0.15; }
-            .p-charizard { width: 250px; right: -120px; top: 0; opacity: 0.15; }
-            .p-gengar { width: 180px; left: -80px; top: 60%; opacity: 0.2; }
-            .p-gardevoir { display: none; /* Hide complex shapes on mobile */ }
-            .p-vaporeon { width: 200px; left: -80px; opacity: 0.3; bottom: 20%; }
-            .p-cubone { width: 150px; right: -40px; bottom: 10px; opacity: 0.5; }
-            .p-pichu { left: 80%; width: 70px; top: 90px; }
-            .p-magikarp { left: 10%; width: 100px; }
-            h1 { font-size: 3.5rem; } 
+        /* --- MODERN GLASS CARD --- */
+        .glass-card {
+            position: relative;
+            background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
+            border: 1px solid var(--border-glass);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.4s ease;
         }
+        .glass-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 40px rgba(0, 242, 234, 0.1);
+        }
+        .glass-card:hover .card-img { transform: scale(1.05); }
+
+        .card-tag {
+            position: absolute; top: 15px; left: 15px; z-index: 2;
+            padding: 4px 10px; border-radius: 6px;
+            font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.2);
+        }
+        .tag-live { color: var(--secondary); border-color: var(--secondary); }
+        .tag-bundle { color: var(--accent-gold); border-color: #ffd700; }
+
+        .card-img-wrap { height: 200px; overflow: hidden; position: relative; }
+        .card-img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s ease; }
+        
+        .card-body { padding: 20px; }
+        .card-title { font-family: var(--font-head); font-size: 1.2rem; margin-bottom: 5px; line-height: 1.2; }
+        .card-desc { font-size: 0.9rem; color: #888; margin-bottom: 15px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        
+        .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
+        .price { font-size: 1.3rem; font-weight: 700; color: var(--primary); }
+        
+        .btn-buy {
+            padding: 8px 20px; background: white; color: black; border-radius: 50px;
+            font-weight: 700; font-size: 0.8rem; text-decoration: none; text-transform: uppercase;
+            transition: 0.2s;
+        }
+        .btn-buy:hover { background: var(--primary); box-shadow: 0 0 15px var(--primary); }
+
+        /* --- INTERACTIVE FOREGROUND POKEMON --- */
+        /* Vaporeon peering over the footer */
+        .p-vaporeon {
+            position: fixed; bottom: -20px; right: -20px; width: 300px; opacity: 0.4;
+            z-index: 0; pointer-events: none;
+            filter: drop-shadow(0 0 30px var(--primary));
+            mask-image: linear-gradient(to top, black 50%, transparent 100%);
+        }
+
+        /* Cubone sitting on the Grid */
+        .p-cubone {
+            position: absolute; bottom: -40px; right: 50px; width: 200px; z-index: 10;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.5));
+        }
+
+        @media (max-width: 1024px) {
+            .content-wrapper { grid-template-columns: 1fr; }
+            .sidebar { display: none; /* Hide sidebar on tablet/mobile for cleaner look */ }
+            .p-rayquaza, .p-charizard { opacity: 0.1; }
+            h1 { font-size: 4rem; }
+            .p-suicune { width: 80vw; opacity: 0.6; }
+        }
+        
+        @keyframes breathe { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
     </style>
 </head>
 <body>
 
-    <div class="particles"></div>
-    
-    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="poke-bg p-suicune">
-    
-    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/384.png" class="poke-bg p-rayquaza">
-    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/006.png" class="poke-bg p-charizard">
-    
-    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/094.png" class="poke-bg p-gengar">
-    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/282.png" class="poke-bg p-gardevoir">
-    
-    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/134.png" class="poke-bg p-vaporeon">
-    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/104.png" class="poke-bg p-cubone">
-    
-    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/172.png" class="poke-bg p-pichu">
-    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/129.png" class="poke-bg p-magikarp">
+    <div class="hero-wrapper">
+        <div class="glow-spot glow-1"></div>
+        <div class="glow-spot glow-2"></div>
 
-    <header>
-        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="header-logo">
-        <h1>PBM BREAKS</h1>
-    </header>
+        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/384.png" class="poke-prop p-rayquaza">
+        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/006.png" class="poke-prop p-charizard">
+        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="poke-prop p-suicune">
 
-    <main>
-        <div class="section-header">
-            <span class="section-line"></span>
-            <span class="section-title">CHANNEL FEED</span>
-            <span class="section-line"></span>
+        <div class="hero-content">
+            <div class="brand-pill">The Crystal League</div>
+            <h1>PBM Breaks</h1>
+            <div class="hero-sub">Premium Live TCG Action</div>
         </div>
+    </div>
+
+    <div class="content-wrapper">
+        
+        <aside class="sidebar">
+            <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/094.png" class="poke-prop p-gengar">
+            <div class="feed-card">
+                <div class="feed-header">
+                    <div class="live-dot"></div>
+                    <h3 style="font-family:var(--font-head); font-weight:700;">CHANNEL FEED</h3>
+                </div>
+                <div id="yt-feed" style="display:flex; flex-direction:column; gap:15px;">
+                    <div style="text-align:center; color:#555; font-size:0.8rem;">Connecting to Uplink...</div>
+                </div>
+            </div>
+        </aside>
+
+        <section class="main-area">
+            <div class="section-title">
+                <i class="ph-fill ph-sparkle" style="color:var(--primary)"></i> AVAILABLE DROPS
+            </div>
+
+            <div class="store-grid" id="store-feed">
+                </div>
             
-        <div id="yt-container" class="yt-container">
-            <div style="color:var(--text-dim); text-align:center; grid-column:1/-1; padding: 2rem;">Loading Crystal Feed...</div>
-        </div>
+            <div style="position:relative; height:50px;">
+                <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/104.png" class="poke-prop p-cubone">
+            </div>
+        </section>
 
-        <div class="section-header">
-            <span class="section-line"></span>
-            <span class="section-title">AVAILABLE BREAKS</span>
-            <span class="section-line"></span>
-        </div>
+    </div>
 
-        <div class="store-grid" id="store-container">
-            <div style="color:var(--text-dim); text-align:center; padding: 2rem;">Summoning Drops...</div>
-        </div>
-    </main>
-
-    <footer>
-        <p>© 2025 PBM Breaks • Not affiliated with Nintendo • Crafted in the Crystal Realm</p>
-    </footer>
+    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/134.png" class="p-vaporeon">
 
     <script>
         const API_URL = 'https://pokeballer-worker.kronborgnielsen.workers.dev/api';
 
+        // --- FETCH YOUTUBE ---
         async function loadVideos() {
-            const container = document.getElementById('yt-container');
+            const container = document.getElementById('yt-feed');
             try {
                 const res = await fetch(`${API_URL}/youtube`);
                 const text = await res.text();
                 const doc = new DOMParser().parseFromString(text, "text/xml");
-                const entries = Array.from(doc.querySelectorAll("entry")).slice(0, 20); 
-
-                if(!entries.length) throw new Error("No videos");
-
-                let streamVideo = null; let huntVideo = null;
-
-                for(let entry of entries) {
-                    const title = entry.querySelector("title").textContent;
-                    const titleLower = title.toLowerCase();
-                    if(titleLower.includes('stream') || titleLower.includes('live') || titleLower.includes('break')) {
-                        const id = entry.querySelector("videoId").textContent;
-                        let badgeStatus = titleLower.includes('upcoming') ? 'upcoming' : 'latest';
-                        streamVideo = { id, title, badgeStatus };
-                        break;
-                    }
-                }
-
-                for(let entry of entries) {
-                    const title = entry.querySelector("title").textContent;
-                    const titleLower = title.toLowerCase();
-                    const id = entry.querySelector("videoId").textContent;
-                    if(!titleLower.includes('stream') && !titleLower.includes('live') && (!streamVideo || id !== streamVideo.id)) {
-                        huntVideo = { id, title };
-                        break;
-                    }
-                }
+                const entries = Array.from(doc.querySelectorAll("entry")).slice(0, 5); // Only top 5 for sidebar
 
                 container.innerHTML = '';
-                const videos = [];
-                if(streamVideo) videos.push({ ...streamVideo, type: 'stream' });
-                if(huntVideo) videos.push({ ...huntVideo, type: 'hunt' });
-
-                if(videos.length === 0) { container.innerHTML = '<div style="text-align:center; color:#888;">No videos found</div>'; return; }
-
-                videos.forEach(v => {
-                    let thumb = `https://i.ytimg.com/vi/${v.id}/maxresdefault.jpg`;
-                    let badgeHTML = '';
-
-                    if (v.type === 'stream') {
-                        if (v.badgeStatus === 'upcoming') {
-                            badgeHTML = `<div class="yt-label lbl-upcoming"><i class="ph-fill ph-clock"></i> UPCOMING LIVE BREAK</div>`;
-                        } else {
-                            badgeHTML = `<div class="yt-label lbl-past"><i class="ph-fill ph-rewind-circle"></i> LATEST LIVE BREAK</div>`;
-                        }
-                    } else {
-                        badgeHTML = `<div class="yt-label lbl-hunt"><i class="ph-fill ph-video"></i> LATEST HUNT</div>`;
-                    }
-
+                entries.forEach(entry => {
+                    const title = entry.querySelector("title").textContent;
+                    const id = entry.querySelector("videoId").textContent;
+                    
                     container.innerHTML += `
-                        <div class="yt-card glass-panel" onclick="window.open('https://youtube.com/watch?v=${v.id}')">
-                            <img src="${thumb}" class="yt-thumb">
-                            ${badgeHTML}
-                            <div style="position:absolute; bottom:0; left:0; right:0; padding:30px 20px; background:linear-gradient(to top, #050510, transparent);">
-                                <div style="color:white; font-weight:800; font-size:1.1rem; text-shadow:0 2px 10px rgba(0,0,0,0.8);">${v.title}</div>
-                            </div>
-                        </div>`;
+                        <div class="glass-card" style="display:flex; align-items:center; gap:10px; padding:10px; border-radius:12px; cursor:pointer;" onclick="window.open('https://youtube.com/watch?v=${id}')">
+                            <img src="https://i.ytimg.com/vi/${id}/default.jpg" style="width:60px; border-radius:8px;">
+                            <div style="font-size:0.8rem; line-height:1.2; font-weight:500;">${title}</div>
+                        </div>
+                    `;
                 });
             } catch(e) {
-                container.innerHTML = `<div style="text-align:center; grid-column:1/-1;"><a href="https://www.youtube.com/@PokeballerMike" target="_blank" class="buy-btn" style="max-width:200px; margin:0 auto;">VISIT CHANNEL</a></div>`;
+                container.innerHTML = `<div style="font-size:0.8rem; opacity:0.5;">Offline</div>`;
             }
         }
 
+        // --- FETCH STORE ---
         async function loadStore() {
-            const container = document.getElementById('store-container');
+            const container = document.getElementById('store-feed');
             try {
                 const res = await fetch(`${API_URL}/items`);
                 const items = await res.json();
-                items.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
                 
                 container.innerHTML = '';
                 items.forEach(item => {
-                    const isBundle = item.type === 'bundle';
-                    const tagClass = isBundle ? 'tag-bundle' : 'tag-msrp';
-                    const tagText = isBundle ? '💎 BUNDLE BREAK' : '✅ MSRP BREAK';
-                    
-                    const btn = (item.stock > 0 && item.googleFormLink) 
-                        ? `<a href="${item.googleFormLink}" target="_blank" class="buy-btn">JOIN BREAK</a>` 
-                        : `<div class="buy-btn sold-out">SOLD OUT</div>`;
-                        
                     const img = item.image || 'https://assets.pokemon.com/assets/cms2/img/misc/trading-card-games/cards/tcg_default_card.png';
-                    
+                    const btnHTML = (item.stock > 0 && item.googleFormLink)
+                        ? `<a href="${item.googleFormLink}" target="_blank" class="btn-buy">Claim</a>`
+                        : `<span style="font-size:0.8rem; opacity:0.5;">SOLD OUT</span>`;
+
                     container.innerHTML += `
-                        <div class="item-card glass-panel">
-                            <div class="type-tag ${tagClass}">${tagText}</div>
-                            <div class="item-img-box">
-                                <img src="${img}" class="item-img">
+                        <div class="glass-card">
+                            <div class="card-img-wrap">
+                                <div class="card-tag tag-live">NEW</div>
+                                <img src="${img}" class="card-img">
                             </div>
-                            <div class="item-content">
-                                <h3>${item.name}</h3>
-                                <p>${item.description}</p>
-                                <div class="price-row">
-                                    <span class="price">$${item.price.toFixed(2)}</span>
-                                    <span class="stock">${item.stock} Spots Left</span>
+                            <div class="card-body">
+                                <div class="card-title">${item.name}</div>
+                                <div class="card-desc">${item.description}</div>
+                                <div class="card-footer">
+                                    <div class="price">$${item.price}</div>
+                                    ${btnHTML}
                                 </div>
-                                ${btn}
                             </div>
-                        </div>`;
+                        </div>
+                    `;
                 });
             } catch(e) {}
         }
 
-        loadVideos(); loadStore();
+        // Parallax effect on mouse move for the background
+        document.addEventListener('mousemove', (e) => {
+            const x = (window.innerWidth - e.pageX) / 50;
+            const y = (window.innerHeight - e.pageY) / 50;
+            
+            const ray = document.querySelector('.p-rayquaza');
+            const char = document.querySelector('.p-charizard');
+            
+            if(ray) ray.style.transform = `translateX(${x}px) translateY(${y}px)`;
+            if(char) char.style.transform = `translateX(${-x}px) translateY(${-y}px) scaleX(-1)`;
+        });
+
+        loadVideos();
+        loadStore();
     </script>
 </body>
 </html>
