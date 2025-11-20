@@ -4,13 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PBM Breaks - The Crystal League</title>
-  
+   
     <link rel="icon" type="image/svg+xml" href="https://upload.wikimedia.org/wikipedia/commons/5/53/Pok%C3%A9_Ball_icon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-
     <style>
         :root {
             --bg-dark: #050510;
@@ -31,105 +30,193 @@
             position: relative;
         }
         body::before {
-            content: ''; position: fixed; inset: 0;
+            content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background:
                 radial-gradient(circle at 50% 50%, rgba(0, 255, 231, 0.05) 0%, transparent 60%),
                 linear-gradient(to bottom, #050510, #0d071a);
             z-index: -10;
         }
-
-        /* === CLEAN FLOATING PARTICLES – ZERO FLICKER === */
         .particles {
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            z-index: -1;
-        }
-        .particles::before {
-            content: "";
-            position: absolute;
-            inset: 0;
+            position: fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:-1;
             background-image:
-                radial-gradient(circle at 20% 80%, var(--accent-cyan) 1px, transparent 1px),
-                radial-gradient(circle at 80%20%, var(--accent-purple) 1px, transparent 1px),
-                radial-gradient(circle at 50%50%, var(--accent-gold) 1px, transparent 1px);
-            background-size: 80px 80px, 120px 120px, 100px 100px;
-            opacity: 0.25;
-            animation: drift 40s linear infinite;
+                radial-gradient(circle at 20% 30%, var(--accent-cyan) 1px, transparent 2px),
+                radial-gradient(circle at 80% 70%, var(--accent-purple) 1px, transparent 2px);
+            background-size: 100px 100px, 150px 150px;
+            animation: particleMove 60s linear infinite; opacity: 0.3;
         }
-        @keyframes drift {
-            from { transform: translate(0, 0); }
-            to   { transform: translate(80px, 80px); }
-        }
-
-        /* Pokémon Backgrounds */
+        @keyframes particleMove { from{background-position:0 0,0 0} to{background-position:0 -1000px,0 -500px} }
+        /* POKEMON BACKGROUND */
         .poke-bg {
-            position: fixed; pointer-events: none; z-index: -5; opacity: 0.4;
-            filter: drop-shadow(0 0 15px rgba(0,0,0,0.8));
+            position: fixed; pointer-events: none; z-index: -5;
+            will-change: transform; transition: all 0.5s ease;
+            opacity: 0.4; filter: drop-shadow(0 0 15px rgba(0,0,0,0.8));
         }
-        .p-suicune { top: 50%; left: 50%; transform: translate(-50%, -50%);
+        .p-suicune {
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: clamp(500px, 70vw, 1000px); opacity: 0.15;
-            filter: drop-shadow(0 0 80px rgba(0,255,231,0.3));
-            animation: breathe 8s ease-in-out infinite;
+            filter: drop-shadow(0 0 80px rgba(0, 255, 231, 0.3));
+            animation: breathe 8s ease-in-out infinite; z-index: -6;
         }
-        /* (rest of pokemon animations unchanged – they were fine) */
         .p-rayquaza { top: 0; left: 0; width: var(--guardian-size); animation: floatLeft 10s infinite; }
         .p-charizard { top: 0; right: 0; width: var(--guardian-size); animation: floatRight 9s infinite; transform: scaleX(-1); }
         .p-gengar { top: 50%; left: 0; transform: translateY(-50%); width: var(--guardian-size); animation: floatLeft 7s infinite 1s; }
         .p-gardevoir { top: 50%; right: 0; transform: translateY(-50%); width: var(--guardian-size); animation: floatRight 8s infinite 2s; }
         .p-vaporeon { bottom: 0; left: 0; width: var(--guardian-size); animation: sway 12s infinite; }
-        .p-cubone { bottom: 0; right: 0; width: calc(var(--guardian-size) * 0.85); }
-        .p-pichu { bottom: 20px; left: 53%; width: 100px; animation: bounce 4s infinite; filter: drop-shadow(0 0 20px var(--accent-gold)); }
-        .p-magikarp { bottom: 10px; left: 50%; transform: translateX(-50%); width: 130px; animation: flop 2s infinite; }
-
+        .p-cubone { bottom: 0; right: 0; width: calc(var(--guardian-size) * 0.85); z-index: -3; }
+        .p-pichu {
+            bottom: 20px; left: 53%; width: 100px; opacity: 0.4;
+            filter: drop-shadow(0 0 20px var(--accent-gold));
+            animation: bounce 4s infinite; z-index: -4;
+        }
+        .p-magikarp { bottom: 10px; left: 50%; transform: translateX(-50%); width: 130px; opacity: 0.4; filter: blur(0.5px); animation: flop 2s infinite; }
         @keyframes breathe { 0%,100%{scale:1; opacity:0.15;} 50%{scale:1.02; opacity:0.2;} }
         @keyframes floatLeft { 0%,100%{margin-top:0;} 50%{margin-top:-15px;} }
         @keyframes floatRight { 0%,100%{margin-top:0;} 50%{margin-top:-15px;} }
         @keyframes sway { 0%,100%{transform:rotate(0deg);} 50%{transform:rotate(3deg);} }
         @keyframes bounce { 0%,100%{transform:translateY(0) rotate(0deg);} 50%{transform:translateY(-10px) rotate(5deg);} }
         @keyframes flop { 0%,100%{transform: translateX(-50%) rotate(-10deg);} 50%{transform: translateX(-50%) rotate(10deg) translateY(-10px);} }
-
-        /* Layout & all your beautiful neon styles (unchanged) */
-        main { position: relative; z-index: 2; max-width: 1200px; margin: 2rem auto 4rem; padding: 2rem;
-            border: 1px solid rgba(0,255,231,0.1); border-radius: 30px; background: rgba(0,0,0,0.2);
+        /* LAYOUT */
+        main {
+            position: relative; z-index: 2; max-width: 1200px; margin: 0 auto; padding: 2rem;
+            border: 1px solid rgba(0, 255, 231, 0.1);
+            border-radius: 30px;
             box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.2);
+            margin-top: 2rem;
+            margin-bottom: 4rem;
         }
-        header { text-align: center; padding: 5rem 1rem 1rem; }
-        .header-logo { width: 130px; filter: drop-shadow(0 0 30px var(--accent-cyan)); animation: floatLeft 6s infinite; }
-        h1 { font-size: clamp(3.5rem, 10vw, 6rem); font-weight: 900; letter-spacing: -2px; margin-top:1rem;
-            text-transform: uppercase; background: linear-gradient(180deg, #fff, #d0faff 45%, #00ffe7 55%, #bd00ff);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        header { text-align: center; padding: 5rem 1rem 1rem; position: relative; z-index: 2; }
+        .header-logo {
+            width: 130px; filter: drop-shadow(0 0 30px var(--accent-cyan));
+            animation: floatLeft 6s infinite ease-in-out;
+        }
+        
+        /* --- FIXED TITLE CSS START --- */
+        h1 {
+            font-size: clamp(3.5rem, 10vw, 6rem);
+            font-weight: 900;
+            letter-spacing: -2px;
+            margin-top: 1rem;
+            text-transform: uppercase;
+            background: linear-gradient(180deg, #ffffff 0%, #d0faff 45%, #00ffe7 55%, #bd00ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
+            /* Removed will-change and transform to fix flickering */
             animation: hologram 8s ease-in-out infinite;
+            padding-bottom: 0.2em; /* Ensures shadow doesn't get clipped */
         }
-        @keyframes hologram { 0%,100% { filter: drop-shadow(0 0 15px rgba(0,255,231,0.6)); }
-                            50% { filter: drop-shadow(0 0 25px rgba(189,0,255,0.7)); } }
+        @keyframes hologram {
+            0% {
+                filter: drop-shadow(0 0 15px rgba(0, 255, 231, 0.6));
+            }
+            50% {
+                filter: drop-shadow(0 0 25px rgba(189, 0, 255, 0.7));
+            }
+            100% {
+                filter: drop-shadow(0 0 15px rgba(0, 255, 231, 0.6));
+            }
+        }
+        /* --- FIXED TITLE CSS END --- */
 
-        /* (all the rest of your neon cards, grids, labels, etc. are exactly the same – I left them untouched) */
         .section-header { display: flex; align-items: center; gap: 1.5rem; margin: 3rem 0 2rem; }
-        .section-line { flex: 1; height: 2px; background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent); opacity: 0.5; box-shadow: 0 0 10px var(--accent-cyan); }
-        .section-title { color: var(--accent-cyan); font-weight: 900; letter-spacing: 3px; font-size: 1.2rem; text-shadow: 0 0 10px var(--accent-cyan); }
-
-        .neon-card-wrapper { position: relative; border-radius: 24px; padding: 3px; background: rgba(255,255,255,0.05); overflow: hidden; transition: 0.4s; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .neon-card-wrapper:hover { transform: translateY(-8px) scale(1.01); box-shadow: 0 0 30px rgba(0,255,231,0.3); }
-        .neon-card-wrapper::before { content: ''; position: absolute; inset: -50%; width: 200%; height: 200%;
-            background: conic-gradient(transparent, transparent 80deg, var(--accent-cyan) 130deg, #fff 140deg, var(--accent-purple) 150deg, transparent 200deg);
-            animation: spinBorder 4s linear infinite;
+        .section-line { height: 2px; background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent); flex: 1; opacity: 0.5; box-shadow: 0 0 10px var(--accent-cyan); }
+        .section-title {
+            color: var(--accent-cyan); font-weight: 900; letter-spacing: 3px; font-size: 1.2rem;
+            text-shadow: 0 0 10px var(--accent-cyan);
         }
-        @keyframes spinBorder { to { transform: rotate(360deg); } }
-        .glass-panel { position: relative; background: rgba(20,20,35,0.85); backdrop-filter: blur(20px) saturate(1.5); border-radius: 21px; overflow: hidden; }
-
+        /* NEON CARD SYSTEM */
+        .neon-card-wrapper {
+            position: relative;
+            border-radius: 24px;
+            padding: 3px;
+            background: rgba(255,255,255,0.05);
+            overflow: hidden;
+            transition: transform 0.4s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .neon-card-wrapper:hover {
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 0 0 30px rgba(0, 255, 231, 0.3);
+        }
+        .neon-card-wrapper::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: conic-gradient(transparent 0deg, transparent 80deg, var(--accent-cyan) 130deg, var(--text-bright) 140deg, var(--accent-purple) 150deg, transparent 200deg);
+            animation: spinBorder 4s linear infinite;
+            z-index: 0;
+        }
+        @keyframes spinBorder { 100% { transform: rotate(360deg); } }
+        .glass-panel {
+            position: relative;
+            background: rgba(20, 20, 35, 0.85);
+            backdrop-filter: blur(20px) saturate(1.5);
+            border-radius: 21px;
+            height: 100%; width: 100%;
+            z-index: 1;
+            overflow: hidden;
+        }
+        /* GRID */
         .yt-container { display: grid; gap: 25px; grid-template-columns: 1fr; }
         @media (min-width: 900px) { .yt-container { grid-template-columns: 1fr 1fr; } }
-        .store-grid { display: grid;grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap: 30px; }
-
-        /* (rest of your styles – unchanged) */
-        footer { text-align: center; padding: 2rem 0 3rem; color: var(--text-dim); font-size: 0.85rem; }
+        .yt-card { aspect-ratio: 16/9; cursor: pointer; }
+        .yt-thumb { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; opacity: 0.9; }
+        .neon-card-wrapper:hover .yt-thumb { transform: scale(1.05); opacity: 1; }
+        .yt-label {
+            position: absolute; top: 15px; left: 15px; padding: 8px 16px; border-radius: 10px;
+            font-weight: 900; font-size: 0.8rem; letter-spacing: 0.5px; z-index: 2;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5); text-transform: uppercase; display:flex; align-items:center; gap:6px;
+            backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);
+        }
+        .lbl-upcoming { background: rgba(255, 215, 0, 0.9); color: black; animation: pulse 2s infinite; }
+        .lbl-past { background: rgba(189, 0, 255, 0.9); color: white; }
+        .lbl-hunt { background: rgba(0, 238, 255, 0.9); color: black; }
+        @keyframes pulse { 0%,100% { opacity:1; scale:1; } 50% { opacity:0.8; scale:0.98; } }
+        .store-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .item-card { display: flex; flex-direction: column; }
+        .type-tag {
+            position: absolute; top: 15px; right: 15px; padding: 6px 12px; border-radius: 6px;
+            font-weight: 900; font-size: 0.75rem; z-index: 2; letter-spacing: 0.5px;
+            text-transform: uppercase; backdrop-filter: blur(10px);
+        }
+        .tag-msrp { background: rgba(0, 255, 157, 0.9); color: black; }
+        .tag-bundle { background: linear-gradient(135deg, #000, #333); color: var(--accent-gold); border: 2px solid var(--accent-gold); }
+        .item-img-box { height: 240px; overflow:hidden; position: relative; }
+        .item-img-box::after { content:''; position:absolute; bottom:0; left:0; width:100%; height:60%; background: linear-gradient(to top, #141423, transparent); }
+        .item-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s; }
+        .neon-card-wrapper:hover .item-img { transform: scale(1.1) rotate(2deg); }
+        .item-content { padding: 1.5rem; flex: 1; display: flex; flex-direction: column; position: relative; }
+        .item-content h3 { font-size: 1.4rem; margin-bottom: 0.5rem; color: white; font-weight: 800; line-height: 1.2; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
+        .item-content p { color: var(--text-dim); font-size: 0.95rem; line-height: 1.5; margin-bottom: 1.5rem; flex: 1; }
+        .price-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; padding-top: 1.2rem; border-top: 2px solid rgba(255,255,255,0.05); }
+        .price { font-size: 1.8rem; font-weight: 900; color: var(--accent-cyan); text-shadow: 0 0 15px rgba(0, 255, 231, 0.4); }
+        .stock { font-size: 0.8rem; color: var(--text-dim); background: rgba(255,255,255,0.07); padding: 5px 10px; border-radius: 5px; font-weight: 600; }
+        .buy-btn {
+            display: block; text-align: center; padding: 1rem; border-radius: 12px;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
+            color: white; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 1rem; letter-spacing: 1px;
+            transition: 0.3s; box-shadow: 0 10px 30px rgba(0, 238, 255, 0.3); position: relative; overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .buy-btn:hover { transform: translateY(-3px); box-shadow: 0 0 40px rgba(189, 0, 255, 0.6); }
+        .sold-out { background: #1a1a1a; color: #555; pointer-events: none; border: 2px solid #333; box-shadow: none; }
+        footer { text-align: center; padding: 2rem 0 3rem; color: var(--text-dim); font-size: 0.85rem; position: relative; z-index: 2; }
+        /* RESPONSIVE */
+        @media (max-width: 1300px) { .p-gengar, .p-gardevoir { display: none; } }
+        @media (max-width: 768px) {
+            .p-rayquaza, .p-charizard, .p-gengar, .p-gardevoir, .p-vaporeon, .p-cubone { display: none; }
+            .p-suicune { width: 120vw; opacity: 0.12; top: 40%; }
+            .p-pichu { width: 70px; bottom: 10px; left: auto; right: 10px; }
+            h1 { font-size: 3.5rem; }
+            main { padding: 1rem; margin-bottom: 2rem; width: 95%; }
+        }
     </style>
 </head>
 <body>
     <div class="particles"></div>
-
-    <!-- Pokémon guardians -->
+   
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="poke-bg p-suicune">
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/384.png" class="poke-bg p-rayquaza">
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/006.png" class="poke-bg p-charizard">
@@ -139,130 +226,124 @@
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/104.png" class="poke-bg p-cubone">
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/172.png" class="poke-bg p-pichu">
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/129.png" class="poke-bg p-magikarp">
-
     <header>
         <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="header-logo">
         <h1>PBM BREAKS</h1>
     </header>
-
     <main>
-        <div class="section-header"><span class="section-line"></span><span class="section-title">CHANNEL FEED</span><span class="section-line"></span></div>
-        <div id="yt-container" class="yt-container">
-            <div style="color:var(--text-dim); text-align:center; grid-column:1/-1; padding:2rem;">Loading Crystal Feed...</div>
+        <div class="section-header">
+            <span class="section-line"></span>
+            <span class="section-title">CHANNEL FEED</span>
+            <span class="section-line"></span>
         </div>
-
-        <div class="section-header"><span class="section-line"></span><span class="section-title">AVAILABLE BREAKS</span><span class="section-line"></span></div>
+           
+        <div id="yt-container" class="yt-container">
+            <div style="color:var(--text-dim); text-align:center; grid-column:1/-1; padding: 2rem;">Loading Crystal Feed...</div>
+        </div>
+        <div class="section-header">
+            <span class="section-line"></span>
+            <span class="section-title">AVAILABLE BREAKS</span>
+            <span class="section-line"></span>
+        </div>
         <div class="store-grid" id="store-container">
-            <div style="color:var(--text-dim); text-align:center; padding:2rem;">Summoning Drops...</div>
+            <div style="color:var(--text-dim); text-align:center; padding: 2rem;">Summoning Drops...</div>
         </div>
     </main>
-
     <footer>
         <p>© 2025 PBM Breaks • Not affiliated with Nintendo • Crafted in the Crystal Realm</p>
     </footer>
-
     <script>
-        // Fixed API URL (added https:// and removed duplicate declarations)
         const API_URL = 'https://pokeballer-worker.kronborgnielsen.workers.dev/api';
-
-        // === YOUTUBE FEED ===
         async function loadVideos() {
             const container = document.getElementById('yt-container');
             try {
                 const res = await fetch(`${API_URL}/youtube`);
-                if (!res.ok) throw new Error('Network error');
                 const text = await res.text();
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(text, "text/xml");
+                const doc = new DOMParser().parseFromString(text, "text/xml");
                 const entries = Array.from(doc.querySelectorAll("entry")).slice(0, 20);
-
-                let streamVideo = null, huntVideo = null;
-
-                for (const entry of entries) {
-                    const title = entry.querySelector("title")?.textContent.toLowerCase() || '';
-                    const id = entry.querySelector("videoId")?.textContent;
-                    if (!id) continue;
-
+                let streamVideo = null; let huntVideo = null;
+                // Find latest/upcoming stream
+                for (let entry of entries) {
+                    const title = entry.querySelector("title").textContent.toLowerCase();
                     if (title.includes('stream') || title.includes('live') || title.includes('break')) {
-                        streamVideo = { id, title: entry.querySelector("title").textContent, upcoming: title.includes('upcoming') };
+                        const id = entry.querySelector("videoId").textContent;
+                        streamVideo = { id, title: entry.querySelector("title").textContent, badgeStatus: title.includes('upcoming') ? 'upcoming' : 'latest' };
                         break;
                     }
                 }
-
-                for (const entry of entries) {
-                    const title = entry.querySelector("title")?.textContent.toLowerCase() || '';
-                    const id = entry.querySelector("videoId")?.textContent;
-                    if (!id || (streamVideo && id === streamVideo.id)) continue;
-                    if (!title.includes('stream') && !title.includes('live')) {
+                // Find latest hunt / non-stream video
+                for (let entry of entries) {
+                    const title = entry.querySelector("title").textContent.toLowerCase();
+                    const id = entry.querySelector("videoId").textContent;
+                    if (!title.includes('stream') && !title.includes('live') && (!streamVideo || id !== streamVideo.id)) {
                         huntVideo = { id, title: entry.querySelector("title").textContent };
                         break;
                     }
                 }
-
                 container.innerHTML = '';
-
-                if (streamVideo) {
-                    container.innerHTML += createVideoCard(streamVideo.id, streamVideo.title, streamVideo.upcoming ? 'upcoming' : 'live');
+                const videos = [];
+                if (streamVideo) videos.push({ ...streamVideo, type: 'stream' });
+                if (huntVideo) videos.push({ ...huntVideo, type: 'hunt' });
+                if (videos.length === 0) {
+                    container.innerHTML = '<div style="text-align:center; color:#888;">No videos found</div>';
+                    return;
                 }
-                if (huntVideo) {
-                    container.innerHTML += createVideoCard(huntVideo.id, huntVideo.title, 'hunt');
-                }
-
-                if (!streamVideo && !huntVideo) throw new Error('No videos');
-            } catch (err) {
-                container.innerHTML = `<div style="text-align:center;grid-column:1/-1;padding:2rem;"><a href="https://www.youtube.com/@PokeballerMike" target="_blank" class="buy-btn" style="display:inline-block;padding:1rem 2rem;">VISIT CHANNEL</a></div>`;
+                videos.forEach(v => {
+                    let thumb = `https://i.ytimg.com/vi/${v.id}/maxresdefault.jpg`;
+                    let badgeHTML = '';
+                    if (v.type === 'stream') {
+                        badgeHTML = v.badgeStatus === 'upcoming'
+                            ? `<div class="yt-label lbl-upcoming"><i class="ph-fill ph-clock"></i> UPCOMING LIVE BREAK</div>`
+                            : `<div class="yt-label lbl-past"><i class="ph-fill ph-rewind-circle"></i> LATEST LIVE BREAK</div>`;
+                    } else {
+                        badgeHTML = `<div class="yt-label lbl-hunt"><i class="ph-fill ph-video"></i> LATEST HUNT</div>`;
+                    }
+                    container.innerHTML += `
+                        <div class="neon-card-wrapper" onclick="window.open('https://youtube.com/watch?v=${v.id}')">
+                            <div class="yt-card glass-panel">
+                                <img src="${thumb}" class="yt-thumb" alt="${v.title}">
+                                ${badgeHTML}
+                                <div style="position:absolute; bottom:0; left:0; right:0; padding:30px 20px; background:linear-gradient(to top, #050510, transparent);">
+                                    <div style="color:white; font-weight:800; font-size:1.1rem; text-shadow:0 2px 10px rgba(0,0,0,0.8);">${v.title}</div>
+                                </div>
+                            </div>
+                        </div>`;
+                });
+            } catch(e) {
+                container.innerHTML = `<div style="text-align:center; grid-column:1/-1;"><a href="https://www.youtube.com/@PokeballerMike" target="_blank" class="buy-btn" style="max-width:200px; margin:0 auto;">VISIT CHANNEL</a></div>`;
             }
         }
-
-        function createVideoCard(id, title, type) {
-            const thumb = `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
-            let badge = '';
-            if (type === 'upcoming') badge = `<div class="yt-label lbl-upcoming"><i class="ph-fill ph-clock"></i> UPCOMING LIVE BREAK</div>`;
-            else if (type === 'live') badge = `<div class="yt-label lbl-past"><i class="ph-fill ph-rewind-circle"></i> LATEST LIVE BREAK</div>`;
-            else badge = `<div class="yt-label lbl-hunt"><i class="ph-fill ph-video"></i> LATEST HUNT</div>`;
-
-            return `
-                <div class="neon-card-wrapper" onclick="window.open('https://youtube.com/watch?v=${id}')" style="cursor:pointer;">
-                    <div class="yt-card glass-panel" style="aspect-ratio:16/9;">
-                        <img src="${thumb}" class="yt-thumb" alt="${title}">
-                        ${badge}
-                        <div style="position:absolute;bottom:0;left:0;right:0;padding:30px 20px;background:linear-gradient(to top,#050510,transparent);">
-                            <div style="color:white;font-weight:800;font-size:1.1rem;text-shadow:0 2px 10px black;">${title}</div>
-                        </div>
-                    </div>
-                </div>`;
-        }
-
-        // === STORE ===
         async function loadStore() {
             const container = document.getElementById('store-container');
             try {
                 const res = await fetch(`${API_URL}/items`);
-                if (!res.ok) throw new Error();
                 const items = await res.json();
-
-                items.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-
+                items.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
+               
                 container.innerHTML = '';
                 items.forEach(item => {
                     const isBundle = item.type === 'bundle';
                     const tagClass = isBundle ? 'tag-bundle' : 'tag-msrp';
                     const tagText = isBundle ? 'BUNDLE BREAK' : 'MSRP BREAK';
-                    const btn = item.stock > 0 && item.googleFormLink
+                   
+                    const btn = (item.stock > 0 && item.googleFormLink)
                         ? `<a href="${item.googleFormLink}" target="_blank" class="buy-btn">JOIN BREAK</a>`
                         : `<div class="buy-btn sold-out">SOLD OUT</div>`;
+                   
                     const img = item.image || 'https://assets.pokemon.com/assets/cms2/img/misc/trading-card-games/cards/tcg_default_card.png';
-
+                   
                     container.innerHTML += `
                         <div class="neon-card-wrapper">
                             <div class="item-card glass-panel">
                                 <div class="type-tag ${tagClass}">${tagText}</div>
-                                <div class="item-img-box"><img src="${img}" class="item-img" alt="${item.name}"></div>
+                                <div class="item-img-box">
+                                    <img src="${img}" class="item-img" alt="${item.name}">
+                                </div>
                                 <div class="item-content">
                                     <h3>${item.name}</h3>
-                                    <p>${item.description || ''}</p>
+                                    <p>${item.description}</p>
                                     <div class="price-row">
-                                        <span class="price">$${Number(item.price).toFixed(2)}</span>
+                                        <span class="price">$${item.price.toFixed(2)}</span>
                                         <span class="stock">${item.stock} Spots Left</span>
                                     </div>
                                     ${btn}
@@ -270,16 +351,10 @@
                             </div>
                         </div>`;
                 });
-            } catch (err) {
-                container.innerHTML = '<div style="color:#f66;text-align:center;padding:2rem;">Could not load store right now</div>';
-            }
+            } catch(e) { console.error(e); }
         }
-
-        // Load everything when page is ready
-        window.addEventListener('DOMContentLoaded', () => {
-            loadVideos();
-            loadStore();
-        });
+        loadVideos();
+        loadStore();
     </script>
 </body>
 </html>
