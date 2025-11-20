@@ -21,8 +21,8 @@
             --text-bright: #ffffff;
             --text-dim: #c0c0e0;
             
-            /* 1. UNIFIED SIZE: All background pokemon are now roughly this size */
-            --guardian-size: clamp(220px, 18vw, 320px);
+            /* SIGNIFICANTLY SMALLER to ensure they fit on screen */
+            --guardian-size: clamp(120px, 14vw, 200px);
         }
 
         * { margin:0; padding:0; box-sizing:border-box; }
@@ -62,102 +62,113 @@
             z-index: -5; 
             will-change: transform; 
             transition: all 0.5s ease;
-            /* 2. UNIFIED GHOST LOOK: All side pokemon share this opacity/filter */
-            opacity: 0.35;
-            filter: drop-shadow(0 0 20px rgba(0,0,0,0.5));
+            opacity: 0.4; /* Visible but not distracting */
+            filter: drop-shadow(0 0 15px rgba(0,0,0,0.8));
         }
 
-        /* SUICUNE (CENTER THEME) - Kept Special */
+        /* SUICUNE (CENTER THEME) */
         .p-suicune { 
             top: 50%; left: 50%; 
             transform: translate(-50%, -50%); 
-            width: clamp(600px, 80vw, 1200px); 
-            opacity: 0.18; 
+            width: clamp(500px, 70vw, 1000px); 
+            opacity: 0.15; 
             filter: drop-shadow(0 0 80px rgba(0, 255, 231, 0.3));
             animation: breathe 8s ease-in-out infinite; 
             z-index: -6;
         }
 
-        /* --- THE GRID SYSTEM (To prevent overlap) --- */
+        /* --- CORNER GUARDIANS (Strict Positioning) --- */
+        /* Using specific pixel/vh offsets to keep them ON SCREEN */
         
-        /* TOP ROW (0-15% Height) */
+        /* TOP ROW */
         .p-rayquaza { 
-            top: -5vh; left: -5vw; 
+            top: 0; left: 0; /* Pin to corner */
             width: var(--guardian-size); 
             animation: floatLeft 10s ease-in-out infinite;
         }
         .p-charizard { 
-            top: -5vh; right: -5vw; 
+            top: 0; right: 0; /* Pin to corner */
             width: var(--guardian-size); 
             animation: floatRight 9s ease-in-out infinite;
             transform: scaleX(-1);
         }
 
-        /* MIDDLE ROW (45-55% Height) */
+        /* MIDDLE ROW */
         .p-gengar {
-            top: 45vh; left: -4vw;
+            top: 50%; left: 0;
+            transform: translateY(-50%);
             width: var(--guardian-size);
             animation: floatLeft 7s infinite ease-in-out 1s;
         }
         .p-gardevoir { 
-            top: 45vh; right: -4vw; 
+            top: 50%; right: 0; 
+            transform: translateY(-50%);
             width: var(--guardian-size); 
             animation: floatRight 8s infinite 2s;
         }
 
-        /* BOTTOM ROW (85-100% Height) */
+        /* BOTTOM ROW */
         .p-vaporeon { 
-            top: 85vh; left: -3vw; 
+            bottom: 0; left: 0; /* Pin to corner */
             width: var(--guardian-size); 
             animation: sway 12s ease-in-out infinite;
         }
         .p-cubone { 
-            top: 85vh; right: -2vw; 
-            width: calc(var(--guardian-size) * 0.9); 
+            bottom: 0; right: 0; /* Pin to corner */
+            width: calc(var(--guardian-size) * 0.85); 
             z-index: -3;
         }
 
-        /* 3. PICHU FIXES 
-           - Moved to Bottom Center (Footer area)
-           - Made larger (same variable as others)
-           - Added opacity to match the ghost theme
-        */
+        /* --- MASCOTS --- */
+        
+        /* PICHU: Top Center (Header Mascot) */
         .p-pichu { 
-            top: 90vh; 
-            left: 50%; 
-            transform: translateX(-50%);
-            width: calc(var(--guardian-size) * 0.8); /* Slightly smaller than dragons */
-            opacity: 0.35; /* Matches others now */
-            filter: drop-shadow(0 0 25px var(--accent-gold));
+            top: 120px; /* Just below the logo */
+            left: 58%; 
+            width: 100px;
+            opacity: 0.6; /* Slightly brighter */
+            filter: drop-shadow(0 0 20px var(--accent-gold));
             animation: bounce 4s infinite ease-in-out;
             z-index: -4; 
         }
 
+        /* MAGIKARP: Bottom Center (Footer Mascot) */
+        .p-magikarp { 
+            bottom: 10px; 
+            left: 50%; 
+            transform: translateX(-50%);
+            width: 130px; 
+            opacity: 0.4; 
+            filter: blur(0.5px); 
+            animation: flop 2s infinite;
+        }
+
         /* Animations */
-        @keyframes breathe { 0%,100%{scale:1; opacity:0.18;} 50%{scale:1.02; opacity:0.22;} }
-        @keyframes floatLeft { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-15px);} }
-        @keyframes floatRight { 0%,100%{transform:translateY(0) scaleX(-1);} 50%{transform:translateY(-15px) scaleX(-1);} }
-        @keyframes sway { 0%,100%{transform:rotate(0deg);} 50%{transform:rotate(2deg);} }
-        @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0) rotate(0deg);} 50%{transform:translateX(-50%) translateY(-10px) rotate(5deg);} }
+        @keyframes breathe { 0%,100%{scale:1; opacity:0.15;} 50%{scale:1.02; opacity:0.2;} }
+        @keyframes floatLeft { 0%,100%{margin-top:0;} 50%{margin-top:-15px;} }
+        @keyframes floatRight { 0%,100%{margin-top:0;} 50%{margin-top:-15px;} }
+        @keyframes sway { 0%,100%{transform:rotate(0deg);} 50%{transform:rotate(3deg);} }
+        @keyframes bounce { 0%,100%{transform:translateY(0) rotate(0deg);} 50%{transform:translateY(-10px) rotate(5deg);} }
+        @keyframes flop { 0%,100%{transform: translateX(-50%) rotate(-10deg);} 50%{transform: translateX(-50%) rotate(10deg) translateY(-10px);} }
 
 
         /* --- LAYOUT --- */
-        main { position: relative; z-index: 2; max-width: 1300px; margin: 0 auto; padding: 0 2rem; }
+        main { position: relative; z-index: 2; max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
 
-        header { position: relative; z-index: 2; text-align: center; padding: 6rem 1rem 3rem; }
+        header { position: relative; z-index: 2; text-align: center; padding: 5rem 1rem 2rem; }
         .header-logo { 
-            width: 140px; filter: drop-shadow(0 0 30px var(--accent-cyan)); 
+            width: 130px; filter: drop-shadow(0 0 30px var(--accent-cyan)); 
             animation: floatLeft 6s infinite ease-in-out;
         }
 
         h1 {
-            font-size: clamp(3.5rem, 12vw, 6rem); font-weight: 900; letter-spacing: -3px; color: white;
-            text-shadow: 0 0 30px rgba(0,238,255,0.4); margin-top: 1.5rem;
+            font-size: clamp(3rem, 10vw, 5rem); font-weight: 900; letter-spacing: -2px; color: white;
+            text-shadow: 0 0 30px rgba(0,238,255,0.4); margin-top: 1rem;
         }
 
-        .section-header { display: flex; align-items: center; gap: 1.5rem; margin: 4rem 0 2rem; }
+        .section-header { display: flex; align-items: center; gap: 1.5rem; margin: 3rem 0 2rem; }
         .section-line { height: 2px; background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent); flex: 1; opacity: 0.5; }
-        .section-title { color: var(--accent-cyan); font-weight: 900; letter-spacing: 3px; font-size: 1.1rem; }
+        .section-title { color: var(--accent-cyan); font-weight: 900; letter-spacing: 3px; font-size: 1rem; }
 
         /* --- CARDS --- */
         .glass-panel {
@@ -168,7 +179,7 @@
         }
         .glass-panel:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 30px 70px rgba(0,0,0,0.6); border-color: var(--accent-cyan); }
 
-        .yt-container { display: grid; gap: 30px; grid-template-columns: 1fr; }
+        .yt-container { display: grid; gap: 20px; grid-template-columns: 1fr; }
         @media (min-width: 900px) { .yt-container { grid-template-columns: 1fr 1fr; } }
 
         .yt-card { aspect-ratio: 16/9; cursor: pointer; }
@@ -176,9 +187,9 @@
         .yt-card:hover .yt-thumb { transform: scale(1.05); }
 
         .yt-label {
-            position: absolute; top: 20px; left: 20px; padding: 10px 20px; border-radius: 12px;
-            font-weight: 900; font-size: 0.9rem; letter-spacing: 0.5px; z-index: 2;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5); text-transform: uppercase; display:flex; align-items:center; gap:8px;
+            position: absolute; top: 15px; left: 15px; padding: 8px 16px; border-radius: 10px;
+            font-weight: 900; font-size: 0.8rem; letter-spacing: 0.5px; z-index: 2;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5); text-transform: uppercase; display:flex; align-items:center; gap:6px;
             backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);
         }
         .lbl-upcoming { background: rgba(255, 215, 0, 0.9); color: black; animation: pulse 2s infinite; }
@@ -186,64 +197,55 @@
         .lbl-hunt { background: rgba(0, 238, 255, 0.9); color: black; }
         @keyframes pulse { 0%,100% { opacity:1; scale:1; } 50% { opacity:0.8; scale:0.98; } }
 
-        .store-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 35px; }
+        .store-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
         .item-card { display: flex; flex-direction: column; }
         
         .type-tag {
-            position: absolute; top: 20px; right: 20px; padding: 8px 16px; border-radius: 8px;
-            font-weight: 900; font-size: 0.85rem; z-index: 2; letter-spacing: 0.5px;
+            position: absolute; top: 15px; right: 15px; padding: 6px 12px; border-radius: 6px;
+            font-weight: 900; font-size: 0.75rem; z-index: 2; letter-spacing: 0.5px;
             text-transform: uppercase; backdrop-filter: blur(10px);
         }
         .tag-msrp { background: rgba(0, 255, 157, 0.9); color: black; }
         .tag-bundle { background: linear-gradient(135deg, #000, #333); color: var(--accent-gold); border: 2px solid var(--accent-gold); }
 
-        .item-img-box { height: 280px; overflow:hidden; position: relative; }
+        .item-img-box { height: 240px; overflow:hidden; position: relative; }
         .item-img-box::after { content:''; position:absolute; bottom:0; left:0; width:100%; height:50%; background: linear-gradient(to top, var(--bg-dark), transparent); }
         .item-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s; }
         .item-card:hover .item-img { transform: scale(1.1) rotate(2deg); }
 
-        .item-content { padding: 2rem; flex: 1; display: flex; flex-direction: column; position: relative; }
-        .item-content h3 { font-size: 1.6rem; margin-bottom: 0.75rem; color: white; font-weight: 800; line-height: 1.2; }
-        .item-content p { color: var(--text-dim); font-size: 1rem; line-height: 1.6; margin-bottom: 2rem; flex: 1; }
+        .item-content { padding: 1.5rem; flex: 1; display: flex; flex-direction: column; position: relative; }
+        .item-content h3 { font-size: 1.4rem; margin-bottom: 0.5rem; color: white; font-weight: 800; line-height: 1.2; }
+        .item-content p { color: var(--text-dim); font-size: 0.95rem; line-height: 1.5; margin-bottom: 1.5rem; flex: 1; }
         
-        .price-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-top: 1.5rem; border-top: 2px solid rgba(255,255,255,0.05); }
-        .price { font-size: 2.2rem; font-weight: 900; color: var(--accent-cyan); }
-        .stock { font-size: 0.9rem; color: var(--text-dim); background: rgba(255,255,255,0.07); padding: 6px 12px; border-radius: 6px; font-weight: 600; }
+        .price-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; padding-top: 1.2rem; border-top: 2px solid rgba(255,255,255,0.05); }
+        .price { font-size: 1.8rem; font-weight: 900; color: var(--accent-cyan); }
+        .stock { font-size: 0.8rem; color: var(--text-dim); background: rgba(255,255,255,0.07); padding: 5px 10px; border-radius: 5px; font-weight: 600; }
 
         .buy-btn {
-            display: block; text-align: center; padding: 1.2rem; border-radius: 16px;
+            display: block; text-align: center; padding: 1rem; border-radius: 12px;
             background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
-            color: white; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 1.1rem; letter-spacing: 1px;
+            color: white; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 1rem; letter-spacing: 1px;
             transition: 0.3s; box-shadow: 0 10px 30px rgba(0, 238, 255, 0.3); position: relative; overflow: hidden;
         }
         .buy-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(189, 0, 255, 0.5); }
         .sold-out { background: #1a1a1a; color: #555; pointer-events: none; border: 2px solid #333; box-shadow: none; }
 
-        footer { text-align: center; padding: 8rem 0 4rem; color: var(--text-dim); font-size: 0.9rem; position: relative; z-index: 2; }
+        footer { text-align: center; padding: 6rem 0 3rem; color: var(--text-dim); font-size: 0.85rem; position: relative; z-index: 2; }
         
         /* --- RESPONSIVE FIXES --- */
-        @media (max-width: 1200px) {
-            /* Push them further out so they don't touch text on tablets */
-            .p-rayquaza { left: -8vw; }
-            .p-charizard { right: -8vw; }
-            .p-gengar { left: -8vw; }
-            .p-gardevoir { right: -8vw; }
+        @media (max-width: 1300px) {
+            /* On laptops, hide the side pokemon (Gengar/Gardevoir) so they don't overlap content */
+            .p-gengar, .p-gardevoir { display: none; }
         }
 
         @media (max-width: 768px) { 
-            /* Mobile: Hide side noise, keep Suicune & Pichu */
+            /* Mobile: Hide everything except Suicune, Pichu, Magikarp */
             .p-rayquaza, .p-charizard, .p-gengar, .p-gardevoir, .p-vaporeon, .p-cubone {
                 display: none; 
             }
             
             .p-suicune { width: 120vw; opacity: 0.12; top: 40%; }
-            
-            /* Pichu moves to top right on mobile as a small badge */
-            .p-pichu { 
-                top: 30px; left: auto; right: 20px; 
-                transform: none;
-                width: 70px; 
-            }
+            .p-pichu { width: 80px; top: 20px; right: 20px; left: auto; }
             h1 { font-size: 3.5rem; } 
         }
     </style>
@@ -264,6 +266,7 @@
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/104.png" class="poke-bg p-cubone">
     
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/172.png" class="poke-bg p-pichu">
+    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/129.png" class="poke-bg p-magikarp">
 
     <header>
         <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="header-logo">
