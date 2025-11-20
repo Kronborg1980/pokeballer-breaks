@@ -6,11 +6,9 @@
     <title>PBM Breaks - Pokémon League Store</title>
     
     <link rel="icon" type="image/svg+xml" href="https://upload.wikimedia.org/wikipedia/commons/5/53/Pok%C3%A9_Ball_icon.svg">
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <style>
@@ -39,7 +37,7 @@
                 radial-gradient(circle at 80% 70%, rgba(157,78,221,0.1) 0%, transparent 50%);
         }
 
-        /* --- GRAPHICS --- */
+        /* GRAPHICS */
         .orb { position: absolute; border-radius: 50%; background: radial-gradient(circle, var(--accent), transparent); opacity: 0.15; pointer-events: none; filter: blur(50px); }
         .orb:nth-child(1){width:600px;height:600px;top:-10%;left:-10%;}
         .orb:nth-child(2){width:800px;height:800px;bottom:-20%;right:-20%; background: radial-gradient(circle, var(--purple), transparent);}
@@ -52,7 +50,7 @@
         }
         @keyframes floatHero { 0%,100%{transform:translate(-50%,-50%);} 50%{transform:translate(-50%,-60%);} }
 
-        /* --- HEADER --- */
+        /* HEADER */
         header { position: relative; z-index: 2; text-align: center; padding: 4rem 1rem 2rem; }
         .header-logo { width: 130px; filter: drop-shadow(0 0 30px var(--accent)); animation: float 6s infinite; }
         @keyframes float { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-15px);} }
@@ -66,65 +64,55 @@
 
         main { position: relative; z-index: 2; max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
 
-        /* --- YOUTUBE LAYOUT --- */
+        /* --- TWO VIDEO GRID --- */
         .youtube-section { margin: 3rem 0 5rem; }
         .section-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
         .section-line { height: 1px; background: rgba(255,255,255,0.1); flex: 1; }
         .section-title { color: #888; font-weight: 800; letter-spacing: 2px; font-size: 0.9rem; }
 
         .yt-container {
-            display: grid; gap: 20px;
-            grid-template-columns: 1fr; 
+            display: grid; gap: 30px;
+            grid-template-columns: 1fr; /* Mobile: 1 Column */
         }
 
         @media (min-width: 900px) {
             .yt-container {
-                grid-template-columns: 1.8fr 1fr; /* Left (Featured) is bigger */
-                grid-template-rows: 1fr 1fr;
+                grid-template-columns: 1fr 1fr; /* Desktop: 2 Equal Columns */
             }
-            /* Featured Video takes Left Column */
-            .yt-feat { grid-column: 1 / 2; grid-row: 1 / 3; height: 100%; }
-            .yt-sub { grid-column: 2 / 3; }
         }
 
         .yt-card {
             background: var(--card); border-radius: 20px; overflow: hidden;
             position: relative; cursor: pointer; transition: 0.3s;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 2px solid transparent;
-            aspect-ratio: 16/9;
+            aspect-ratio: 16/9; /* Force Widescreen Ratio */
         }
         .yt-card:hover { transform: translateY(-5px); filter: brightness(1.1); }
         .yt-thumb { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-        /* --- BADGES & BORDERS --- */
-        
-        /* 1. LIVE / STREAM (Purple) */
-        .border-live { border-color: var(--purple); box-shadow: 0 0 40px rgba(157, 78, 221, 0.3); }
-        .lbl-live { background: var(--purple); color: white; }
-
-        /* 2. UPCOMING (Yellow/Gold) */
+        /* Borders */
+        .border-live { border-color: var(--live-red); box-shadow: 0 0 40px rgba(255, 0, 85, 0.3); }
         .border-upcoming { border-color: var(--gold); box-shadow: 0 0 40px rgba(255, 215, 0, 0.3); }
-        .lbl-upcoming { background: var(--gold); color: black; animation: pulse 1.5s infinite; }
+        .border-past { border-color: var(--purple); }
+        .border-hunt { border-color: rgba(255,255,255,0.15); }
 
-        /* 3. HUNT (Blue/Standard) */
-        .border-hunt { border-color: rgba(255,255,255,0.1); }
-        .lbl-hunt { background: rgba(0,0,0,0.8); color: var(--accent); border: 1px solid var(--accent); }
-
+        /* Labels */
         .yt-label {
             position: absolute; top: 15px; left: 15px;
             padding: 8px 16px; border-radius: 8px;
             font-weight: 900; font-size: 0.85rem; letter-spacing: 0.5px; z-index: 2;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.8); text-transform: uppercase;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.8); text-transform: uppercase; display:flex; align-items:center; gap:8px;
         }
+        
+        .lbl-live { background: var(--live-red); color: white; animation: pulse 1.5s infinite; }
+        .lbl-upcoming { background: var(--gold); color: black; border:2px solid white; }
+        .lbl-past { background: var(--purple); color: white; }
+        .lbl-hunt { background: rgba(0,0,0,0.8); color: var(--accent); border: 1px solid var(--accent); }
 
         @keyframes pulse { 0% { opacity:1; } 50% { opacity:0.7; } 100% { opacity:1; } }
 
         /* --- STORE ITEMS --- */
-        .store-grid { 
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
-            gap: 30px; margin-top: 2rem; 
-        }
-        
+        .store-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 2rem; }
         .item-card {
             background: var(--card); border-radius: 24px; overflow: hidden;
             border: 1px solid rgba(255,255,255,0.1); transition: 0.4s ease;
@@ -138,21 +126,11 @@
             font-weight: 900; font-size: 0.8rem; z-index: 2; letter-spacing: 0.5px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.8); text-transform: uppercase;
         }
-        
-        /* MSRP BADGE */
         .tag-msrp { background: #00ff9d; color: black; }
-        
-        /* PREMIUM BUNDLE BADGE (Darker, More Contrast) */
-        .tag-bundle { 
-            background: linear-gradient(135deg, #000, #222); 
-            color: var(--gold); 
-            border: 1px solid var(--gold); 
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
-        }
+        .tag-bundle { background: linear-gradient(135deg, #000, #222); color: var(--gold); border: 1px solid var(--gold); box-shadow: 0 0 15px rgba(255, 215, 0, 0.4); }
 
         .item-img { width: 100%; height: 260px; object-fit: cover; transition: transform 0.5s; }
         .item-card:hover .item-img { transform: scale(1.05); }
-
         .item-content { padding: 1.5rem; flex: 1; display: flex; flex-direction: column; position: relative; background: linear-gradient(to top, #151525 50%, transparent); }
         .item-content h3 { font-size: 1.4rem; margin-bottom: 0.5rem; color: white; font-weight: 800; line-height: 1.3; }
         .item-content p { color: var(--text2); font-size: 0.9rem; line-height: 1.5; margin-bottom: 1.5rem; flex: 1; }
@@ -171,11 +149,6 @@
         .sold-out { background: #222; color: #555; pointer-events: none; border: 1px solid #333; }
 
         footer { text-align: center; padding: 5rem 0 3rem; color: #666; font-size: 0.85rem; position: relative; z-index: 2; }
-        
-        @media (max-width: 600px) {
-            h1 { font-size: 3rem; }
-            .yt-card { aspect-ratio: 16/9 !important; }
-        }
     </style>
 </head>
 <body>
@@ -219,7 +192,7 @@
     <script>
         const API_URL = 'https://pokeballer-worker.kronborgnielsen.workers.dev/api';
 
-        // --- 1. VIDEO LOGIC (Safe Version) ---
+        // --- 1. VIDEO LOGIC (Strict: 1 Stream + 1 Hunt) ---
         async function loadVideos() {
             const container = document.getElementById('yt-container');
             const proxy = 'https://corsproxy.io/?';
@@ -228,91 +201,89 @@
                 const res = await fetch(`${API_URL}/youtube`);
                 const text = await res.text();
                 const doc = new DOMParser().parseFromString(text, "text/xml");
-                const entries = Array.from(doc.querySelectorAll("entry")).slice(0, 15); 
+                const entries = Array.from(doc.querySelectorAll("entry")).slice(0, 20); // Search deeper
 
                 if(!entries.length) throw new Error("No videos");
 
-                let streamCandidate = null;
-                let huntCandidates = [];
+                let streamVideo = null;
+                let huntVideo = null;
 
-                // 1. Find the Stream (Live or Past)
+                // 1. FIND STREAM (Live, Upcoming, or Past)
                 for(let entry of entries) {
-                    const id = entry.querySelector("videoId").textContent;
                     const title = entry.querySelector("title").textContent;
                     const titleLower = title.toLowerCase();
+                    
+                    // It's a stream if title contains 'Stream', 'Live' or 'Break'
+                    if(titleLower.includes('stream') || titleLower.includes('live')) {
+                        const id = entry.querySelector("videoId").textContent;
+                        
+                        // Determine Badge Type
+                        let status = 'past'; // Default
+                        if(titleLower.includes('upcoming')) status = 'upcoming';
+                        
+                        // Check if REALLY live (Thumb Check)
+                        let isLiveNow = false;
+                        try {
+                             const check = await fetch(proxy + encodeURIComponent(`https://i.ytimg.com/vi/${id}/hqdefault_live.jpg`), {method:'HEAD'});
+                             if(check.ok) { status = 'live'; isLiveNow = true; }
+                        } catch(e){}
 
-                    // Is it a stream? (Has "stream" or "live" in title, OR has live thumb)
-                    // We check thumbnail later to determine Badge Type
-                    let isStream = false;
-                    try {
-                        // Check if live thumb exists
-                        const check = await fetch(proxy + encodeURIComponent(`https://i.ytimg.com/vi/${id}/hqdefault_live.jpg`), {method:'HEAD'});
-                        if(check.ok) isStream = true; 
-                    } catch(e){}
-
-                    // If it has live thumb OR title implies stream/live/break
-                    if(isStream || titleLower.includes('live') || titleLower.includes('stream')) {
-                        if(!streamCandidate) {
-                            // Determine Status
-                            let status = 'latest'; // Default "Latest Live Break"
-                            if(titleLower.includes('upcoming')) status = 'upcoming';
-                            
-                            streamCandidate = { id, title, status, isStream };
-                        }
-                    } else {
-                        // It's a hunt video
-                        if(huntCandidates.length < 2) {
-                            huntCandidates.push({ id, title });
-                        }
+                        streamVideo = { id, title, status, isLiveNow };
+                        break; // Found the latest stream, stop looking
                     }
                 }
 
-                // Fallback if no stream found, use first video as "Featured"
-                if(!streamCandidate && huntCandidates.length > 0) {
-                    streamCandidate = { ...huntCandidates.shift(), status: 'latest', isStream: false }; 
+                // 2. FIND HUNT (Latest standard video)
+                for(let entry of entries) {
+                    const id = entry.querySelector("videoId").textContent;
+                    // Ensure it's not the same video as the stream
+                    if(!streamVideo || id !== streamVideo.id) {
+                         const title = entry.querySelector("title").textContent.toLowerCase();
+                         // Hunts usually don't have "Stream" in title
+                         if(!title.includes('stream') && !title.includes('live')) {
+                             huntVideo = { id, title: entry.querySelector("title").textContent };
+                             break; // Found the latest hunt, stop looking
+                         }
+                    }
                 }
 
                 // Render
                 container.innerHTML = '';
-                
-                // FEATURED VIDEO (Left Side)
-                if(streamCandidate) {
-                    let thumb, badgeHTML, borderClass;
+                const videos = [];
+                if(streamVideo) videos.push({ ...streamVideo, type: 'stream' });
+                if(huntVideo) videos.push({ ...huntVideo, type: 'hunt' });
 
-                    // Logic for Badge
-                    if(streamCandidate.status === 'upcoming') {
-                         // UPCOMING
-                         thumb = `https://i.ytimg.com/vi/${streamCandidate.id}/hqdefault.jpg`; // Upcoming usually has standard thumb until live
-                         badgeHTML = `<div class="yt-label lbl-upcoming">🟡 UPCOMING BREAK</div>`;
-                         borderClass = 'border-upcoming';
+                videos.forEach(v => {
+                    let thumb = `https://i.ytimg.com/vi/${v.id}/maxresdefault.jpg`;
+                    let badgeHTML = '';
+                    let borderClass = '';
+
+                    if (v.type === 'stream') {
+                        if (v.status === 'live') {
+                            thumb = `https://i.ytimg.com/vi/${v.id}/hqdefault_live.jpg`;
+                            badgeHTML = `<div class="yt-label lbl-live"><i class="ph-fill ph-broadcast"></i> LIVE NOW</div>`;
+                            borderClass = 'border-live';
+                        } else if (v.status === 'upcoming') {
+                            badgeHTML = `<div class="yt-label lbl-upcoming"><i class="ph-fill ph-clock"></i> UPCOMING BREAK</div>`;
+                            borderClass = 'border-upcoming';
+                        } else {
+                            // Past Stream
+                            badgeHTML = `<div class="yt-label lbl-past"><i class="ph-fill ph-rewind-circle"></i> LATEST LIVE BREAK</div>`;
+                            borderClass = 'border-past';
+                        }
                     } else {
-                         // LATEST / LIVE (Safe Badge)
-                         // Use Live thumb if available, else MaxRes
-                         thumb = streamCandidate.isStream 
-                            ? `https://i.ytimg.com/vi/${streamCandidate.id}/hqdefault_live.jpg` 
-                            : `https://i.ytimg.com/vi/${streamCandidate.id}/maxresdefault.jpg`;
-                         
-                         badgeHTML = `<div class="yt-label lbl-live">🟣 LATEST LIVE BREAK</div>`;
-                         borderClass = 'border-live';
+                        // Hunt
+                        badgeHTML = `<div class="yt-label lbl-hunt"><i class="ph-fill ph-video"></i> NEWEST HUNT</div>`;
+                        borderClass = 'border-hunt';
                     }
 
                     container.innerHTML += `
-                        <div class="yt-card yt-feat ${borderClass}" onclick="window.open('https://youtube.com/watch?v=${streamCandidate.id}')">
+                        <div class="yt-card ${borderClass}" onclick="window.open('https://youtube.com/watch?v=${v.id}')">
                             <img src="${thumb}" class="yt-thumb">
                             ${badgeHTML}
                             <div style="position:absolute; bottom:0; left:0; right:0; padding:20px; background:linear-gradient(to top, rgba(0,0,0,0.9), transparent);">
-                                <div style="color:white; font-weight:700; text-shadow:0 2px 4px black;">${streamCandidate.title}</div>
+                                <div style="color:white; font-weight:700; text-shadow:0 2px 4px black;">${v.title}</div>
                             </div>
-                        </div>
-                    `;
-                }
-
-                // HUNT VIDEOS (Right Side)
-                huntCandidates.forEach(v => {
-                    container.innerHTML += `
-                        <div class="yt-card yt-sub border-hunt" onclick="window.open('https://youtube.com/watch?v=${v.id}')">
-                            <img src="https://i.ytimg.com/vi/${v.id}/maxresdefault.jpg" class="yt-thumb">
-                            <div class="yt-label lbl-hunt">🆕 NEWEST HUNT</div>
                         </div>
                     `;
                 });
