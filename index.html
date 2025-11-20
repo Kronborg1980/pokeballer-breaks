@@ -73,7 +73,17 @@
         .p-vaporeon { bottom: 0; left: 0; width: var(--guardian-size); animation: sway 12s infinite; }
         .p-cubone { bottom: 0; right: 0; width: calc(var(--guardian-size) * 0.85); z-index: -3; }
         
-        .p-pichu { top: 130px; left: 58%; width: 100px; opacity: 0.8; filter: drop-shadow(0 0 20px var(--accent-gold)); animation: bounce 4s infinite; z-index: -4; }
+        /* PICHU UPDATED: Moved down and opacity lowered to match others */
+        .p-pichu { 
+            top: auto; 
+            bottom: 20px; 
+            left: 53%; /* Slightly right of center next to magikarp */
+            width: 100px; 
+            opacity: 0.4; /* FIXED TRANSPARENCY */
+            filter: drop-shadow(0 0 20px var(--accent-gold)); 
+            animation: bounce 4s infinite; 
+            z-index: -4; 
+        }
         .p-magikarp { bottom: 10px; left: 50%; transform: translateX(-50%); width: 130px; opacity: 0.4; filter: blur(0.5px); animation: flop 2s infinite; }
 
         @keyframes breathe { 0%,100%{scale:1; opacity:0.15;} 50%{scale:1.02; opacity:0.2;} }
@@ -102,32 +112,18 @@
             animation: floatLeft 6s infinite ease-in-out;
         }
 
-        /* --- NEW: UBER COOL GLOSSY TITLE --- */
+        /* UBER COOL GLOSSY TITLE */
         h1 {
             font-size: clamp(3.5rem, 10vw, 6rem); 
             font-weight: 900; 
             letter-spacing: -2px; 
             margin-top: 1rem;
             text-transform: uppercase;
-            
-            /* The Gradient Text Fill */
-            background: linear-gradient(
-                180deg, 
-                #ffffff 0%, 
-                #d0faff 45%, 
-                #00ffe7 55%, 
-                #bd00ff 100%
-            );
+            background: linear-gradient(180deg, #ffffff 0%, #d0faff 45%, #00ffe7 55%, #bd00ff 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            
-            /* The "Neon Glass" Glow */
             filter: drop-shadow(0 0 15px rgba(0, 255, 231, 0.6));
-            
-            /* The "Frozen" Stroke */
             -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
-            
-            /* Animation */
             animation: hologram 5s infinite alternate;
         }
         
@@ -143,11 +139,10 @@
             text-shadow: 0 0 10px var(--accent-cyan);
         }
 
-        /* --- NEW: LED BORDER ANIMATION CARD SYSTEM --- */
+        /* LED BORDER ANIMATION CARD SYSTEM */
         .neon-card-wrapper {
             position: relative;
             border-radius: 24px;
-            /* This creates the space for the border */
             padding: 3px; 
             background: rgba(255,255,255,0.05);
             overflow: hidden;
@@ -160,33 +155,23 @@
             box-shadow: 0 0 30px rgba(0, 255, 231, 0.3);
         }
 
-        /* The Spinning Light Beam */
         .neon-card-wrapper::before {
             content: '';
             position: absolute;
             top: -50%; left: -50%;
             width: 200%; height: 200%;
-            /* The "Suicune" Gradient Beam */
-            background: conic-gradient(
-                transparent 0deg, 
-                transparent 80deg, 
-                var(--accent-cyan) 130deg, 
-                var(--text-bright) 140deg, 
-                var(--accent-purple) 150deg, 
-                transparent 200deg
-            );
+            background: conic-gradient(transparent 0deg, transparent 80deg, var(--accent-cyan) 130deg, var(--text-bright) 140deg, var(--accent-purple) 150deg, transparent 200deg);
             animation: spinBorder 4s linear infinite;
             z-index: 0;
         }
 
         @keyframes spinBorder { 100% { transform: rotate(360deg); } }
 
-        /* The Inner Card (Glass) */
         .glass-panel {
             position: relative;
-            background: rgba(20, 20, 35, 0.85); /* Darker for contrast */
+            background: rgba(20, 20, 35, 0.85);
             backdrop-filter: blur(20px) saturate(1.5);
-            border-radius: 21px; /* Slightly smaller than wrapper */
+            border-radius: 21px;
             height: 100%; width: 100%;
             z-index: 1;
             overflow: hidden;
@@ -252,7 +237,8 @@
         @media (max-width: 768px) { 
             .p-rayquaza, .p-charizard, .p-gengar, .p-gardevoir, .p-vaporeon, .p-cubone { display: none; }
             .p-suicune { width: 120vw; opacity: 0.12; top: 40%; }
-            .p-pichu { width: 80px; top: 20px; right: 20px; left: auto; }
+            /* Mobile Pichu Position */
+            .p-pichu { width: 70px; bottom: 10px; left: auto; right: 10px; }
             h1 { font-size: 3.5rem; } 
             main { padding: 1rem; margin-bottom: 2rem; width: 95%; }
         }
@@ -362,7 +348,6 @@
                         badgeHTML = `<div class="yt-label lbl-hunt"><i class="ph-fill ph-video"></i> LATEST HUNT</div>`;
                     }
 
-                    /* UPDATED: Added wrapper for the LED border effect */
                     container.innerHTML += `
                         <div class="neon-card-wrapper" onclick="window.open('https://youtube.com/watch?v=${v.id}')">
                             <div class="yt-card glass-panel">
@@ -398,7 +383,6 @@
                         
                     const img = item.image || 'https://assets.pokemon.com/assets/cms2/img/misc/trading-card-games/cards/tcg_default_card.png';
                     
-                    /* UPDATED: Added wrapper for the LED border effect */
                     container.innerHTML += `
                         <div class="neon-card-wrapper">
                             <div class="item-card glass-panel">
