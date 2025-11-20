@@ -65,19 +65,23 @@
         .p-gardevoir { top: 50%; right: 0; transform: translateY(-50%); width: var(--guardian-size); animation: floatRight 8s infinite 2s; }
         .p-vaporeon { bottom: 0; left: 0; width: var(--guardian-size); animation: sway 12s infinite; }
         .p-cubone { bottom: 0; right: 0; width: calc(var(--guardian-size) * 0.85); z-index: -3; }
+        
+        /* --- UPDATED PICHU POSITION --- */
         .p-pichu {
-            bottom: 20px; left: 53%; width: 100px; opacity: 0.4;
+            bottom: 20px; 
+            left: 68%; /* Increased from 53% to create spread */
+            width: 100px; opacity: 0.4;
             filter: drop-shadow(0 0 20px var(--accent-gold));
             animation: bounce 4s infinite; z-index: -4;
         }
         .p-magikarp { bottom: 10px; left: 50%; transform: translateX(-50%); width: 130px; opacity: 0.4; filter: blur(0.5px); animation: flop 2s infinite; }
         
-        /* --- NEW PINSIR CSS --- */
+        /* --- UPDATED PINSIR POSITION (BOTTOM) --- */
         .p-pinsir { 
-            top: 15%; 
-            left: 18%; 
+            bottom: 25px; /* Moved to bottom */
+            left: 15%;    /* Positioned on the left side */
             width: calc(var(--guardian-size) * 1.1); 
-            opacity: 0.6;
+            opacity: 0.5;
             animation: pinsirSnap 8s infinite ease-in-out;
             z-index: -5;
         }
