@@ -3,96 +3,225 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PBM Breaks</title>
+    <title>PBM Breaks - Pokémon League Store</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <style>
-        :root { --bg: #0a0a15; --card: #1a1a2e; --accent: #00eeff; --live: #ff0055; --text: #fff; }
-        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; padding: 20px; overflow-x: hidden; }
-        
-        header { text-align: center; margin-bottom: 4rem; }
-        h1 { font-size: 3rem; font-weight: 900; background: linear-gradient(90deg, var(--accent), #fff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0; }
 
-        /* YOUTUBE GRID */
-        .youtube-section { max-width: 1100px; margin: 0 auto 5rem; }
-        .section-title { text-align: center; font-size: 1.5rem; color: #888; margin-bottom: 2rem; font-weight: 800; }
+    <style>
+        :root {
+            --bg: #0a0a15;
+            --card: rgba(26, 26, 46, 0.85); /* More transparent for glass effect */
+            --accent: #00eeff;
+            --electric: #00ff9d;
+            --purple: #9d4edd;
+            --live-red: #ff0055;
+            --text: #ffffff;
+            --text2: #e0e0ff;
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            /* Deep Space Gradient */
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(0,238,255,0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(157,78,221,0.15) 0%, transparent 50%);
+        }
+
+        /* --- AWESOME GRAPHICS RESTORED --- */
+        .orb {
+            position: absolute; border-radius: 50%;
+            background: radial-gradient(circle, var(--accent), transparent);
+            opacity: 0.15; pointer-events: none; filter: blur(40px); z-index: 0;
+        }
+        .orb:nth-child(1){width:600px;height:600px;top:-10%;left:-10%; animation: pulseOrb 10s infinite alternate;}
+        .orb:nth-child(2){width:800px;height:800px;bottom:-20%;right:-20%; background: radial-gradient(circle, var(--purple), transparent); animation: pulseOrb 15s infinite alternate-reverse;}
         
-        .yt-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        @keyframes pulseOrb { 0%{opacity:0.1; transform:scale(1);} 100%{opacity:0.2; transform:scale(1.1);} }
+
+        .suicune-hero {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: clamp(300px, 90vw, 900px); opacity: 0.2; pointer-events: none; z-index: 0;
+            filter: drop-shadow(0 0 80px var(--accent)) brightness(1.2);
+            animation: floatHero 20s infinite ease-in-out;
+        }
+        @keyframes floatHero { 0%,100%{transform:translate(-50%, -50%) translateY(0);} 50%{transform:translate(-50%, -50%) translateY(-30px);} }
+
+        /* --- HEADER --- */
+        header {
+            position: relative; z-index: 2; text-align: center;
+            padding: 5rem 1rem 3rem;
+        }
         
-        @media(min-width: 800px) {
+        .header-logo { 
+            width: 140px; filter: drop-shadow(0 0 40px var(--accent)); 
+            animation: levitate 6s infinite ease-in-out; 
+        }
+        @keyframes levitate { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+
+        h1 {
+            font-size: clamp(3.5rem, 10vw, 6rem); font-weight: 900; letter-spacing: -3px;
+            background: linear-gradient(to right, #00eeff, #fff, #d946ef);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-top: 1rem; filter: drop-shadow(0 0 30px rgba(0,238,255,0.4));
+        }
+
+        main { position: relative; z-index: 2; max-width: 1300px; margin: 0 auto; padding: 0 1.5rem; }
+
+        /* --- YOUTUBE SECTION --- */
+        .youtube-section { margin: 4rem 0; }
+        .section-title { 
+            text-align: center; font-size: 2rem; color: var(--text); margin-bottom: 2.5rem; font-weight: 800; 
+            text-shadow: 0 0 20px rgba(157, 78, 221, 0.6);
+        }
+        
+        .yt-grid { display: grid; grid-template-columns: 1fr; gap: 25px; }
+        
+        @media (min-width: 900px) {
             .yt-grid.live-mode { grid-template-columns: 2fr 1fr; grid-template-rows: 1fr 1fr; }
-            .yt-grid.live-mode .yt-card:first-child { grid-column: 1 / 2; grid-row: 1 / 3; } 
+            .yt-grid.live-mode .yt-card:first-child { grid-column: 1 / 2; grid-row: 1 / 3; }
             .yt-grid.normal-mode { grid-template-columns: repeat(3, 1fr); }
         }
 
-        .yt-card { position: relative; background: var(--card); border-radius: 20px; overflow: hidden; cursor: pointer; transition: 0.3s; aspect-ratio: 16/9; border: 2px solid rgba(255,255,255,0.1); }
-        .yt-card:hover { transform: translateY(-5px); }
+        .yt-card {
+            background: var(--card); border-radius: 24px; overflow: hidden;
+            position: relative; cursor: pointer; border: 2px solid rgba(255,255,255,0.1);
+            aspect-ratio: 16/9; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); backdrop-filter: blur(10px);
+        }
+        .yt-card:hover { transform: translateY(-10px) scale(1.02); border-color: var(--accent); box-shadow: 0 20px 50px rgba(0,238,255,0.2); }
+        
         .yt-thumb { width: 100%; height: 100%; object-fit: cover; }
-
-        /* Styles for LIVE vs UPLOAD */
-        .yt-card.is-live { border: 3px solid var(--live); box-shadow: 0 0 30px rgba(255, 0, 85, 0.3); }
-        .yt-badge { position: absolute; top: 15px; left: 15px; padding: 5px 12px; border-radius: 50px; font-weight: 900; font-size: 0.8rem; z-index: 2; }
-        .badge-live { background: var(--live); color: white; animation: pulse 1.5s infinite; }
-        .badge-upload { background: rgba(0,0,0,0.7); border: 1px solid #555; color: white; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
-
-        /* STORE GRID */
-        .store-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 1100px; margin: 0 auto; }
-        .item-card { background: var(--card); border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); position: relative; transition: 0.3s; display: flex; flex-direction: column; }
-        .item-card:hover { transform: translateY(-10px); border-color: var(--accent); }
         
-        .type-tag { position: absolute; top: 15px; right: 15px; padding: 5px 10px; border-radius: 8px; font-weight: bold; font-size: 0.8rem; color: black; z-index: 2; }
-        .tag-msrp { background: #00ff9d; }
-        .tag-bundle { background: #ffd700; }
-
-        .item-img { width: 100%; height: 250px; object-fit: cover; }
-        .item-content { padding: 20px; flex: 1; display: flex; flex-direction: column; }
-        .item-btn { margin-top: auto; padding: 12px; text-align: center; background: var(--accent); color: black; font-weight: 900; text-decoration: none; border-radius: 8px; display: block; }
-        .sold-out { background: #333; color: #666; pointer-events: none; }
+        .yt-card.is-live { border: 3px solid var(--live-red); box-shadow: 0 0 50px rgba(255, 0, 85, 0.4); }
         
-        /* Mobile Fixes */
-        @media(max-width: 600px) {
-            h1 { font-size: 2.5rem; }
+        .yt-badge { 
+            position: absolute; top: 15px; left: 15px; padding: 6px 16px; border-radius: 50px; 
+            font-weight: 900; font-size: 0.85rem; z-index: 2; letter-spacing: 1px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.8);
+        }
+        .badge-live { background: var(--live-red); color: white; animation: pulseBadge 1.5s infinite; }
+        .badge-upload { background: rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.3); color: white; }
+        @keyframes pulseBadge { 0% { transform:scale(1); } 50% { transform:scale(1.05); box-shadow: 0 0 20px var(--live-red); } 100% { transform:scale(1); } }
+
+        /* --- STORE ITEMS --- */
+        .store-grid { 
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
+            gap: 35px; margin-top: 4rem; 
+        }
+        
+        .item-card {
+            background: var(--card); border-radius: 30px; overflow: hidden;
+            border: 2px solid rgba(255,255,255,0.1); transition: 0.4s ease;
+            display: flex; flex-direction: column; position: relative;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+        }
+        .item-card:hover { 
+            transform: translateY(-15px); border-color: var(--accent); 
+            box-shadow: 0 40px 80px rgba(0,238,255,0.15); 
+        }
+        
+        .type-tag {
+            position: absolute; top: 15px; right: 15px; padding: 8px 16px; border-radius: 12px;
+            font-weight: 900; font-size: 0.85rem; color: black; z-index: 2;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5); border: 2px solid white;
+        }
+        .tag-msrp { background: linear-gradient(135deg, #00ff9d, #00b8ff); }
+        .tag-bundle { background: linear-gradient(135deg, #ffd700, #ff8c00); }
+
+        .item-img { width: 100%; height: 280px; object-fit: cover; transition: transform 0.5s; }
+        .item-card:hover .item-img { transform: scale(1.1); }
+
+        .item-content { padding: 1.8rem; flex: 1; display: flex; flex-direction: column; z-index: 1; position: relative; background: linear-gradient(to top, #1a1a2e 80%, transparent); }
+        .item-content h3 { font-size: 1.6rem; margin-bottom: 0.8rem; color: white; font-weight: 800; }
+        .item-content p { color: var(--text2); font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.5rem; flex: 1; }
+        
+        .price-row { 
+            display: flex; justify-content: space-between; align-items: center; 
+            margin-bottom: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); 
+        }
+        .price { font-size: 2rem; font-weight: 900; color: var(--electric); text-shadow: 0 0 20px rgba(0,255,157,0.5); }
+        .stock { font-size: 0.9rem; color: var(--accent); background: rgba(0,238,255,0.1); padding: 5px 10px; border-radius: 8px; border: 1px solid rgba(0,238,255,0.3); }
+
+        .buy-btn {
+            display: block; text-align: center; padding: 1.2rem; border-radius: 16px;
+            background: linear-gradient(135deg, var(--accent), var(--purple));
+            color: white; text-decoration: none; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;
+            transition: 0.3s; box-shadow: 0 10px 30px rgba(0,238,255,0.3);
+        }
+        .buy-btn:hover { transform: translateY(-3px); box-shadow: 0 20px 50px rgba(0,238,255,0.5); filter: brightness(1.1); }
+        .sold-out { background: rgba(255,255,255,0.1); color: #888; box-shadow: none; border: 1px solid #444; pointer-events: none; }
+
+        footer { text-align: center; padding: 6rem 0 3rem; color: #666; font-size: 0.9rem; position: relative; z-index: 2; }
+
+        /* Mobile Adjustments */
+        @media (max-width: 600px) {
+            h1 { font-size: 3.5rem; }
             .yt-grid { grid-template-columns: 1fr !important; }
+            .item-card { margin: 0 10px; }
         }
     </style>
 </head>
 <body>
 
+    <div class="orb"></div><div class="orb"></div>
+    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="suicune-hero">
+
     <header>
-        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" style="width:100px;">
+        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="header-logo">
         <h1>PBM BREAKS</h1>
     </header>
 
-    <div class="youtube-section">
-        <div class="section-title">CHANNEL FEED</div>
-        <div id="yt-container" class="yt-grid">
-            <div style="text-align:center; grid-column: 1/-1;">
-                <a href="https://www.youtube.com/@PokeballerMike" target="_blank" class="item-btn" style="max-width:200px; margin:0 auto;">VISIT YOUTUBE</a>
+    <main>
+        <section class="youtube-section">
+            <div class="section-title">📺 CHANNEL FEED</div>
+            <div id="yt-container" class="yt-grid">
+                <div style="text-align:center; grid-column: 1/-1; color:#888;">
+                    <i class="ph ph-spinner ph-spin" style="font-size:2rem;"></i> Loading Videos...
+                </div>
+            </div>
+        </section>
+
+        <div class="store-grid" id="store-container">
+            <div style="text-align:center; color:#888; font-size:1.5rem;">
+                 <i class="ph ph-spinner ph-spin"></i> Loading Drops...
             </div>
         </div>
-    </div>
+    </main>
 
-    <div class="store-grid" id="store-container">Loading...</div>
+    <footer>
+        <p>© 2025 PBM Breaks • Not affiliated with Nintendo</p>
+    </footer>
 
     <script>
+        // Use your specific worker URL
         const API_URL = 'https://pokeballer-worker.kronborgnielsen.workers.dev/api';
-        const CHANNEL_ID = "UCdFYy9uChCNAWbvVhTYwHaQ";
 
+        // 1. Load Videos (Using the internal proxy in your worker)
         async function loadVideos() {
             const container = document.getElementById('yt-container');
-            const proxy = 'https://corsproxy.io/?';
             try {
-                const res = await fetch(proxy + encodeURIComponent(`https://www.youtube.com/feeds/videos.xml?channel_id=${CHANNEL_ID}`));
+                // Using the new /youtube endpoint I added to your worker code
+                const res = await fetch(`${API_URL}/youtube`); 
                 const text = await res.text();
+                
                 const doc = new DOMParser().parseFromString(text, "text/xml");
                 const entries = Array.from(doc.querySelectorAll("entry")).slice(0, 3);
                 
                 if(entries.length === 0) throw new Error('No videos');
 
                 let videos = [];
+                const proxy = 'https://corsproxy.io/?'; // Fallback proxy for thumbnail check only
+
                 for(let entry of entries) {
                     const id = entry.querySelector("videoId").textContent;
                     const title = entry.querySelector("title").textContent;
@@ -105,47 +234,64 @@
                     videos.push({ id, title, isLive });
                 }
 
+                // Sort so Live is first
                 videos.sort((a,b) => b.isLive - a.isLive);
+                
+                // Set Grid Layout based on if there is a live video
                 container.className = videos.some(v=>v.isLive) ? 'yt-grid live-mode' : 'yt-grid normal-mode';
                 container.innerHTML = '';
 
                 videos.forEach(v => {
                     const thumb = v.isLive ? `https://i.ytimg.com/vi/${v.id}/hqdefault_live.jpg` : `https://i.ytimg.com/vi/${v.id}/mqdefault.jpg`;
-                    const badge = v.isLive ? `<div class="yt-badge badge-live">🔴 LIVE</div>` : `<div class="yt-badge badge-upload">VIDEO</div>`;
+                    const badge = v.isLive ? `<div class="yt-badge badge-live">🔴 LIVE NOW</div>` : `<div class="yt-badge badge-upload">LATEST VIDEO</div>`;
                     const cls = v.isLive ? 'is-live' : 'is-upload';
-                    container.innerHTML += `<div class="yt-card ${cls}" onclick="window.open('https://youtube.com/watch?v=${v.id}')"><img src="${thumb}" class="yt-thumb">${badge}</div>`;
+                    
+                    container.innerHTML += `
+                        <div class="yt-card ${cls}" onclick="window.open('https://youtube.com/watch?v=${v.id}')">
+                            <img src="${thumb}" class="yt-thumb">
+                            ${badge}
+                            <div style="position:absolute; bottom:0; left:0; right:0; padding:20px; background:linear-gradient(to top, rgba(0,0,0,0.9), transparent);">
+                                <div style="color:white; font-weight:700; font-size:1rem; text-shadow:0 2px 4px black;">${v.title}</div>
+                            </div>
+                        </div>`;
                 });
             } catch(e) { 
                 console.log("Feed Error", e);
-                // Fallback if proxy fails
-                container.innerHTML = '<div style="text-align:center; grid-column: 1/-1;"><a href="https://www.youtube.com/@PokeballerMike" target="_blank" class="item-btn" style="max-width:200px; margin:0 auto;">WATCH ON YOUTUBE</a></div>'; 
+                container.innerHTML = '<div style="text-align:center; grid-column: 1/-1;"><a href="https://www.youtube.com/@PokeballerMike" target="_blank" class="buy-btn" style="max-width:250px; margin:0 auto;">VISIT YOUTUBE CHANNEL</a></div>'; 
             }
         }
 
+        // 2. Load Store Items
         async function loadStore() {
             const container = document.getElementById('store-container');
             try {
                 const res = await fetch(`${API_URL}/items`);
                 const items = await res.json();
-                // Sort Newest First
-                items.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
-                container.innerHTML = '';
                 
+                // Sort by Newest (createdAt)
+                items.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
+                
+                container.innerHTML = '';
+                if(items.length === 0) { container.innerHTML = '<div style="text-align:center; color:#666;">No active breaks right now!</div>'; return; }
+
                 items.forEach(item => {
                     const tagClass = item.type === 'bundle' ? 'tag-bundle' : 'tag-msrp';
-                    const tagText = item.type === 'bundle' ? 'BUNDLE' : 'MSRP';
-                    const btn = (item.stock > 0 && item.googleFormLink) ? `<a href="${item.googleFormLink}" class="item-btn">JOIN</a>` : `<div class="item-btn sold-out">SOLD OUT</div>`;
+                    const tagText = item.type === 'bundle' ? '✨ BUNDLE' : '✅ MSRP';
+                    const btn = (item.stock > 0 && item.googleFormLink) ? `<a href="${item.googleFormLink}" target="_blank" class="buy-btn">JOIN BREAK</a>` : `<div class="buy-btn sold-out">SOLD OUT</div>`;
                     const img = item.image || 'https://assets.pokemon.com/assets/cms2/img/misc/trading-card-games/cards/tcg_default_card.png';
                     
                     container.innerHTML += `
                         <div class="item-card">
                             <div class="type-tag ${tagClass}">${tagText}</div>
-                            <img src="${img}" class="item-img">
+                            <div style="overflow:hidden;">
+                                <img src="${img}" class="item-img">
+                            </div>
                             <div class="item-content">
                                 <h3>${item.name}</h3>
-                                <div style="display:flex; justify-content:space-between; margin-bottom:1rem;">
-                                    <span style="color:var(--accent); font-weight:bold; font-size:1.2rem;">$${item.price}</span>
-                                    <span style="color:#888;">${item.stock} left</span>
+                                <p>${item.description}</p>
+                                <div class="price-row">
+                                    <span class="price">$${item.price.toFixed(2)}</span>
+                                    <span class="stock">${item.stock} Spots</span>
                                 </div>
                                 ${btn}
                             </div>
@@ -154,7 +300,8 @@
             } catch(e) { container.innerHTML = "Error loading store."; }
         }
 
-        loadVideos(); loadStore();
+        loadVideos(); 
+        loadStore();
     </script>
 </body>
 </html>
