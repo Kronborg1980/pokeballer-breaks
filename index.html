@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PBM Breaks - The Crystal League</title>
- 
+   
     <link rel="icon" type="image/svg+xml" href="https://upload.wikimedia.org/wikipedia/commons/5/53/Pok%C3%A9_Ball_icon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -45,17 +45,29 @@
             animation: particleMove 60s linear infinite; opacity: 0.3;
         }
         @keyframes particleMove { from{background-position:0 0,0 0} to{background-position:0 -1000px,0 -500px} }
-
-        /* POKEMON BACKGROUND - unchanged */
-        .poke-bg { position: fixed; pointer-events: none; z-index: -5; will-change: transform; opacity: 0.4; filter: drop-shadow(0 0 15px rgba(0,0,0,0.8)); }
-        .p-suicune { top: 50%; left: 50%; transform: translate(-50%, -50%); width: clamp(500px, 70vw, 1000px); opacity: 0.15; filter: drop-shadow(0 0 80px rgba(0, 255, 231, 0.3)); animation: breathe 8s ease-in-out infinite; z-index: -6; }
+        /* POKEMON BACKGROUND */
+        .poke-bg {
+            position: fixed; pointer-events: none; z-index: -5;
+            will-change: transform; transition: all 0.5s ease;
+            opacity: 0.4; filter: drop-shadow(0 0 15px rgba(0,0,0,0.8));
+        }
+        .p-suicune {
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: clamp(500px, 70vw, 1000px); opacity: 0.15;
+            filter: drop-shadow(0 0 80px rgba(0, 255, 231, 0.3));
+            animation: breathe 8s ease-in-out infinite; z-index: -6;
+        }
         .p-rayquaza { top: 0; left: 0; width: var(--guardian-size); animation: floatLeft 10s infinite; }
         .p-charizard { top: 0; right: 0; width: var(--guardian-size); animation: floatRight 9s infinite; transform: scaleX(-1); }
         .p-gengar { top: 50%; left: 0; transform: translateY(-50%); width: var(--guardian-size); animation: floatLeft 7s infinite 1s; }
         .p-gardevoir { top: 50%; right: 0; transform: translateY(-50%); width: var(--guardian-size); animation: floatRight 8s infinite 2s; }
         .p-vaporeon { bottom: 0; left: 0; width: var(--guardian-size); animation: sway 12s infinite; }
         .p-cubone { bottom: 0; right: 0; width: calc(var(--guardian-size) * 0.85); z-index: -3; }
-        .p-pichu { bottom: 20px; left: 53%; width: 100px; opacity: 0.4; filter: drop-shadow(0 0 20px var(--accent-gold)); animation: bounce 4s infinite; z-index: -4; }
+        .p-pichu {
+            bottom: 20px; left: 53%; width: 100px; opacity: 0.4;
+            filter: drop-shadow(0 0 20px var(--accent-gold));
+            animation: bounce 4s infinite; z-index: -4;
+        }
         .p-magikarp { bottom: 10px; left: 50%; transform: translateX(-50%); width: 130px; opacity: 0.4; filter: blur(0.5px); animation: flop 2s infinite; }
         @keyframes breathe { 0%,100%{scale:1; opacity:0.15;} 50%{scale:1.02; opacity:0.2;} }
         @keyframes floatLeft { 0%,100%{margin-top:0;} 50%{margin-top:-15px;} }
@@ -63,74 +75,139 @@
         @keyframes sway { 0%,100%{transform:rotate(0deg);} 50%{transform:rotate(3deg);} }
         @keyframes bounce { 0%,100%{transform:translateY(0) rotate(0deg);} 50%{transform:translateY(-10px) rotate(5deg);} }
         @keyframes flop { 0%,100%{transform: translateX(-50%) rotate(-10deg);} 50%{transform: translateX(-50%) rotate(10deg) translateY(-10px);} }
-
-        main { position: relative; z-index: 2; max-width: 1200px; margin: 0 auto; padding: 2rem; border: 1px solid rgba(0, 255, 231, 0.1); border-radius: 30px; box-shadow: 0 0 50px rgba(0,0,0,0.5); background: rgba(0,0,0,0.2); margin-top: 2rem; margin-bottom: 4rem; }
+        
+        /* LAYOUT */
+        main {
+            position: relative; z-index: 2; max-width: 1200px; margin: 0 auto; padding: 2rem;
+            border: 1px solid rgba(0, 255, 231, 0.1);
+            border-radius: 30px;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.2);
+            margin-top: 2rem;
+            margin-bottom: 4rem;
+        }
         header { text-align: center; padding: 5rem 1rem 1rem; position: relative; z-index: 2; }
-        .header-logo { width: 130px; filter: drop-shadow(0 0 30px var(--accent-cyan)); animation: floatLeft 6s infinite ease-in-out; }
-        h1 { font-size: clamp(3.5rem, 10vw, 6rem); font-weight: 900; letter-spacing: -2px; margin-top: 1rem; text-transform: uppercase; background: linear-gradient(180deg, #ffffff 0%, #d0faff 45%, #00ffe7 55%, #bd00ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3); animation: hologram 8s ease-in-out infinite; }
-        @keyframes hologram { 0%,100% { filter: drop-shadow(0 0 15px rgba(0, 255, 231, 0.6)); } 50% { filter: drop-shadow(0 0 25px rgba(189, 0, 255, 0.7)); } }
+        .header-logo {
+            width: 130px; filter: drop-shadow(0 0 30px var(--accent-cyan));
+            animation: floatLeft 6s infinite ease-in-out;
+        }
+        
+        /* --- NEW "FLICKER-PROOF" TITLE --- */
+        h1 {
+            font-size: clamp(3.5rem, 10vw, 6rem);
+            font-weight: 900;
+            letter-spacing: -2px;
+            margin-top: 1rem;
+            text-transform: uppercase;
+            position: relative;
+            display: inline-block;
+            z-index: 1;
+            
+            /* Front Layer (Gradient Only, No Shadow) */
+            background: linear-gradient(180deg, #ffffff 0%, #d0faff 45%, #00ffe7 55%, #bd00ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            /* Note: Removing text-stroke from the front layer often helps compositing */
+        }
 
-        /* === 100% FLICKER-FREE NEON BORDER === */
+        /* Back Layer (The Glow Animation) */
+        h1::before {
+            content: attr(data-text); /* Copies the text automatically */
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            
+            /* This layer is just for the glow */
+            color: var(--accent-cyan); 
+            filter: blur(12px); /* Soft Neon Blur */
+            opacity: 0.6;
+            animation: deepGlow 4s ease-in-out infinite;
+        }
+        
+        /* Second Back Layer (Sharp Outline) */
+        h1::after {
+            content: attr(data-text);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            -webkit-text-stroke: 4px rgba(0, 255, 231, 0.3);
+            color: transparent;
+        }
+
+        @keyframes deepGlow {
+            0%, 100% { opacity: 0.4; filter: blur(12px); transform: scale(1); }
+            50% { opacity: 0.8; filter: blur(16px); transform: scale(1.02); }
+        }
+        /* --- END TITLE CSS --- */
+
+        .section-header { display: flex; align-items: center; gap: 1.5rem; margin: 3rem 0 2rem; }
+        .section-line { height: 2px; background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent); flex: 1; opacity: 0.5; box-shadow: 0 0 10px var(--accent-cyan); }
+        .section-title {
+            color: var(--accent-cyan); font-weight: 900; letter-spacing: 3px; font-size: 1.2rem;
+            text-shadow: 0 0 10px var(--accent-cyan);
+        }
+        /* NEON CARD SYSTEM */
         .neon-card-wrapper {
             position: relative;
             border-radius: 24px;
-            padding: 4px;                     /* thickness of the neon border */
-            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple)) border-box;
-            background-clip: padding-box;
-            border: 4px solid transparent;   /* important */
+            padding: 3px;
+            background: rgba(255,255,255,0.05);
             overflow: hidden;
             transition: transform 0.4s ease;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-        .neon-card-wrapper::before {
-            content: "";
-            position: absolute;
-            inset: -4px;                      /* extend outside */
-            padding: 4px;
-            border-radius: 28px;
-            background: conic-gradient(from 0deg, var(--accent-cyan), var(--accent-purple), #fff, var(--accent-cyan), var(--accent-purple));
-            background-size: 200% 200%;
-            animation: neonSpin 8s linear infinite;
-            mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-            mask-composite: exclude;
-            -webkit-mask-composite: xor;
-            z-index: -1;
-        }
-        @keyframes neonSpin {
-            0%   { background-position: 0% 0%; }
-            100% { background-position: 100% 100%; }
-        }
         .neon-card-wrapper:hover {
             transform: translateY(-8px) scale(1.01);
-            box-shadow: 0 0 35px rgba(0, 255, 231, 0.4);
+            box-shadow: 0 0 30px rgba(0, 255, 231, 0.3);
         }
+        .neon-card-wrapper::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: conic-gradient(transparent 0deg, transparent 80deg, var(--accent-cyan) 130deg, var(--text-bright) 140deg, var(--accent-purple) 150deg, transparent 200deg);
+            animation: spinBorder 4s linear infinite;
+            z-index: 0;
+        }
+        @keyframes spinBorder { 100% { transform: rotate(360deg); } }
         .glass-panel {
             position: relative;
             background: rgba(20, 20, 35, 0.85);
             backdrop-filter: blur(20px) saturate(1.5);
-            border-radius: 20px;
-            height: 100%;
-            width: 100%;
+            border-radius: 21px;
+            height: 100%; width: 100%;
             z-index: 1;
             overflow: hidden;
         }
-
-        /* rest of your styles unchanged */
-        .section-header { display: flex; align-items: center; gap: 1.5rem; margin: 3rem 0 2rem; }
-        .section-line { height: 2px; background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent); flex: 1; opacity: 0.5; box-shadow: 0 0 10px var(--accent-cyan); }
-        .section-title { color: var(--accent-cyan); font-weight: 900; letter-spacing: 3px; font-size: 1.2rem; text-shadow: 0 0 10px var(--accent-cyan); }
+        /* GRID */
         .yt-container { display: grid; gap: 25px; grid-template-columns: 1fr; }
         @media (min-width: 900px) { .yt-container { grid-template-columns: 1fr 1fr; } }
         .yt-card { aspect-ratio: 16/9; cursor: pointer; }
         .yt-thumb { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; opacity: 0.9; }
         .neon-card-wrapper:hover .yt-thumb { transform: scale(1.05); opacity: 1; }
-        .yt-label { position: absolute; top: 15px; left: 15px; padding: 8px 16px; border-radius: 10px; font-weight: 900; font-size: 0.8rem; letter-spacing: 0.5px; z-index: 2; box-shadow: 0 5px 15px rgba(0,0,0,0.5); text-transform: uppercase; display:flex; align-items:center; gap:6px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); }
+        .yt-label {
+            position: absolute; top: 15px; left: 15px; padding: 8px 16px; border-radius: 10px;
+            font-weight: 900; font-size: 0.8rem; letter-spacing: 0.5px; z-index: 2;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5); text-transform: uppercase; display:flex; align-items:center; gap:6px;
+            backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);
+        }
         .lbl-upcoming { background: rgba(255, 215, 0, 0.9); color: black; animation: pulse 2s infinite; }
         .lbl-past { background: rgba(189, 0, 255, 0.9); color: white; }
         .lbl-hunt { background: rgba(0, 238, 255, 0.9); color: black; }
         @keyframes pulse { 0%,100% { opacity:1; scale:1; } 50% { opacity:0.8; scale:0.98; } }
         .store-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
-        .type-tag { position: absolute; top: 15px; right: 15px; padding: 6px 12px; border-radius: 6px; font-weight: 900; font-size: 0.75rem; z-index: 2; letter-spacing: 0.5px; text-transform: uppercase; backdrop-filter: blur(10px); }
+        .item-card { display: flex; flex-direction: column; }
+        .type-tag {
+            position: absolute; top: 15px; right: 15px; padding: 6px 12px; border-radius: 6px;
+            font-weight: 900; font-size: 0.75rem; z-index: 2; letter-spacing: 0.5px;
+            text-transform: uppercase; backdrop-filter: blur(10px);
+        }
         .tag-msrp { background: rgba(0, 255, 157, 0.9); color: black; }
         .tag-bundle { background: linear-gradient(135deg, #000, #333); color: var(--accent-gold); border: 2px solid var(--accent-gold); }
         .item-img-box { height: 240px; overflow:hidden; position: relative; }
@@ -143,18 +220,30 @@
         .price-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; padding-top: 1.2rem; border-top: 2px solid rgba(255,255,255,0.05); }
         .price { font-size: 1.8rem; font-weight: 900; color: var(--accent-cyan); text-shadow: 0 0 15px rgba(0, 255, 231, 0.4); }
         .stock { font-size: 0.8rem; color: var(--text-dim); background: rgba(255,255,255,0.07); padding: 5px 10px; border-radius: 5px; font-weight: 600; }
-        .buy-btn { display: block; text-align: center; padding: 1rem; border-radius: 12px; background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple)); color: white; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 1rem; letter-spacing: 1px; transition: 0.3s; box-shadow: 0 10px 30px rgba(0, 238, 255, 0.3); position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.2); }
+        .buy-btn {
+            display: block; text-align: center; padding: 1rem; border-radius: 12px;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
+            color: white; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 1rem; letter-spacing: 1px;
+            transition: 0.3s; box-shadow: 0 10px 30px rgba(0, 238, 255, 0.3); position: relative; overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
         .buy-btn:hover { transform: translateY(-3px); box-shadow: 0 0 40px rgba(189, 0, 255, 0.6); }
         .sold-out { background: #1a1a1a; color: #555; pointer-events: none; border: 2px solid #333; box-shadow: none; }
         footer { text-align: center; padding: 2rem 0 3rem; color: var(--text-dim); font-size: 0.85rem; position: relative; z-index: 2; }
+        /* RESPONSIVE */
         @media (max-width: 1300px) { .p-gengar, .p-gardevoir { display: none; } }
-        @media (max-width: 768px) { .p-rayquaza, .p-charizard, .p-gengar, .p-gardevoir, .p-vaporeon, .p-cubone { display: none; } .p-suicune { width: 120vw; opacity: 0.12; top: 40%; } .p-pichu { width: 70px; bottom: 10px; left: auto; right: 10px; } h1 { font-size: 3.5rem; } main { padding: 1rem; margin-bottom: 2rem; width: 95%; } }
+        @media (max-width: 768px) {
+            .p-rayquaza, .p-charizard, .p-gengar, .p-gardevoir, .p-vaporeon, .p-cubone { display: none; }
+            .p-suicune { width: 120vw; opacity: 0.12; top: 40%; }
+            .p-pichu { width: 70px; bottom: 10px; left: auto; right: 10px; }
+            h1 { font-size: 3.5rem; }
+            main { padding: 1rem; margin-bottom: 2rem; width: 95%; }
+        }
     </style>
 </head>
 <body>
-    <!-- entire body stays exactly the same -->
     <div class="particles"></div>
- 
+   
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="poke-bg p-suicune">
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/384.png" class="poke-bg p-rayquaza">
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/006.png" class="poke-bg p-charizard">
@@ -164,43 +253,133 @@
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/104.png" class="poke-bg p-cubone">
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/172.png" class="poke-bg p-pichu">
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/129.png" class="poke-bg p-magikarp">
-    
     <header>
         <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="header-logo">
-        <h1>PBM BREAKS</h1>
+        <h1 data-text="PBM BREAKS">PBM BREAKS</h1>
     </header>
-    
     <main>
         <div class="section-header">
             <span class="section-line"></span>
             <span class="section-title">CHANNEL FEED</span>
             <span class="section-line"></span>
         </div>
-         
+           
         <div id="yt-container" class="yt-container">
             <div style="color:var(--text-dim); text-align:center; grid-column:1/-1; padding: 2rem;">Loading Crystal Feed...</div>
         </div>
-        
         <div class="section-header">
             <span class="section-line"></span>
             <span class="section-title">AVAILABLE BREAKS</span>
             <span class="section-line"></span>
         </div>
-        
         <div class="store-grid" id="store-container">
             <div style="color:var(--text-dim); text-align:center; padding: 2rem;">Summoning Drops...</div>
         </div>
     </main>
-    
     <footer>
         <p>© 2025 PBM Breaks • Not affiliated with Nintendo • Crafted in the Crystal Realm</p>
     </footer>
-
-    <!-- JS unchanged -->
     <script>
         const API_URL = 'https://pokeballer-worker.kronborgnielsen.workers.dev/api';
-        async function loadVideos() { /* ... your original script ... */ }
-        async function loadStore() { /* ... your original script ... */ }
+        async function loadVideos() {
+            const container = document.getElementById('yt-container');
+            try {
+                const res = await fetch(`${API_URL}/youtube`);
+                const text = await res.text();
+                const doc = new DOMParser().parseFromString(text, "text/xml");
+                const entries = Array.from(doc.querySelectorAll("entry")).slice(0, 20);
+                let streamVideo = null; let huntVideo = null;
+                // Find latest/upcoming stream
+                for (let entry of entries) {
+                    const title = entry.querySelector("title").textContent.toLowerCase();
+                    if (title.includes('stream') || title.includes('live') || title.includes('break')) {
+                        const id = entry.querySelector("videoId").textContent;
+                        streamVideo = { id, title: entry.querySelector("title").textContent, badgeStatus: title.includes('upcoming') ? 'upcoming' : 'latest' };
+                        break;
+                    }
+                }
+                // Find latest hunt / non-stream video
+                for (let entry of entries) {
+                    const title = entry.querySelector("title").textContent.toLowerCase();
+                    const id = entry.querySelector("videoId").textContent;
+                    if (!title.includes('stream') && !title.includes('live') && (!streamVideo || id !== streamVideo.id)) {
+                        huntVideo = { id, title: entry.querySelector("title").textContent };
+                        break;
+                    }
+                }
+                container.innerHTML = '';
+                const videos = [];
+                if (streamVideo) videos.push({ ...streamVideo, type: 'stream' });
+                if (huntVideo) videos.push({ ...huntVideo, type: 'hunt' });
+                if (videos.length === 0) {
+                    container.innerHTML = '<div style="text-align:center; color:#888;">No videos found</div>';
+                    return;
+                }
+                videos.forEach(v => {
+                    let thumb = `https://i.ytimg.com/vi/${v.id}/maxresdefault.jpg`;
+                    let badgeHTML = '';
+                    if (v.type === 'stream') {
+                        badgeHTML = v.badgeStatus === 'upcoming'
+                            ? `<div class="yt-label lbl-upcoming"><i class="ph-fill ph-clock"></i> UPCOMING LIVE BREAK</div>`
+                            : `<div class="yt-label lbl-past"><i class="ph-fill ph-rewind-circle"></i> LATEST LIVE BREAK</div>`;
+                    } else {
+                        badgeHTML = `<div class="yt-label lbl-hunt"><i class="ph-fill ph-video"></i> LATEST HUNT</div>`;
+                    }
+                    container.innerHTML += `
+                        <div class="neon-card-wrapper" onclick="window.open('https://youtube.com/watch?v=${v.id}')">
+                            <div class="yt-card glass-panel">
+                                <img src="${thumb}" class="yt-thumb" alt="${v.title}">
+                                ${badgeHTML}
+                                <div style="position:absolute; bottom:0; left:0; right:0; padding:30px 20px; background:linear-gradient(to top, #050510, transparent);">
+                                    <div style="color:white; font-weight:800; font-size:1.1rem; text-shadow:0 2px 10px rgba(0,0,0,0.8);">${v.title}</div>
+                                </div>
+                            </div>
+                        </div>`;
+                });
+            } catch(e) {
+                container.innerHTML = `<div style="text-align:center; grid-column:1/-1;"><a href="https://www.youtube.com/@PokeballerMike" target="_blank" class="buy-btn" style="max-width:200px; margin:0 auto;">VISIT CHANNEL</a></div>`;
+            }
+        }
+        async function loadStore() {
+            const container = document.getElementById('store-container');
+            try {
+                const res = await fetch(`${API_URL}/items`);
+                const items = await res.json();
+                items.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
+               
+                container.innerHTML = '';
+                items.forEach(item => {
+                    const isBundle = item.type === 'bundle';
+                    const tagClass = isBundle ? 'tag-bundle' : 'tag-msrp';
+                    const tagText = isBundle ? 'BUNDLE BREAK' : 'MSRP BREAK';
+                   
+                    const btn = (item.stock > 0 && item.googleFormLink)
+                        ? `<a href="${item.googleFormLink}" target="_blank" class="buy-btn">JOIN BREAK</a>`
+                        : `<div class="buy-btn sold-out">SOLD OUT</div>`;
+                   
+                    const img = item.image || 'https://assets.pokemon.com/assets/cms2/img/misc/trading-card-games/cards/tcg_default_card.png';
+                   
+                    container.innerHTML += `
+                        <div class="neon-card-wrapper">
+                            <div class="item-card glass-panel">
+                                <div class="type-tag ${tagClass}">${tagText}</div>
+                                <div class="item-img-box">
+                                    <img src="${img}" class="item-img" alt="${item.name}">
+                                </div>
+                                <div class="item-content">
+                                    <h3>${item.name}</h3>
+                                    <p>${item.description}</p>
+                                    <div class="price-row">
+                                        <span class="price">$${item.price.toFixed(2)}</span>
+                                        <span class="stock">${item.stock} Spots Left</span>
+                                    </div>
+                                    ${btn}
+                                </div>
+                            </div>
+                        </div>`;
+                });
+            } catch(e) { console.error(e); }
+        }
         loadVideos();
         loadStore();
     </script>
