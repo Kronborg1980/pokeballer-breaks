@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #0a0a15; --card: rgba(26,26,46,0.95); --accent: #00eeff; --purple: #9d4edd; --text: #ffffff; }
+        :root { --bg: #0a0a15; --card: rgba(26,26,46,0.95); --accent: #00eeff; --purple: #9d4edd; --text: #ffffff; --gold: #ffd700; }
         
         body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; padding: 1.5rem; min-height: 100vh; }
         
@@ -29,12 +29,11 @@
         
         button { width: 100%; padding: 1rem; background: linear-gradient(135deg, var(--accent), var(--purple)); color: white; font-weight: 900; border: none; border-radius: 8px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; font-size: 1rem; }
         
-        /* --- NYT LISTE DESIGN (Mobilvenligt) --- */
         ul { padding: 0; margin: 0; }
         li { 
             background: rgba(255,255,255,0.05); padding: 1rem; margin-bottom: 1rem; border-radius: 12px; 
             border: 1px solid rgba(255,255,255,0.05); list-style: none;
-            display: flex; flex-direction: column; gap: 1rem; /* Stack vertikalt på mobil */
+            display: flex; flex-direction: column; gap: 1rem;
         }
 
         .item-content { flex: 1; }
@@ -46,15 +45,14 @@
             padding: 4px 8px; font-size: 0.7rem; border-radius: 4px; font-weight: 800; text-transform: uppercase; 
             white-space: nowrap; flex-shrink: 0; margin-top: 2px;
         }
-        .b-msrp { background: rgba(0,255,157,0.2); color: #00ff9d; border: 1px solid #00ff9d; }
-        .b-bundle { background: rgba(255,215,0,0.2); color: #ffd700; border: 1px solid #ffd700; }
+        .b-msrp { background: #00ff9d; color: black; }
+        .b-bundle { background: #222; color: var(--gold); border: 1px solid var(--gold); }
 
         .btn-group { display: flex; gap: 10px; width: 100%; }
-        .btn-group button { padding: 10px; font-size: 0.9rem; flex: 1; } /* Knapper fylder bredden */
+        .btn-group button { padding: 10px; font-size: 0.9rem; flex: 1; }
         .btn-edit { background: #00b8ff; box-shadow: none; }
         .btn-del { background: #ff0055; box-shadow: none; }
 
-        /* Desktop fix */
         @media(min-width: 600px) {
             li { flex-direction: row; align-items: center; }
             .btn-group { width: auto; flex-shrink: 0; }
@@ -84,7 +82,7 @@
                 <label>Break Type</label>
                 <select id="item-type">
                     <option value="msrp">✅ MSRP Break</option>
-                    <option value="bundle">✨ Bundle Break</option>
+                    <option value="bundle">💎 Bundle Break (Premium)</option>
                 </select>
 
                 <label>Name</label><input type="text" id="item-name">
@@ -180,7 +178,7 @@
             list.innerHTML = '';
             items.forEach(item => {
                 const badgeClass = item.type === 'bundle' ? 'b-bundle' : 'b-msrp';
-                const badgeText = item.type === 'bundle' ? 'BUNDLE' : 'MSRP';
+                const badgeText = item.type === 'bundle' ? 'BUNDLE BREAK' : 'MSRP BREAK';
                 
                 list.innerHTML += `
                     <li>
