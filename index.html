@@ -18,7 +18,6 @@
             --accent-cyan: #00ffe7;
             --accent-purple: #bd00ff;
             --accent-gold: #ffd700;
-            --accent-red: #ff3366;
             --text-bright: #ffffff;
             --text-dim: #c0c0e0;
         }
@@ -40,95 +39,116 @@
             background: 
                 radial-gradient(circle at 50% 0%, rgba(189, 0, 255, 0.15) 0%, transparent 60%),
                 radial-gradient(circle at 85% 30%, rgba(0, 255, 231, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 15% 80%, rgba(255, 51, 102, 0.08) 0%, transparent 50%),
                 linear-gradient(to bottom, #050510, #120a24);
-            z-index: -3;
-        }
-        body::after {
-            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url("https://t4.ftcdn.net/jpg/00/37/32/27/360_F_37322707_QeC9r66i9f9XG031z438333573482721.jpg");
-            opacity: 0.03; mix-blend-mode: overlay; pointer-events: none; z-index: 10;
+            z-index: -10;
         }
 
         .particles {
             position: fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:-1;
             background-image: 
                 radial-gradient(circle at 20% 30%, var(--accent-cyan) 1px, transparent 2px),
-                radial-gradient(circle at 80% 70%, var(--accent-purple) 1px, transparent 2px),
-                radial-gradient(circle at 40% 50%, white 2px, transparent 3px);
-            background-size: 100px 100px, 150px 150px, 200px 200px;
+                radial-gradient(circle at 80% 70%, var(--accent-purple) 1px, transparent 2px);
+            background-size: 100px 100px, 150px 150px;
             animation: particleMove 60s linear infinite; opacity: 0.3;
         }
-        @keyframes particleMove { from{background-position:0 0,0 0,0 0} to{background-position:0 -1000px,0 -500px,0 -200px} }
+        @keyframes particleMove { from{background-position:0 0,0 0} to{background-position:0 -1000px,0 -500px} }
 
-        /* --- POKEMON ENSEMBLE (ALL VISIBLE) --- */
+        /* --- THE POKEMON STAGE --- */
         .poke-bg { 
-            position: fixed; pointer-events: none; z-index: -2; 
-            will-change: transform; transition: 0.5s;
+            position: fixed; 
+            pointer-events: none; 
+            z-index: -5; 
+            will-change: transform; 
+            transition: all 0.5s ease;
         }
 
-        /* SUICUNE (Hero) */
+        /* 1. SUICUNE (Center) */
         .p-suicune { 
-            top: 50%; left: 50%; transform: translate(-50%, -55%); width: clamp(350px, 70vw, 900px); 
-            opacity: 0.2; filter: drop-shadow(0 0 80px var(--accent-cyan));
-            animation: subtleFloat 12s ease-in-out infinite; 
+            top: 50%; left: 50%; 
+            transform: translate(-50%, -50%); 
+            width: clamp(500px, 90vw, 1200px); 
+            opacity: 0.12; 
+            filter: drop-shadow(0 0 100px var(--accent-cyan)) grayscale(30%);
+            animation: deepBreath 10s ease-in-out infinite; 
         }
 
-        /* CHARIZARD */
+        /* 2. RAYQUAZA (Top Left - Sky God) */
+        .p-rayquaza { 
+            top: -80px; left: -150px; 
+            width: clamp(450px, 55vw, 800px); 
+            opacity: 0.5; 
+            filter: drop-shadow(20px 20px 50px rgba(0, 255, 100, 0.2));
+            animation: slither 15s ease-in-out infinite alternate;
+            z-index: -4;
+        }
+
+        /* 3. CHARIZARD (Top Right - Sky Rival) */
         .p-charizard { 
-            top: 5%; right: -5%; width: 600px; opacity: 0.35; 
-            filter: drop-shadow(0 0 30px rgba(255, 50, 0, 0.3)); 
-            animation: driftSlow 30s infinite alternate; 
+            top: -50px; right: -100px; 
+            width: clamp(300px, 40vw, 600px); 
+            opacity: 0.5; 
+            filter: drop-shadow(-20px 20px 40px rgba(255, 50, 0, 0.3)); 
+            animation: hoverFloat 8s ease-in-out infinite;
         }
 
-        /* VAPOREON */
-        .p-vaporeon { 
-            bottom: 15%; left: 2%; width: 400px; opacity: 0.5; 
-            filter: drop-shadow(0 0 40px rgba(0, 200, 255, 0.5)); 
-            animation: subtleFloat 15s infinite 2s; 
+        /* 4. GENGAR (Mid Left - Shadow Peeker) */
+        .p-gengar {
+            top: 45%; left: -40px;
+            width: clamp(250px, 30vw, 450px);
+            opacity: 0.55;
+            filter: drop-shadow(0 0 40px rgba(138, 43, 226, 0.4));
+            animation: spookyFloat 6s infinite ease-in-out;
         }
 
-        /* GARDEVOIR */
+        /* 5. GARDEVOIR (Mid Right - Graceful Balance) */
         .p-gardevoir { 
-            top: 10%; left: 5%; width: 350px; opacity: 0.3; 
-            filter: drop-shadow(0 0 20px rgba(100, 255, 100, 0.3)); 
-            animation: subtleFloat 18s infinite 5s; 
-        }
-        
-        /* PINSIR */
-        .p-pinsir { 
-            bottom: 20%; right: 2%; width: 320px; opacity: 0.45; 
-            filter: drop-shadow(0 0 30px rgba(150, 100, 255, 0.4)); 
-            animation: driftSlow 25s infinite alternate-reverse; 
-        }
-        
-        /* --- UPDATED: HIGH VISIBILITY TRIO --- */
-        
-        /* CUBONE (Brightened & Centered Right) */
-        .p-cubone { 
-            bottom: 5%; right: 25%; width: 220px; opacity: 0.6; 
-            filter: drop-shadow(0 0 25px rgba(200, 180, 150, 0.4));
-            animation: driftSlow 20s infinite alternate; 
-        }
-        
-        /* PICHU (Brightened & Glowing) */
-        .p-pichu { 
-            top: 15%; right: 22%; width: 160px; opacity: 0.7; 
-            filter: drop-shadow(0 0 40px var(--accent-gold)); 
-            animation: swiftFloat 8s infinite; 
-        }
-        
-        /* MAGIKARP (Moved up, increased opacity) */
-        .p-magikarp { 
-            bottom: 2%; left: 35%; width: 200px; opacity: 0.65; 
-            filter: drop-shadow(0 0 20px rgba(255, 100, 0, 0.4));
-            animation: flop 2s infinite ease-in-out; transform-origin: center bottom; 
+            top: 50%; right: -60px; 
+            width: clamp(250px, 30vw, 400px); 
+            opacity: 0.35; 
+            filter: drop-shadow(-20px 0 40px rgba(189, 0, 255, 0.3)); 
+            animation: hoverFloat 9s infinite 2s;
         }
 
-        @keyframes subtleFloat { 0%,100%{transform:translate(0,0);} 50%{transform:translate(0,-20px);} }
-        @keyframes driftSlow { 0%{transform: translate(0,0) rotate(0deg);} 100%{transform: translate(20px, -20px) rotate(3deg);} }
-        @keyframes swiftFloat { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-20px);} }
-        @keyframes flop { 0%,100% { transform: rotate(-10deg) translateY(0); } 50% { transform: rotate(10deg) translateY(-15px); }}
+        /* 6. VAPOREON (Bottom Left - Water) */
+        .p-vaporeon { 
+            bottom: 0; left: -50px; 
+            width: clamp(280px, 35vw, 500px); 
+            opacity: 0.6; 
+            filter: drop-shadow(0 -10px 30px rgba(0, 238, 255, 0.2));
+            transform-origin: bottom left;
+            animation: gentleSway 12s ease-in-out infinite;
+        }
+
+        /* 7. CUBONE (Bottom Right - Earth) */
+        .p-cubone { 
+            bottom: -20px; right: 10%; 
+            width: clamp(180px, 20vw, 300px); 
+            opacity: 0.7; 
+            filter: drop-shadow(0 0 20px rgba(200, 180, 150, 0.2));
+        }
+
+        /* 8. PICHU (Accents) */
+        .p-pichu { 
+            top: 120px; left: 65%; 
+            width: 120px; opacity: 0.8; 
+            filter: drop-shadow(0 0 25px var(--accent-gold));
+            animation: bounce 4s infinite ease-in-out;
+        }
+        
+        /* 9. MAGIKARP (Footer) */
+        .p-magikarp { 
+            bottom: 20px; left: 40%; width: 180px; opacity: 0.5; 
+            filter: blur(1px); animation: flop 1.5s infinite;
+        }
+
+        /* Animations */
+        @keyframes deepBreath { 0%,100%{scale:1; opacity:0.12;} 50%{scale:1.05; opacity:0.15;} }
+        @keyframes hoverFloat { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-30px);} }
+        @keyframes slither { 0%{transform:translate(0,0) rotate(0deg);} 100%{transform:translate(20px, 20px) rotate(2deg);} }
+        @keyframes spookyFloat { 0%,100%{transform:translateY(0) scale(1);} 50%{transform:translateY(-15px) scale(1.02);} }
+        @keyframes gentleSway { 0%,100%{transform:rotate(0deg);} 50%{transform:rotate(3deg);} }
+        @keyframes bounce { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-15px);} }
+        @keyframes flop { 0%,100%{transform: rotate(-10deg) translateY(0);} 50%{transform: rotate(20deg) translateY(-20px);} }
 
 
         /* --- LAYOUT --- */
@@ -136,24 +156,20 @@
 
         header { position: relative; z-index: 2; text-align: center; padding: 6rem 1rem 3rem; }
         .header-logo { 
-            width: 140px; filter: drop-shadow(0 0 30px var(--accent-cyan)) drop-shadow(0 0 60px var(--accent-purple)); 
-            animation: swiftFloat 6s infinite ease-in-out;
+            width: 140px; filter: drop-shadow(0 0 30px var(--accent-cyan)); 
+            animation: hoverFloat 6s infinite ease-in-out;
         }
 
         h1 {
             font-size: clamp(3.5rem, 12vw, 6rem); font-weight: 900; letter-spacing: -3px; color: white;
-            text-shadow: 0 0 10px rgba(0,238,255,0.8), 0 0 30px rgba(0,238,255,0.4);
-            margin-top: 1.5rem;
+            text-shadow: 0 0 30px rgba(0,238,255,0.4); margin-top: 1.5rem;
         }
 
         .section-header { display: flex; align-items: center; gap: 1.5rem; margin: 4rem 0 2rem; }
         .section-line { height: 2px; background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent); flex: 1; opacity: 0.5; }
-        .section-title { 
-            color: var(--accent-cyan); font-weight: 900; letter-spacing: 3px; font-size: 1.1rem; 
-            text-shadow: 0 0 15px var(--accent-cyan);
-        }
+        .section-title { color: var(--accent-cyan); font-weight: 900; letter-spacing: 3px; font-size: 1.1rem; }
 
-        /* --- GLASS CARDS --- */
+        /* --- CARDS --- */
         .glass-panel {
             background: var(--card-glass); backdrop-filter: blur(20px) saturate(1.5);
             border-radius: 24px; border: 1px solid rgba(255,255,255,0.1);
@@ -162,16 +178,8 @@
         }
         .glass-panel:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 30px 70px rgba(0,0,0,0.6); border-color: var(--accent-cyan); }
 
-        /* --- VIDEO GRID (EQUAL SIZE) --- */
-        .yt-container { 
-            display: grid; gap: 30px; 
-            grid-template-columns: 1fr; 
-        }
-        @media (min-width: 900px) { 
-            .yt-container { 
-                grid-template-columns: 1fr 1fr; /* 50/50 Split */
-            } 
-        }
+        .yt-container { display: grid; gap: 30px; grid-template-columns: 1fr; }
+        @media (min-width: 900px) { .yt-container { grid-template-columns: 1fr 1fr; } }
 
         .yt-card { aspect-ratio: 16/9; cursor: pointer; }
         .yt-thumb { width: 100%; height: 100%; object-fit: cover; display: block; transition: 0.5s; }
@@ -183,12 +191,11 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.5); text-transform: uppercase; display:flex; align-items:center; gap:8px;
             backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);
         }
-        .lbl-upcoming { background: rgba(255, 215, 0, 0.9); color: black; box-shadow: 0 0 30px var(--accent-gold); animation: pulse 2s infinite; }
-        .lbl-past { background: rgba(189, 0, 255, 0.9); color: white; box-shadow: 0 0 30px var(--accent-purple); }
-        .lbl-hunt { background: rgba(0, 238, 255, 0.9); color: black; box-shadow: 0 0 30px var(--accent-cyan); }
+        .lbl-upcoming { background: rgba(255, 215, 0, 0.9); color: black; animation: pulse 2s infinite; }
+        .lbl-past { background: rgba(189, 0, 255, 0.9); color: white; }
+        .lbl-hunt { background: rgba(0, 238, 255, 0.9); color: black; }
         @keyframes pulse { 0%,100% { opacity:1; scale:1; } 50% { opacity:0.8; scale:0.98; } }
 
-        /* --- STORE ITEMS --- */
         .store-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 35px; }
         .item-card { display: flex; flex-direction: column; }
         
@@ -197,23 +204,20 @@
             font-weight: 900; font-size: 0.85rem; z-index: 2; letter-spacing: 0.5px;
             text-transform: uppercase; backdrop-filter: blur(10px);
         }
-        .tag-msrp { background: rgba(0, 255, 157, 0.9); color: black; box-shadow: 0 0 20px rgba(0, 255, 157, 0.5); }
-        .tag-bundle { 
-            background: linear-gradient(135deg, #000, #333); color: var(--accent-gold); 
-            border: 2px solid var(--accent-gold); box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
-        }
+        .tag-msrp { background: rgba(0, 255, 157, 0.9); color: black; }
+        .tag-bundle { background: linear-gradient(135deg, #000, #333); color: var(--accent-gold); border: 2px solid var(--accent-gold); }
 
         .item-img-box { height: 280px; overflow:hidden; position: relative; }
         .item-img-box::after { content:''; position:absolute; bottom:0; left:0; width:100%; height:50%; background: linear-gradient(to top, var(--bg-dark), transparent); }
-        .item-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        .item-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s; }
         .item-card:hover .item-img { transform: scale(1.1) rotate(2deg); }
 
         .item-content { padding: 2rem; flex: 1; display: flex; flex-direction: column; position: relative; }
-        .item-content h3 { font-size: 1.6rem; margin-bottom: 0.75rem; color: white; font-weight: 800; line-height: 1.2; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
+        .item-content h3 { font-size: 1.6rem; margin-bottom: 0.75rem; color: white; font-weight: 800; line-height: 1.2; }
         .item-content p { color: var(--text-dim); font-size: 1rem; line-height: 1.6; margin-bottom: 2rem; flex: 1; }
         
         .price-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-top: 1.5rem; border-top: 2px solid rgba(255,255,255,0.05); }
-        .price { font-size: 2.2rem; font-weight: 900; color: var(--accent-cyan); text-shadow: 0 0 20px var(--accent-cyan); }
+        .price { font-size: 2.2rem; font-weight: 900; color: var(--accent-cyan); }
         .stock { font-size: 0.9rem; color: var(--text-dim); background: rgba(255,255,255,0.07); padding: 6px 12px; border-radius: 6px; font-weight: 600; }
 
         .buy-btn {
@@ -222,21 +226,29 @@
             color: white; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 1.1rem; letter-spacing: 1px;
             transition: 0.3s; box-shadow: 0 10px 30px rgba(0, 238, 255, 0.3); position: relative; overflow: hidden;
         }
-        .buy-btn::after { content:''; position:absolute; top:0; left:-100%; width:100%; height:100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); transition:0.5s; }
         .buy-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(189, 0, 255, 0.5); }
-        .buy-btn:hover::after { left:100%; }
         .sold-out { background: #1a1a1a; color: #555; pointer-events: none; border: 2px solid #333; box-shadow: none; }
 
         footer { text-align: center; padding: 8rem 0 4rem; color: var(--text-dim); font-size: 0.9rem; position: relative; z-index: 2; }
         
+        /* --- RESPONSIVE --- */
+        @media (max-width: 1024px) {
+            .p-rayquaza { opacity: 0.3; left: -200px; top: 0; }
+            .p-charizard { opacity: 0.3; right: -150px; }
+            .p-gengar { left: -100px; opacity: 0.4; }
+            .p-gardevoir { right: -150px; opacity: 0.3; }
+        }
+
         @media (max-width: 768px) { 
-            h1 { font-size: 4rem; } 
-            .p-charizard { width: 400px; right: -20%; }
-            .p-vaporeon { width: 250px; left: -10%; }
-            .p-gardevoir { width: 200px; top: 5%; }
-            .p-pichu { width: 120px; right: 10%; }
-            .p-cubone { width: 150px; right: 15%; }
-            .p-magikarp { width: 150px; left: 20%; }
+            .p-rayquaza { width: 300px; left: -100px; opacity: 0.3; }
+            .p-charizard { width: 250px; right: -120px; top: 0; opacity: 0.3; }
+            .p-gengar { width: 200px; left: -80px; bottom: 30%; opacity: 0.3; }
+            .p-gardevoir { display: none; }
+            .p-vaporeon { width: 200px; left: -80px; opacity: 0.3; bottom: 20%; }
+            .p-cubone { width: 150px; right: -40px; bottom: 10px; opacity: 0.5; }
+            .p-pichu { left: 80%; width: 80px; top: 80px; }
+            .p-magikarp { left: 10%; width: 100px; }
+            h1 { font-size: 3.5rem; } 
         }
     </style>
 </head>
@@ -245,12 +257,17 @@
     <div class="particles"></div>
     
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="poke-bg p-suicune">
+    
+    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/384.png" class="poke-bg p-rayquaza">
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/006.png" class="poke-bg p-charizard">
+    
+    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/094.png" class="poke-bg p-gengar">
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/282.png" class="poke-bg p-gardevoir">
+    
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/134.png" class="poke-bg p-vaporeon">
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/104.png" class="poke-bg p-cubone">
+    
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/172.png" class="poke-bg p-pichu">
-    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/127.png" class="poke-bg p-pinsir">
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/129.png" class="poke-bg p-magikarp">
 
     <header>
