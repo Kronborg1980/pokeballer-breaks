@@ -3,382 +3,352 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PBM Breaks | Crystal League</title>
+    <title>PBM Breaks - The Crystal League</title>
     
     <link rel="icon" type="image/svg+xml" href="https://upload.wikimedia.org/wikipedia/commons/5/53/Pok%C3%A9_Ball_icon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <style>
         :root {
-            --bg-deep: #030305;
-            --bg-panel: rgba(255, 255, 255, 0.03);
-            --border-glass: rgba(255, 255, 255, 0.08);
-            
-            --primary: #00f2ea; /* Cyber Cyan */
-            --secondary: #ff0055; /* Neon Red */
-            --tertiary: #bd00ff; /* Deep Purple */
-            
-            --font-head: 'Outfit', sans-serif;
-            --font-body: 'Space Grotesk', sans-serif;
+            --bg-core: #080810;
+            --glass-panel: rgba(20, 25, 40, 0.75);
+            --border-light: rgba(255, 255, 255, 0.08);
+            --accent-cyan: #00ffe7;
+            --accent-purple: #bd00ff;
+            --accent-gold: #ffd700;
         }
 
         * { margin:0; padding:0; box-sizing:border-box; }
 
         body {
-            background-color: var(--bg-deep);
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-core);
             color: white;
-            font-family: var(--font-body);
             overflow-x: hidden;
             min-height: 100vh;
-        }
-
-        /* --- GLOBAL TEXTURES --- */
-        /* Scanline effect for retro-modern vibe */
-        body::after {
-            content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            z-index: 999; background-size: 100% 2px, 3px 100%; pointer-events: none;
-        }
-
-        /* --- HERO SECTION (The "Stage") --- */
-        .hero-wrapper {
             position: relative;
-            height: 85vh;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
         }
 
-        /* Dynamic Background Glows */
-        .glow-spot {
-            position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.4; z-index: 0;
+        /* --- ATMOSPHERE BACKGROUND --- */
+        /* A subtle grid to give it structure */
+        body::before {
+            content:''; position: fixed; top:0; left:0; width:100%; height:100%;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -10;
+            mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
         }
-        .glow-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: var(--tertiary); }
-        .glow-2 { bottom: -10%; right: -10%; width: 60vw; height: 60vw; background: var(--primary); }
 
-        /* --- INTEGRATED POKEMON (Masked & Blended) --- */
-        .poke-prop {
-            position: absolute;
+        /* --- THE POKEMON STAGE (Fixed Composition) --- */
+        .poke-layer {
+            position: fixed;
             pointer-events: none;
-            z-index: 1;
-            /* This mask is KEY: fades the image into the background so no hard lines */
-            -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 100%);
-            mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 100%);
-            transition: transform 0.3s ease-out;
+            z-index: -5;
+            transition: transform 0.1s ease-out; /* Smooth movement */
         }
 
-        /* Rayquaza: Top Left, Desaturated to look like a statue/texture */
-        .p-rayquaza {
-            top: -5%; left: -5%; width: 50vw; max-width: 800px;
-            opacity: 0.2; filter: contrast(120%) grayscale(100%) drop-shadow(0 0 20px var(--primary));
-            mix-blend-mode: hard-light;
-            animation: breathe 10s infinite ease-in-out;
-        }
-
-        /* Charizard: Top Right, Dark silhouette */
-        .p-charizard {
-            top: -5%; right: -10%; width: 45vw; max-width: 700px;
-            opacity: 0.15; filter: grayscale(100%) contrast(150%);
-            transform: scaleX(-1); /* Face center */
-        }
-
-        /* Suicune: The Centerpiece, Full Color but glowing */
+        /* 1. SUICUNE (Center Watermark) */
         .p-suicune {
-            top: 50%; left: 50%; transform: translate(-50%, -45%);
-            width: 40vw; max-width: 600px; min-width: 300px;
-            z-index: 2; opacity: 0.9;
-            filter: drop-shadow(0 0 50px rgba(0, 242, 234, 0.3));
-            -webkit-mask-image: radial-gradient(circle, black 40%, transparent 80%);
-            mask-image: radial-gradient(circle, black 40%, transparent 80%);
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 800px; opacity: 0.1;
+            filter: grayscale(100%) drop-shadow(0 0 50px var(--accent-cyan));
         }
 
-        /* --- TYPOGRAPHY --- */
-        .hero-content {
-            z-index: 10; text-align: center; position: relative;
+        /* 2. RAYQUAZA (Top Left - The Arch) */
+        .p-rayquaza {
+            top: -50px; left: -100px; width: 700px;
+            opacity: 0.6;
+            filter: drop-shadow(0 20px 60px rgba(0, 255, 100, 0.15));
+            /* Subtle fade at the bottom so it blends */
+            mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+        }
+
+        /* 3. CHARIZARD (Top Right - Flipped to face content) */
+        .p-charizard {
+            top: -40px; right: -80px; width: 600px;
+            opacity: 0.5;
+            transform: scaleX(-1); /* FLIP IMAGE to look inwards */
+            filter: drop-shadow(0 20px 60px rgba(255, 50, 0, 0.2));
+            mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+        }
+
+        /* 4. GENGAR (Mid Left - Peeking) */
+        .p-gengar {
+            top: 45%; left: -60px; width: 350px;
+            opacity: 0.7;
+            transform: rotate(10deg);
+            filter: drop-shadow(0 0 50px rgba(138, 43, 226, 0.2));
+        }
+
+        /* 5. GARDEVOIR (Mid Right - Sentinel) */
+        .p-gardevoir {
+            top: 45%; right: -60px; width: 350px;
+            opacity: 0.5;
+            transform: scaleX(-1); /* FLIP IMAGE */
+            filter: drop-shadow(0 0 50px rgba(100, 255, 150, 0.1));
+        }
+
+        /* 6. VAPOREON & CUBONE (Bottom Anchors) */
+        .p-vaporeon {
+            bottom: 0; left: -40px; width: 400px;
+            opacity: 0.7;
+            filter: drop-shadow(0 -10px 40px rgba(0, 238, 255, 0.2));
+        }
+        .p-cubone {
+            bottom: -20px; right: 10%; width: 250px;
+            opacity: 0.8;
+            filter: drop-shadow(0 0 30px rgba(150, 100, 50, 0.2));
+            z-index: -4;
+        }
+
+        /* --- LAYOUT & UI --- */
+        main {
+            position: relative; z-index: 2;
+            max-width: 1200px; margin: 0 auto; padding: 0 2rem;
+        }
+
+        header {
+            text-align: center; padding: 6rem 0 3rem;
+            position: relative;
         }
         
-        .brand-pill {
-            display: inline-block; padding: 8px 16px; border-radius: 50px;
-            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-            font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; color: var(--primary);
-            margin-bottom: 1rem; backdrop-filter: blur(10px);
-            box-shadow: 0 0 20px rgba(0, 242, 234, 0.2);
+        .brand-badge {
+            display: inline-block; padding: 6px 16px; margin-bottom: 15px;
+            border: 1px solid var(--accent-cyan); border-radius: 50px;
+            color: var(--accent-cyan); font-size: 0.8rem; letter-spacing: 2px; font-weight: 700;
+            background: rgba(0, 255, 231, 0.1); box-shadow: 0 0 20px rgba(0, 255, 231, 0.2);
         }
 
         h1 {
-            font-family: var(--font-head);
-            font-size: clamp(4rem, 12vw, 9rem);
-            line-height: 0.9;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: -0.04em;
-            background: linear-gradient(180deg, #ffffff 0%, #a5a5a5 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
-        }
-        
-        .hero-sub {
-            font-size: clamp(1rem, 2vw, 1.5rem);
-            color: var(--text-dim); margin-top: 1rem; letter-spacing: 4px; text-transform: uppercase;
-            background: linear-gradient(90deg, transparent, black, transparent); /* Darkens BG behind text for readability */
-            padding: 0.5rem 2rem;
+            font-size: clamp(3rem, 8vw, 5.5rem);
+            font-weight: 900; letter-spacing: -2px;
+            background: linear-gradient(180deg, #fff, #888);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        /* --- MAIN CONTENT GRID --- */
-        .content-wrapper {
-            position: relative;
-            z-index: 5;
-            max-width: 1400px;
-            margin: -100px auto 0; /* Overlap the hero */
-            padding: 0 2rem 4rem;
-            display: grid;
-            grid-template-columns: 350px 1fr;
-            gap: 40px;
+        .section-divider {
+            display: flex; align-items: center; gap: 20px; margin: 4rem 0 2rem;
+        }
+        .divider-line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); }
+        .divider-title {
+            font-weight: 800; letter-spacing: 1px; color: var(--accent-cyan);
+            text-shadow: 0 0 15px var(--accent-cyan);
         }
 
-        /* --- SIDEBAR (The "Feed") --- */
-        .sidebar {
-            position: relative;
-        }
-        .feed-card {
-            background: rgba(10, 10, 15, 0.6);
-            border: 1px solid var(--border-glass);
-            border-radius: 24px;
-            padding: 24px;
-            backdrop-filter: blur(20px);
-            height: fit-content;
-            position: sticky; top: 20px;
-        }
-        
-        .feed-header { 
-            display: flex; align-items: center; gap: 10px; margin-bottom: 20px; 
-            border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px;
-        }
-        .live-dot { width: 8px; height: 8px; background: var(--secondary); border-radius: 50%; box-shadow: 0 0 10px var(--secondary); animation: pulse 1s infinite; }
-
-        /* Sidebar Guardian */
-        .p-gengar {
-            position: absolute; top: -60px; left: -40px; width: 180px; z-index: 2;
-            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
-            transform: rotate(-10deg);
-        }
-
-        /* --- MAIN GRID (The Store) --- */
-        .main-area { display: flex; flex-direction: column; gap: 30px; }
-        
-        .section-title {
-            font-family: var(--font-head); font-size: 2rem; font-weight: 700;
-            display: flex; align-items: center; gap: 15px;
-        }
-        .section-title::after { content:''; flex:1; height:1px; background: linear-gradient(90deg, var(--border-glass), transparent); }
-
-        .store-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;
-        }
-
-        /* --- MODERN GLASS CARD --- */
-        .glass-card {
-            position: relative;
-            background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
-            border: 1px solid var(--border-glass);
-            border-radius: 20px;
+        /* --- GLASS CARDS (Cleaned Up) --- */
+        .card-panel {
+            background: var(--glass-panel);
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
             overflow: hidden;
-            transition: all 0.4s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
         }
-        .glass-card:hover {
+        .card-panel:hover {
             transform: translateY(-5px);
-            border-color: var(--primary);
-            box-shadow: 0 10px 40px rgba(0, 242, 234, 0.1);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 20px 50px rgba(0, 238, 255, 0.15);
         }
-        .glass-card:hover .card-img { transform: scale(1.05); }
 
-        .card-tag {
-            position: absolute; top: 15px; left: 15px; z-index: 2;
-            padding: 4px 10px; border-radius: 6px;
-            font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
-            background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.2);
+        /* --- YOUTUBE GRID --- */
+        .yt-grid {
+            display: grid; grid-template-columns: 1fr; gap: 25px;
         }
-        .tag-live { color: var(--secondary); border-color: var(--secondary); }
-        .tag-bundle { color: var(--accent-gold); border-color: #ffd700; }
+        @media(min-width: 768px) { .yt-grid { grid-template-columns: 1fr 1fr; } }
 
-        .card-img-wrap { height: 200px; overflow: hidden; position: relative; }
-        .card-img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s ease; }
+        .yt-thumb-box { position: relative; aspect-ratio: 16/9; overflow: hidden; }
+        .yt-thumb { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+        .card-panel:hover .yt-thumb { transform: scale(1.05); }
         
-        .card-body { padding: 20px; }
-        .card-title { font-family: var(--font-head); font-size: 1.2rem; margin-bottom: 5px; line-height: 1.2; }
-        .card-desc { font-size: 0.9rem; color: #888; margin-bottom: 15px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .status-badge {
+            position: absolute; top: 15px; left: 15px;
+            padding: 6px 12px; border-radius: 6px;
+            font-weight: 800; font-size: 0.75rem; text-transform: uppercase;
+            display: flex; align-items: center; gap: 6px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        .bg-live { background: #ff0040; color: white; }
+        .bg-upcoming { background: var(--accent-gold); color: black; }
+        .bg-vod { background: #222; color: #aaa; border: 1px solid #444; }
+
+        .yt-info { padding: 20px; }
+        .yt-title { font-weight: 700; line-height: 1.4; font-size: 1.1rem; color: #fff; }
+
+        /* --- STORE GRID --- */
+        .store-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px;
+        }
         
-        .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
-        .price { font-size: 1.3rem; font-weight: 700; color: var(--primary); }
+        .product-img-box { height: 220px; position: relative; background: radial-gradient(circle, #2a2a35, #1a1a20); }
+        .product-img { width: 100%; height: 100%; object-fit: contain; padding: 20px; transition: 0.4s; }
+        .card-panel:hover .product-img { transform: scale(1.1) rotate(2deg); }
+
+        .product-info { padding: 20px; text-align: center; }
+        .product-title { font-weight: 800; font-size: 1.2rem; margin-bottom: 5px; }
+        .product-desc { font-size: 0.9rem; color: #aaa; margin-bottom: 15px; height: 40px; overflow: hidden; }
         
-        .btn-buy {
-            padding: 8px 20px; background: white; color: black; border-radius: 50px;
-            font-weight: 700; font-size: 0.8rem; text-decoration: none; text-transform: uppercase;
-            transition: 0.2s;
-        }
-        .btn-buy:hover { background: var(--primary); box-shadow: 0 0 15px var(--primary); }
-
-        /* --- INTERACTIVE FOREGROUND POKEMON --- */
-        /* Vaporeon peering over the footer */
-        .p-vaporeon {
-            position: fixed; bottom: -20px; right: -20px; width: 300px; opacity: 0.4;
-            z-index: 0; pointer-events: none;
-            filter: drop-shadow(0 0 30px var(--primary));
-            mask-image: linear-gradient(to top, black 50%, transparent 100%);
+        .price-tag { 
+            font-size: 1.5rem; font-weight: 900; color: var(--accent-cyan); display: block; margin-bottom: 15px;
+            text-shadow: 0 0 15px rgba(0, 255, 231, 0.3);
         }
 
-        /* Cubone sitting on the Grid */
-        .p-cubone {
-            position: absolute; bottom: -40px; right: 50px; width: 200px; z-index: 10;
-            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.5));
+        .btn-action {
+            display: block; padding: 12px; width: 100%;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
+            color: white; font-weight: 800; text-transform: uppercase; text-decoration: none;
+            border-radius: 8px; transition: 0.3s;
         }
+        .btn-action:hover { filter: brightness(1.2); box-shadow: 0 0 20px var(--accent-purple); }
 
+        footer { text-align: center; padding: 6rem 0 3rem; color: #555; font-size: 0.9rem; position: relative; z-index: 2; }
+
+        /* --- RESPONSIVE CLEANUP --- */
         @media (max-width: 1024px) {
-            .content-wrapper { grid-template-columns: 1fr; }
-            .sidebar { display: none; /* Hide sidebar on tablet/mobile for cleaner look */ }
-            .p-rayquaza, .p-charizard { opacity: 0.1; }
-            h1 { font-size: 4rem; }
-            .p-suicune { width: 80vw; opacity: 0.6; }
+            .p-rayquaza { left: -200px; opacity: 0.4; }
+            .p-charizard { right: -150px; opacity: 0.4; }
         }
-        
-        @keyframes breathe { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        @media (max-width: 768px) {
+            /* On mobile, fade them out more so text is readable */
+            .p-rayquaza, .p-charizard { top: 0; width: 300px; opacity: 0.2; }
+            .p-gengar, .p-gardevoir { opacity: 0.15; top: 60%; }
+            .p-vaporeon { left: -100px; opacity: 0.3; }
+            h1 { font-size: 3.5rem; }
+        }
 
     </style>
 </head>
 <body>
 
-    <div class="hero-wrapper">
-        <div class="glow-spot glow-1"></div>
-        <div class="glow-spot glow-2"></div>
+    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="poke-layer p-suicune">
+    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/384.png" class="poke-layer p-rayquaza">
+    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/006.png" class="poke-layer p-charizard">
+    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/094.png" class="poke-layer p-gengar">
+    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/282.png" class="poke-layer p-gardevoir">
+    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/134.png" class="poke-layer p-vaporeon">
+    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/104.png" class="poke-layer p-cubone">
 
-        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/384.png" class="poke-prop p-rayquaza">
-        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/006.png" class="poke-prop p-charizard">
-        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="poke-prop p-suicune">
+    <header>
+        <div class="brand-badge">THE CRYSTAL LEAGUE</div>
+        <h1>PBM BREAKS</h1>
+    </header>
 
-        <div class="hero-content">
-            <div class="brand-pill">The Crystal League</div>
-            <h1>PBM Breaks</h1>
-            <div class="hero-sub">Premium Live TCG Action</div>
+    <main>
+        <div class="section-divider">
+            <span class="divider-line"></span>
+            <span class="divider-title">LIVE ACTION</span>
+            <span class="divider-line"></span>
         </div>
-    </div>
 
-    <div class="content-wrapper">
-        
-        <aside class="sidebar">
-            <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/094.png" class="poke-prop p-gengar">
-            <div class="feed-card">
-                <div class="feed-header">
-                    <div class="live-dot"></div>
-                    <h3 style="font-family:var(--font-head); font-weight:700;">CHANNEL FEED</h3>
-                </div>
-                <div id="yt-feed" style="display:flex; flex-direction:column; gap:15px;">
-                    <div style="text-align:center; color:#555; font-size:0.8rem;">Connecting to Uplink...</div>
-                </div>
-            </div>
-        </aside>
+        <div class="yt-grid" id="yt-feed">
+            <div style="grid-column:1/-1; text-align:center; padding:2rem; color:#666;">Scanning Feed...</div>
+        </div>
 
-        <section class="main-area">
-            <div class="section-title">
-                <i class="ph-fill ph-sparkle" style="color:var(--primary)"></i> AVAILABLE DROPS
-            </div>
+        <div class="section-divider">
+            <span class="divider-line"></span>
+            <span class="divider-title">AVAILABLE DROPS</span>
+            <span class="divider-line"></span>
+        </div>
 
-            <div class="store-grid" id="store-feed">
-                </div>
-            
-            <div style="position:relative; height:50px;">
-                <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/104.png" class="poke-prop p-cubone">
-            </div>
-        </section>
+        <div class="store-grid" id="store-feed">
+            <div style="grid-column:1/-1; text-align:center; padding:2rem; color:#666;">Loading Inventory...</div>
+        </div>
+    </main>
 
-    </div>
-
-    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/134.png" class="p-vaporeon">
+    <footer>
+        <p>© 2025 PBM Breaks • Not affiliated with Nintendo • Crafted in the Crystal Realm</p>
+    </footer>
 
     <script>
         const API_URL = 'https://pokeballer-worker.kronborgnielsen.workers.dev/api';
 
-        // --- FETCH YOUTUBE ---
-        async function loadVideos() {
-            const container = document.getElementById('yt-feed');
+        async function loadContent() {
+            const ytContainer = document.getElementById('yt-feed');
+            const storeContainer = document.getElementById('store-feed');
+
+            // 1. FETCH YOUTUBE
             try {
                 const res = await fetch(`${API_URL}/youtube`);
                 const text = await res.text();
                 const doc = new DOMParser().parseFromString(text, "text/xml");
-                const entries = Array.from(doc.querySelectorAll("entry")).slice(0, 5); // Only top 5 for sidebar
+                const entries = Array.from(doc.querySelectorAll("entry")).slice(0, 4); // Limit to 4
 
-                container.innerHTML = '';
+                if(entries.length) ytContainer.innerHTML = '';
+                
                 entries.forEach(entry => {
                     const title = entry.querySelector("title").textContent;
                     const id = entry.querySelector("videoId").textContent;
+                    const titleLower = title.toLowerCase();
                     
-                    container.innerHTML += `
-                        <div class="glass-card" style="display:flex; align-items:center; gap:10px; padding:10px; border-radius:12px; cursor:pointer;" onclick="window.open('https://youtube.com/watch?v=${id}')">
-                            <img src="https://i.ytimg.com/vi/${id}/default.jpg" style="width:60px; border-radius:8px;">
-                            <div style="font-size:0.8rem; line-height:1.2; font-weight:500;">${title}</div>
+                    let badgeClass = 'bg-vod';
+                    let badgeText = 'LATEST VOD';
+                    
+                    if(titleLower.includes('live')) { badgeClass = 'bg-live'; badgeText = 'LIVE NOW'; }
+                    else if(titleLower.includes('upcoming')) { badgeClass = 'bg-upcoming'; badgeText = 'UPCOMING'; }
+
+                    ytContainer.innerHTML += `
+                        <div class="card-panel" onclick="window.open('https://youtube.com/watch?v=${id}')" style="cursor:pointer;">
+                            <div class="yt-thumb-box">
+                                <img src="https://i.ytimg.com/vi/${id}/maxresdefault.jpg" class="yt-thumb">
+                                <div class="status-badge ${badgeClass}">${badgeText}</div>
+                            </div>
+                            <div class="yt-info">
+                                <div class="yt-title">${title}</div>
+                            </div>
                         </div>
                     `;
                 });
-            } catch(e) {
-                container.innerHTML = `<div style="font-size:0.8rem; opacity:0.5;">Offline</div>`;
-            }
-        }
+            } catch(e) { ytContainer.innerHTML = '<div style="text-align:center">Feed Unavailable</div>'; }
 
-        // --- FETCH STORE ---
-        async function loadStore() {
-            const container = document.getElementById('store-feed');
+            // 2. FETCH STORE
             try {
                 const res = await fetch(`${API_URL}/items`);
                 const items = await res.json();
                 
-                container.innerHTML = '';
+                if(items.length) storeContainer.innerHTML = '';
+
                 items.forEach(item => {
                     const img = item.image || 'https://assets.pokemon.com/assets/cms2/img/misc/trading-card-games/cards/tcg_default_card.png';
-                    const btnHTML = (item.stock > 0 && item.googleFormLink)
-                        ? `<a href="${item.googleFormLink}" target="_blank" class="btn-buy">Claim</a>`
-                        : `<span style="font-size:0.8rem; opacity:0.5;">SOLD OUT</span>`;
+                    const btn = (item.stock > 0 && item.googleFormLink)
+                        ? `<a href="${item.googleFormLink}" target="_blank" class="btn-action">Claim Spot</a>`
+                        : `<div class="btn-action" style="background:#333; cursor:not-allowed;">Sold Out</div>`;
 
-                    container.innerHTML += `
-                        <div class="glass-card">
-                            <div class="card-img-wrap">
-                                <div class="card-tag tag-live">NEW</div>
-                                <img src="${img}" class="card-img">
+                    storeContainer.innerHTML += `
+                        <div class="card-panel">
+                            <div class="product-img-box">
+                                <img src="${img}" class="product-img">
                             </div>
-                            <div class="card-body">
-                                <div class="card-title">${item.name}</div>
-                                <div class="card-desc">${item.description}</div>
-                                <div class="card-footer">
-                                    <div class="price">$${item.price}</div>
-                                    ${btnHTML}
-                                </div>
+                            <div class="product-info">
+                                <div class="product-title">${item.name}</div>
+                                <div class="product-desc">${item.description}</div>
+                                <div class="price-tag">$${item.price}</div>
+                                ${btn}
                             </div>
                         </div>
                     `;
                 });
-            } catch(e) {}
+            } catch(e) { storeContainer.innerHTML = '<div style="text-align:center">Store Unavailable</div>'; }
         }
 
-        // Parallax effect on mouse move for the background
+        // Simple Parallax for Depth
         document.addEventListener('mousemove', (e) => {
             const x = (window.innerWidth - e.pageX) / 50;
             const y = (window.innerHeight - e.pageY) / 50;
             
-            const ray = document.querySelector('.p-rayquaza');
-            const char = document.querySelector('.p-charizard');
-            
-            if(ray) ray.style.transform = `translateX(${x}px) translateY(${y}px)`;
-            if(char) char.style.transform = `translateX(${-x}px) translateY(${-y}px) scaleX(-1)`;
+            const layers = document.querySelectorAll('.poke-layer');
+            layers.forEach(layer => {
+                const speed = layer.classList.contains('p-suicune') ? 0.5 : 1.5;
+                layer.style.transform = `translate(${x * speed}px, ${y * speed}px) ${layer.classList.contains('p-charizard') || layer.classList.contains('p-gardevoir') ? 'scaleX(-1)' : ''}`;
+            });
         });
 
-        loadVideos();
-        loadStore();
+        loadContent();
     </script>
 </body>
 </html>
