@@ -82,7 +82,10 @@
             border: 1px solid rgba(0, 255, 231, 0.1);
             border-radius: 30px;
             box-shadow: 0 0 50px rgba(0,0,0,0.5);
-            background: rgba(0,0,0,0.2);
+            /* ADDED BACKDROP FILTER: This isolates the content from the moving background, preventing header flicker */
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             margin-top: 2rem;
             margin-bottom: 4rem;
         }
@@ -92,7 +95,7 @@
             animation: floatLeft 6s infinite ease-in-out;
         }
         
-        /* --- NEW "FLICKER-PROOF" TITLE --- */
+        /* --- STABLE TITLE START --- */
         h1 {
             font-size: clamp(3.5rem, 10vw, 6rem);
             font-weight: 900;
@@ -102,56 +105,48 @@
             position: relative;
             display: inline-block;
             z-index: 1;
-            
-            /* Front Layer (Gradient Only, No Shadow) */
             background: linear-gradient(180deg, #ffffff 0%, #d0faff 45%, #00ffe7 55%, #bd00ff 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            /* Note: Removing text-stroke from the front layer often helps compositing */
         }
-
-        /* Back Layer (The Glow Animation) */
         h1::before {
-            content: attr(data-text); /* Copies the text automatically */
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            
-            /* This layer is just for the glow */
+            content: attr(data-text);
+            position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: -1;
             color: var(--accent-cyan); 
-            filter: blur(12px); /* Soft Neon Blur */
-            opacity: 0.6;
+            filter: blur(12px); opacity: 0.6;
             animation: deepGlow 4s ease-in-out infinite;
         }
-        
-        /* Second Back Layer (Sharp Outline) */
         h1::after {
             content: attr(data-text);
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
+            position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: -2;
             -webkit-text-stroke: 4px rgba(0, 255, 231, 0.3);
             color: transparent;
         }
-
         @keyframes deepGlow {
             0%, 100% { opacity: 0.4; filter: blur(12px); transform: scale(1); }
             50% { opacity: 0.8; filter: blur(16px); transform: scale(1.02); }
         }
-        /* --- END TITLE CSS --- */
+        /* --- STABLE TITLE END --- */
 
+        /* --- STABLE SECTION LINES START --- */
         .section-header { display: flex; align-items: center; gap: 1.5rem; margin: 3rem 0 2rem; }
-        .section-line { height: 2px; background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent); flex: 1; opacity: 0.5; box-shadow: 0 0 10px var(--accent-cyan); }
+        
+        .section-line { 
+            height: 3px; /* Increased from 2px to 3px for stability */
+            background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent); 
+            flex: 1; 
+            opacity: 0.8; /* Increased opacity to compensate for removed shadow */
+            border-radius: 100%;
+            /* Removed box-shadow to eliminate flicker */
+            transform: translateZ(0); /* Forces GPU to lock position */
+        }
+        
         .section-title {
             color: var(--accent-cyan); font-weight: 900; letter-spacing: 3px; font-size: 1.2rem;
             text-shadow: 0 0 10px var(--accent-cyan);
         }
+        /* --- STABLE SECTION LINES END --- */
+
         /* NEON CARD SYSTEM */
         .neon-card-wrapper {
             position: relative;
