@@ -50,7 +50,6 @@
             opacity: 0.03; mix-blend-mode: overlay; pointer-events: none; z-index: 10;
         }
 
-        /* Particles */
         .particles {
             position: fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:-1;
             background-image: 
@@ -62,56 +61,73 @@
         }
         @keyframes particleMove { from{background-position:0 0,0 0,0 0} to{background-position:0 -1000px,0 -500px,0 -200px} }
 
-        /* --- POKEMON ENSEMBLE (High Visibility) --- */
+        /* --- POKEMON ENSEMBLE (ALL VISIBLE) --- */
         .poke-bg { 
             position: fixed; pointer-events: none; z-index: -2; 
-            filter: drop-shadow(0 0 15px rgba(0,0,0,0.8)); will-change: transform; 
-            transition: 0.5s;
+            will-change: transform; transition: 0.5s;
         }
 
-        /* SUICUNE (Center Hero) */
+        /* SUICUNE (Hero) */
         .p-suicune { 
             top: 50%; left: 50%; transform: translate(-50%, -55%); width: clamp(350px, 70vw, 900px); 
             opacity: 0.2; filter: drop-shadow(0 0 80px var(--accent-cyan));
             animation: subtleFloat 12s ease-in-out infinite; 
         }
 
-        /* CHARIZARD (Top Right - Looming) */
+        /* CHARIZARD */
         .p-charizard { 
             top: 5%; right: -5%; width: 600px; opacity: 0.35; 
             filter: drop-shadow(0 0 30px rgba(255, 50, 0, 0.3)); 
             animation: driftSlow 30s infinite alternate; 
         }
 
-        /* VAPOREON (Bottom Left - Clearer) */
+        /* VAPOREON */
         .p-vaporeon { 
-            bottom: 15%; left: 2%; width: 400px; opacity: 0.45; 
-            filter: drop-shadow(0 0 30px rgba(0, 200, 255, 0.4)); 
+            bottom: 15%; left: 2%; width: 400px; opacity: 0.5; 
+            filter: drop-shadow(0 0 40px rgba(0, 200, 255, 0.5)); 
             animation: subtleFloat 15s infinite 2s; 
         }
 
-        /* GARDEVOIR (Top Left) */
+        /* GARDEVOIR */
         .p-gardevoir { 
             top: 10%; left: 5%; width: 350px; opacity: 0.3; 
             filter: drop-shadow(0 0 20px rgba(100, 255, 100, 0.3)); 
             animation: subtleFloat 18s infinite 5s; 
         }
         
-        /* PINSIR (Bottom Right - Clearer) */
+        /* PINSIR */
         .p-pinsir { 
-            bottom: 20%; right: 2%; width: 320px; opacity: 0.4; 
-            filter: drop-shadow(0 0 20px rgba(150, 100, 255, 0.3)); 
+            bottom: 20%; right: 2%; width: 320px; opacity: 0.45; 
+            filter: drop-shadow(0 0 30px rgba(150, 100, 255, 0.4)); 
             animation: driftSlow 25s infinite alternate-reverse; 
         }
         
-        /* SMALLER ONES */
-        .p-cubone { bottom: 5%; right: 30%; width: 200px; opacity: 0.3; animation: driftSlow 20s infinite alternate; }
-        .p-pichu { top: 12%; right: 25%; width: 150px; opacity: 0.4; filter: drop-shadow(0 0 30px var(--accent-gold)); animation: swiftFloat 8s infinite; }
-        .p-magikarp { bottom: -2%; left: 40%; width: 180px; opacity: 0.5; animation: flop 2s infinite ease-in-out; transform-origin: center bottom; }
+        /* --- UPDATED: HIGH VISIBILITY TRIO --- */
+        
+        /* CUBONE (Brightened & Centered Right) */
+        .p-cubone { 
+            bottom: 5%; right: 25%; width: 220px; opacity: 0.6; 
+            filter: drop-shadow(0 0 25px rgba(200, 180, 150, 0.4));
+            animation: driftSlow 20s infinite alternate; 
+        }
+        
+        /* PICHU (Brightened & Glowing) */
+        .p-pichu { 
+            top: 15%; right: 22%; width: 160px; opacity: 0.7; 
+            filter: drop-shadow(0 0 40px var(--accent-gold)); 
+            animation: swiftFloat 8s infinite; 
+        }
+        
+        /* MAGIKARP (Moved up, increased opacity) */
+        .p-magikarp { 
+            bottom: 2%; left: 35%; width: 200px; opacity: 0.65; 
+            filter: drop-shadow(0 0 20px rgba(255, 100, 0, 0.4));
+            animation: flop 2s infinite ease-in-out; transform-origin: center bottom; 
+        }
 
         @keyframes subtleFloat { 0%,100%{transform:translate(0,0);} 50%{transform:translate(0,-20px);} }
         @keyframes driftSlow { 0%{transform: translate(0,0) rotate(0deg);} 100%{transform: translate(20px, -20px) rotate(3deg);} }
-        @keyframes swiftFloat { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-15px);} }
+        @keyframes swiftFloat { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-20px);} }
         @keyframes flop { 0%,100% { transform: rotate(-10deg) translateY(0); } 50% { transform: rotate(10deg) translateY(-15px); }}
 
 
@@ -149,11 +165,11 @@
         /* --- VIDEO GRID (EQUAL SIZE) --- */
         .yt-container { 
             display: grid; gap: 30px; 
-            grid-template-columns: 1fr; /* Mobile: Stacked */
+            grid-template-columns: 1fr; 
         }
         @media (min-width: 900px) { 
             .yt-container { 
-                grid-template-columns: 1fr 1fr; /* Desktop: 50% / 50% */
+                grid-template-columns: 1fr 1fr; /* 50/50 Split */
             } 
         }
 
@@ -218,6 +234,9 @@
             .p-charizard { width: 400px; right: -20%; }
             .p-vaporeon { width: 250px; left: -10%; }
             .p-gardevoir { width: 200px; top: 5%; }
+            .p-pichu { width: 120px; right: 10%; }
+            .p-cubone { width: 150px; right: 15%; }
+            .p-magikarp { width: 150px; left: 20%; }
         }
     </style>
 </head>
@@ -240,16 +259,14 @@
     </header>
 
     <main>
-        <div class="youtube-section">
-            <div class="section-header">
-                <span class="section-line"></span>
-                <span class="section-title">CHANNEL FEED</span>
-                <span class="section-line"></span>
-            </div>
+        <div class="section-header">
+            <span class="section-line"></span>
+            <span class="section-title">CHANNEL FEED</span>
+            <span class="section-line"></span>
+        </div>
             
-            <div id="yt-container" class="yt-container">
-                <div style="color:var(--text-dim); text-align:center; grid-column:1/-1; padding: 2rem;">Loading Crystal Feed...</div>
-            </div>
+        <div id="yt-container" class="yt-container">
+            <div style="color:var(--text-dim); text-align:center; grid-column:1/-1; padding: 2rem;">Loading Crystal Feed...</div>
         </div>
 
         <div class="section-header">
@@ -270,7 +287,6 @@
     <script>
         const API_URL = 'https://pokeballer-worker.kronborgnielsen.workers.dev/api';
 
-        // --- 1. VIDEO LOGIC (SAFE & ACCURATE) ---
         async function loadVideos() {
             const container = document.getElementById('yt-container');
             try {
@@ -283,7 +299,6 @@
 
                 let streamVideo = null; let huntVideo = null;
 
-                // 1. FIND STREAM
                 for(let entry of entries) {
                     const title = entry.querySelector("title").textContent;
                     const titleLower = title.toLowerCase();
@@ -295,7 +310,6 @@
                     }
                 }
 
-                // 2. FIND HUNT
                 for(let entry of entries) {
                     const title = entry.querySelector("title").textContent;
                     const titleLower = title.toLowerCase();
@@ -341,7 +355,6 @@
             }
         }
 
-        // --- 2. STORE LOGIC ---
         async function loadStore() {
             const container = document.getElementById('store-container');
             try {
