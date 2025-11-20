@@ -20,6 +20,9 @@
             --accent-gold: #ffd700;
             --text-bright: #ffffff;
             --text-dim: #c0c0e0;
+            
+            /* Standardized size for the 'Guardian' Pokemon */
+            --guardian-size: clamp(280px, 25vw, 380px);
         }
 
         * { margin:0; padding:0; box-sizing:border-box; }
@@ -37,9 +40,8 @@
         body::before {
             content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: 
-                radial-gradient(circle at 50% 0%, rgba(189, 0, 255, 0.15) 0%, transparent 60%),
-                radial-gradient(circle at 85% 30%, rgba(0, 255, 231, 0.1) 0%, transparent 50%),
-                linear-gradient(to bottom, #050510, #120a24);
+                radial-gradient(circle at 50% 50%, rgba(0, 255, 231, 0.05) 0%, transparent 60%),
+                linear-gradient(to bottom, #050510, #0d071a);
             z-index: -10;
         }
 
@@ -62,95 +64,103 @@
             transition: all 0.5s ease;
         }
 
-        /* 1. SUICUNE (The Watermark - Very faint, Center) */
+        /* 1. SUICUNE (THE MAIN THEME) 
+           Significantly brighter than before, perfectly centered, 
+           and creates the "Crystal" atmosphere.
+        */
         .p-suicune { 
-            top: 40%; left: 50%; 
+            top: 50%; left: 50%; 
             transform: translate(-50%, -50%); 
-            width: clamp(600px, 90vw, 1400px); 
-            opacity: 0.08; /* Barely visible, adds texture */
-            filter: grayscale(50%) drop-shadow(0 0 100px var(--accent-cyan));
-            animation: deepBreath 10s ease-in-out infinite; 
+            width: clamp(600px, 80vw, 1200px); 
+            opacity: 0.18; /* Increased visibility */
+            /* The Blue Glow */
+            filter: drop-shadow(0 0 80px rgba(0, 255, 231, 0.3));
+            animation: breathe 8s ease-in-out infinite; 
+            z-index: -6; /* Behind everything */
         }
 
-        /* 2. RAYQUAZA (Top Left - The Ceiling) */
+        /* THE GUARDIANS 
+           Unified sizing and specific zoning to prevent overlap.
+           They are pushed to the edges to frame the content.
+        */
+        
+        /* Zone 1: Top Left */
         .p-rayquaza { 
-            top: -120px; left: -100px; 
-            width: clamp(500px, 50vw, 900px); 
-            opacity: 0.3; /* Transparent enough to read text over */
-            filter: drop-shadow(10px 10px 30px rgba(0,0,0,0.5));
-            animation: slither 20s ease-in-out infinite alternate;
-            z-index: -4;
+            top: -50px; left: -80px; 
+            width: var(--guardian-size); 
+            opacity: 0.4; 
+            filter: drop-shadow(10px 10px 20px rgba(0,0,0,0.5));
+            animation: floatLeft 10s ease-in-out infinite;
         }
 
-        /* 3. CHARIZARD (Top Right - The Ceiling) */
+        /* Zone 2: Top Right */
         .p-charizard { 
-            top: -80px; right: -120px; 
-            width: clamp(400px, 45vw, 700px); 
-            opacity: 0.25; 
-            filter: drop-shadow(-10px 10px 30px rgba(0,0,0,0.5));
-            animation: hoverFloat 8s ease-in-out infinite;
+            top: -30px; right: -60px; 
+            width: var(--guardian-size); 
+            opacity: 0.4; 
+            filter: drop-shadow(-10px 10px 20px rgba(0,0,0,0.5));
+            animation: floatRight 9s ease-in-out infinite;
+            transform: scaleX(-1); /* Flip to face inward */
         }
 
-        /* 4. GENGAR (Mid Left - Peeking from shadow) */
+        /* Zone 3: Middle Left */
         .p-gengar {
-            top: 50%; left: -80px;
-            width: clamp(250px, 25vw, 450px);
+            top: 45%; left: -60px;
+            width: var(--guardian-size);
             opacity: 0.4;
-            filter: drop-shadow(0 0 40px rgba(138, 43, 226, 0.2));
-            animation: spookyFloat 6s infinite ease-in-out;
+            filter: drop-shadow(0 0 30px rgba(138, 43, 226, 0.15));
+            animation: floatLeft 7s infinite ease-in-out 1s;
         }
 
-        /* 5. GARDEVOIR (Mid Right - Graceful) */
+        /* Zone 4: Middle Right */
         .p-gardevoir { 
-            top: 55%; right: -60px; 
-            width: clamp(250px, 25vw, 400px); 
-            opacity: 0.3; 
-            filter: drop-shadow(-20px 0 40px rgba(189, 0, 255, 0.2)); 
-            animation: hoverFloat 9s infinite 2s;
+            top: 45%; right: -60px; 
+            width: var(--guardian-size); 
+            opacity: 0.4; 
+            filter: drop-shadow(-20px 0 30px rgba(189, 0, 255, 0.15)); 
+            animation: floatRight 8s infinite 2s;
         }
 
-        /* 6. VAPOREON (Bottom Left - Grounded) */
+        /* Zone 5: Bottom Left */
         .p-vaporeon { 
-            bottom: -50px; left: -20px; 
-            width: clamp(300px, 30vw, 500px); 
+            bottom: -40px; left: -40px; 
+            width: var(--guardian-size); 
             opacity: 0.5; 
-            filter: drop-shadow(0 -10px 30px rgba(0, 238, 255, 0.15));
-            transform-origin: bottom left;
-            animation: gentleSway 12s ease-in-out infinite;
+            filter: drop-shadow(0 -10px 30px rgba(0, 238, 255, 0.1));
+            animation: sway 12s ease-in-out infinite;
         }
 
-        /* 7. CUBONE (Bottom Right - Grounded) */
+        /* Zone 6: Bottom Right */
         .p-cubone { 
-            bottom: -20px; right: 15%; 
-            width: clamp(200px, 20vw, 350px); 
-            opacity: 0.6; 
-            filter: drop-shadow(0 0 20px rgba(200, 180, 150, 0.2));
+            bottom: -20px; right: 5%; 
+            width: calc(var(--guardian-size) * 0.8); /* Cubone is naturally smaller */
+            opacity: 0.5; 
+            filter: drop-shadow(0 0 20px rgba(200, 180, 150, 0.15));
             z-index: -3;
         }
 
-        /* 8. PICHU (Header Mascot - Near Title) */
+        /* Mascots (Pichu & Magikarp) stay attached to UI elements */
         .p-pichu { 
-            top: 110px; left: 62%; 
-            width: 100px; opacity: 0.9; 
+            top: 115px; left: 58%; 
+            width: 90px; opacity: 0.9; 
             filter: drop-shadow(0 0 25px var(--accent-gold));
             animation: bounce 4s infinite ease-in-out;
-            z-index: 1; /* Sits on top */
+            z-index: 1; 
         }
         
-        /* 9. MAGIKARP (Footer Mascot) */
         .p-magikarp { 
-            bottom: 20px; left: 40%; width: 150px; opacity: 0.5; 
+            bottom: 20px; left: 50%; width: 140px; opacity: 0.5; 
             filter: blur(1px); animation: flop 1.5s infinite;
+            transform: translateX(-50%);
         }
 
         /* Animations */
-        @keyframes deepBreath { 0%,100%{scale:1; opacity:0.08;} 50%{scale:1.02; opacity:0.12;} }
-        @keyframes hoverFloat { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-20px);} }
-        @keyframes slither { 0%{transform:translate(0,0) rotate(0deg);} 100%{transform:translate(10px, 10px) rotate(1deg);} }
-        @keyframes spookyFloat { 0%,100%{transform:translateY(0) scale(1);} 50%{transform:translateY(-15px) scale(1.02);} }
-        @keyframes gentleSway { 0%,100%{transform:rotate(0deg);} 50%{transform:rotate(2deg);} }
+        @keyframes breathe { 0%,100%{scale:1; opacity:0.18;} 50%{scale:1.02; opacity:0.22;} }
+        @keyframes floatLeft { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-15px);} }
+        @keyframes floatRight { 0%,100%{transform:translateY(0) scaleX(-1);} 50%{transform:translateY(-15px) scaleX(-1);} }
+        @keyframes sway { 0%,100%{transform:rotate(0deg);} 50%{transform:rotate(2deg);} }
         @keyframes bounce { 0%,100%{transform:translateY(0) rotate(0deg);} 50%{transform:translateY(-10px) rotate(5deg);} }
-        @keyframes flop { 0%,100%{transform: rotate(-10deg) translateY(0);} 50%{transform: rotate(20deg) translateY(-20px);} }
+        @keyframes flop { 0%,100%{transform: translateX(-50%) rotate(-10deg);} 50%{transform: translateX(-50%) rotate(10deg) translateY(-10px);} }
 
 
         /* --- LAYOUT --- */
@@ -159,7 +169,7 @@
         header { position: relative; z-index: 2; text-align: center; padding: 6rem 1rem 3rem; }
         .header-logo { 
             width: 140px; filter: drop-shadow(0 0 30px var(--accent-cyan)); 
-            animation: hoverFloat 6s infinite ease-in-out;
+            animation: floatLeft 6s infinite ease-in-out;
         }
 
         h1 {
@@ -235,20 +245,28 @@
         
         /* --- RESPONSIVE FIXES --- */
         @media (max-width: 1200px) {
-            .p-rayquaza { left: -200px; opacity: 0.2; }
-            .p-charizard { right: -150px; opacity: 0.2; }
+            /* Slightly retreat side pokemon on medium screens */
+            .p-rayquaza { left: -120px; }
+            .p-charizard { right: -120px; }
+            .p-gengar { left: -120px; }
+            .p-gardevoir { right: -120px; }
         }
 
         @media (max-width: 768px) { 
-            /* Mobile: Push them away so they dont cover text */
-            .p-rayquaza { width: 300px; left: -100px; top: 0; opacity: 0.15; }
-            .p-charizard { width: 250px; right: -120px; top: 0; opacity: 0.15; }
-            .p-gengar { width: 180px; left: -80px; top: 60%; opacity: 0.2; }
-            .p-gardevoir { display: none; /* Hide complex shapes on mobile */ }
-            .p-vaporeon { width: 200px; left: -80px; opacity: 0.3; bottom: 20%; }
-            .p-cubone { width: 150px; right: -40px; bottom: 10px; opacity: 0.5; }
+            /* Mobile: CLEAN UP. Hide the side noise to focus on Suicune & Content */
+            .p-rayquaza, .p-charizard, .p-gengar, .p-gardevoir, .p-vaporeon, .p-cubone {
+                display: none; 
+            }
+            
+            /* Adjust Suicune for mobile portrait */
+            .p-suicune { 
+                width: 120vw; 
+                opacity: 0.12; 
+                top: 40%;
+            }
+
+            /* Adjust Mascots */
             .p-pichu { left: 80%; width: 70px; top: 90px; }
-            .p-magikarp { left: 10%; width: 100px; }
             h1 { font-size: 3.5rem; } 
         }
     </style>
