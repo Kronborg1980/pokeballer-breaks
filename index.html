@@ -14,14 +14,13 @@
     <style>
         :root {
             --bg-dark: #050510;
-            --card-glass: rgba(20, 20, 40, 0.6);
             --accent-cyan: #00ffe7;
             --accent-purple: #bd00ff;
             --accent-gold: #ffd700;
             --text-bright: #ffffff;
             --text-dim: #c0c0e0;
             
-            /* SIGNIFICANTLY SMALLER to ensure they fit on screen */
+            /* Pokemon Size (Kept small/safe from previous request) */
             --guardian-size: clamp(120px, 14vw, 200px);
         }
 
@@ -36,7 +35,7 @@
             position: relative;
         }
 
-        /* --- ATMOSPHERE --- */
+        /* --- BACKGROUND & ATMOSPHERE --- */
         body::before {
             content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: 
@@ -55,95 +54,28 @@
         }
         @keyframes particleMove { from{background-position:0 0,0 0} to{background-position:0 -1000px,0 -500px} }
 
-        /* --- THE POKEMON STAGE --- */
+        /* --- POKEMON (Safe Positions) --- */
         .poke-bg { 
-            position: fixed; 
-            pointer-events: none; 
-            z-index: -5; 
-            will-change: transform; 
-            transition: all 0.5s ease;
-            opacity: 0.4; /* Visible but not distracting */
-            filter: drop-shadow(0 0 15px rgba(0,0,0,0.8));
+            position: fixed; pointer-events: none; z-index: -5; 
+            will-change: transform; transition: all 0.5s ease;
+            opacity: 0.4; filter: drop-shadow(0 0 15px rgba(0,0,0,0.8));
         }
-
-        /* SUICUNE (CENTER THEME) */
         .p-suicune { 
-            top: 50%; left: 50%; 
-            transform: translate(-50%, -50%); 
-            width: clamp(500px, 70vw, 1000px); 
-            opacity: 0.15; 
+            top: 50%; left: 50%; transform: translate(-50%, -50%); 
+            width: clamp(500px, 70vw, 1000px); opacity: 0.15; 
             filter: drop-shadow(0 0 80px rgba(0, 255, 231, 0.3));
-            animation: breathe 8s ease-in-out infinite; 
-            z-index: -6;
+            animation: breathe 8s ease-in-out infinite; z-index: -6;
         }
-
-        /* --- CORNER GUARDIANS (Strict Positioning) --- */
-        /* Using specific pixel/vh offsets to keep them ON SCREEN */
+        .p-rayquaza { top: 0; left: 0; width: var(--guardian-size); animation: floatLeft 10s infinite; }
+        .p-charizard { top: 0; right: 0; width: var(--guardian-size); animation: floatRight 9s infinite; transform: scaleX(-1); }
+        .p-gengar { top: 50%; left: 0; transform: translateY(-50%); width: var(--guardian-size); animation: floatLeft 7s infinite 1s; }
+        .p-gardevoir { top: 50%; right: 0; transform: translateY(-50%); width: var(--guardian-size); animation: floatRight 8s infinite 2s; }
+        .p-vaporeon { bottom: 0; left: 0; width: var(--guardian-size); animation: sway 12s infinite; }
+        .p-cubone { bottom: 0; right: 0; width: calc(var(--guardian-size) * 0.85); z-index: -3; }
         
-        /* TOP ROW */
-        .p-rayquaza { 
-            top: 0; left: 0; /* Pin to corner */
-            width: var(--guardian-size); 
-            animation: floatLeft 10s ease-in-out infinite;
-        }
-        .p-charizard { 
-            top: 0; right: 0; /* Pin to corner */
-            width: var(--guardian-size); 
-            animation: floatRight 9s ease-in-out infinite;
-            transform: scaleX(-1);
-        }
+        .p-pichu { top: 130px; left: 58%; width: 100px; opacity: 0.8; filter: drop-shadow(0 0 20px var(--accent-gold)); animation: bounce 4s infinite; z-index: -4; }
+        .p-magikarp { bottom: 10px; left: 50%; transform: translateX(-50%); width: 130px; opacity: 0.4; filter: blur(0.5px); animation: flop 2s infinite; }
 
-        /* MIDDLE ROW */
-        .p-gengar {
-            top: 50%; left: 0;
-            transform: translateY(-50%);
-            width: var(--guardian-size);
-            animation: floatLeft 7s infinite ease-in-out 1s;
-        }
-        .p-gardevoir { 
-            top: 50%; right: 0; 
-            transform: translateY(-50%);
-            width: var(--guardian-size); 
-            animation: floatRight 8s infinite 2s;
-        }
-
-        /* BOTTOM ROW */
-        .p-vaporeon { 
-            bottom: 0; left: 0; /* Pin to corner */
-            width: var(--guardian-size); 
-            animation: sway 12s ease-in-out infinite;
-        }
-        .p-cubone { 
-            bottom: 0; right: 0; /* Pin to corner */
-            width: calc(var(--guardian-size) * 0.85); 
-            z-index: -3;
-        }
-
-        /* --- MASCOTS --- */
-        
-        /* PICHU: Top Center (Header Mascot) */
-        .p-pichu { 
-            top: 120px; /* Just below the logo */
-            left: 58%; 
-            width: 100px;
-            opacity: 0.6; /* Slightly brighter */
-            filter: drop-shadow(0 0 20px var(--accent-gold));
-            animation: bounce 4s infinite ease-in-out;
-            z-index: -4; 
-        }
-
-        /* MAGIKARP: Bottom Center (Footer Mascot) */
-        .p-magikarp { 
-            bottom: 10px; 
-            left: 50%; 
-            transform: translateX(-50%);
-            width: 130px; 
-            opacity: 0.4; 
-            filter: blur(0.5px); 
-            animation: flop 2s infinite;
-        }
-
-        /* Animations */
         @keyframes breathe { 0%,100%{scale:1; opacity:0.15;} 50%{scale:1.02; opacity:0.2;} }
         @keyframes floatLeft { 0%,100%{margin-top:0;} 50%{margin-top:-15px;} }
         @keyframes floatRight { 0%,100%{margin-top:0;} 50%{margin-top:-15px;} }
@@ -153,38 +85,120 @@
 
 
         /* --- LAYOUT --- */
-        main { position: relative; z-index: 2; max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+        main { 
+            position: relative; z-index: 2; max-width: 1200px; margin: 0 auto; padding: 2rem; 
+            /* Main Site Border */
+            border: 1px solid rgba(0, 255, 231, 0.1);
+            border-radius: 30px;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.2);
+            margin-top: 2rem;
+            margin-bottom: 4rem;
+        }
 
-        header { position: relative; z-index: 2; text-align: center; padding: 5rem 1rem 2rem; }
+        header { position: relative; z-index: 2; text-align: center; padding: 5rem 1rem 1rem; }
         .header-logo { 
             width: 130px; filter: drop-shadow(0 0 30px var(--accent-cyan)); 
             animation: floatLeft 6s infinite ease-in-out;
         }
 
+        /* --- NEW: UBER COOL GLOSSY TITLE --- */
         h1 {
-            font-size: clamp(3rem, 10vw, 5rem); font-weight: 900; letter-spacing: -2px; color: white;
-            text-shadow: 0 0 30px rgba(0,238,255,0.4); margin-top: 1rem;
+            font-size: clamp(3.5rem, 10vw, 6rem); 
+            font-weight: 900; 
+            letter-spacing: -2px; 
+            margin-top: 1rem;
+            text-transform: uppercase;
+            
+            /* The Gradient Text Fill */
+            background: linear-gradient(
+                180deg, 
+                #ffffff 0%, 
+                #d0faff 45%, 
+                #00ffe7 55%, 
+                #bd00ff 100%
+            );
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            
+            /* The "Neon Glass" Glow */
+            filter: drop-shadow(0 0 15px rgba(0, 255, 231, 0.6));
+            
+            /* The "Frozen" Stroke */
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
+            
+            /* Animation */
+            animation: hologram 5s infinite alternate;
+        }
+        
+        @keyframes hologram {
+            0% { filter: drop-shadow(0 0 15px rgba(0, 255, 231, 0.6)); }
+            100% { filter: drop-shadow(0 0 25px rgba(189, 0, 255, 0.6)); }
         }
 
         .section-header { display: flex; align-items: center; gap: 1.5rem; margin: 3rem 0 2rem; }
-        .section-line { height: 2px; background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent); flex: 1; opacity: 0.5; }
-        .section-title { color: var(--accent-cyan); font-weight: 900; letter-spacing: 3px; font-size: 1rem; }
-
-        /* --- CARDS --- */
-        .glass-panel {
-            background: var(--card-glass); backdrop-filter: blur(20px) saturate(1.5);
-            border-radius: 24px; border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5); overflow: hidden; position: relative;
-            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        .section-line { height: 2px; background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent); flex: 1; opacity: 0.5; box-shadow: 0 0 10px var(--accent-cyan); }
+        .section-title { 
+            color: var(--accent-cyan); font-weight: 900; letter-spacing: 3px; font-size: 1.2rem; 
+            text-shadow: 0 0 10px var(--accent-cyan);
         }
-        .glass-panel:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 30px 70px rgba(0,0,0,0.6); border-color: var(--accent-cyan); }
 
-        .yt-container { display: grid; gap: 20px; grid-template-columns: 1fr; }
+        /* --- NEW: LED BORDER ANIMATION CARD SYSTEM --- */
+        .neon-card-wrapper {
+            position: relative;
+            border-radius: 24px;
+            /* This creates the space for the border */
+            padding: 3px; 
+            background: rgba(255,255,255,0.05);
+            overflow: hidden;
+            transition: transform 0.4s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .neon-card-wrapper:hover {
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 0 0 30px rgba(0, 255, 231, 0.3);
+        }
+
+        /* The Spinning Light Beam */
+        .neon-card-wrapper::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            /* The "Suicune" Gradient Beam */
+            background: conic-gradient(
+                transparent 0deg, 
+                transparent 80deg, 
+                var(--accent-cyan) 130deg, 
+                var(--text-bright) 140deg, 
+                var(--accent-purple) 150deg, 
+                transparent 200deg
+            );
+            animation: spinBorder 4s linear infinite;
+            z-index: 0;
+        }
+
+        @keyframes spinBorder { 100% { transform: rotate(360deg); } }
+
+        /* The Inner Card (Glass) */
+        .glass-panel {
+            position: relative;
+            background: rgba(20, 20, 35, 0.85); /* Darker for contrast */
+            backdrop-filter: blur(20px) saturate(1.5);
+            border-radius: 21px; /* Slightly smaller than wrapper */
+            height: 100%; width: 100%;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        /* --- GRID LAYOUTS --- */
+        .yt-container { display: grid; gap: 25px; grid-template-columns: 1fr; }
         @media (min-width: 900px) { .yt-container { grid-template-columns: 1fr 1fr; } }
 
         .yt-card { aspect-ratio: 16/9; cursor: pointer; }
-        .yt-thumb { width: 100%; height: 100%; object-fit: cover; display: block; transition: 0.5s; }
-        .yt-card:hover .yt-thumb { transform: scale(1.05); }
+        .yt-thumb { width: 100%; height: 100%; object-fit: cover; display: block; transition: 0.5s; opacity: 0.9; }
+        .neon-card-wrapper:hover .yt-thumb { transform: scale(1.05); opacity: 1; }
 
         .yt-label {
             position: absolute; top: 15px; left: 15px; padding: 8px 16px; border-radius: 10px;
@@ -197,7 +211,7 @@
         .lbl-hunt { background: rgba(0, 238, 255, 0.9); color: black; }
         @keyframes pulse { 0%,100% { opacity:1; scale:1; } 50% { opacity:0.8; scale:0.98; } }
 
-        .store-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
+        .store-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
         .item-card { display: flex; flex-direction: column; }
         
         .type-tag {
@@ -209,16 +223,16 @@
         .tag-bundle { background: linear-gradient(135deg, #000, #333); color: var(--accent-gold); border: 2px solid var(--accent-gold); }
 
         .item-img-box { height: 240px; overflow:hidden; position: relative; }
-        .item-img-box::after { content:''; position:absolute; bottom:0; left:0; width:100%; height:50%; background: linear-gradient(to top, var(--bg-dark), transparent); }
+        .item-img-box::after { content:''; position:absolute; bottom:0; left:0; width:100%; height:60%; background: linear-gradient(to top, #141423, transparent); }
         .item-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s; }
-        .item-card:hover .item-img { transform: scale(1.1) rotate(2deg); }
+        .neon-card-wrapper:hover .item-img { transform: scale(1.1) rotate(2deg); }
 
         .item-content { padding: 1.5rem; flex: 1; display: flex; flex-direction: column; position: relative; }
-        .item-content h3 { font-size: 1.4rem; margin-bottom: 0.5rem; color: white; font-weight: 800; line-height: 1.2; }
+        .item-content h3 { font-size: 1.4rem; margin-bottom: 0.5rem; color: white; font-weight: 800; line-height: 1.2; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
         .item-content p { color: var(--text-dim); font-size: 0.95rem; line-height: 1.5; margin-bottom: 1.5rem; flex: 1; }
         
         .price-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; padding-top: 1.2rem; border-top: 2px solid rgba(255,255,255,0.05); }
-        .price { font-size: 1.8rem; font-weight: 900; color: var(--accent-cyan); }
+        .price { font-size: 1.8rem; font-weight: 900; color: var(--accent-cyan); text-shadow: 0 0 15px rgba(0, 255, 231, 0.4); }
         .stock { font-size: 0.8rem; color: var(--text-dim); background: rgba(255,255,255,0.07); padding: 5px 10px; border-radius: 5px; font-weight: 600; }
 
         .buy-btn {
@@ -226,27 +240,21 @@
             background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
             color: white; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 1rem; letter-spacing: 1px;
             transition: 0.3s; box-shadow: 0 10px 30px rgba(0, 238, 255, 0.3); position: relative; overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.2);
         }
-        .buy-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(189, 0, 255, 0.5); }
+        .buy-btn:hover { transform: translateY(-3px); box-shadow: 0 0 40px rgba(189, 0, 255, 0.6); }
         .sold-out { background: #1a1a1a; color: #555; pointer-events: none; border: 2px solid #333; box-shadow: none; }
 
-        footer { text-align: center; padding: 6rem 0 3rem; color: var(--text-dim); font-size: 0.85rem; position: relative; z-index: 2; }
+        footer { text-align: center; padding: 2rem 0 3rem; color: var(--text-dim); font-size: 0.85rem; position: relative; z-index: 2; }
         
         /* --- RESPONSIVE FIXES --- */
-        @media (max-width: 1300px) {
-            /* On laptops, hide the side pokemon (Gengar/Gardevoir) so they don't overlap content */
-            .p-gengar, .p-gardevoir { display: none; }
-        }
-
+        @media (max-width: 1300px) { .p-gengar, .p-gardevoir { display: none; } }
         @media (max-width: 768px) { 
-            /* Mobile: Hide everything except Suicune, Pichu, Magikarp */
-            .p-rayquaza, .p-charizard, .p-gengar, .p-gardevoir, .p-vaporeon, .p-cubone {
-                display: none; 
-            }
-            
+            .p-rayquaza, .p-charizard, .p-gengar, .p-gardevoir, .p-vaporeon, .p-cubone { display: none; }
             .p-suicune { width: 120vw; opacity: 0.12; top: 40%; }
             .p-pichu { width: 80px; top: 20px; right: 20px; left: auto; }
             h1 { font-size: 3.5rem; } 
+            main { padding: 1rem; margin-bottom: 2rem; width: 95%; }
         }
     </style>
 </head>
@@ -258,10 +266,8 @@
     
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/384.png" class="poke-bg p-rayquaza">
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/006.png" class="poke-bg p-charizard">
-    
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/094.png" class="poke-bg p-gengar">
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/282.png" class="poke-bg p-gardevoir">
-    
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/134.png" class="poke-bg p-vaporeon">
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/104.png" class="poke-bg p-cubone">
     
@@ -356,12 +362,15 @@
                         badgeHTML = `<div class="yt-label lbl-hunt"><i class="ph-fill ph-video"></i> LATEST HUNT</div>`;
                     }
 
+                    /* UPDATED: Added wrapper for the LED border effect */
                     container.innerHTML += `
-                        <div class="yt-card glass-panel" onclick="window.open('https://youtube.com/watch?v=${v.id}')">
-                            <img src="${thumb}" class="yt-thumb">
-                            ${badgeHTML}
-                            <div style="position:absolute; bottom:0; left:0; right:0; padding:30px 20px; background:linear-gradient(to top, #050510, transparent);">
-                                <div style="color:white; font-weight:800; font-size:1.1rem; text-shadow:0 2px 10px rgba(0,0,0,0.8);">${v.title}</div>
+                        <div class="neon-card-wrapper" onclick="window.open('https://youtube.com/watch?v=${v.id}')">
+                            <div class="yt-card glass-panel">
+                                <img src="${thumb}" class="yt-thumb">
+                                ${badgeHTML}
+                                <div style="position:absolute; bottom:0; left:0; right:0; padding:30px 20px; background:linear-gradient(to top, #050510, transparent);">
+                                    <div style="color:white; font-weight:800; font-size:1.1rem; text-shadow:0 2px 10px rgba(0,0,0,0.8);">${v.title}</div>
+                                </div>
                             </div>
                         </div>`;
                 });
@@ -389,20 +398,23 @@
                         
                     const img = item.image || 'https://assets.pokemon.com/assets/cms2/img/misc/trading-card-games/cards/tcg_default_card.png';
                     
+                    /* UPDATED: Added wrapper for the LED border effect */
                     container.innerHTML += `
-                        <div class="item-card glass-panel">
-                            <div class="type-tag ${tagClass}">${tagText}</div>
-                            <div class="item-img-box">
-                                <img src="${img}" class="item-img">
-                            </div>
-                            <div class="item-content">
-                                <h3>${item.name}</h3>
-                                <p>${item.description}</p>
-                                <div class="price-row">
-                                    <span class="price">$${item.price.toFixed(2)}</span>
-                                    <span class="stock">${item.stock} Spots Left</span>
+                        <div class="neon-card-wrapper">
+                            <div class="item-card glass-panel">
+                                <div class="type-tag ${tagClass}">${tagText}</div>
+                                <div class="item-img-box">
+                                    <img src="${img}" class="item-img">
                                 </div>
-                                ${btn}
+                                <div class="item-content">
+                                    <h3>${item.name}</h3>
+                                    <p>${item.description}</p>
+                                    <div class="price-row">
+                                        <span class="price">$${item.price.toFixed(2)}</span>
+                                        <span class="stock">${item.stock} Spots Left</span>
+                                    </div>
+                                    ${btn}
+                                </div>
                             </div>
                         </div>`;
                 });
