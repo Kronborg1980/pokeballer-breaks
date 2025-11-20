@@ -91,7 +91,6 @@
         .yt-thumb { width: 100%; height: 100%; object-fit: cover; display: block; }
 
         /* Borders */
-        .border-live { border-color: var(--live-red); box-shadow: 0 0 40px rgba(255, 0, 85, 0.3); }
         .border-upcoming { border-color: var(--gold); box-shadow: 0 0 40px rgba(255, 215, 0, 0.3); }
         .border-past { border-color: var(--purple); }
         .border-hunt { border-color: rgba(255,255,255,0.15); }
@@ -104,8 +103,7 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.8); text-transform: uppercase; display:flex; align-items:center; gap:8px;
         }
         
-        .lbl-live { background: var(--live-red); color: white; animation: pulse 1.5s infinite; }
-        .lbl-upcoming { background: var(--gold); color: black; border:2px solid white; }
+        .lbl-upcoming { background: var(--gold); color: black; animation: pulse 1.5s infinite; }
         .lbl-past { background: var(--purple); color: white; }
         .lbl-hunt { background: rgba(0,0,0,0.8); color: var(--accent); border: 1px solid var(--accent); }
 
@@ -192,66 +190,66 @@
     <script>
         const API_URL = 'https://pokeballer-worker.kronborgnielsen.workers.dev/api';
 
-        // --- 1. VIDEO LOGIC (Strict: 1 Stream + 1 Hunt) ---
+        // --- 1. VIDEO LOGIC (SAFE & ACCURATE) ---
         async function loadVideos() {
             const container = document.getElementById('yt-container');
-            const proxy = 'https://corsproxy.io/?';
 
             try {
                 const res = await fetch(`${API_URL}/youtube`);
                 const text = await res.text();
                 const doc = new DOMParser().parseFromString(text, "text/xml");
-                const entries = Array.from(doc.querySelectorAll("entry")).slice(0, 20); // Search deeper
+                const entries = Array.from(doc.querySelectorAll("entry")).slice(0, 20); 
 
                 if(!entries.length) throw new Error("No videos");
 
                 let streamVideo = null;
                 let huntVideo = null;
 
-                // 1. FIND STREAM (Live, Upcoming, or Past)
+                // 1. FIND LATEST STREAM (Upcoming OR Past)
                 for(let entry of entries) {
                     const title = entry.querySelector("title").textContent;
                     const titleLower = title.toLowerCase();
                     
-                    // It's a stream if title contains 'Stream', 'Live' or 'Break'
-                    if(titleLower.includes('stream') || titleLower.includes('live')) {
+                    // Keywords for Stream
+                    if(titleLower.includes('stream') || titleLower.includes('live') || titleLower.includes('break')) {
                         const id = entry.querySelector("videoId").textContent;
                         
-                        // Determine Badge Type
-                        let status = 'past'; // Default
-                        if(titleLower.includes('upcoming')) status = 'upcoming';
+                        // STRICT LOGIC:
+                        // Is it "Upcoming"? -> Label UPCOMING
+                        // Otherwise -> Label LATEST LIVE BREAK
                         
-                        // Check if REALLY live (Thumb Check)
-                        let isLiveNow = false;
-                        try {
-                             const check = await fetch(proxy + encodeURIComponent(`https://i.ytimg.com/vi/${id}/hqdefault_live.jpg`), {method:'HEAD'});
-                             if(check.ok) { status = 'live'; isLiveNow = true; }
-                        } catch(e){}
-
-                        streamVideo = { id, title, status, isLiveNow };
-                        break; // Found the latest stream, stop looking
+                        let badgeStatus = 'latest'; // Default
+                        if(titleLower.includes('upcoming')) {
+                            badgeStatus = 'upcoming';
+                        }
+                        
+                        streamVideo = { id, title, badgeStatus };
+                        break; // Stop, we found the newest one
                     }
                 }
 
-                // 2. FIND HUNT (Latest standard video)
+                // 2. FIND LATEST HUNT (Standard Video)
                 for(let entry of entries) {
+                    const title = entry.querySelector("title").textContent.toLowerCase();
                     const id = entry.querySelector("videoId").textContent;
-                    // Ensure it's not the same video as the stream
-                    if(!streamVideo || id !== streamVideo.id) {
-                         const title = entry.querySelector("title").textContent.toLowerCase();
-                         // Hunts usually don't have "Stream" in title
-                         if(!title.includes('stream') && !title.includes('live')) {
-                             huntVideo = { id, title: entry.querySelector("title").textContent };
-                             break; // Found the latest hunt, stop looking
-                         }
+                    
+                    // Skip if it looks like a stream title, OR if it's the same video we just picked
+                    if(!title.includes('stream') && !title.includes('live') && (!streamVideo || id !== streamVideo.id)) {
+                        huntVideo = { id, title: entry.querySelector("title").textContent };
+                        break; // Stop, found newest hunt
                     }
                 }
 
-                // Render
+                // RENDER (Exactly 2 Videos if found)
                 container.innerHTML = '';
                 const videos = [];
                 if(streamVideo) videos.push({ ...streamVideo, type: 'stream' });
                 if(huntVideo) videos.push({ ...huntVideo, type: 'hunt' });
+
+                if(videos.length === 0) {
+                    container.innerHTML = '<div style="text-align:center; color:#888;">No videos found</div>';
+                    return;
+                }
 
                 videos.forEach(v => {
                     let thumb = `https://i.ytimg.com/vi/${v.id}/maxresdefault.jpg`;
@@ -259,21 +257,18 @@
                     let borderClass = '';
 
                     if (v.type === 'stream') {
-                        if (v.status === 'live') {
-                            thumb = `https://i.ytimg.com/vi/${v.id}/hqdefault_live.jpg`;
-                            badgeHTML = `<div class="yt-label lbl-live"><i class="ph-fill ph-broadcast"></i> LIVE NOW</div>`;
-                            borderClass = 'border-live';
-                        } else if (v.status === 'upcoming') {
-                            badgeHTML = `<div class="yt-label lbl-upcoming"><i class="ph-fill ph-clock"></i> UPCOMING BREAK</div>`;
+                        if (v.badgeStatus === 'upcoming') {
+                            // UPCOMING
+                            badgeHTML = `<div class="yt-label lbl-upcoming"><i class="ph-fill ph-clock"></i> UPCOMING LIVE BREAK</div>`;
                             borderClass = 'border-upcoming';
                         } else {
-                            // Past Stream
+                            // LATEST LIVE (Past)
                             badgeHTML = `<div class="yt-label lbl-past"><i class="ph-fill ph-rewind-circle"></i> LATEST LIVE BREAK</div>`;
                             borderClass = 'border-past';
                         }
                     } else {
-                        // Hunt
-                        badgeHTML = `<div class="yt-label lbl-hunt"><i class="ph-fill ph-video"></i> NEWEST HUNT</div>`;
+                        // HUNT
+                        badgeHTML = `<div class="yt-label lbl-hunt"><i class="ph-fill ph-video"></i> LATEST HUNT</div>`;
                         borderClass = 'border-hunt';
                     }
 
