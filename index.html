@@ -45,6 +45,7 @@
             animation: particleMove 60s linear infinite; opacity: 0.3;
         }
         @keyframes particleMove { from{background-position:0 0,0 0} to{background-position:0 -1000px,0 -500px} }
+        
         /* POKEMON BACKGROUND */
         .poke-bg {
             position: fixed; pointer-events: none; z-index: -5;
@@ -82,7 +83,6 @@
             border: 1px solid rgba(0, 255, 231, 0.1);
             border-radius: 30px;
             box-shadow: 0 0 50px rgba(0,0,0,0.5);
-            /* ADDED BACKDROP FILTER: This isolates the content from the moving background, preventing header flicker */
             background: rgba(0,0,0,0.4);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
@@ -95,7 +95,7 @@
             animation: floatLeft 6s infinite ease-in-out;
         }
         
-        /* --- STABLE TITLE START --- */
+        /* --- NEW LIQUID GLASS HEADLINE --- */
         h1 {
             font-size: clamp(3.5rem, 10vw, 6rem);
             font-weight: 900;
@@ -105,47 +105,94 @@
             position: relative;
             display: inline-block;
             z-index: 1;
-            background: linear-gradient(180deg, #ffffff 0%, #d0faff 45%, #00ffe7 55%, #bd00ff 100%);
+            
+            /* Base Gradient */
+            background: linear-gradient(180deg, #ffffff 20%, #b8f9ff 50%, #00ffe7 55%, #bd00ff 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        h1::before {
-            content: attr(data-text);
-            position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: -1;
-            color: var(--accent-cyan); 
-            filter: blur(12px); opacity: 0.6;
-            animation: deepGlow 4s ease-in-out infinite;
-        }
+        /* The Shimmer Overlay */
         h1::after {
             content: attr(data-text);
-            position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: -2;
-            -webkit-text-stroke: 4px rgba(0, 255, 231, 0.3);
-            color: transparent;
+            position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 2;
+            background: linear-gradient(
+                110deg, 
+                transparent 30%, 
+                rgba(255, 255, 255, 0.8) 45%, 
+                rgba(255, 255, 255, 0.9) 50%, 
+                rgba(255, 255, 255, 0.8) 55%, 
+                transparent 70%
+            );
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glassShimmer 6s infinite linear;
+            pointer-events: none;
+            filter: drop-shadow(0 0 15px rgba(0, 255, 231, 0.5));
         }
-        @keyframes deepGlow {
-            0%, 100% { opacity: 0.4; filter: blur(12px); transform: scale(1); }
-            50% { opacity: 0.8; filter: blur(16px); transform: scale(1.02); }
-        }
-        /* --- STABLE TITLE END --- */
+        @keyframes glassShimmer { 0% { background-position: 150% 0; } 100% { background-position: -150% 0; } }
 
-        /* --- STABLE SECTION LINES START --- */
-        .section-header { display: flex; align-items: center; gap: 1.5rem; margin: 3rem 0 2rem; }
-        
-        .section-line { 
-            height: 3px; /* Increased from 2px to 3px for stability */
-            background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent); 
-            flex: 1; 
-            opacity: 0.8; /* Increased opacity to compensate for removed shadow */
-            border-radius: 100%;
-            /* Removed box-shadow to eliminate flicker */
-            transform: translateZ(0); /* Forces GPU to lock position */
+        /* --- NEW GLASS CAPSULE SECTION HEADERS --- */
+        .section-header { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            gap: 1.5rem; 
+            margin: 3rem auto 2rem; 
+            position: relative;
+            
+            /* Glass Capsule Style */
+            background: rgba(10, 10, 25, 0.6);
+            border: 1px solid rgba(0, 255, 231, 0.3);
+            box-shadow: 
+                0 0 20px rgba(0, 255, 231, 0.1) inset,
+                0 10px 20px rgba(0,0,0,0.5);
+            padding: 12px 40px;
+            border-radius: 50px;
+            backdrop-filter: blur(8px);
+            max-width: 600px;
+            overflow: hidden;
         }
+        
+        /* The animated sheen on the capsule */
+        .section-header::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: skewX(-25deg);
+            animation: capsuleSheen 4s infinite ease-in-out;
+        }
+        @keyframes capsuleSheen { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
+
+        .section-line { 
+            height: 4px; 
+            background: rgba(0, 255, 231, 0.2); 
+            flex: 1; 
+            border-radius: 10px;
+            position: relative;
+            box-shadow: 0 0 10px rgba(0, 255, 231, 0.1);
+        }
+        /* The "LED" Pulse inside the line */
+        .section-line::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, #00ffe7, transparent);
+            opacity: 0.8;
+            border-radius: 10px;
+            animation: pulseLine 3s infinite ease-in-out alternate;
+        }
+        @keyframes pulseLine { 0% { opacity: 0.3; transform: scaleX(0.8); } 100% { opacity: 1; transform: scaleX(1); } }
         
         .section-title {
-            color: var(--accent-cyan); font-weight: 900; letter-spacing: 3px; font-size: 1.2rem;
-            text-shadow: 0 0 10px var(--accent-cyan);
+            color: #fff; 
+            font-weight: 900; 
+            letter-spacing: 3px; 
+            font-size: 1.3rem;
+            text-shadow: 
+                0 0 10px var(--accent-cyan),
+                0 0 20px var(--accent-cyan);
+            position: relative;
+            z-index: 2;
         }
-        /* --- STABLE SECTION LINES END --- */
+        /* --- END NEW SECTION STYLES --- */
 
         /* NEON CARD SYSTEM */
         .neon-card-wrapper {
@@ -233,6 +280,8 @@
             .p-pichu { width: 70px; bottom: 10px; left: auto; right: 10px; }
             h1 { font-size: 3.5rem; }
             main { padding: 1rem; margin-bottom: 2rem; width: 95%; }
+            .section-header { flex-direction: column; gap: 0.5rem; border-radius: 20px; }
+            .section-line { width: 100%; height: 2px; }
         }
     </style>
 </head>
