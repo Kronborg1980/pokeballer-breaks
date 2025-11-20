@@ -55,7 +55,7 @@
         /* Center Suicune (Background version - dimmed) */
         .p-suicune {
             top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: clamp(500px, 70vw, 1000px); opacity: 0.08; /* Lowered opacity so header logos pop */
+            width: clamp(500px, 70vw, 1000px); opacity: 0.08;
             filter: drop-shadow(0 0 80px rgba(0, 255, 231, 0.2));
             animation: breathe 8s ease-in-out infinite; z-index: -6;
         }
@@ -71,6 +71,21 @@
             animation: bounce 4s infinite; z-index: -4;
         }
         .p-magikarp { bottom: 10px; left: 50%; transform: translateX(-50%); width: 130px; opacity: 0.4; filter: blur(0.5px); animation: flop 2s infinite; }
+        
+        /* --- NEW PINSIR CSS --- */
+        .p-pinsir { 
+            top: 15%; 
+            left: 18%; 
+            width: calc(var(--guardian-size) * 1.1); 
+            opacity: 0.6;
+            animation: pinsirSnap 8s infinite ease-in-out;
+            z-index: -5;
+        }
+        @keyframes pinsirSnap {
+            0%, 100% { transform: rotate(-15deg) translateY(0); }
+            50% { transform: rotate(-5deg) translateY(-20px); }
+        }
+
         @keyframes breathe { 0%,100%{scale:1; opacity:0.08;} 50%{scale:1.02; opacity:0.12;} }
         @keyframes floatLeft { 0%,100%{margin-top:0;} 50%{margin-top:-15px;} }
         @keyframes floatRight { 0%,100%{margin-top:0;} 50%{margin-top:-15px;} }
@@ -103,24 +118,17 @@
         .header-wrapper {
             display: flex;
             align-items: center;
-            gap: 2rem; /* Space between logos and text */
+            gap: 2rem;
         }
-        
-        /* The Container for the Logo Animation */
         .logo-animator {
             animation: floatLogo 6s infinite ease-in-out;
         }
-        
-        /* The Actual Image Styling */
         .header-logo {
-            width: 160px; /* Size of the guardians */
+            width: 160px;
             filter: drop-shadow(0 0 30px var(--accent-cyan));
             display: block;
         }
-
-        /* Flip the Left Suicune so it faces inward (Right) */
         .logo-left .header-logo { transform: scaleX(-1); }
-        /* Right Suicune naturally faces Left, so we keep it default */
         
         @keyframes floatLogo {
             0%, 100% { transform: translateY(0); }
@@ -137,10 +145,8 @@
             position: relative;
             display: inline-block;
             z-index: 1;
-            margin: 0; /* Reset margin for flex alignment */
+            margin: 0;
             line-height: 1;
-            
-            /* Base Gradient */
             background: linear-gradient(180deg, #ffffff 20%, #b8f9ff 50%, #00ffe7 55%, #bd00ff 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -274,20 +280,16 @@
         /* RESPONSIVE */
         @media (max-width: 1300px) { .p-gengar, .p-gardevoir { display: none; } }
         @media (max-width: 768px) {
-            .p-rayquaza, .p-charizard, .p-gengar, .p-gardevoir, .p-vaporeon, .p-cubone { display: none; }
+            .p-rayquaza, .p-charizard, .p-gengar, .p-gardevoir, .p-vaporeon, .p-cubone, .p-pinsir { display: none; }
             .p-suicune { width: 120vw; opacity: 0.12; top: 40%; }
             .p-pichu { width: 70px; bottom: 10px; left: auto; right: 10px; }
             h1 { font-size: 3.5rem; }
             main { padding: 1rem; margin-bottom: 2rem; width: 95%; }
             .section-header { flex-direction: column; gap: 0.5rem; border-radius: 20px; }
             .section-line { width: 100%; height: 2px; }
-            
-            /* Header Adjustment for Mobile */
             .header-wrapper { flex-direction: column; gap: 1rem; }
-            /* Hide Right Suicune on mobile for cleaner look, or keep if you prefer stack */
             .logo-right { display: none; } 
             .header-logo { width: 120px; }
-            /* Reset the Left flip so the single top logo faces correctly (Left) */
             .logo-left .header-logo { transform: scaleX(1); }
         }
     </style>
@@ -296,6 +298,7 @@
     <div class="particles"></div>
    
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="poke-bg p-suicune">
+    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/127.png" class="poke-bg p-pinsir">
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/384.png" class="poke-bg p-rayquaza">
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/006.png" class="poke-bg p-charizard">
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/094.png" class="poke-bg p-gengar">
@@ -310,9 +313,7 @@
             <div class="logo-animator logo-left">
                 <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="header-logo">
             </div>
-            
             <h1 data-text="PBM BREAKS">PBM BREAKS</h1>
-            
             <div class="logo-animator logo-right">
                 <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="header-logo">
             </div>
@@ -351,7 +352,6 @@
                 const doc = new DOMParser().parseFromString(text, "text/xml");
                 const entries = Array.from(doc.querySelectorAll("entry")).slice(0, 20);
                 let streamVideo = null; let huntVideo = null;
-                // Find latest/upcoming stream
                 for (let entry of entries) {
                     const title = entry.querySelector("title").textContent.toLowerCase();
                     if (title.includes('stream') || title.includes('live') || title.includes('break')) {
@@ -360,7 +360,6 @@
                         break;
                     }
                 }
-                // Find latest hunt / non-stream video
                 for (let entry of entries) {
                     const title = entry.querySelector("title").textContent.toLowerCase();
                     const id = entry.querySelector("videoId").textContent;
