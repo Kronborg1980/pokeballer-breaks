@@ -52,10 +52,11 @@
             will-change: transform; transition: all 0.5s ease;
             opacity: 0.4; filter: drop-shadow(0 0 15px rgba(0,0,0,0.8));
         }
+        /* Center Suicune (Background version - dimmed) */
         .p-suicune {
             top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: clamp(500px, 70vw, 1000px); opacity: 0.15;
-            filter: drop-shadow(0 0 80px rgba(0, 255, 231, 0.3));
+            width: clamp(500px, 70vw, 1000px); opacity: 0.08; /* Lowered opacity so header logos pop */
+            filter: drop-shadow(0 0 80px rgba(0, 255, 231, 0.2));
             animation: breathe 8s ease-in-out infinite; z-index: -6;
         }
         .p-rayquaza { top: 0; left: 0; width: var(--guardian-size); animation: floatLeft 10s infinite; }
@@ -70,7 +71,7 @@
             animation: bounce 4s infinite; z-index: -4;
         }
         .p-magikarp { bottom: 10px; left: 50%; transform: translateX(-50%); width: 130px; opacity: 0.4; filter: blur(0.5px); animation: flop 2s infinite; }
-        @keyframes breathe { 0%,100%{scale:1; opacity:0.15;} 50%{scale:1.02; opacity:0.2;} }
+        @keyframes breathe { 0%,100%{scale:1; opacity:0.08;} 50%{scale:1.02; opacity:0.12;} }
         @keyframes floatLeft { 0%,100%{margin-top:0;} 50%{margin-top:-15px;} }
         @keyframes floatRight { 0%,100%{margin-top:0;} 50%{margin-top:-15px;} }
         @keyframes sway { 0%,100%{transform:rotate(0deg);} 50%{transform:rotate(3deg);} }
@@ -89,40 +90,65 @@
             margin-top: 2rem;
             margin-bottom: 4rem;
         }
-        header { text-align: center; padding: 5rem 1rem 1rem; position: relative; z-index: 2; }
-        .header-logo {
-            width: 130px; filter: drop-shadow(0 0 30px var(--accent-cyan));
-            animation: floatLeft 6s infinite ease-in-out;
+
+        /* --- DUAL SUICUNE HEADER START --- */
+        header { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            padding: 4rem 1rem 1rem; 
+            position: relative; 
+            z-index: 2; 
+        }
+        .header-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 2rem; /* Space between logos and text */
         }
         
-        /* --- NEW LIQUID GLASS HEADLINE --- */
+        /* The Container for the Logo Animation */
+        .logo-animator {
+            animation: floatLogo 6s infinite ease-in-out;
+        }
+        
+        /* The Actual Image Styling */
+        .header-logo {
+            width: 160px; /* Size of the guardians */
+            filter: drop-shadow(0 0 30px var(--accent-cyan));
+            display: block;
+        }
+
+        /* Flip the Left Suicune so it faces inward (Right) */
+        .logo-left .header-logo { transform: scaleX(-1); }
+        /* Right Suicune naturally faces Left, so we keep it default */
+        
+        @keyframes floatLogo {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        /* --- DUAL SUICUNE HEADER END --- */
+        
+        /* --- LIQUID GLASS HEADLINE --- */
         h1 {
-            font-size: clamp(3.5rem, 10vw, 6rem);
+            font-size: clamp(3.5rem, 9vw, 6rem);
             font-weight: 900;
             letter-spacing: -2px;
-            margin-top: 1rem;
             text-transform: uppercase;
             position: relative;
             display: inline-block;
             z-index: 1;
+            margin: 0; /* Reset margin for flex alignment */
+            line-height: 1;
             
             /* Base Gradient */
             background: linear-gradient(180deg, #ffffff 20%, #b8f9ff 50%, #00ffe7 55%, #bd00ff 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        /* The Shimmer Overlay */
         h1::after {
             content: attr(data-text);
             position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 2;
-            background: linear-gradient(
-                110deg, 
-                transparent 30%, 
-                rgba(255, 255, 255, 0.8) 45%, 
-                rgba(255, 255, 255, 0.9) 50%, 
-                rgba(255, 255, 255, 0.8) 55%, 
-                transparent 70%
-            );
+            background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.8) 45%, rgba(255, 255, 255, 0.9) 50%, rgba(255, 255, 255, 0.8) 55%, transparent 70%);
             background-size: 200% 100%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -132,67 +158,40 @@
         }
         @keyframes glassShimmer { 0% { background-position: 150% 0; } 100% { background-position: -150% 0; } }
 
-        /* --- NEW GLASS CAPSULE SECTION HEADERS --- */
+        /* --- GLASS CAPSULE SECTION HEADERS --- */
         .section-header { 
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            gap: 1.5rem; 
-            margin: 3rem auto 2rem; 
-            position: relative;
-            
-            /* Glass Capsule Style */
+            display: flex; align-items: center; justify-content: center; gap: 1.5rem; 
+            margin: 3rem auto 2rem; position: relative;
             background: rgba(10, 10, 25, 0.6);
             border: 1px solid rgba(0, 255, 231, 0.3);
-            box-shadow: 
-                0 0 20px rgba(0, 255, 231, 0.1) inset,
-                0 10px 20px rgba(0,0,0,0.5);
-            padding: 12px 40px;
-            border-radius: 50px;
-            backdrop-filter: blur(8px);
-            max-width: 600px;
-            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 255, 231, 0.1) inset, 0 10px 20px rgba(0,0,0,0.5);
+            padding: 12px 40px; border-radius: 50px; backdrop-filter: blur(8px);
+            max-width: 600px; overflow: hidden;
         }
-        
-        /* The animated sheen on the capsule */
         .section-header::before {
             content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-            transform: skewX(-25deg);
-            animation: capsuleSheen 4s infinite ease-in-out;
+            transform: skewX(-25deg); animation: capsuleSheen 4s infinite ease-in-out;
         }
         @keyframes capsuleSheen { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
 
         .section-line { 
-            height: 4px; 
-            background: rgba(0, 255, 231, 0.2); 
-            flex: 1; 
-            border-radius: 10px;
-            position: relative;
+            height: 4px; background: rgba(0, 255, 231, 0.2); flex: 1; 
+            border-radius: 10px; position: relative;
             box-shadow: 0 0 10px rgba(0, 255, 231, 0.1);
         }
-        /* The "LED" Pulse inside the line */
         .section-line::after {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(90deg, transparent, #00ffe7, transparent);
-            opacity: 0.8;
-            border-radius: 10px;
-            animation: pulseLine 3s infinite ease-in-out alternate;
+            opacity: 0.8; border-radius: 10px; animation: pulseLine 3s infinite ease-in-out alternate;
         }
         @keyframes pulseLine { 0% { opacity: 0.3; transform: scaleX(0.8); } 100% { opacity: 1; transform: scaleX(1); } }
         
         .section-title {
-            color: #fff; 
-            font-weight: 900; 
-            letter-spacing: 3px; 
-            font-size: 1.3rem;
-            text-shadow: 
-                0 0 10px var(--accent-cyan),
-                0 0 20px var(--accent-cyan);
-            position: relative;
-            z-index: 2;
+            color: #fff; font-weight: 900; letter-spacing: 3px; font-size: 1.3rem;
+            text-shadow: 0 0 10px var(--accent-cyan), 0 0 20px var(--accent-cyan);
+            position: relative; z-index: 2;
         }
-        /* --- END NEW SECTION STYLES --- */
 
         /* NEON CARD SYSTEM */
         .neon-card-wrapper {
@@ -282,6 +281,14 @@
             main { padding: 1rem; margin-bottom: 2rem; width: 95%; }
             .section-header { flex-direction: column; gap: 0.5rem; border-radius: 20px; }
             .section-line { width: 100%; height: 2px; }
+            
+            /* Header Adjustment for Mobile */
+            .header-wrapper { flex-direction: column; gap: 1rem; }
+            /* Hide Right Suicune on mobile for cleaner look, or keep if you prefer stack */
+            .logo-right { display: none; } 
+            .header-logo { width: 120px; }
+            /* Reset the Left flip so the single top logo faces correctly (Left) */
+            .logo-left .header-logo { transform: scaleX(1); }
         }
     </style>
 </head>
@@ -297,10 +304,21 @@
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/104.png" class="poke-bg p-cubone">
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/172.png" class="poke-bg p-pichu">
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/129.png" class="poke-bg p-magikarp">
+    
     <header>
-        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="header-logo">
-        <h1 data-text="PBM BREAKS">PBM BREAKS</h1>
+        <div class="header-wrapper">
+            <div class="logo-animator logo-left">
+                <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="header-logo">
+            </div>
+            
+            <h1 data-text="PBM BREAKS">PBM BREAKS</h1>
+            
+            <div class="logo-animator logo-right">
+                <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="header-logo">
+            </div>
+        </div>
     </header>
+
     <main>
         <div class="section-header">
             <span class="section-line"></span>
