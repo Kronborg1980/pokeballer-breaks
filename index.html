@@ -7,6 +7,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
     <style>
         :root {
             --bg: #0a0a15;
@@ -17,392 +20,291 @@
             --purple: #9d4edd;
             --text: #ffffff;
             --text2: #e0e0ff;
-            /* Badge Colors */
-            --bundle-grad: linear-gradient(135deg, #ffd700, #ff8c00);
-            --msrp-grad: linear-gradient(135deg, #00ff9d, #00b8ff);
+            
+            --live-red: #ff0055;
+            --upload-blue: #4169e1;
         }
 
         * { margin:0; padding:0; box-sizing:border-box; }
 
-        html, body {
-            min-height: 100vh;
+        body {
             font-family: 'Inter', sans-serif;
             background: var(--bg);
             color: var(--text);
+            min-height: 100vh;
             overflow-x: hidden;
-            width: 100%;
+            background-image: radial-gradient(circle at 50% 0%, rgba(0,238,255,0.1) 0%, transparent 60%);
         }
-
-        body {
-            display: flex;
-            flex-direction: column;
-            background-image: 
-                radial-gradient(circle at 20% 30%, rgba(0,238,255,0.14) 0%, transparent 50%),
-                radial-gradient(circle at 80% 70%, rgba(157,78,221,0.12) 0%, transparent 50%),
-                radial-gradient(circle at 50% 50%, rgba(0,255,157,0.07) 0%, transparent 70%);
-        }
-
-        /* Visual Background Elements */
-        .orb {
-            position: absolute;
-            border-radius: 50%;
-            background: radial-gradient(circle, var(--accent), transparent);
-            opacity: 0.2;
-            pointer-events: none;
-            filter: blur(35px);
-        }
-        .orb:nth-child(1){width:700px;height:700px;top:-15%;left:-10%;}
-        .orb:nth-child(2){width:900px;height:900px;bottom:-25%;right:-20%;}
-        .orb:nth-child(3){width:600px;height:600px;top:20%;right:5%;}
 
         .suicune-hero {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: clamp(300px, 85vw, 900px);
-            opacity: 0.26;
-            filter: drop-shadow(0 0 80px var(--accent)) brightness(1.3);
-            pointer-events: none;
-            z-index: 1;
-            animation: suicuneFloat 22s infinite ease-in-out;
-        }
-        @keyframes suicuneFloat {
-            0%,100% { transform: translate(-50%, -50%) translateY(0); }
-            50% { transform: translate(-50%, -50%) translateY(-30px); }
+            position: fixed; top: 20%; left: 50%; transform: translate(-50%, -20%);
+            width: clamp(300px, 90vw, 800px); opacity: 0.15; pointer-events: none; z-index: 0;
+            filter: drop-shadow(0 0 80px var(--accent));
         }
 
-        /* Header */
         header {
-            position: relative;
-            text-align: center;
-            padding: clamp(3rem, 10vw, 7rem) 1rem clamp(4rem, 10vw, 8rem);
-            z-index: 2;
+            position: relative; z-index: 2; text-align: center;
+            padding: 4rem 1rem 2rem;
         }
-
-        .header-logo {
-            width: clamp(120px, 35vw, 220px);
-            filter: drop-shadow(0 0 60px var(--accent));
-            animation: levitate 7s infinite ease-in-out;
-        }
-        @keyframes levitate { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-25px); } }
+        
+        .header-logo { width: 120px; filter: drop-shadow(0 0 30px var(--accent)); animation: float 6s infinite; }
+        @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
 
         h1 {
-            font-size: clamp(2.8rem, 11vw, 7.5rem);
-            font-weight: 900;
-            letter-spacing: -0.05em;
-            background: linear-gradient(90deg, #00eeff, #ffffff, #ff00ff);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 100px rgba(0,238,255,0.8);
-            margin-top: 1.5rem;
+            font-size: clamp(3rem, 10vw, 5rem); font-weight: 900; letter-spacing: -2px;
+            background: linear-gradient(to right, #00eeff, #fff, #d946ef);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-top: 1rem;
         }
 
-        main {
-            flex: 1;
-            width: 100%;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 clamp(1rem, 4vw, 2rem);
-            position: relative;
-            z-index: 2;
-        }
+        main { position: relative; z-index: 2; max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
 
-        .store-intro {
-            text-align: center;
-            padding: clamp(3rem, 8vw, 5.5rem) clamp(2rem, 5vw, 3rem);
-            margin-bottom: clamp(4rem, 8vw, 6rem);
-            background: linear-gradient(135deg, rgba(26,26,46,0.94), rgba(18,18,31,0.99));
-            border-radius: clamp(32px, 8vw, 48px);
-            border: 3px solid rgba(0,238,255,0.5);
-            box-shadow: 0 35px 120px rgba(0,0,0,0.8);
-            backdrop-filter: blur(18px);
-        }
-        .store-intro h2 {
-            font-size: clamp(2.5rem, 8vw, 4.8rem);
-            font-weight: 900;
-            background: linear-gradient(120deg, var(--electric), var(--accent), var(--purple));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 1.2rem;
-        }
-        .store-intro p {
-            font-size: clamp(1.1rem, 3.2vw, 1.5rem);
-            color: var(--text2);
-            max-width: 950px;
-            margin: 0 auto;
-            line-height: 2;
-        }
-
-        /* YOUTUBE LAYOUT */
-        .youtube-section { margin: clamp(5rem, 10vw, 8rem) 0; }
-        .youtube-title {
-            font-size: clamp(2.8rem, 9vw, 5.5rem);
-            font-weight: 900;
-            text-align: center;
-            margin-bottom: clamp(2.5rem, 6vw, 4.5rem);
-            background: linear-gradient(90deg, #ff0080, #00eeff, #00ff9d, #ff00ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 80px rgba(0,238,255,0.9);
-        }
-        .youtube-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
-        @media (min-width: 1024px) {
-            .youtube-grid.has-featured { grid-template-columns: 1fr 1fr; grid-template-areas: "hero hero" "sub1 sub2"; }
-            .youtube-grid.standard-grid { grid-template-columns: repeat(3, 1fr); }
-        }
-        .yt-video {
-            position: relative; border-radius: 24px; overflow: hidden; background: var(--card);
-            border: 2px solid rgba(255,255,255,0.1); transition: all 0.4s ease; cursor: pointer;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5); aspect-ratio: 16/9;
-        }
-        .yt-video:hover { transform: translateY(-10px) scale(1.02); border-color: var(--accent); box-shadow: 0 30px 80px rgba(0,238,255,0.3); }
-        .yt-video.featured { grid-area: hero; border: 3px solid #ff006e; box-shadow: 0 0 60px rgba(255,0,110,0.4); }
-        .yt-thumb { width: 100%; height: 100%; object-fit: cover; }
-        .play-button {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 70px; height: 70px; background: rgba(0,0,0,0.7); border: 4px solid white; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; font-size: 30px; color: white;
-            transition: 0.3s; backdrop-filter: blur(5px);
-        }
-        .yt-video.featured .play-button { width: 100px; height: 100px; font-size: 40px; background: rgba(255, 0, 110, 0.8); }
-        .yt-video:hover .play-button { transform: translate(-50%, -50%) scale(1.2); background: var(--accent); border-color:white; }
-        .yt-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 2rem; background: linear-gradient(to top, rgba(0,0,0,0.95), transparent); }
-        .yt-title { font-size: 1.2rem; font-weight: 700; color: white; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        .yt-video.featured .yt-title { font-size: 2rem; font-weight: 900; }
-        .status-badge { position: absolute; top: 20px; left: 20px; padding: 8px 20px; border-radius: 50px; font-weight: 900; font-size: 0.9rem; letter-spacing: 1px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10; }
-        .badge-live { background: #ff0000; color: white; animation: pulseRed 1.5s infinite; }
-        .badge-upcoming { background: #ff8c00; color: white; }
-        @keyframes pulseRed { 0%,100% { box-shadow: 0 0 20px #ff0000; } 50% { box-shadow: 0 0 50px #ff0000; } }
-
-        /* STORE GRID */
-        .store-container {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: clamp(2.5rem, 6vw, 3.2rem);
-            margin-top: clamp(4rem, 8vw, 5rem);
-        }
-        @media (min-width: 768px) {
-            .store-container { grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); }
-        }
-
-        .item-card { 
-            background: var(--card); 
-            border-radius: clamp(30px, 8vw, 38px); 
-            overflow: hidden; 
-            border: 2px solid rgba(0,238,255,0.3); 
-            transition: all 0.5s ease; 
-            box-shadow: 0 25px 65px rgba(0,0,0,0.6); 
-            display: flex; flex-direction: column; 
-            position: relative;
-        }
-        .item-card:hover { transform: translateY(-25px) scale(1.05); border-color: var(--accent); box-shadow: 0 50px 130px rgba(0,238,255,0.45); }
-        .item-image { width: 100%; height: clamp(240px, 60vw, 310px); object-fit: cover; transition: transform 0.7s ease; }
-        .item-card:hover .item-image { transform: scale(1.16); }
-        .card-content { padding: clamp(1.8rem, 5vw, 2.5rem); background: linear-gradient(to top, var(--surface), transparent); flex-grow: 1; display: flex; flex-direction: column; }
+        /* YOUTUBE SECTION */
+        .youtube-section { margin: 4rem 0; }
+        .youtube-title { text-align: center; font-size: 2rem; font-weight: 800; margin-bottom: 2rem; color: var(--text2); }
         
-        /* BADGES FOR ITEMS */
+        .youtube-grid {
+            display: grid; gap: 1.5rem;
+            grid-template-columns: 1fr;
+        }
+        
+        @media (min-width: 900px) {
+            .youtube-grid.has-live {
+                grid-template-columns: 2fr 1fr; /* Live video takes 2/3rds */
+                grid-template-rows: 1fr 1fr;
+            }
+            /* The first child (Live video) spans 2 rows on desktop */
+            .youtube-grid.has-live .yt-video:first-child {
+                grid-column: 1 / 2;
+                grid-row: 1 / 3;
+                height: 100%;
+            }
+            .youtube-grid.no-live {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .yt-video {
+            background: var(--card); border-radius: 20px; overflow: hidden;
+            position: relative; cursor: pointer; border: 2px solid rgba(255,255,255,0.1);
+            aspect-ratio: 16/9; transition: 0.3s;
+        }
+        .yt-video:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        
+        .yt-thumb { width: 100%; height: 100%; object-fit: cover; }
+        
+        /* LIVE STYLE */
+        .yt-video.is-live {
+            border: 3px solid var(--live-red);
+            box-shadow: 0 0 40px rgba(255, 0, 85, 0.4);
+        }
+        .yt-video.is-upload {
+            border: 2px solid var(--upload-blue);
+        }
+
+        /* BADGES ON VIDEO */
+        .video-badge {
+            position: absolute; top: 15px; left: 15px;
+            padding: 6px 14px; border-radius: 50px; font-weight: 900; font-size: 0.8rem;
+            z-index: 5; box-shadow: 0 5px 15px rgba(0,0,0,0.8);
+        }
+        .badge-live { background: var(--live-red); color: white; animation: pulse 1.5s infinite; }
+        .badge-upload { background: var(--upload-blue); color: white; }
+
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
+
+        .play-icon {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            font-size: 3rem; color: white; filter: drop-shadow(0 5px 15px black); opacity: 0.9;
+        }
+
+        /* STORE ITEMS */
+        .store-container {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem; margin-top: 4rem;
+        }
+        
+        .item-card {
+            background: var(--card); border-radius: 24px; overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1); transition: 0.4s;
+            display: flex; flex-direction: column; position: relative;
+        }
+        .item-card:hover { border-color: var(--accent); transform: translateY(-10px); }
+        
+        .item-image { width: 100%; height: 250px; object-fit: cover; }
+        
+        /* TYPE BADGES */
         .type-badge {
-            position: absolute; top: 20px; right: 20px; z-index: 10;
-            padding: 8px 16px; border-radius: 12px;
-            font-weight: 800; font-size: 0.9rem; letter-spacing: 0.5px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.6);
-            color: black;
+            position: absolute; top: 15px; right: 15px;
+            padding: 6px 12px; border-radius: 8px; font-weight: 800; font-size: 0.8rem;
+            color: #000; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
             border: 2px solid white;
         }
-        .badge-bundle { background: var(--bundle-grad); }
-        .badge-msrp { background: var(--msrp-grad); }
+        .tb-bundle { background: linear-gradient(135deg, #ffd700, #ff8c00); }
+        .tb-msrp { background: linear-gradient(135deg, #00ff9d, #00b8ff); }
 
-        .item-card h3 { font-size: clamp(1.7rem, 5vw, 2.2rem); font-weight: 800; background: linear-gradient(90deg, var(--accent), #fff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 1rem; }
-        .description { color: var(--text2); margin-bottom: 1.6rem; line-height: 1.9; flex-grow: 1; font-size: clamp(1rem, 2.8vw, 1.1rem); }
-        .item-details { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.8rem; padding-top: 1rem; border-top: 1.5px solid rgba(0,238,255,0.3); }
-        .item-price { font-size: clamp(2.1rem, 7vw, 2.9rem); font-weight: 900; color: var(--electric); text-shadow: 0 0 40px rgba(0,255,157,0.7); }
-        .item-stock { background: rgba(0,238,255,0.25); color: var(--accent); padding: clamp(0.6rem, 1.5vw, 0.8rem) clamp(1rem, 2.5vw, 1.4rem); border-radius: 50px; font-weight: 700; border: 2px solid var(--accent); font-size: clamp(0.9rem, 2.2vw, 1rem); }
-        .action-button, .out-of-stock { 
-            width: 100%; padding: clamp(1.2rem, 4vw, 1.6rem); text-align: center; border-radius: 28px; 
-            font-size: clamp(1.2rem, 4vw, 1.5rem); font-weight: 800; margin-top: auto;
-            color: white !important; text-shadow: 0 2px 10px rgba(0,0,0,0.8); letter-spacing: 1px;
-            text-decoration: none; display: block;
+        .card-content { padding: 1.5rem; flex: 1; display: flex; flex-direction: column; }
+        .card-content h3 { font-size: 1.5rem; margin-bottom: 0.5rem; color: white; }
+        .card-content p { color: var(--text2); font-size: 0.9rem; line-height: 1.6; margin-bottom: 1rem; flex: 1; }
+        
+        .price-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .price { font-size: 1.8rem; font-weight: 900; color: var(--electric); }
+        .stock { font-size: 0.9rem; color: #888; }
+
+        .buy-btn {
+            display: block; text-align: center; padding: 1rem; border-radius: 12px;
+            background: linear-gradient(90deg, var(--accent), var(--purple));
+            color: white; text-decoration: none; font-weight: 800; text-transform: uppercase;
+            transition: 0.3s;
         }
-        .action-button { background: linear-gradient(135deg, var(--accent), var(--purple)); box-shadow: 0 18px 50px rgba(0,238,255,0.55); transition: all 0.4s; }
-        .action-button:hover { transform: translateY(-8px); box-shadow: 0 32px 80px rgba(0,238,255,0.75); background: linear-gradient(135deg, #00ffff, #d946ef); }
-        .out-of-stock { background: rgba(255,77,77,0.3); color: #ff6b6b !important; border: 3px solid #ff4444; }
+        .buy-btn:hover { filter: brightness(1.2); }
+        .sold-out { background: #333; color: #666; pointer-events: none; }
 
-        footer { padding: clamp(3rem, 8vw, 4rem) 1rem 2rem; text-align: center; color: #777; background: rgba(10,10,21,0.99); border-top: 1.5px solid rgba(0,238,255,0.25); font-size: clamp(0.9rem, 2.5vw, 0.95rem); width: 100%; }
-        footer p:last-child { font-size: 0.82rem; color: #555; margin-top: 0.5rem; }
-        #lightbox-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.98); backdrop-filter: blur(30px); justify-content: center; align-items: center; z-index: 1000; cursor: zoom-out; }
-        #lightbox-overlay.show { display: flex; }
-        #lightbox-image { max-width: 96vw; max-height: 96vh; border-radius: 38px; border: 7px solid var(--accent); box-shadow: 0 0 150px rgba(0,238,255,0.9); }
+        footer { text-align: center; padding: 4rem 0 2rem; color: #666; font-size: 0.9rem; }
+
+        /* Mobile Adjustments */
+        @media (max-width: 600px) {
+            h1 { font-size: 3rem; }
+            .youtube-grid { grid-template-columns: 1fr !important; } /* Force 1 column on mobile */
+            .item-card { margin: 0 10px; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="orb"></div><div class="orb"></div><div class="orb"></div>
-
-    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" alt="Suicune" class="suicune-hero" loading="lazy">
+    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="suicune-hero">
 
     <header>
-        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" alt="Suicune Logo" class="header-logo" loading="lazy">
+        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="header-logo">
         <h1>PBM BREAKS</h1>
     </header>
 
     <main>
-        <div class="store-intro">
-            <h2>Welcome to PBM Breaks!</h2>
-            <p>Get ready for live TCG pack openings and curated breaks with Pokeballer Mike! We're live on YouTube, offering exclusive bundles and the thrill of the hunt. Grab your spot and let's pull some rare cards!</p>
-        </div>
-
         <section class="youtube-section">
-            <h2 class="youtube-title">LATEST BREAKS</h2>
-            <div class="youtube-grid" id="youtube-videos"></div>
+            <h2 class="youtube-title">CHANNEL FEED</h2>
+            <div id="youtube-grid" class="youtube-grid">
+                <div style="text-align:center; padding:2rem; color:#666;">Loading Videos...</div>
+            </div>
         </section>
 
-        <div id="store-content" class="store-container"></div>
+        <div id="store-grid" class="store-container">
+            <div style="text-align:center; padding:2rem; color:#666;">Loading Drops...</div>
+        </div>
     </main>
 
     <footer>
-        <p>© 2025 PBM Breaks. All Rights Reserved.</p>
-        <p>Not affiliated with Nintendo or The Pokémon Company</p>
+        <p>© 2025 PBM Breaks • Not affiliated with Nintendo</p>
     </footer>
-
-    <div id="lightbox-overlay"><img id="lightbox-image" src="" alt=""></div>
 
     <script>
         const API_URL = 'https://pokeballer-worker.kronborgnielsen.workers.dev/api';
         const CHANNEL_ID = "UCdFYy9uChCNAWbvVhTYwHaQ";
 
-        async function loadItems() {
-            const container = document.getElementById('store-content');
-            container.innerHTML = '<div style="text-align:center;padding:5rem;color:var(--accent);font-size:2.2rem;">Loading Breaks...</div>';
+        // 1. LOAD YOUTUBE
+        async function loadVideos() {
+            const grid = document.getElementById('youtube-grid');
+            const proxy = 'https://api.allorigins.ml/raw?url=';
+            
+            try {
+                const feedUrl = encodeURIComponent(`https://www.youtube.com/feeds/videos.xml?channel_id=${CHANNEL_ID}&t=${Date.now()}`);
+                const res = await fetch(proxy + feedUrl);
+                const text = await res.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(text, "text/xml");
+                const entries = Array.from(doc.querySelectorAll("entry")).slice(0, 3);
+
+                if (!entries.length) { grid.innerHTML = 'No videos found.'; return; }
+
+                let videos = [];
+                
+                // Parse videos and check live status
+                for (let entry of entries) {
+                    const vidId = entry.querySelector("videoId").textContent;
+                    const title = entry.querySelector("title").textContent;
+                    
+                    // Check for Live Thumbnail (HQDefault_Live only exists for streams)
+                    let isLive = false;
+                    try {
+                        const thumbCheck = await fetch(proxy + encodeURIComponent(`https://i.ytimg.com/vi/${vidId}/hqdefault_live.jpg`), { method:'HEAD' });
+                        if(thumbCheck.ok) isLive = true;
+                    } catch(e){}
+
+                    videos.push({ id: vidId, title, isLive });
+                }
+
+                // Sort: Live video always goes first
+                videos.sort((a, b) => (b.isLive === true) - (a.isLive === true));
+
+                // Render
+                grid.innerHTML = '';
+                const hasLive = videos.some(v => v.isLive);
+                grid.className = `youtube-grid ${hasLive ? 'has-live' : 'no-live'}`;
+
+                videos.forEach(vid => {
+                    const thumb = vid.isLive 
+                        ? `https://i.ytimg.com/vi/${vid.id}/hqdefault_live.jpg`
+                        : `https://i.ytimg.com/vi/${vid.id}/maxresdefault.jpg`;
+                    
+                    const badgeHtml = vid.isLive 
+                        ? `<div class="video-badge badge-live">🔴 LIVE STREAM</div>`
+                        : `<div class="video-badge badge-upload">📼 LATEST UPLOAD</div>`;
+
+                    const vidClass = vid.isLive ? 'is-live' : 'is-upload';
+
+                    grid.innerHTML += `
+                        <div class="yt-video ${vidClass}" onclick="window.open('https://www.youtube.com/watch?v=${vid.id}', '_blank')">
+                            <img src="${thumb}" class="yt-thumb">
+                            ${badgeHtml}
+                            <i class="ph-fill ph-play-circle play-icon"></i>
+                        </div>
+                    `;
+                });
+
+            } catch(e) { console.error(e); grid.innerHTML = "Check out @PokeballerMike on YouTube!"; }
+        }
+
+        // 2. LOAD STORE ITEMS
+        async function loadStore() {
+            const grid = document.getElementById('store-grid');
             try {
                 const res = await fetch(`${API_URL}/items`);
                 let items = await res.json();
-                container.innerHTML = '';
-                if (!items.length) { container.innerHTML = '<p style="text-align:center;color:#aaa;font-size:1.7rem;">No active breaks — next one soon!</p>'; return; }
                 
-                // SORTING: NEWEST FIRST (Using createdAt if available, otherwise unordered)
+                // Sort by Newest
                 items.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
 
-                items.forEach((item, i) => {
-                    const card = document.createElement('div');
-                    card.className = 'item-card';
-                    
+                grid.innerHTML = '';
+                items.forEach(item => {
+                    const isBundle = item.type === 'bundle';
+                    const badgeClass = isBundle ? 'tb-bundle' : 'tb-msrp';
+                    const badgeText = isBundle ? '✨ BUNDLE' : '✅ MSRP';
                     const img = item.image || 'https://assets.pokemon.com/assets/cms2/img/misc/trading-card-games/cards/tcg_default_card.png';
-                    const btn = item.stock > 0 && item.googleFormLink ? `<a href="${item.googleFormLink}" target="_blank" class="action-button">JOIN BREAK!</a>` : `<div class="out-of-stock">SOLD OUT</div>`;
                     
-                    // BADGE LOGIC
-                    let badgeHtml = '';
-                    if (item.type === 'bundle') {
-                        badgeHtml = '<div class="type-badge badge-bundle">✨ BUNDLE BREAK</div>';
-                    } else {
-                        // Default to MSRP badge if type is msrp OR undefined (legacy items)
-                        badgeHtml = '<div class="type-badge badge-msrp">✅ MSRP BREAK</div>';
-                    }
+                    const btnHtml = (item.stock > 0 && item.googleFormLink)
+                        ? `<a href="${item.googleFormLink}" target="_blank" class="buy-btn">JOIN BREAK</a>`
+                        : `<div class="buy-btn sold-out">SOLD OUT</div>`;
 
-                    card.innerHTML = `
-                        <img src="${img}" alt="${item.name}" class="item-image" loading="lazy">
-                        ${badgeHtml}
-                        <div class="card-content">
-                            <h3>${item.name}</h3>
-                            <p class="description">${item.description}</p>
-                            <div class="item-details">
-                                <span class="item-price">$${item.price.toFixed(2)}</span>
-                                <span class="item-stock">Spots: ${item.stock}</span>
+                    grid.innerHTML += `
+                        <div class="item-card">
+                            <div class="type-badge ${badgeClass}">${badgeText}</div>
+                            <img src="${img}" class="item-image">
+                            <div class="card-content">
+                                <h3>${item.name}</h3>
+                                <p>${item.description}</p>
+                                <div class="price-row">
+                                    <span class="price">$${item.price}</span>
+                                    <span class="stock">${item.stock} Spots</span>
+                                </div>
+                                ${btnHtml}
                             </div>
-                            ${btn}
-                        </div>`;
-                    container.appendChild(card);
+                        </div>
+                    `;
                 });
-            } catch { container.innerHTML = '<p style="text-align:center;color:#ff4444;">Failed to load — refresh!</p>'; }
+            } catch(e) { grid.innerHTML = "Error loading store items."; }
         }
 
-        async function loadYouTubeVideos() {
-            const container = document.getElementById('youtube-videos');
-            container.innerHTML = '<div style="width:100%;text-align:center;color:var(--accent);">Checking YouTube...</div>';
-            
-            const proxies = ['https://api.allorigins.ml/raw?url=', 'https://corsproxy.io/?'];
-            let feedEntries = [];
-
-            for (let proxy of proxies) {
-                try {
-                    const url = `${proxy}${encodeURIComponent('https://www.youtube.com/feeds/videos.xml?channel_id=' + CHANNEL_ID + '&t=' + Date.now())}`;
-                    const xmlText = await (await fetch(url)).text();
-                    const xml = new DOMParser().parseFromString(xmlText, "application/xml");
-                    if (xml.querySelector("parsererror")) continue;
-                    feedEntries = Array.from(xml.querySelectorAll("entry")).slice(0, 6);
-                    if(feedEntries.length) break; 
-                } catch (e) {}
-            }
-
-            if (!feedEntries.length) {
-                container.innerHTML = '<p>Check out the channel on YouTube!</p>';
-                return;
-            }
-
-            let featuredVideo = null;
-            let regularVideos = [];
-
-            for (let entry of feedEntries) {
-                const videoId = entry.querySelector("videoId")?.textContent;
-                const title = entry.querySelector("title")?.textContent;
-                if (!videoId) continue;
-
-                let isLiveOrUpcoming = false;
-                try {
-                    const hqThumb = `https://i.ytimg.com/vi/${videoId}/hqdefault_live.jpg`;
-                    const check = await fetch(`https://api.allorigins.ml/raw?url=${encodeURIComponent(hqThumb)}`, { method: 'HEAD' });
-                    if (check.ok) isLiveOrUpcoming = true;
-                } catch(e) {}
-
-                const videoObj = { videoId, title, isLiveOrUpcoming };
-                if (isLiveOrUpcoming && !featuredVideo) {
-                    featuredVideo = videoObj;
-                } else {
-                    regularVideos.push(videoObj);
-                }
-            }
-
-            let videosToShow = [];
-            if (featuredVideo) {
-                container.className = "youtube-grid has-featured";
-                videosToShow = [featuredVideo, ...regularVideos.slice(0, 2)];
-            } else {
-                container.className = "youtube-grid standard-grid";
-                videosToShow = regularVideos.slice(0, 3);
-            }
-
-            container.innerHTML = '';
-            videosToShow.forEach((vid, index) => {
-                const isFeatured = (index === 0 && featuredVideo);
-                const thumbUrl = vid.isLiveOrUpcoming 
-                    ? `https://i.ytimg.com/vi/${vid.videoId}/hqdefault_live.jpg` 
-                    : `https://i.ytimg.com/vi/${vid.videoId}/maxresdefault.jpg`;
-
-                const card = document.createElement('div');
-                card.className = `yt-video ${isFeatured ? 'featured' : ''}`;
-                card.onclick = () => window.open(`https://www.youtube.com/watch?v=${vid.videoId}`, '_blank');
-                let badgeHTML = vid.isLiveOrUpcoming ? `<div class="status-badge badge-live">LIVE / UPCOMING</div>` : '';
-
-                card.innerHTML = `
-                    <img src="${thumbUrl}" alt="${vid.title}" class="yt-thumb" loading="lazy">
-                    ${badgeHTML}
-                    <div class="play-button">▶</div>
-                    <div class="yt-overlay"><div class="yt-title">${vid.title}</div></div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            loadItems();
-            loadYouTubeVideos();
-            const overlay = document.getElementById('lightbox-overlay');
-            const img = document.getElementById('lightbox-image');
-            document.getElementById('store-content').addEventListener('click', e => {
-                if (e.target.classList.contains('item-image')) { img.src = e.target.src; overlay.classList.add('show'); }
-            });
-            overlay.addEventListener('click', () => { overlay.classList.remove('show'); setTimeout(() => img.src = '', 300); });
-        });
+        loadVideos();
+        loadStore();
     </script>
 </body>
 </html>
