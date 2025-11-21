@@ -456,22 +456,25 @@
                 container.innerHTML = ''; 
                 videos.forEach(v => {
                     let badgeHTML = '';
-                    
-                    // Badge Logic
+                    let autoPlayParam = '0'; // Default to NO autoplay
+
+                    // Badge & Autoplay Logic
                     if (v.type === 'stream') {
                         // UNIVERSAL BADGE: Covers Upcoming, Live, and Replay
                         badgeHTML = `<div class="yt-label lbl-universal"><i class="ph-fill ph-broadcast"></i> OFFICIAL LIVE FEED</div>`;
+                        autoPlayParam = '1'; // ENABLE AUTOPLAY FOR STREAM
                     } else {
                         // Hunt
                         badgeHTML = `<div class="yt-label lbl-hunt"><i class="ph-fill ph-video"></i> LATEST HUNT</div>`;
+                        autoPlayParam = '0'; // DISABLE AUTOPLAY FOR HUNTS
                     }
                     
-                    // *** EMBED FOR ALL (Force Autoplay & Playsinline) ***
+                    // *** EMBED ***
                     container.innerHTML += `
                         <div class="neon-card-wrapper">
                             <div class="yt-card glass-panel">
                                 <iframe 
-                                    src="https://www.youtube.com/embed/${v.id}?autoplay=1&mute=1&playsinline=1&controls=1&modestbranding=1&rel=0" 
+                                    src="https://www.youtube.com/embed/${v.id}?autoplay=${autoPlayParam}&mute=1&playsinline=1&controls=1&modestbranding=1&rel=0" 
                                     style="width:100%; height:100%; border:none;" 
                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                                     allowfullscreen>
@@ -501,8 +504,8 @@
                     const tagClass = isBundle ? 'tag-bundle' : 'tag-msrp';
                     const tagText = isBundle ? 'BUNDLE BREAK' : 'MSRP BREAK';
                     
-                    const btn = (item.stock > 0 && item.googleFormLink)
-                        ? `<a href="${item.googleFormLink}" target="_blank" class="buy-btn">JOIN BREAK</a>`
+                    const btn = (item.stock > 0 && item.googleFormLink) 
+                        ? `<a href="${item.googleFormLink}" target="_blank" class="buy-btn">JOIN BREAK</a>` 
                         : `<div class="buy-btn sold-out">SOLD OUT</div>`;
                     
                     const img = item.image || 'https://assets.pokemon.com/assets/cms2/img/misc/trading-card-games/cards/tcg_default_card.png';
