@@ -331,7 +331,6 @@
     <script>
         const API_URL = 'https://pokeballer-worker.kronborgnielsen.workers.dev/api';
 
-        // Helper: Render Shimmering Skeletons
         function renderSkeletons(containerId, count) {
             const container = document.getElementById(containerId);
             container.innerHTML = '';
@@ -353,40 +352,21 @@
                 let streamVideo = null; 
                 let huntVideo = null;
 
-                // --- FIX: EXPANDED KEYWORDS ---
-                // The code will now check for ANY of these words to decide if it's "Upcoming"
+                // EXPANDED KEYWORDS
                 const upcomingKeywords = [
-                    'upcoming', 
-                    'scheduled', 
-                    'soon', 
-                    'tonight', 
-                    'waiting', 
-                    'starts', 
-                    'premiere',
-                    '8pm', 
-                    'est',
-                    'cst',
-                    'pst'
+                    'upcoming', 'scheduled', 'soon', 'tonight', 
+                    'waiting', 'starts', 'premiere', '8pm', 'est', 'cst', 'pst'
                 ];
-                // -----------------------------------------
 
                 // FIND STREAM VIDEO
                 for (let entry of entries) {
                     const rawTitle = entry.querySelector("title").textContent;
                     const title = rawTitle.toLowerCase();
                     
-                    // Check if it is a stream/break video
                     if (title.includes('stream') || title.includes('live') || title.includes('break')) {
                         const id = entry.querySelector("videoId").textContent;
-                        
-                        // Check if the title contains ANY of the upcoming keywords
                         const isUpcoming = upcomingKeywords.some(word => title.includes(word));
-
-                        streamVideo = { 
-                            id, 
-                            title: rawTitle, 
-                            badgeStatus: isUpcoming ? 'upcoming' : 'latest' 
-                        };
+                        streamVideo = { id, title: rawTitle, badgeStatus: isUpcoming ? 'upcoming' : 'latest' };
                         break;
                     }
                 }
@@ -413,20 +393,35 @@
                     return;
                 }
                 
-                container.innerHTML = ''; // Clear skeletons
+                container.innerHTML = ''; 
                 videos.forEach(v => {
-                    let thumb = `https://i.ytimg.com/vi/${v.id}/maxresdefault.jpg`;
+                    let contentHTML = '';
                     let badgeHTML = '';
                     
-                    if (v.type === 'stream') {
-                        badgeHTML = v.badgeStatus === 'upcoming' 
-                            ? `<div class="yt-label lbl-upcoming"><i class="ph-fill ph-clock"></i> UPCOMING LIVE BREAK</div>`
-                            : `<div class="yt-label lbl-past"><i class="ph-fill ph-rewind-circle"></i> LATEST LIVE BREAK</div>`;
-                    } else {
-                        badgeHTML = `<div class="yt-label lbl-hunt"><i class="ph-fill ph-video"></i> LATEST HUNT</div>`;
-                    }
+                    // LOGIC: If it's UPCOMING, show the LIVE PLAYER (iframe)
+                    // If it's PAST, show the IMAGE with a link
                     
-                    container.innerHTML += `
+                    if (v.type === 'stream' && v.badgeStatus === 'upcoming') {
+                        badgeHTML = `<div class="yt-label lbl-upcoming"><i class="ph-fill ph-clock"></i> UPCOMING LIVE BREAK</div>`;
+                        // NOTE: Iframe replaces the onclick action
+                        contentHTML = `
+                        <div class="neon-card-wrapper">
+                            <div class="yt-card glass-panel">
+                                <iframe 
+                                    src="https://www.youtube.com/embed/${v.id}" 
+                                    style="width:100%; height:100%; border:none;" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                    allowfullscreen>
+                                </iframe>
+                                ${badgeHTML}
+                            </div>
+                        </div>`;
+                    } 
+                    // PAST STREAM
+                    else if (v.type === 'stream') {
+                        badgeHTML = `<div class="yt-label lbl-past"><i class="ph-fill ph-rewind-circle"></i> LATEST LIVE BREAK</div>`;
+                        let thumb = `https://i.ytimg.com/vi/${v.id}/maxresdefault.jpg`;
+                        contentHTML = `
                         <div class="neon-card-wrapper" onclick="window.open('https://youtube.com/watch?v=${v.id}')">
                             <div class="yt-card glass-panel">
                                 <img src="${thumb}" class="yt-thumb" alt="${v.title}">
@@ -436,6 +431,24 @@
                                 </div>
                             </div>
                         </div>`;
+                    } 
+                    // HUNT VIDEO
+                    else {
+                        badgeHTML = `<div class="yt-label lbl-hunt"><i class="ph-fill ph-video"></i> LATEST HUNT</div>`;
+                        let thumb = `https://i.ytimg.com/vi/${v.id}/maxresdefault.jpg`;
+                        contentHTML = `
+                        <div class="neon-card-wrapper" onclick="window.open('https://youtube.com/watch?v=${v.id}')">
+                            <div class="yt-card glass-panel">
+                                <img src="${thumb}" class="yt-thumb" alt="${v.title}">
+                                ${badgeHTML}
+                                <div style="position:absolute; bottom:0; left:0; right:0; padding:30px 20px; background:linear-gradient(to top, #050510, transparent);">
+                                    <div style="color:white; font-weight:800; font-size:1.1rem; text-shadow:0 2px 10px rgba(0,0,0,0.8);">${v.title}</div>
+                                </div>
+                            </div>
+                        </div>`;
+                    }
+                    
+                    container.innerHTML += contentHTML;
                 });
             } catch(e) {
                 console.error("Error loading videos:", e);
@@ -444,14 +457,14 @@
         }
 
         async function loadStore() {
-            renderSkeletons('store-container', 4); // Show shimmer
+            renderSkeletons('store-container', 4);
             const container = document.getElementById('store-container');
             try {
                 const res = await fetch(`${API_URL}/items`);
                 const items = await res.json();
                 items.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
                 
-                container.innerHTML = ''; // Clear skeletons
+                container.innerHTML = ''; 
                 
                 items.forEach(item => {
                     const isBundle = item.type === 'bundle';
