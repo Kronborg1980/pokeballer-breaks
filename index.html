@@ -128,18 +128,30 @@
         }
         @keyframes glassShimmer { 0% { background-position: 150% 0; } 100% { background-position: -150% 0; } }
 
-        /* SUBSCRIBE & NOTIFICATIONS */
-        .sub-wrapper {
-            display: flex; justify-content: center; align-items: center; gap: 15px;
-            margin-top: 2rem; position: relative; z-index: 5;
+        /* SUB PANEL STYLES */
+        .sub-info-panel {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 2rem; gap: 2rem; flex-wrap: wrap;
         }
+        .sub-text { flex: 1; min-width: 280px; }
+        .sub-text h3 { 
+            display: flex; align-items: center; gap: 10px;
+            font-size: 1.4rem; color: var(--accent-gold); margin-bottom: 0.5rem;
+        }
+        .sub-text p { color: var(--text-dim); line-height: 1.6; font-size: 0.95rem; }
+        .sub-text strong { color: white; }
+        
+        .sub-actions { 
+            display: flex; gap: 15px; align-items: center; justify-content: center;
+        }
+
         .sub-btn {
             background: linear-gradient(135deg, #ff0000, #cc0000);
             color: white; padding: 12px 28px; border-radius: 50px;
             text-decoration: none; font-weight: 900; display: flex; align-items: center; gap: 10px;
             box-shadow: 0 0 25px rgba(255, 0, 0, 0.5);
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 1px solid rgba(255,255,255,0.3); letter-spacing: 1px; font-size: 1.1rem;
+            border: 1px solid rgba(255,255,255,0.3); letter-spacing: 1px; font-size: 1.1rem; white-space: nowrap;
         }
         .sub-btn:hover { 
             transform: translateY(-5px) scale(1.05); 
@@ -151,7 +163,7 @@
             display: flex; align-items: center; justify-content: center;
             text-decoration: none; font-size: 1.4rem;
             transition: all 0.3s ease; border: 1px solid var(--accent-gold);
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); flex-shrink: 0;
         }
         .bell-btn:hover { 
             transform: rotate(20deg) scale(1.1); 
@@ -311,6 +323,8 @@
             .store-grid { grid-template-columns: 1fr; gap: 25px; }
             .item-content { padding: 1.2rem; }
             .buy-btn { padding: 1.1rem; }
+
+            .sub-info-panel { flex-direction: column; text-align: center; }
         }
     </style>
 </head>
@@ -338,14 +352,6 @@
                 <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="header-logo">
             </div>
         </div>
-        <div class="sub-wrapper">
-            <a href="https://www.youtube.com/@PokeballerMike?sub_confirmation=1" target="_blank" class="sub-btn">
-                <i class="ph-fill ph-youtube-logo"></i> SUBSCRIBE
-            </a>
-            <a href="https://www.youtube.com/@PokeballerMike?sub_confirmation=1" target="_blank" class="bell-btn" title="Turn on Notifications">
-                <i class="ph-fill ph-bell-ringing"></i>
-            </a>
-        </div>
     </header>
 
     <main>
@@ -357,6 +363,27 @@
             
         <div id="yt-container" class="yt-container">
             </div>
+        
+        <div class="neon-card-wrapper" style="margin-top: 25px; margin-bottom: 40px;">
+            <div class="glass-panel sub-info-panel">
+                <div class="sub-text">
+                    <h3><i class="ph-fill ph-crown"></i> JOIN THE CRYSTAL LEAGUE</h3>
+                    <p>
+                        <strong>Why Subscribe?</strong> Support the channel and watch every hit live! <br>
+                        <strong>Turn on Notifications:</strong> Be the first to know when a Break goes live. Spots fill up fast—don't miss the drop!
+                    </p>
+                </div>
+                <div class="sub-actions">
+                    <a href="https://www.youtube.com/@PokeballerMike?sub_confirmation=1" target="_blank" class="sub-btn">
+                        <i class="ph-fill ph-youtube-logo"></i> SUBSCRIBE
+                    </a>
+                    <a href="https://www.youtube.com/@PokeballerMike?sub_confirmation=1" target="_blank" class="bell-btn" title="Turn on Notifications">
+                        <i class="ph-fill ph-bell-ringing"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
         <div class="section-header">
             <span class="section-line"></span>
             <span class="section-title">AVAILABLE BREAKS</span>
