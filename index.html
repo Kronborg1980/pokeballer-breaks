@@ -52,7 +52,6 @@
             will-change: transform; transition: all 0.5s ease;
             opacity: 0.4; filter: drop-shadow(0 0 15px rgba(0,0,0,0.8));
         }
-        /* Center Suicune (Background version - dimmed) */
         .p-suicune {
             top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: clamp(500px, 70vw, 1000px); opacity: 0.08;
@@ -67,21 +66,14 @@
         .p-cubone { bottom: 0; right: 0; width: calc(var(--guardian-size) * 0.85); z-index: -3; }
         
         .p-pichu {
-            bottom: 20px; 
-            left: 68%; 
-            width: 100px; opacity: 0.4;
+            bottom: 20px; left: 68%; width: 100px; opacity: 0.4;
             filter: drop-shadow(0 0 20px var(--accent-gold));
             animation: bounce 4s infinite; z-index: -4;
         }
         .p-magikarp { bottom: 10px; left: 50%; transform: translateX(-50%); width: 130px; opacity: 0.4; filter: blur(0.5px); animation: flop 2s infinite; }
-        
         .p-pinsir { 
-            bottom: 25px; 
-            left: 15%;   
-            width: calc(var(--guardian-size) * 1.1); 
-            opacity: 0.5;
-            animation: pinsirSnap 8s infinite ease-in-out;
-            z-index: -5;
+            bottom: 25px; left: 15%; width: calc(var(--guardian-size) * 1.1); 
+            opacity: 0.5; animation: pinsirSnap 8s infinite ease-in-out; z-index: -5;
         }
         @keyframes pinsirSnap {
             0%, 100% { transform: rotate(-15deg) translateY(0); }
@@ -108,64 +100,35 @@
             margin-bottom: 4rem;
         }
 
-        /* --- DUAL SUICUNE HEADER START --- */
+        /* HEADER */
         header { 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            padding: 4rem 1rem 1rem; 
-            position: relative; 
-            z-index: 2; 
+            display: flex; justify-content: center; align-items: center; 
+            padding: 4rem 1rem 1rem; position: relative; z-index: 2; 
         }
-        .header-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 2rem;
-        }
-        .logo-animator {
-            animation: floatLogo 6s infinite ease-in-out;
-        }
-        .header-logo {
-            width: 160px;
-            filter: drop-shadow(0 0 30px var(--accent-cyan));
-            display: block;
-        }
+        .header-wrapper { display: flex; align-items: center; gap: 2rem; }
+        .logo-animator { animation: floatLogo 6s infinite ease-in-out; }
+        .header-logo { width: 160px; filter: drop-shadow(0 0 30px var(--accent-cyan)); display: block; }
         .logo-left .header-logo { transform: scaleX(-1); }
-        
-        @keyframes floatLogo {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
-        }
+        @keyframes floatLogo { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
         
         h1 {
-            font-size: clamp(3.5rem, 9vw, 6rem);
-            font-weight: 900;
-            letter-spacing: -2px;
-            text-transform: uppercase;
-            position: relative;
-            display: inline-block;
-            z-index: 1;
-            margin: 0;
-            line-height: 1;
+            font-size: clamp(3.5rem, 9vw, 6rem); font-weight: 900; letter-spacing: -2px;
+            text-transform: uppercase; position: relative; display: inline-block;
+            z-index: 1; margin: 0; line-height: 1;
             background: linear-gradient(180deg, #ffffff 20%, #b8f9ff 50%, #00ffe7 55%, #bd00ff 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-align: center; /* Ensure centered text */
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-align: center;
         }
         h1::after {
-            content: attr(data-text);
-            position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 2;
+            content: attr(data-text); position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 2;
             background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.8) 45%, rgba(255, 255, 255, 0.9) 50%, rgba(255, 255, 255, 0.8) 55%, transparent 70%);
-            background-size: 200% 100%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: glassShimmer 6s infinite linear;
-            pointer-events: none;
+            background-size: 200% 100%; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            animation: glassShimmer 6s infinite linear; pointer-events: none;
             filter: drop-shadow(0 0 15px rgba(0, 255, 231, 0.5));
         }
         @keyframes glassShimmer { 0% { background-position: 150% 0; } 100% { background-position: -150% 0; } }
 
-        /* --- GLASS CAPSULE SECTION HEADERS --- */
+        /* SECTION HEADERS */
         .section-header { 
             display: flex; align-items: center; justify-content: center; gap: 1.5rem; 
             margin: 3rem auto 2rem; position: relative;
@@ -181,11 +144,9 @@
             transform: skewX(-25deg); animation: capsuleSheen 4s infinite ease-in-out;
         }
         @keyframes capsuleSheen { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
-
         .section-line { 
             height: 4px; background: rgba(0, 255, 231, 0.2); flex: 1; 
-            border-radius: 10px; position: relative;
-            box-shadow: 0 0 10px rgba(0, 255, 231, 0.1);
+            border-radius: 10px; position: relative; box-shadow: 0 0 10px rgba(0, 255, 231, 0.1);
         }
         .section-line::after {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -193,48 +154,59 @@
             opacity: 0.8; border-radius: 10px; animation: pulseLine 3s infinite ease-in-out alternate;
         }
         @keyframes pulseLine { 0% { opacity: 0.3; transform: scaleX(0.8); } 100% { opacity: 1; transform: scaleX(1); } }
-        
         .section-title {
             color: #fff; font-weight: 900; letter-spacing: 3px; font-size: 1.3rem;
             text-shadow: 0 0 10px var(--accent-cyan), 0 0 20px var(--accent-cyan);
-            position: relative; z-index: 2;
-            text-align: center;
+            position: relative; z-index: 2; text-align: center;
         }
 
-        /* NEON CARD SYSTEM */
+        /* NEON CARDS */
         .neon-card-wrapper {
-            position: relative;
-            border-radius: 24px;
-            padding: 3px;
-            background: rgba(255,255,255,0.05);
-            overflow: hidden;
-            transition: transform 0.4s ease;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative; border-radius: 24px; padding: 3px;
+            background: rgba(255,255,255,0.05); overflow: hidden;
+            transition: transform 0.4s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
         .neon-card-wrapper:hover {
-            transform: translateY(-8px) scale(1.01);
-            box-shadow: 0 0 30px rgba(0, 255, 231, 0.3);
+            transform: translateY(-8px) scale(1.01); box-shadow: 0 0 30px rgba(0, 255, 231, 0.3);
         }
         .neon-card-wrapper::before {
-            content: '';
-            position: absolute;
-            top: -50%; left: -50%;
-            width: 200%; height: 200%;
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
             background: conic-gradient(transparent 0deg, transparent 80deg, var(--accent-cyan) 130deg, var(--text-bright) 140deg, var(--accent-purple) 150deg, transparent 200deg);
-            animation: spinBorder 4s linear infinite;
-            z-index: 0;
+            animation: spinBorder 4s linear infinite; z-index: 0;
         }
         @keyframes spinBorder { 100% { transform: rotate(360deg); } }
         .glass-panel {
-            position: relative;
-            background: rgba(20, 20, 35, 0.85);
-            backdrop-filter: blur(20px) saturate(1.5);
-            border-radius: 21px;
-            height: 100%; width: 100%;
-            z-index: 1;
-            overflow: hidden;
+            position: relative; background: rgba(20, 20, 35, 0.85);
+            backdrop-filter: blur(20px) saturate(1.5); border-radius: 21px;
+            height: 100%; width: 100%; z-index: 1; overflow: hidden;
         }
-        /* GRID */
+
+        /* SKELETON LOADING */
+        .skeleton {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            min-height: 400px; /* Responsive Height */
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(0, 255, 231, 0.1);
+        }
+        .skeleton::after {
+            content: "";
+            position: absolute;
+            top: 0; right: 0; bottom: 0; left: 0;
+            transform: translateX(-100%);
+            background-image: linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0) 0,
+                rgba(0, 255, 231, 0.1) 20%,
+                rgba(189, 0, 255, 0.1) 60%,
+                rgba(255, 255, 255, 0)
+            );
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer { 100% { transform: translateX(100%); } }
+
+        /* GRID SYSTEM */
         .yt-container { display: grid; gap: 25px; grid-template-columns: 1fr; }
         @media (min-width: 900px) { .yt-container { grid-template-columns: 1fr 1fr; } }
         .yt-card { aspect-ratio: 16/9; cursor: pointer; }
@@ -250,8 +222,9 @@
         .lbl-past { background: rgba(189, 0, 255, 0.9); color: white; }
         .lbl-hunt { background: rgba(0, 238, 255, 0.9); color: black; }
         @keyframes pulse { 0%,100% { opacity:1; scale:1; } 50% { opacity:0.8; scale:0.98; } }
+
         .store-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
-        .item-card { display: flex; flex-direction: column; }
+        .item-card { display: flex; flex-direction: column; height: 100%; }
         .type-tag {
             position: absolute; top: 15px; right: 15px; padding: 6px 12px; border-radius: 6px;
             font-weight: 900; font-size: 0.75rem; z-index: 2; letter-spacing: 0.5px;
@@ -280,46 +253,32 @@
         .sold-out { background: #1a1a1a; color: #555; pointer-events: none; border: 2px solid #333; box-shadow: none; }
         footer { text-align: center; padding: 2rem 0 3rem; color: var(--text-dim); font-size: 0.85rem; position: relative; z-index: 2; }
         
-        /* RESPONSIVE & SMOOTHING */
+        /* RESPONSIVE MEDIA QUERIES */
         @media (max-width: 1300px) { .p-gengar, .p-gardevoir { display: none; } }
         
         @media (max-width: 768px) {
-            /* Hide background elements */
             .p-rayquaza, .p-charizard, .p-gengar, .p-gardevoir, .p-vaporeon, .p-cubone, .p-pinsir { display: none; }
             .p-suicune { width: 120vw; opacity: 0.1; top: 40%; }
             .p-pichu { width: 70px; bottom: 10px; left: auto; right: 10px; }
             
-            /* Header Smoothing */
             .header-wrapper { flex-direction: column; gap: 1rem; text-align: center; }
             h1 { font-size: clamp(2.5rem, 10vw, 3.5rem); line-height: 1.1; }
             .logo-right { display: none; } 
             .header-logo { width: 100px; }
             .logo-left .header-logo { transform: scaleX(1); }
 
-            /* Main Container Smoothing */
             main { padding: 1.5rem 1rem; margin-bottom: 2rem; width: 95%; border-radius: 20px; }
             
-            /* Section Header Smoothing - Center Aligned */
             .section-header { 
-                width: 100%; 
-                padding: 10px 15px; 
-                border-radius: 25px;
-                gap: 1rem; /* Reduce gap so lines don't push text too far */
-                margin: 2rem auto 1.5rem;
+                width: 100%; padding: 10px 15px; border-radius: 25px;
+                gap: 1rem; margin: 2rem auto 1.5rem;
             }
             .section-title { font-size: 1rem; white-space: nowrap; }
-            /* Keep lines but make them smaller */
             .section-line { height: 2px; min-width: 20px; } 
             
-            /* Grid Smoothing */
-            .store-grid { 
-                grid-template-columns: 1fr; /* Single column for smoothness */
-                gap: 25px;
-            }
-            
-            /* Card Tweaks */
+            .store-grid { grid-template-columns: 1fr; gap: 25px; }
             .item-content { padding: 1.2rem; }
-            .buy-btn { padding: 1.1rem; } /* Bigger touch target */
+            .buy-btn { padding: 1.1rem; }
         }
     </style>
 </head>
@@ -357,29 +316,39 @@
         </div>
             
         <div id="yt-container" class="yt-container">
-            <div style="color:var(--text-dim); text-align:center; grid-column:1/-1; padding: 2rem;">Loading Crystal Feed...</div>
-        </div>
+            </div>
         <div class="section-header">
             <span class="section-line"></span>
             <span class="section-title">AVAILABLE BREAKS</span>
             <span class="section-line"></span>
         </div>
         <div class="store-grid" id="store-container">
-            <div style="color:var(--text-dim); text-align:center; padding: 2rem;">Summoning Drops...</div>
-        </div>
+            </div>
     </main>
     <footer>
         <p>© 2025 PBM Breaks • Not affiliated with Nintendo • Crafted in the Crystal Realm</p>
     </footer>
     <script>
         const API_URL = 'https://pokeballer-worker.kronborgnielsen.workers.dev/api';
+
+        // Helper: Render Shimmering Skeletons
+        function renderSkeletons(containerId, count) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            for(let i=0; i<count; i++) {
+                container.innerHTML += `<div class="skeleton"></div>`;
+            }
+        }
+
         async function loadVideos() {
+            renderSkeletons('yt-container', 2); // Show shimmer
             const container = document.getElementById('yt-container');
             try {
                 const res = await fetch(`${API_URL}/youtube`);
                 const text = await res.text();
                 const doc = new DOMParser().parseFromString(text, "text/xml");
                 const entries = Array.from(doc.querySelectorAll("entry")).slice(0, 20);
+                
                 let streamVideo = null; let huntVideo = null;
                 for (let entry of entries) {
                     const title = entry.querySelector("title").textContent.toLowerCase();
@@ -397,14 +366,18 @@
                         break;
                     }
                 }
-                container.innerHTML = '';
+                
+                // Render Real Data
                 const videos = [];
                 if (streamVideo) videos.push({ ...streamVideo, type: 'stream' });
                 if (huntVideo) videos.push({ ...huntVideo, type: 'hunt' });
+                
                 if (videos.length === 0) {
                     container.innerHTML = '<div style="text-align:center; color:#888;">No videos found</div>';
                     return;
                 }
+                
+                container.innerHTML = ''; // Clear skeletons
                 videos.forEach(v => {
                     let thumb = `https://i.ytimg.com/vi/${v.id}/maxresdefault.jpg`;
                     let badgeHTML = '';
@@ -430,14 +403,17 @@
                 container.innerHTML = `<div style="text-align:center; grid-column:1/-1;"><a href="https://www.youtube.com/@PokeballerMike" target="_blank" class="buy-btn" style="max-width:200px; margin:0 auto;">VISIT CHANNEL</a></div>`;
             }
         }
+
         async function loadStore() {
+            renderSkeletons('store-container', 4); // Show shimmer
             const container = document.getElementById('store-container');
             try {
                 const res = await fetch(`${API_URL}/items`);
                 const items = await res.json();
                 items.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
                 
-                container.innerHTML = '';
+                container.innerHTML = ''; // Clear skeletons
+                
                 items.forEach(item => {
                     const isBundle = item.type === 'bundle';
                     const tagClass = isBundle ? 'tag-bundle' : 'tag-msrp';
@@ -470,6 +446,7 @@
                 });
             } catch(e) { console.error(e); }
         }
+
         loadVideos();
         loadStore();
     </script>
