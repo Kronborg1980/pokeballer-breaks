@@ -343,26 +343,62 @@
         async function loadVideos() {
             renderSkeletons('yt-container', 2); // Show shimmer
             const container = document.getElementById('yt-container');
+            
             try {
                 const res = await fetch(`${API_URL}/youtube`);
                 const text = await res.text();
                 const doc = new DOMParser().parseFromString(text, "text/xml");
                 const entries = Array.from(doc.querySelectorAll("entry")).slice(0, 20);
                 
-                let streamVideo = null; let huntVideo = null;
+                let streamVideo = null; 
+                let huntVideo = null;
+
+                // --- FIX: EXPANDED KEYWORDS ---
+                // The code will now check for ANY of these words to decide if it's "Upcoming"
+                const upcomingKeywords = [
+                    'upcoming', 
+                    'scheduled', 
+                    'soon', 
+                    'tonight', 
+                    'waiting', 
+                    'starts', 
+                    'premiere',
+                    '8pm', 
+                    'est',
+                    'cst',
+                    'pst'
+                ];
+                // -----------------------------------------
+
+                // FIND STREAM VIDEO
                 for (let entry of entries) {
-                    const title = entry.querySelector("title").textContent.toLowerCase();
+                    const rawTitle = entry.querySelector("title").textContent;
+                    const title = rawTitle.toLowerCase();
+                    
+                    // Check if it is a stream/break video
                     if (title.includes('stream') || title.includes('live') || title.includes('break')) {
                         const id = entry.querySelector("videoId").textContent;
-                        streamVideo = { id, title: entry.querySelector("title").textContent, badgeStatus: title.includes('upcoming') ? 'upcoming' : 'latest' };
+                        
+                        // Check if the title contains ANY of the upcoming keywords
+                        const isUpcoming = upcomingKeywords.some(word => title.includes(word));
+
+                        streamVideo = { 
+                            id, 
+                            title: rawTitle, 
+                            badgeStatus: isUpcoming ? 'upcoming' : 'latest' 
+                        };
                         break;
                     }
                 }
+
+                // FIND HUNT VIDEO
                 for (let entry of entries) {
-                    const title = entry.querySelector("title").textContent.toLowerCase();
+                    const rawTitle = entry.querySelector("title").textContent;
+                    const title = rawTitle.toLowerCase();
                     const id = entry.querySelector("videoId").textContent;
+                    
                     if (!title.includes('stream') && !title.includes('live') && (!streamVideo || id !== streamVideo.id)) {
-                        huntVideo = { id, title: entry.querySelector("title").textContent };
+                        huntVideo = { id, title: rawTitle };
                         break;
                     }
                 }
@@ -381,6 +417,7 @@
                 videos.forEach(v => {
                     let thumb = `https://i.ytimg.com/vi/${v.id}/maxresdefault.jpg`;
                     let badgeHTML = '';
+                    
                     if (v.type === 'stream') {
                         badgeHTML = v.badgeStatus === 'upcoming' 
                             ? `<div class="yt-label lbl-upcoming"><i class="ph-fill ph-clock"></i> UPCOMING LIVE BREAK</div>`
@@ -388,6 +425,7 @@
                     } else {
                         badgeHTML = `<div class="yt-label lbl-hunt"><i class="ph-fill ph-video"></i> LATEST HUNT</div>`;
                     }
+                    
                     container.innerHTML += `
                         <div class="neon-card-wrapper" onclick="window.open('https://youtube.com/watch?v=${v.id}')">
                             <div class="yt-card glass-panel">
@@ -400,6 +438,7 @@
                         </div>`;
                 });
             } catch(e) {
+                console.error("Error loading videos:", e);
                 container.innerHTML = `<div style="text-align:center; grid-column:1/-1;"><a href="https://www.youtube.com/@PokeballerMike" target="_blank" class="buy-btn" style="max-width:200px; margin:0 auto;">VISIT CHANNEL</a></div>`;
             }
         }
