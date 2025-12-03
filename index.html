@@ -46,61 +46,41 @@
         }
         @keyframes particleMove { from{background-position:0 0,0 0} to{background-position:0 -1000px,0 -500px} }
         
+        /* POKEMON BACKGROUND IMAGES */
         .poke-bg {
             position: fixed; pointer-events: none; z-index: -5;
             will-change: transform; transition: all 0.5s ease;
             opacity: 0.4; filter: drop-shadow(0 0 15px rgba(0,0,0,0.8));
         }
-        .p-suicune {
-            top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: clamp(500px, 70vw, 1000px); opacity: 0.08;
-            filter: drop-shadow(0 0 80px rgba(0, 255, 231, 0.2));
-            animation: breathe 8s ease-in-out infinite; z-index: -6;
-        }
+        .p-suicune { top: 50%; left: 50%; transform: translate(-50%, -50%); width: clamp(500px, 70vw, 1000px); opacity: 0.08; filter: drop-shadow(0 0 80px rgba(0, 255, 231, 0.2)); animation: breathe 8s ease-in-out infinite; z-index: -6; }
         .p-rayquaza { top: 0; left: 0; width: var(--guardian-size); animation: floatLeft 10s infinite; }
         .p-charizard { top: 0; right: 0; width: var(--guardian-size); animation: floatRight 9s infinite; transform: scaleX(-1); }
         .p-gengar { top: 50%; left: 0; transform: translateY(-50%); width: var(--guardian-size); animation: floatLeft 7s infinite 1s; }
         .p-gardevoir { top: 50%; right: 0; transform: translateY(-50%); width: var(--guardian-size); animation: floatRight 8s infinite 2s; }
         .p-vaporeon { bottom: 0; left: 0; width: var(--guardian-size); animation: sway 12s infinite; }
         .p-cubone { bottom: 0; right: 0; width: calc(var(--guardian-size) * 0.85); z-index: -3; }
-        
-        .p-pichu {
-            bottom: 20px; left: 68%; width: 100px; opacity: 0.4;
-            filter: drop-shadow(0 0 20px var(--accent-gold));
-            animation: bounce 4s infinite; z-index: -4;
-        }
+        .p-pichu { bottom: 20px; left: 68%; width: 100px; opacity: 0.4; filter: drop-shadow(0 0 20px var(--accent-gold)); animation: bounce 4s infinite; z-index: -4; }
         .p-magikarp { bottom: 10px; left: 50%; transform: translateX(-50%); width: 130px; opacity: 0.4; filter: blur(0.5px); animation: flop 2s infinite; }
-        .p-pinsir { 
-            bottom: 25px; left: 15%; width: calc(var(--guardian-size) * 1.1); 
-            opacity: 0.5; animation: pinsirSnap 8s infinite ease-in-out; z-index: -5;
-        }
-        @keyframes pinsirSnap {
-            0%, 100% { transform: rotate(-15deg) translateY(0); }
-            50% { transform: rotate(-5deg) translateY(-20px); }
-        }
+        .p-pinsir { bottom: 25px; left: 15%; width: calc(var(--guardian-size) * 1.1); opacity: 0.5; animation: pinsirSnap 8s infinite ease-in-out; z-index: -5; }
+
         @keyframes breathe { 0%,100%{scale:1; opacity:0.08;} 50%{scale:1.02; opacity:0.12;} }
         @keyframes floatLeft { 0%,100%{margin-top:0;} 50%{margin-top:-15px;} }
         @keyframes floatRight { 0%,100%{margin-top:0;} 50%{margin-top:-15px;} }
         @keyframes sway { 0%,100%{transform:rotate(0deg);} 50%{transform:rotate(3deg);} }
         @keyframes bounce { 0%,100%{transform:translateY(0) rotate(0deg);} 50%{transform:translateY(-10px) rotate(5deg);} }
         @keyframes flop { 0%,100%{transform: translateX(-50%) rotate(-10deg);} 50%{transform: translateX(-50%) rotate(10deg) translateY(-10px);} }
+        @keyframes pinsirSnap { 0%, 100% { transform: rotate(-15deg) translateY(0); } 50% { transform: rotate(-5deg) translateY(-20px); } }
         
+        /* MAIN LAYOUT */
         main {
             position: relative; z-index: 2; max-width: 1200px; margin: 0 auto; padding: 2rem;
-            border: 1px solid rgba(0, 255, 231, 0.1);
-            border-radius: 30px;
-            box-shadow: 0 0 50px rgba(0,0,0,0.5);
-            background: rgba(0,0,0,0.4);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            margin-top: 2rem;
-            margin-bottom: 4rem;
+            border: 1px solid rgba(0, 255, 231, 0.1); border-radius: 30px;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5); background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            margin-top: 2rem; margin-bottom: 4rem;
         }
 
-        header { 
-            display: flex; flex-direction: column; justify-content: center; align-items: center; 
-            padding: 4rem 1rem 1rem; position: relative; z-index: 2; 
-        }
+        header { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 4rem 1rem 1rem; position: relative; z-index: 2; }
         .header-wrapper { display: flex; align-items: center; gap: 2rem; }
         .logo-animator { animation: floatLogo 6s infinite ease-in-out; }
         .header-logo { width: 160px; filter: drop-shadow(0 0 30px var(--accent-cyan)); display: block; }
@@ -124,55 +104,32 @@
         }
         @keyframes glassShimmer { 0% { background-position: 150% 0; } 100% { background-position: -150% 0; } }
 
-        .sub-info-panel {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 2rem; gap: 2rem; flex-wrap: wrap;
-        }
+        /* PANELS & CARDS */
+        .sub-info-panel { display: flex; align-items: center; justify-content: space-between; padding: 2rem; gap: 2rem; flex-wrap: wrap; }
         .sub-text { flex: 1; min-width: 280px; }
-        .sub-text h3 { 
-            display: flex; align-items: center; gap: 10px;
-            font-size: 1.4rem; color: var(--accent-gold); margin-bottom: 0.5rem;
-        }
+        .sub-text h3 { display: flex; align-items: center; gap: 10px; font-size: 1.4rem; color: var(--accent-gold); margin-bottom: 0.5rem; }
         .sub-text p { color: var(--text-dim); line-height: 1.6; font-size: 0.95rem; }
         .sub-text strong { color: white; }
-        
-        .sub-actions { 
-            display: flex; gap: 15px; align-items: center; justify-content: center;
-        }
+        .sub-actions { display: flex; gap: 15px; align-items: center; justify-content: center; }
 
         .sub-btn {
-            background: linear-gradient(135deg, #ff0000, #cc0000);
-            color: white; padding: 12px 28px; border-radius: 50px;
+            background: linear-gradient(135deg, #ff0000, #cc0000); color: white; padding: 12px 28px; border-radius: 50px;
             text-decoration: none; font-weight: 900; display: flex; align-items: center; gap: 10px;
-            box-shadow: 0 0 25px rgba(255, 0, 0, 0.5);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 25px rgba(255, 0, 0, 0.5); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             border: 1px solid rgba(255,255,255,0.3); letter-spacing: 1px; font-size: 1.1rem; white-space: nowrap;
         }
-        .sub-btn:hover { 
-            transform: translateY(-5px) scale(1.05); 
-            box-shadow: 0 0 40px rgba(255, 0, 0, 0.8); 
-        }
+        .sub-btn:hover { transform: translateY(-5px) scale(1.05); box-shadow: 0 0 40px rgba(255, 0, 0, 0.8); }
         .bell-btn {
-            background: rgba(20, 20, 20, 0.8); backdrop-filter: blur(5px);
-            color: var(--accent-gold); width: 50px; height: 50px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            text-decoration: none; font-size: 1.4rem;
-            transition: all 0.3s ease; border: 1px solid var(--accent-gold);
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); flex-shrink: 0;
+            background: rgba(20, 20, 20, 0.8); backdrop-filter: blur(5px); color: var(--accent-gold); width: 50px; height: 50px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1.4rem;
+            transition: all 0.3s ease; border: 1px solid var(--accent-gold); box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); flex-shrink: 0;
         }
-        .bell-btn:hover { 
-            transform: rotate(20deg) scale(1.1); 
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
-            background: var(--accent-gold); color: black;
-        }
+        .bell-btn:hover { transform: rotate(20deg) scale(1.1); box-shadow: 0 0 30px rgba(255, 215, 0, 0.6); background: var(--accent-gold); color: black; }
 
         .section-header { 
-            display: flex; align-items: center; justify-content: center; gap: 1.5rem; 
-            margin: 3rem auto 2rem; position: relative;
-            background: rgba(10, 10, 25, 0.6);
-            border: 1px solid rgba(0, 255, 231, 0.3);
-            box-shadow: 0 0 20px rgba(0, 255, 231, 0.1) inset, 0 10px 20px rgba(0,0,0,0.5);
-            padding: 12px 40px; border-radius: 50px; backdrop-filter: blur(8px);
+            display: flex; align-items: center; justify-content: center; gap: 1.5rem; margin: 3rem auto 2rem; position: relative;
+            background: rgba(10, 10, 25, 0.6); border: 1px solid rgba(0, 255, 231, 0.3);
+            box-shadow: 0 0 20px rgba(0, 255, 231, 0.1) inset, 0 10px 20px rgba(0,0,0,0.5); padding: 12px 40px; border-radius: 50px; backdrop-filter: blur(8px);
             max-width: 600px; overflow: hidden;
         }
         .section-header::before {
@@ -181,30 +138,22 @@
             transform: skewX(-25deg); animation: capsuleSheen 4s infinite ease-in-out;
         }
         @keyframes capsuleSheen { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
-        .section-line { 
-            height: 4px; background: rgba(0, 255, 231, 0.2); flex: 1; 
-            border-radius: 10px; position: relative; box-shadow: 0 0 10px rgba(0, 255, 231, 0.1);
-        }
+        .section-line { height: 4px; background: rgba(0, 255, 231, 0.2); flex: 1; border-radius: 10px; position: relative; box-shadow: 0 0 10px rgba(0, 255, 231, 0.1); }
         .section-line::after {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, #00ffe7, transparent);
-            opacity: 0.8; border-radius: 10px; animation: pulseLine 3s infinite ease-in-out alternate;
+            background: linear-gradient(90deg, transparent, #00ffe7, transparent); opacity: 0.8; border-radius: 10px; animation: pulseLine 3s infinite ease-in-out alternate;
         }
         @keyframes pulseLine { 0% { opacity: 0.3; transform: scaleX(0.8); } 100% { opacity: 1; transform: scaleX(1); } }
         .section-title {
             color: #fff; font-weight: 900; letter-spacing: 3px; font-size: 1.3rem;
-            text-shadow: 0 0 10px var(--accent-cyan), 0 0 20px var(--accent-cyan);
-            position: relative; z-index: 2; text-align: center;
+            text-shadow: 0 0 10px var(--accent-cyan), 0 0 20px var(--accent-cyan); position: relative; z-index: 2; text-align: center;
         }
 
         .neon-card-wrapper {
             position: relative; border-radius: 24px; padding: 3px;
-            background: rgba(255,255,255,0.05); overflow: hidden;
-            transition: transform 0.4s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            background: rgba(255,255,255,0.05); overflow: hidden; transition: transform 0.4s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-        .neon-card-wrapper:hover {
-            transform: translateY(-8px) scale(1.01); box-shadow: 0 0 30px rgba(0, 255, 231, 0.3);
-        }
+        .neon-card-wrapper:hover { transform: translateY(-8px) scale(1.01); box-shadow: 0 0 30px rgba(0, 255, 231, 0.3); }
         .neon-card-wrapper::before {
             content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
             background: conic-gradient(transparent 0deg, transparent 80deg, var(--accent-cyan) 130deg, var(--text-bright) 140deg, var(--accent-purple) 150deg, transparent 200deg);
@@ -212,35 +161,27 @@
         }
         @keyframes spinBorder { 100% { transform: rotate(360deg); } }
         .glass-panel {
-            position: relative; background: rgba(20, 20, 35, 0.85);
-            backdrop-filter: blur(20px) saturate(1.5); border-radius: 21px;
+            position: relative; background: rgba(20, 20, 35, 0.85); backdrop-filter: blur(20px) saturate(1.5); border-radius: 21px;
             height: 100%; width: 100%; z-index: 1; overflow: hidden;
         }
 
+        /* LOADING SKELETON */
         .skeleton {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 24px;
-            min-height: 400px; 
-            position: relative;
-            overflow: hidden;
-            border: 1px solid rgba(0, 255, 231, 0.1);
+            background: rgba(255, 255, 255, 0.05); border-radius: 24px; min-height: 400px; position: relative; overflow: hidden; border: 1px solid rgba(0, 255, 231, 0.1);
         }
         .skeleton::after {
-            content: "";
-            position: absolute;
-            top: 0; right: 0; bottom: 0; left: 0;
-            transform: translateX(-100%);
+            content: ""; position: absolute; top: 0; right: 0; bottom: 0; left: 0; transform: translateX(-100%);
             background-image: linear-gradient(90deg, rgba(255, 255, 255, 0) 0, rgba(0, 255, 231, 0.1) 20%, rgba(189, 0, 255, 0.1) 60%, rgba(255, 255, 255, 0));
             animation: shimmer 1.5s infinite;
         }
         @keyframes shimmer { 100% { transform: translateX(100%); } }
 
+        /* VIDEO & STORE GRID */
         .yt-container { display: grid; gap: 25px; grid-template-columns: 1fr; }
         @media (min-width: 900px) { .yt-container { grid-template-columns: 1fr 1fr; } }
         .yt-card { aspect-ratio: 16/9; cursor: pointer; }
         .yt-label {
-            position: absolute; top: 15px; left: 15px; padding: 8px 16px; border-radius: 10px;
-            font-weight: 900; font-size: 0.8rem; letter-spacing: 0.5px; z-index: 2;
+            position: absolute; top: 15px; left: 15px; padding: 8px 16px; border-radius: 10px; font-weight: 900; font-size: 0.8rem; letter-spacing: 0.5px; z-index: 2;
             box-shadow: 0 5px 15px rgba(0,0,0,0.5); text-transform: uppercase; display:flex; align-items:center; gap:6px;
             backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);
         }
@@ -252,8 +193,7 @@
         .store-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
         .item-card { display: flex; flex-direction: column; height: 100%; }
         .type-tag {
-            position: absolute; top: 15px; right: 15px; padding: 6px 12px; border-radius: 6px;
-            font-weight: 900; font-size: 0.75rem; z-index: 2; letter-spacing: 0.5px;
+            position: absolute; top: 15px; right: 15px; padding: 6px 12px; border-radius: 6px; font-weight: 900; font-size: 0.75rem; z-index: 2; letter-spacing: 0.5px;
             text-transform: uppercase; backdrop-filter: blur(10px);
         }
         .tag-msrp { background: rgba(0, 255, 157, 0.9); color: black; }
@@ -268,6 +208,7 @@
         .price-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; padding-top: 1.2rem; border-top: 2px solid rgba(255,255,255,0.05); }
         .price { font-size: 1.8rem; font-weight: 900; color: var(--accent-cyan); text-shadow: 0 0 15px rgba(0, 255, 231, 0.4); }
         .stock { font-size: 0.8rem; color: var(--text-dim); background: rgba(255,255,255,0.07); padding: 5px 10px; border-radius: 5px; font-weight: 600; }
+        
         .buy-btn {
             display: block; text-align: center; padding: 1rem; border-radius: 12px;
             background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
@@ -286,41 +227,25 @@
             .p-pichu { width: 70px; bottom: 10px; left: auto; right: 10px; }
             .header-wrapper { flex-direction: column; gap: 1rem; text-align: center; }
             h1 { font-size: clamp(2.5rem, 10vw, 3.5rem); line-height: 1.1; }
-            .logo-right { display: none; } 
-            .header-logo { width: 100px; }
-            .logo-left .header-logo { transform: scaleX(1); }
+            .logo-right { display: none; } .header-logo { width: 100px; } .logo-left .header-logo { transform: scaleX(1); }
             main { padding: 1.5rem 1rem; margin-bottom: 2rem; width: 95%; border-radius: 20px; }
             .section-header { width: 100%; padding: 10px 15px; border-radius: 25px; gap: 1rem; margin: 2rem auto 1.5rem; }
-            .section-title { font-size: 1rem; white-space: nowrap; }
-            .section-line { height: 2px; min-width: 20px; } 
+            .section-title { font-size: 1rem; white-space: nowrap; } .section-line { height: 2px; min-width: 20px; } 
             .store-grid { grid-template-columns: 1fr; gap: 25px; }
-            .item-content { padding: 1.2rem; }
-            .buy-btn { padding: 1.1rem; }
+            .item-content { padding: 1.2rem; } .buy-btn { padding: 1.1rem; }
             .sub-info-panel { flex-direction: column; text-align: center; }
         }
 
-        .image-modal {
-            display: none; position: fixed; z-index: 9999; padding-top: 50px;
-            left: 0; top: 0; width: 100%; height: 100%; overflow: auto;
-            background-color: rgba(0, 0, 0, 0.9); backdrop-filter: blur(5px);
-            align-items: center; justify-content: center;
-        }
-        .modal-content {
-            margin: auto; display: block; max-width: 90%; max-height: 85vh;
-            border: 2px solid var(--accent-cyan); box-shadow: 0 0 50px rgba(0, 255, 231, 0.5);
-            border-radius: 15px; animation: zoomIn 0.3s;
-        }
+        /* MODAL */
+        .image-modal { display: none; position: fixed; z-index: 9999; padding-top: 50px; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.9); backdrop-filter: blur(5px); align-items: center; justify-content: center; }
+        .modal-content { margin: auto; display: block; max-width: 90%; max-height: 85vh; border: 2px solid var(--accent-cyan); box-shadow: 0 0 50px rgba(0, 255, 231, 0.5); border-radius: 15px; animation: zoomIn 0.3s; }
         @keyframes zoomIn { from {transform:scale(0)} to {transform:scale(1)} }
-        .close-modal {
-            position: absolute; top: 20px; right: 35px; color: var(--text-bright);
-            font-size: 40px; font-weight: bold; transition: 0.3s; cursor: pointer; z-index: 10000;
-        }
+        .close-modal { position: absolute; top: 20px; right: 35px; color: var(--text-bright); font-size: 40px; font-weight: bold; transition: 0.3s; cursor: pointer; z-index: 10000; }
         .close-modal:hover { color: var(--accent-cyan); }
     </style>
 </head>
 <body>
     <div class="particles"></div>
-    
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="poke-bg p-suicune">
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/127.png" class="poke-bg p-pinsir">
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/384.png" class="poke-bg p-rayquaza">
@@ -334,54 +259,33 @@
     
     <header>
         <div class="header-wrapper">
-            <div class="logo-animator logo-left">
-                <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="header-logo">
-            </div>
+            <div class="logo-animator logo-left"><img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="header-logo"></div>
             <h1 data-text="PBM BREAKS">PBM BREAKS</h1>
-            <div class="logo-animator logo-right">
-                <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="header-logo">
-            </div>
+            <div class="logo-animator logo-right"><img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="header-logo"></div>
         </div>
     </header>
 
     <main>
-        <div class="section-header">
-            <span class="section-line"></span>
-            <span class="section-title">CHANNEL FEED</span>
-            <span class="section-line"></span>
-        </div>
+        <div class="section-header"><span class="section-line"></span><span class="section-title">CHANNEL FEED</span><span class="section-line"></span></div>
         <div id="yt-container" class="yt-container"></div>
         
         <div class="neon-card-wrapper" style="margin-top: 25px; margin-bottom: 40px;">
             <div class="glass-panel sub-info-panel">
                 <div class="sub-text">
                     <h3><i class="ph-fill ph-crown"></i> JOIN POKEBALLER MIKE</h3>
-                    <p>
-                        <strong>Why Subscribe?</strong> Support the channel and watch every hit live! <br>
-                        <strong>Turn on Notifications:</strong> Be the first to know when a Break goes live.
-                    </p>
+                    <p><strong>Why Subscribe?</strong> Support the channel and watch every hit live! <br><strong>Turn on Notifications:</strong> Be the first to know when a Break goes live.</p>
                 </div>
                 <div class="sub-actions">
-                    <a href="https://www.youtube.com/@PokeballerMike?sub_confirmation=1" target="_blank" class="sub-btn">
-                        <i class="ph-fill ph-youtube-logo"></i> SUBSCRIBE
-                    </a>
-                    <a href="https://www.youtube.com/@PokeballerMike?sub_confirmation=1" target="_blank" class="bell-btn" title="Turn on Notifications">
-                        <i class="ph-fill ph-bell-ringing"></i>
-                    </a>
+                    <a href="https://www.youtube.com/@PokeballerMike?sub_confirmation=1" target="_blank" class="sub-btn"><i class="ph-fill ph-youtube-logo"></i> SUBSCRIBE</a>
+                    <a href="https://www.youtube.com/@PokeballerMike?sub_confirmation=1" target="_blank" class="bell-btn" title="Turn on Notifications"><i class="ph-fill ph-bell-ringing"></i></a>
                 </div>
             </div>
         </div>
 
-        <div class="section-header">
-            <span class="section-line"></span>
-            <span class="section-title">AVAILABLE BREAKS</span>
-            <span class="section-line"></span>
-        </div>
+        <div class="section-header"><span class="section-line"></span><span class="section-title">AVAILABLE BREAKS</span><span class="section-line"></span></div>
         <div class="store-grid" id="store-container"></div>
     </main>
-    <footer>
-        <p>© 2025 PBM Breaks • Not affiliated with Nintendo • Crafted in the Crystal Realm</p>
-    </footer>
+    <footer><p>© 2025 PBM Breaks • Not affiliated with Nintendo • Crafted in the Crystal Realm</p></footer>
 
     <div id="myModal" class="image-modal" onclick="closeModal()">
         <span class="close-modal">&times;</span>
@@ -394,9 +298,7 @@
         function renderSkeletons(containerId, count) {
             const container = document.getElementById(containerId);
             container.innerHTML = '';
-            for(let i=0; i<count; i++) {
-                container.innerHTML += `<div class="skeleton"></div>`;
-            }
+            for(let i=0; i<count; i++) container.innerHTML += `<div class="skeleton"></div>`;
         }
 
         async function loadVideos() {
@@ -409,23 +311,19 @@
                 const doc = new DOMParser().parseFromString(text, "text/xml");
                 const entries = Array.from(doc.querySelectorAll("entry")).slice(0, 20);
                 
-                let streamVideo = null; 
-                let huntVideo = null;
+                let streamVideo = null, huntVideo = null;
 
                 for (let entry of entries) {
                     const rawTitle = entry.querySelector("title").textContent;
-                    const title = rawTitle.toLowerCase();
-                    if (title.includes('stream') || title.includes('live') || title.includes('break')) {
+                    if (rawTitle.toLowerCase().match(/stream|live|break/)) {
                         streamVideo = { id: entry.querySelector("videoId").textContent, title: rawTitle, badgeStatus: 'stream' };
                         break;
                     }
                 }
-
                 for (let entry of entries) {
                     const rawTitle = entry.querySelector("title").textContent;
-                    const title = rawTitle.toLowerCase();
                     const id = entry.querySelector("videoId").textContent;
-                    if (!title.includes('stream') && !title.includes('live') && (!streamVideo || id !== streamVideo.id)) {
+                    if (!rawTitle.toLowerCase().match(/stream|live/) && (!streamVideo || id !== streamVideo.id)) {
                         huntVideo = { id, title: rawTitle };
                         break;
                     }
@@ -435,39 +333,28 @@
                 if (streamVideo) videos.push({ ...streamVideo, type: 'stream' });
                 if (huntVideo) videos.push({ ...huntVideo, type: 'hunt' });
                 
-                if (videos.length === 0) {
-                    container.innerHTML = '<div style="text-align:center; color:#888;">No videos found</div>';
-                    return;
-                }
+                if (videos.length === 0) { container.innerHTML = '<div style="text-align:center; color:#888;">No videos found</div>'; return; }
                 
                 container.innerHTML = ''; 
                 videos.forEach(v => {
-                    let badgeHTML = '';
-                    let autoPlayParam = '0';
-
-                    if (v.type === 'stream') {
-                        badgeHTML = `<div class="yt-label lbl-universal"><i class="ph-fill ph-broadcast"></i> OFFICIAL LIVE FEED</div>`;
-                        autoPlayParam = '1';
-                    } else {
-                        badgeHTML = `<div class="yt-label lbl-hunt"><i class="ph-fill ph-video"></i> LATEST HUNT</div>`;
-                        autoPlayParam = '0';
-                    }
+                    const isStream = v.type === 'stream';
+                    const badgeHTML = isStream 
+                        ? `<div class="yt-label lbl-universal"><i class="ph-fill ph-broadcast"></i> OFFICIAL LIVE FEED</div>`
+                        : `<div class="yt-label lbl-hunt"><i class="ph-fill ph-video"></i> LATEST HUNT</div>`;
                     
                     container.innerHTML += `
                         <div class="neon-card-wrapper">
                             <div class="yt-card glass-panel">
-                                <iframe 
-                                    src="https://www.youtube.com/embed/${v.id}?autoplay=${autoPlayParam}&mute=1&playsinline=1&controls=1&modestbranding=1&rel=0" 
+                                <iframe src="https://www.youtube.com/embed/${v.id}?autoplay=${isStream?'1':'0'}&mute=1&playsinline=1&controls=1&modestbranding=1&rel=0" 
                                     style="width:100%; height:100%; border:none;" 
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                                    allowfullscreen>
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
                                 </iframe>
                                 ${badgeHTML}
                             </div>
                         </div>`;
                 });
             } catch(e) {
-                console.error("Error loading videos:", e);
+                console.error("Video Error:", e);
                 container.innerHTML = `<div style="text-align:center; grid-column:1/-1;"><a href="https://www.youtube.com/@PokeballerMike" target="_blank" class="buy-btn" style="max-width:200px; margin:0 auto;">VISIT CHANNEL</a></div>`;
             }
         }
@@ -486,9 +373,15 @@
                     const tagClass = isBundle ? 'tag-bundle' : 'tag-msrp';
                     const tagText = isBundle ? 'BUNDLE BREAK' : 'MSRP BREAK';
                     
-                    const btn = (item.stock > 0 && item.googleFormLink) 
-                        ? `<a href="${item.googleFormLink}" target="_blank" class="buy-btn" onclick="trackClick('${item.id}')">JOIN BREAK</a>` 
-                        : `<div class="buy-btn sold-out">SOLD OUT</div>`;
+                    // Button logic: If googleFormLink is missing, show 'Coming Soon' instead of Join
+                    let btn = `<div class="buy-btn sold-out">SOLD OUT</div>`;
+                    if (item.stock > 0) {
+                        if (item.googleFormLink) {
+                             btn = `<a href="${item.googleFormLink}" target="_blank" class="buy-btn" onclick="trackClick('${item.id}')">JOIN BREAK</a>`;
+                        } else {
+                             btn = `<div class="buy-btn sold-out" style="background:#555; border-color:#777;">COMING SOON</div>`;
+                        }
+                    }
                     
                     const img = item.image || 'https://assets.pokemon.com/assets/cms2/img/misc/trading-card-games/cards/tcg_default_card.png';
                     
@@ -514,31 +407,27 @@
             } catch(e) { console.error(e); }
         }
 
+        // --- TRACKING FUNCTION ---
         function trackClick(id) {
+            // keepalive: true ensures the request finishes even if the browser opens a new tab/window immediately
             fetch(`${API_URL}/click`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id: id })
+                body: JSON.stringify({ id: id }),
+                keepalive: true
             }).catch(e => console.log('Tracking error', e));
+            return true;
         }
 
         loadVideos();
         loadStore();
 
         function openModal(src) {
-            const modal = document.getElementById("myModal");
-            const modalImg = document.getElementById("img01");
-            modal.style.display = "flex"; 
-            modalImg.src = src; 
+            document.getElementById("myModal").style.display = "flex"; 
+            document.getElementById("img01").src = src; 
         }
-
-        function closeModal() {
-            document.getElementById("myModal").style.display = "none";
-        }
-
-        document.addEventListener('keydown', function(event) {
-            if (event.key === "Escape") closeModal();
-        });
+        function closeModal() { document.getElementById("myModal").style.display = "none"; }
+        document.addEventListener('keydown', e => { if (e.key === "Escape") closeModal(); });
     </script>
 </body>
 </html>
