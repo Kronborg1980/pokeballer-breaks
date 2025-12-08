@@ -369,6 +369,9 @@
                 
                 container.innerHTML = ''; 
                 items.forEach(item => {
+                    // --- THE FIX: HIDE ITEM IF MARKED HIDDEN ---
+                    if (item.hidden) return; 
+
                     const isBundle = item.type === 'bundle';
                     const tagClass = isBundle ? 'tag-bundle' : 'tag-msrp';
                     const tagText = isBundle ? 'BUNDLE BREAK' : 'MSRP BREAK';
