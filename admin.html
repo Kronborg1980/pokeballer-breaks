@@ -61,8 +61,9 @@
                         <select id="item-hidden" style="border: 1px solid #555;"><option value="false">👁️ Public</option><option value="true" style="color:#ff6666">🚫 Hidden</option></select>
                     </div>
                 </div>
+                
                 <label>Break Schedule / Time</label>
-                <input type="text" id="item-schedule" placeholder="e.g. Dec. 12, 8:00 PM (CST gets added automatically)">
+                <input type="text" id="item-schedule" placeholder="e.g. Dec. 12, 8:00 PM (CST added automatically)">
                 
                 <label>Name</label><input type="text" id="item-name">
                 <label>Description</label><input type="text" id="item-description">
@@ -81,7 +82,6 @@
         </div>
     </div>
     <script>
-        // --- ENSURE THIS URL IS CORRECT ---
         const API_URL = 'https://pokeballer-worker.kronborgnielsen.workers.dev/api';
         
         let editingId = null;
@@ -102,10 +102,9 @@
                 const res = await fetch(`${API_URL}/login`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({username:u, password:p}) });
                 const data = await res.json();
                 if(data.success) { localStorage.setItem('adminToken','1'); location.reload(); } 
-                else alert('Invalid Credentials. Check Console for details.');
+                else alert('Invalid Credentials.');
             } catch(e) { 
-                console.error(e);
-                alert('Server Connection Error. Is your Worker running? Check Console (F12).'); 
+                alert('Server Error. Check console.'); 
             }
         }
 
@@ -153,7 +152,6 @@
 
                 editingId = null; currentImage = ''; currentCreatedAt = null; currentClicks = 0;
                 
-                // Reset Form
                 document.getElementById('item-name').value = '';
                 document.getElementById('item-description').value = '';
                 document.getElementById('item-price').value = '';
@@ -167,8 +165,7 @@
                 
                 loadItems();
             } catch(e) {
-                console.error(e);
-                alert("Save Failed. See Console.");
+                alert("Save Failed.");
                 btn.innerText = "Save Failed";
             }
         }
@@ -178,10 +175,7 @@
                 const res = await fetch(`${API_URL}/items`);
                 const items = await res.json();
                 
-                if(items.error) {
-                    alert("DATABASE ERROR: " + items.error);
-                    return;
-                }
+                if(items.error) { alert("DATABASE ERROR: " + items.error); return; }
 
                 items.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
                 
@@ -192,7 +186,6 @@
                     const badgeText = item.type === 'bundle' ? 'BUNDLE BREAK' : 'MSRP BREAK';
                     const hiddenBadge = item.hidden ? '<span class="badge b-hidden">HIDDEN</span>' : '';
                     const opacity = item.hidden ? 'opacity: 0.6;' : '';
-                    // Ensure CST is displayed in admin too
                     const scheduleDisplay = item.scheduleText ? (item.scheduleText.includes('CST') ? item.scheduleText : `${item.scheduleText} CST`) : '';
                     const timeBadge = scheduleDisplay ? `<span class="badge b-time">⏱️ ${scheduleDisplay}</span>` : '';
 
@@ -217,9 +210,7 @@
                             </div>
                         </li>`;
                 });
-            } catch(e) {
-                console.error("Load Error", e);
-            }
+            } catch(e) { console.error("Load Error", e); }
         }
 
         function editItem(item) {
