@@ -31,7 +31,7 @@
             position: relative;
         }
 
-        /* PERFORMANCE FIX: Static background layer */
+        /* OPTIMIZATION: Static background layer */
         body::before {
             content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background:
@@ -51,26 +51,26 @@
             opacity: 0.3;
         }
         
-        /* --- RESTORED POKEMON ANIMATIONS (GPU OPTIMIZED) --- */
+        /* --- HIGH PERFORMANCE ANIMATION SETTINGS --- */
         .poke-bg {
             position: fixed; pointer-events: none; z-index: -5;
             opacity: 0.4; 
-            filter: drop-shadow(0 0 10px rgba(0,0,0,0.5));
-            will-change: transform; /* Tells browser to use GPU */
+            /* THE FIX: No drop-shadows on moving elements, strictly GPU layers */
+            will-change: transform; 
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            perspective: 1000px;
         }
         
         /* 1. SUICUNE (Breathing) */
         .p-suicune { 
             top: 50%; left: 50%; transform: translate(-50%, -50%); 
-            width: clamp(500px, 70vw, 1000px); opacity: 0.08; 
-            filter: drop-shadow(0 0 80px rgba(0, 255, 231, 0.2)); 
+            width: clamp(500px, 70vw, 1000px); opacity: 0.05; 
+            /* Suicune is huge, so we only animate opacity to save lag, removed scale */
             animation: breathe 8s ease-in-out infinite; 
             z-index: -6; 
         }
-        @keyframes breathe { 
-            0%,100% { transform: translate(-50%, -50%) scale(1); opacity:0.08; } 
-            50% { transform: translate(-50%, -50%) scale(1.02); opacity:0.12; } 
-        }
+        @keyframes breathe { 0%,100% { opacity:0.05; } 50% { opacity:0.1; } }
 
         /* 2. RAYQUAZA (Float Left) */
         .p-rayquaza { top: 0; left: 0; width: var(--guardian-size); animation: float 10s infinite ease-in-out; }
@@ -87,46 +87,46 @@
         /* 6. VAPOREON (Sway) */
         .p-vaporeon { bottom: 0; left: 0; width: var(--guardian-size); transform-origin: bottom center; animation: sway 12s infinite ease-in-out; }
 
-        /* 7. CUBONE (Static/Subtle) */
+        /* 7. CUBONE (Static) */
         .p-cubone { bottom: 0; right: 0; width: calc(var(--guardian-size) * 0.85); z-index: -3; }
 
         /* 8. PICHU (Bounce) */
-        .p-pichu { bottom: 20px; left: 68%; width: 100px; opacity: 0.4; filter: drop-shadow(0 0 20px var(--accent-gold)); animation: bounce 4s infinite; z-index: -4; }
+        .p-pichu { bottom: 20px; left: 68%; width: 100px; opacity: 0.4; animation: bounce 4s infinite; z-index: -4; }
 
         /* 9. MAGIKARP (Flop) */
-        .p-magikarp { bottom: 10px; left: 50%; width: 130px; opacity: 0.4; filter: blur(0.5px); animation: flop 2s infinite; }
+        .p-magikarp { bottom: 10px; left: 50%; width: 130px; opacity: 0.4; animation: flop 2s infinite; }
 
         /* 10. PINSIR (Snap) */
         .p-pinsir { bottom: 25px; left: 15%; width: calc(var(--guardian-size) * 1.1); opacity: 0.5; animation: pinsirSnap 8s infinite ease-in-out; z-index: -5; }
 
         /* --- GPU ANIMATION KEYFRAMES --- */
         @keyframes float { 
-            0%, 100% { transform: translateY(0); } 
-            50% { transform: translateY(-20px); } 
+            0%, 100% { transform: translate3d(0, 0, 0); } 
+            50% { transform: translate3d(0, -20px, 0); } 
         }
         @keyframes floatFlipped { 
-            0%, 100% { transform: scaleX(-1) translateY(0); } 
-            50% { transform: scaleX(-1) translateY(-20px); } 
+            0%, 100% { transform: scaleX(-1) translate3d(0, 0, 0); } 
+            50% { transform: scaleX(-1) translate3d(0, -20px, 0); } 
         }
         @keyframes floatMid {
-            0%, 100% { transform: translateY(-50%); }
-            50% { transform: translateY(calc(-50% - 15px)); }
+            0%, 100% { transform: translate3d(0, -50%, 0); }
+            50% { transform: translate3d(0, calc(-50% - 15px), 0); }
         }
         @keyframes sway { 
             0%, 100% { transform: rotate(0deg); } 
             50% { transform: rotate(3deg); } 
         }
         @keyframes bounce { 
-            0%, 100% { transform: translateY(0) rotate(0deg); } 
-            50% { transform: translateY(-10px) rotate(5deg); } 
+            0%, 100% { transform: translate3d(0,0,0) rotate(0deg); } 
+            50% { transform: translate3d(0, -10px, 0) rotate(5deg); } 
         }
         @keyframes flop { 
-            0%, 100% { transform: translateX(-50%) rotate(-10deg); } 
-            50% { transform: translateX(-50%) rotate(10deg) translateY(-10px); } 
+            0%, 100% { transform: translate3d(-50%, 0, 0) rotate(-10deg); } 
+            50% { transform: translate3d(-50%, -10px, 0) rotate(10deg); } 
         }
         @keyframes pinsirSnap { 
-            0%, 100% { transform: rotate(-15deg) translateY(0); } 
-            50% { transform: rotate(-5deg) translateY(-20px); } 
+            0%, 100% { transform: rotate(-15deg) translate3d(0,0,0); } 
+            50% { transform: rotate(-5deg) translate3d(0, -20px, 0); } 
         }
 
         /* MAIN LAYOUT */
@@ -135,15 +135,17 @@
             border: 1px solid rgba(0, 255, 231, 0.1); border-radius: 30px;
             box-shadow: 0 0 50px rgba(0,0,0,0.5); 
             background: rgba(10, 12, 25, 0.85); 
-            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
             margin-top: 2rem; margin-bottom: 4rem;
         }
 
         header { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 4rem 1rem 1rem; position: relative; z-index: 2; }
         .header-wrapper { display: flex; align-items: center; gap: 2rem; }
+        
+        /* RESTORED VISUALS: Logos get shadows because they don't move across the screen */
         .header-logo { width: 160px; display: block; filter: drop-shadow(0 0 25px var(--accent-cyan)); }
         .logo-left .header-logo { transform: scaleX(-1); }
-        .logo-animator { animation: float 6s infinite ease-in-out; } /* Logos float too */
+        .logo-animator { animation: float 6s infinite ease-in-out; } 
 
         h1 {
             font-size: clamp(3.5rem, 9vw, 6rem); font-weight: 900; letter-spacing: -2px;
@@ -152,6 +154,7 @@
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             text-align: center; position: relative; display: inline-block; z-index: 1;
         }
+        /* The Light Shimmer Effect */
         h1::after {
             content: attr(data-text); position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 2;
             background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.8) 45%, rgba(255, 255, 255, 0.9) 50%, rgba(255, 255, 255, 0.8) 55%, transparent 70%);
@@ -268,6 +271,8 @@
             .store-grid { grid-template-columns: 1fr; gap: 25px; }
             .item-content { padding: 1.2rem; } .buy-btn { padding: 1.1rem; }
             .sub-info-panel { flex-direction: column; text-align: center; }
+            /* DISABLE HEAVY ANIMATIONS ON MOBILE */
+            .poke-bg { animation: none !important; }
         }
 
         .image-modal { display: none; position: fixed; z-index: 9999; padding-top: 50px; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.9); align-items: center; justify-content: center; }
