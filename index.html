@@ -226,7 +226,7 @@
             border: 1px solid var(--accent-purple); color: #e0aaff;
             box-shadow: 0 0 15px rgba(213, 0, 255, 0.3);
             display: flex; align-items: center; gap: 5px;
-            pointer-events: none; /* Allows clicks to pass through */
+            pointer-events: none; /* Allows clicks to pass through to the image */
         }
 
         .item-img-box { height: 260px; overflow:hidden; position: relative; cursor: pointer; border-bottom: 1px solid rgba(0, 255, 242, 0.2); }
@@ -418,15 +418,13 @@
                     const tagClass = isBundle ? 'tag-bundle' : 'tag-msrp';
                     const tagText = isBundle ? 'BUNDLE BREAK' : 'MSRP BREAK';
                     
-                    // --- NEW: Time Badge Logic (Bottom Left + CST Auto-append) ---
+                    // --- TIME BADGE LOGIC ---
                     let timeBadgeHTML = '';
                     if (item.scheduleText) {
-                        // Automatically append CST if the admin didn't type it
                         const displayText = item.scheduleText.includes('CST') ? item.scheduleText : `${item.scheduleText} CST`;
                         timeBadgeHTML = `<div class="time-tag-bottom"><i class="ph-fill ph-clock-countdown"></i> ${displayText}</div>`;
                     }
 
-                    
                     let btn = `<div class="buy-btn sold-out">SOLD OUT</div>`;
                     if (item.stock > 0) {
                         if (item.googleFormLink) {
@@ -444,7 +442,8 @@
                                 <div class="type-tag ${tagClass}">${tagText}</div>
                                 <div class="item-img-box" onclick="openModal('${img}')">
                                     <img src="${img}" class="item-img" alt="${item.name}">
-                                    ${timeBadgeHTML} </div>
+                                    ${timeBadgeHTML}
+                                </div>
                                 <div class="item-content">
                                     <h3>${item.name}</h3>
                                     <p>${item.description}</p>
