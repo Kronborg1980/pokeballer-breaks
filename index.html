@@ -132,17 +132,18 @@
         /* MAIN LAYOUT */
         main {
             position: relative; z-index: 2; max-width: 1200px; margin: 0 auto; padding: 2rem;
-            border: 1px solid rgba(0, 255, 231, 0.1); border-radius: 30px;
-            box-shadow: 0 0 50px rgba(0,0,0,0.5); 
-            background: rgba(10, 12, 25, 0.85); 
-            backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
+            /* Updated Main Container Glass */
+            border: 1px solid rgba(0, 255, 231, 0.15); 
+            border-radius: 30px;
+            box-shadow: 0 0 80px rgba(0,0,0,0.6); 
+            background: rgba(5, 5, 12, 0.7); 
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
             margin-top: 2rem; margin-bottom: 4rem;
         }
 
         header { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 4rem 1rem 1rem; position: relative; z-index: 2; }
         .header-wrapper { display: flex; align-items: center; gap: 2rem; }
         
-        /* RESTORED VISUALS: Logos get shadows because they don't move across the screen */
         .header-logo { width: 160px; display: block; filter: drop-shadow(0 0 25px var(--accent-cyan)); }
         .logo-left .header-logo { transform: scaleX(-1); }
         .logo-animator { animation: float 6s infinite ease-in-out; } 
@@ -154,7 +155,6 @@
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             text-align: center; position: relative; display: inline-block; z-index: 1;
         }
-        /* The Light Shimmer Effect */
         h1::after {
             content: attr(data-text); position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 2;
             background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.8) 45%, rgba(255, 255, 255, 0.9) 50%, rgba(255, 255, 255, 0.8) 55%, transparent 70%);
@@ -187,51 +187,87 @@
             display: flex; align-items: center; justify-content: center; gap: 1.5rem; margin: 3rem auto 2rem;
             background: rgba(10, 10, 25, 0.8); border: 1px solid rgba(0, 255, 231, 0.3);
             padding: 12px 40px; border-radius: 50px; max-width: 600px;
+            box-shadow: 0 0 20px rgba(0, 255, 231, 0.1);
         }
-        .section-line { height: 4px; background: rgba(0, 255, 231, 0.2); flex: 1; border-radius: 10px; }
+        .section-line { height: 4px; background: rgba(0, 255, 231, 0.2); flex: 1; border-radius: 10px; box-shadow: 0 0 10px var(--accent-cyan); }
         .section-title {
             color: #fff; font-weight: 900; letter-spacing: 3px; font-size: 1.3rem;
-            text-shadow: 0 0 10px var(--accent-cyan); text-align: center;
+            text-shadow: 0 0 15px var(--accent-cyan); text-align: center;
         }
 
+        /* ------------------------------------------------ */
+        /* --- NEW GLASS GLOW STYLES --- */
+        /* ------------------------------------------------ */
+        
         .neon-card-wrapper {
-            position: relative; border-radius: 24px; padding: 3px;
-            background: rgba(255,255,255,0.05); overflow: hidden; transition: transform 0.2s ease;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.5); transform: translateZ(0);
+            position: relative; border-radius: 24px; padding: 2px;
+            /* Static Outer Glow added to wrapper */
+            box-shadow: 0 0 20px rgba(0, 255, 231, 0.15), 0 0 40px rgba(189, 0, 255, 0.1);
+            background: rgba(255,255,255,0.05); 
+            overflow: hidden; transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s ease;
+            transform: translateZ(0);
         }
-        .neon-card-wrapper:hover { transform: translateY(-5px); }
+        
+        /* Intensified Glow on Hover */
+        .neon-card-wrapper:hover { 
+            transform: translateY(-8px) scale(1.01); 
+            box-shadow: 0 0 35px rgba(0, 255, 231, 0.4), 0 0 60px rgba(189, 0, 255, 0.3);
+        }
+
         .neon-card-wrapper::before {
             content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
             background: conic-gradient(transparent 0deg, transparent 80deg, var(--accent-cyan) 130deg, var(--text-bright) 140deg, var(--accent-purple) 150deg, transparent 200deg);
             animation: spinBorder 4s linear infinite; z-index: 0;
+            opacity: 0.8;
         }
         @keyframes spinBorder { 100% { transform: rotate(360deg); } }
         
+        /* TRUE FROSTED GLASS PANEL */
         .glass-panel {
             position: relative; 
-            background: rgba(20, 20, 35, 0.95); /* Darker, less blur */
-            border-radius: 21px; height: 100%; width: 100%; z-index: 1; overflow: hidden;
+            /* More transparent background for "Glass" look */
+            background: linear-gradient(135deg, rgba(25, 25, 40, 0.6) 0%, rgba(10, 10, 20, 0.85) 100%);
+            /* Heavy Blur */
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border-radius: 22px; 
+            height: 100%; width: 100%; z-index: 1; overflow: hidden;
+            
+            /* Glass Reflection Borders (Top is brighter) */
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-top: 1px solid rgba(255, 255, 255, 0.35);
+            border-left: 1px solid rgba(255, 255, 255, 0.15);
+            
+            /* Inner Glow Depth */
+            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.6), inset 0 0 10px rgba(0, 255, 231, 0.05);
         }
 
-        .skeleton { background: rgba(255, 255, 255, 0.05); border-radius: 24px; min-height: 400px; border: 1px solid rgba(0, 255, 231, 0.1); }
+        .skeleton { 
+            background: rgba(255, 255, 255, 0.05); border-radius: 24px; min-height: 400px; 
+            border: 1px solid rgba(0, 255, 231, 0.1); 
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+        }
 
         .yt-container { display: grid; gap: 25px; grid-template-columns: 1fr; }
         @media (min-width: 900px) { .yt-container { grid-template-columns: 1fr 1fr; } }
         .yt-card { aspect-ratio: 16/9; cursor: pointer; }
+        
         .yt-label {
             position: absolute; top: 15px; left: 15px; padding: 8px 16px; border-radius: 10px; font-weight: 900; font-size: 0.8rem; letter-spacing: 0.5px; z-index: 2;
             box-shadow: 0 5px 15px rgba(0,0,0,0.5); text-transform: uppercase; display:flex; align-items:center; gap:6px;
-            background: rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(0,0,0,0.6); 
+            border: 1px solid rgba(255,255,255,0.2);
+            backdrop-filter: blur(5px);
         }
         .lbl-upcoming { color: #ffd700; }
         .lbl-hunt { color: #00eeff; }
-        .lbl-universal { background: linear-gradient(90deg, #ff0055, #ff0000); color: white; }
+        .lbl-universal { background: linear-gradient(90deg, #ff0055, #ff0000); color: white; border:none; }
 
         .store-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
         .item-card { display: flex; flex-direction: column; height: 100%; }
         .type-tag {
             position: absolute; top: 15px; right: 15px; padding: 6px 12px; border-radius: 6px; font-weight: 900; font-size: 0.75rem; z-index: 2; letter-spacing: 0.5px;
-            text-transform: uppercase; background: rgba(0,0,0,0.8);
+            text-transform: uppercase; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,0.1);
         }
         .tag-msrp { color: #00ff9d; }
         .tag-bundle { color: var(--accent-gold); border: 2px solid var(--accent-gold); }
@@ -241,11 +277,11 @@
         .item-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s; }
         .neon-card-wrapper:hover .item-img { transform: scale(1.1) rotate(2deg); }
         .item-content { padding: 1.5rem; flex: 1; display: flex; flex-direction: column; position: relative; }
-        .item-content h3 { font-size: 1.4rem; margin-bottom: 0.5rem; color: white; font-weight: 800; line-height: 1.2; }
+        .item-content h3 { font-size: 1.4rem; margin-bottom: 0.5rem; color: white; font-weight: 800; line-height: 1.2; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
         .item-content p { color: var(--text-dim); font-size: 0.95rem; line-height: 1.5; margin-bottom: 1.5rem; flex: 1; }
-        .price-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; padding-top: 1.2rem; border-top: 2px solid rgba(255,255,255,0.05); }
+        .price-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; padding-top: 1.2rem; border-top: 1px solid rgba(255,255,255,0.1); }
         .price { font-size: 1.8rem; font-weight: 900; color: var(--accent-cyan); text-shadow: 0 0 15px rgba(0, 255, 231, 0.4); }
-        .stock { font-size: 0.8rem; color: var(--text-dim); background: rgba(255,255,255,0.07); padding: 5px 10px; border-radius: 5px; font-weight: 600; }
+        .stock { font-size: 0.8rem; color: var(--text-dim); background: rgba(255,255,255,0.07); padding: 5px 10px; border-radius: 5px; font-weight: 600; border: 1px solid rgba(255,255,255,0.05); }
         
         .buy-btn {
             display: block; text-align: center; padding: 1rem; border-radius: 12px;
@@ -253,8 +289,9 @@
             color: white; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 1rem; letter-spacing: 1px;
             transition: 0.3s; position: relative; overflow: hidden;
             border: 1px solid rgba(255,255,255,0.2); cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
-        .buy-btn:hover { transform: translateY(-3px); box-shadow: 0 0 20px rgba(189, 0, 255, 0.6); }
+        .buy-btn:hover { transform: translateY(-3px); box-shadow: 0 0 25px rgba(189, 0, 255, 0.6); }
         .sold-out { background: #1a1a1a; color: #555; pointer-events: none; border: 2px solid #333; box-shadow: none; }
         footer { text-align: center; padding: 2rem 0 3rem; color: var(--text-dim); font-size: 0.85rem; position: relative; z-index: 2; }
         
@@ -275,7 +312,7 @@
             .poke-bg { animation: none !important; }
         }
 
-        .image-modal { display: none; position: fixed; z-index: 9999; padding-top: 50px; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.9); align-items: center; justify-content: center; }
+        .image-modal { display: none; position: fixed; z-index: 9999; padding-top: 50px; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.9); align-items: center; justify-content: center; backdrop-filter: blur(10px); }
         .modal-content { margin: auto; display: block; max-width: 90%; max-height: 85vh; border: 2px solid var(--accent-cyan); box-shadow: 0 0 50px rgba(0, 255, 231, 0.5); border-radius: 15px; }
         .close-modal { position: absolute; top: 20px; right: 35px; color: var(--text-bright); font-size: 40px; font-weight: bold; cursor: pointer; z-index: 10000; }
     </style>
