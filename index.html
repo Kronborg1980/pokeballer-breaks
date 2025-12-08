@@ -218,7 +218,7 @@
         .tag-msrp { color: #00ff9d; text-shadow: 0 0 10px #00ff9d; border-color: #00ff9d; }
         .tag-bundle { color: var(--accent-gold); border: 2px solid var(--accent-gold); text-shadow: 0 0 10px var(--accent-gold); background: rgba(255, 215, 0, 0.1); }
         
-        /* --- NEW: BOTTOM LEFT TIME TAG --- */
+        /* --- BOTTOM LEFT TIME TAG --- */
         .time-tag-bottom {
             position: absolute; bottom: 10px; left: 10px; 
             padding: 6px 12px; border-radius: 8px; font-weight: 800; font-size: 0.75rem; z-index: 3; letter-spacing: 0.5px;
@@ -226,7 +226,7 @@
             border: 1px solid var(--accent-purple); color: #e0aaff;
             box-shadow: 0 0 15px rgba(213, 0, 255, 0.3);
             display: flex; align-items: center; gap: 5px;
-            pointer-events: none; /* Ensures clicks pass through to the image */
+            pointer-events: none; /* Allows clicks to pass through */
         }
 
         .item-img-box { height: 260px; overflow:hidden; position: relative; cursor: pointer; border-bottom: 1px solid rgba(0, 255, 242, 0.2); }
