@@ -396,6 +396,17 @@
             }
         }
 
+        // --- NEW DATE FORMATTER FOR FRONTEND ---
+        function formatSchedule(isoString) {
+            if (!isoString) return '';
+            const date = new Date(isoString);
+            if (isNaN(date.getTime())) return isoString; // Fallback if it's not a valid date
+            
+            // Format: Fri, Oct 25 @ 8:00 PM
+            return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) + 
+                   ' @ ' + date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+        }
+
         async function loadStore() {
             renderSkeletons('store-container', 4);
             const container = document.getElementById('store-container');
@@ -413,9 +424,10 @@
                     const tagClass = isBundle ? 'tag-bundle' : 'tag-msrp';
                     const tagText = isBundle ? 'BUNDLE BREAK' : 'MSRP BREAK';
                     
-                    // NEW: Time Badge Logic
-                    const timeBadge = item.scheduleText 
-                        ? `<div class="time-tag"><i class="ph-fill ph-clock-countdown"></i> ${item.scheduleText}</div>` 
+                    // NEW: Time Badge Logic with Formatter
+                    const prettyDate = formatSchedule(item.scheduleText);
+                    const timeBadge = prettyDate 
+                        ? `<div class="time-tag"><i class="ph-fill ph-clock-countdown"></i> ${prettyDate}</div>` 
                         : '';
                     
                     let btn = `<div class="buy-btn sold-out">SOLD OUT</div>`;
