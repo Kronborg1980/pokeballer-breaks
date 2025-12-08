@@ -218,13 +218,15 @@
         .tag-msrp { color: #00ff9d; text-shadow: 0 0 10px #00ff9d; border-color: #00ff9d; }
         .tag-bundle { color: var(--accent-gold); border: 2px solid var(--accent-gold); text-shadow: 0 0 10px var(--accent-gold); background: rgba(255, 215, 0, 0.1); }
         
-        /* NEW: TIME TAG STYLE */
-        .time-tag {
-            position: absolute; top: 20px; left: 20px; padding: 8px 16px; border-radius: 8px; font-weight: 800; font-size: 0.8rem; z-index: 2; letter-spacing: 1px;
-            text-transform: uppercase; background: rgba(20, 0, 50, 0.9); backdrop-filter: blur(8px);
+        /* --- NEW: BOTTOM LEFT TIME TAG --- */
+        .time-tag-bottom {
+            position: absolute; bottom: 10px; left: 10px; 
+            padding: 6px 12px; border-radius: 8px; font-weight: 800; font-size: 0.75rem; z-index: 3; letter-spacing: 0.5px;
+            text-transform: uppercase; background: rgba(20, 0, 50, 0.85); backdrop-filter: blur(5px);
             border: 1px solid var(--accent-purple); color: #e0aaff;
-            box-shadow: 0 0 15px rgba(213, 0, 255, 0.4);
-            display: flex; align-items: center; gap: 6px;
+            box-shadow: 0 0 15px rgba(213, 0, 255, 0.3);
+            display: flex; align-items: center; gap: 5px;
+            pointer-events: none; /* Ensures clicks pass through to the image */
         }
 
         .item-img-box { height: 260px; overflow:hidden; position: relative; cursor: pointer; border-bottom: 1px solid rgba(0, 255, 242, 0.2); }
@@ -396,23 +398,15 @@
             }
         }
 
-        // --- NEW DATE FORMATTER FOR FRONTEND ---
-        function formatSchedule(isoString) {
-            if (!isoString) return '';
-            const date = new Date(isoString);
-            if (isNaN(date.getTime())) return isoString; // Fallback if it's not a valid date
-            
-            // Format: Fri, Oct 25 @ 8:00 PM
-            return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) + 
-                   ' @ ' + date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-        }
-
         async function loadStore() {
             renderSkeletons('store-container', 4);
             const container = document.getElementById('store-container');
             try {
                 const res = await fetch(`${API_URL}/items`);
                 const items = await res.json();
+                
+                if(items.error) { console.error("DB Error:", items.error); return; }
+
                 items.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
                 
                 let storeHTML = '';
@@ -424,11 +418,14 @@
                     const tagClass = isBundle ? 'tag-bundle' : 'tag-msrp';
                     const tagText = isBundle ? 'BUNDLE BREAK' : 'MSRP BREAK';
                     
-                    // NEW: Time Badge Logic with Formatter
-                    const prettyDate = formatSchedule(item.scheduleText);
-                    const timeBadge = prettyDate 
-                        ? `<div class="time-tag"><i class="ph-fill ph-clock-countdown"></i> ${prettyDate}</div>` 
-                        : '';
+                    // --- NEW: Time Badge Logic (Bottom Left + CST Auto-append) ---
+                    let timeBadgeHTML = '';
+                    if (item.scheduleText) {
+                        // Automatically append CST if the admin didn't type it
+                        const displayText = item.scheduleText.includes('CST') ? item.scheduleText : `${item.scheduleText} CST`;
+                        timeBadgeHTML = `<div class="time-tag-bottom"><i class="ph-fill ph-clock-countdown"></i> ${displayText}</div>`;
+                    }
+
                     
                     let btn = `<div class="buy-btn sold-out">SOLD OUT</div>`;
                     if (item.stock > 0) {
@@ -444,11 +441,10 @@
                     storeHTML += `
                         <div class="neon-card-wrapper">
                             <div class="item-card glass-panel">
-                                ${timeBadge}
                                 <div class="type-tag ${tagClass}">${tagText}</div>
                                 <div class="item-img-box" onclick="openModal('${img}')">
                                     <img src="${img}" class="item-img" alt="${item.name}">
-                                </div>
+                                    ${timeBadgeHTML} </div>
                                 <div class="item-content">
                                     <h3>${item.name}</h3>
                                     <p>${item.description}</p>
