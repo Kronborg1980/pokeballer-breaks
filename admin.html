@@ -48,6 +48,7 @@
         }
         .b-msrp { background: #00ff9d; color: black; }
         .b-bundle { background: #222; color: var(--gold); border: 1px solid var(--gold); }
+        .b-hidden { background: #ff4444; color: white; border: 1px solid #ff4444; }
 
         .click-badge {
             background: rgba(0, 184, 255, 0.15);
@@ -88,11 +89,22 @@
             <div class="card">
                 <h3 style="margin-top:0; margin-bottom:1rem;">Add / Edit Item</h3>
                 
-                <label>Break Type</label>
-                <select id="item-type">
-                    <option value="msrp">✅ MSRP Break</option>
-                    <option value="bundle">💎 Bundle Break (Premium)</option>
-                </select>
+                <div style="display:flex; gap:10px;">
+                    <div style="flex:1">
+                        <label>Break Type</label>
+                        <select id="item-type">
+                            <option value="msrp">✅ MSRP Break</option>
+                            <option value="bundle">💎 Bundle Break (Premium)</option>
+                        </select>
+                    </div>
+                    <div style="flex:1">
+                        <label>Visibility</label>
+                        <select id="item-hidden" style="border: 1px solid #555;">
+                            <option value="false">👁️ Public</option>
+                            <option value="true" style="color:#ff6666">🚫 Hidden</option>
+                        </select>
+                    </div>
+                </div>
 
                 <label>Name</label><input type="text" id="item-name">
                 <label>Description</label><input type="text" id="item-description">
@@ -145,6 +157,7 @@
             btn.innerText = "Saving...";
             
             const type = document.getElementById('item-type').value;
+            const hidden = document.getElementById('item-hidden').value === 'true'; // Get hidden Status
             const name = document.getElementById('item-name').value;
             const desc = document.getElementById('item-description').value;
             const price = parseFloat(document.getElementById('item-price').value);
@@ -159,8 +172,6 @@
                 await new Promise(r => reader.onload = () => { img = reader.result; r(); });
             }
 
-            const clicksToSave = editingId ? currentClicks : 0;
-
             const body = { 
                 type, 
                 name, 
@@ -169,8 +180,9 @@
                 stock, 
                 googleFormLink:form, 
                 image:img, 
-                clickCount: clicksToSave,
-                createdAt: editingId ? currentCreatedAt : Date.now() 
+                clickCount: editingId ? currentClicks : 0,
+                createdAt: editingId ? currentCreatedAt : Date.now(),
+                hidden: hidden // Save hidden status
             };
             
             const url = editingId ? `${API_URL}/items/${editingId}` : `${API_URL}/items`;
@@ -179,6 +191,8 @@
             await fetch(url, { method, headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
             
             editingId = null; currentImage = ''; currentCreatedAt = null; currentClicks = 0;
+            
+            // Reset Form
             document.getElementById('item-name').value = '';
             document.getElementById('item-description').value = '';
             document.getElementById('item-price').value = '';
@@ -186,6 +200,7 @@
             document.getElementById('item-google-form-link').value = '';
             document.getElementById('item-image').value = '';
             document.getElementById('item-type').value = 'msrp';
+            document.getElementById('item-hidden').value = 'false'; // Reset to Public
             btn.innerText = "Save Item";
             
             loadItems();
@@ -201,19 +216,21 @@
             items.forEach(item => {
                 const badgeClass = item.type === 'bundle' ? 'b-bundle' : 'b-msrp';
                 const badgeText = item.type === 'bundle' ? 'BUNDLE BREAK' : 'MSRP BREAK';
-                const clicks = item.clickCount || 0;
+                const hiddenBadge = item.hidden ? '<span class="badge b-hidden">HIDDEN</span>' : '';
+                const opacity = item.hidden ? 'opacity: 0.6;' : ''; // Dim hidden items
 
                 list.innerHTML += `
-                    <li>
+                    <li style="${opacity}">
                         <div class="item-content">
                             <div class="item-header">
+                                ${hiddenBadge}
                                 <span class="badge ${badgeClass}">${badgeText}</span> 
                                 <span class="item-title">${item.name}</span>
                             </div>
                             <div class="item-meta">
                                 <span>$${item.price}</span>
                                 <span>• Stock: ${item.stock}</span>
-                                <span class="click-badge">🖱️ ${clicks} clicks</span>
+                                <span class="click-badge">🖱️ ${item.clickCount||0} clicks</span>
                             </div>
                         </div>
                         <div class="btn-group">
@@ -231,6 +248,7 @@
             currentClicks = item.clickCount || 0; 
 
             document.getElementById('item-type').value = item.type || 'msrp';
+            document.getElementById('item-hidden').value = item.hidden ? 'true' : 'false'; // Set visibility
             document.getElementById('item-name').value = item.name;
             document.getElementById('item-description').value = item.description;
             document.getElementById('item-price').value = item.price;
