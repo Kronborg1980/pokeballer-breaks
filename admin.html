@@ -10,139 +10,79 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --bg: #0a0a15; --card: rgba(26,26,46,0.95); --accent: #00eeff; --purple: #9d4edd; --text: #ffffff; --gold: #ffd700; }
-        
         body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; padding: 1.5rem; min-height: 100vh; }
-        
         .suicune-bg { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 800px; opacity: 0.1; z-index: -1; pointer-events: none; filter: drop-shadow(0 0 80px var(--accent)); }
-        
         .container { max-width: 600px; margin: 0 auto; position: relative; z-index: 1; }
         h1 { text-align: center; color: var(--accent); margin-bottom: 2rem; font-weight: 900; font-size: 2rem; }
-
-        .card { 
-            background: var(--card); padding: 1.5rem; border-radius: 16px; 
-            border: 1px solid rgba(0,238,255,0.2); margin-bottom: 1.5rem; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
-        }
-        
+        .card { background: var(--card); padding: 1.5rem; border-radius: 16px; border: 1px solid rgba(0,238,255,0.2); margin-bottom: 1.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         label { display: block; margin-bottom: 0.5rem; color: #aaa; font-weight: 600; font-size: 0.85rem; }
         input, select { width: 100%; padding: 12px; margin-bottom: 1rem; background: rgba(0,0,0,0.5); border: 1px solid #444; color: white; border-radius: 8px; font-size: 1rem; }
         input:focus, select:focus { outline: none; border-color: var(--accent); }
-        
         button { width: 100%; padding: 1rem; background: linear-gradient(135deg, var(--accent), var(--purple)); color: white; font-weight: 900; border: none; border-radius: 8px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; font-size: 1rem; }
-        
         ul { padding: 0; margin: 0; }
-        li { 
-            background: rgba(255,255,255,0.05); padding: 1rem; margin-bottom: 1rem; border-radius: 12px; 
-            border: 1px solid rgba(255,255,255,0.05); list-style: none;
-            display: flex; flex-direction: column; gap: 1rem;
-        }
-
+        li { background: rgba(255,255,255,0.05); padding: 1rem; margin-bottom: 1rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); list-style: none; display: flex; flex-direction: column; gap: 1rem; }
         .item-content { flex: 1; }
         .item-header { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 5px; flex-wrap: wrap; }
         .item-title { font-weight: 700; font-size: 1rem; line-height: 1.3; width: 100%; margin-top: 5px;}
         .item-meta { font-size: 0.85rem; color: #888; margin-top: 5px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;}
-        
-        /* BADGE STYLES */
-        .badge { 
-            padding: 4px 8px; font-size: 0.7rem; border-radius: 4px; font-weight: 800; text-transform: uppercase; 
-            white-space: nowrap; flex-shrink: 0;
-        }
+        .badge { padding: 4px 8px; font-size: 0.7rem; border-radius: 4px; font-weight: 800; text-transform: uppercase; white-space: nowrap; flex-shrink: 0; }
         .b-msrp { background: #00ff9d; color: black; }
         .b-bundle { background: #222; color: var(--gold); border: 1px solid var(--gold); }
         .b-hidden { background: #ff4444; color: white; border: 1px solid #ff4444; }
-        
-        /* NEW: TIME BADGE STYLE */
-        .b-time { 
-            background: rgba(157, 78, 221, 0.2); 
-            color: #e0aaff; 
-            border: 1px solid var(--purple);
-            display: flex; align-items: center; gap: 4px;
-        }
-
-        .click-badge {
-            background: rgba(0, 184, 255, 0.15);
-            color: #00b8ff;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-weight: 600;
-        }
-
+        .b-time { background: rgba(157, 78, 221, 0.2); color: #e0aaff; border: 1px solid var(--purple); display: flex; align-items: center; gap: 4px; }
+        .click-badge { background: rgba(0, 184, 255, 0.15); color: #00b8ff; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
         .btn-group { display: flex; gap: 10px; width: 100%; }
         .btn-group button { padding: 10px; font-size: 0.9rem; flex: 1; }
         .btn-edit { background: #00b8ff; box-shadow: none; }
         .btn-del { background: #ff0055; box-shadow: none; }
-
-        @media(min-width: 600px) {
-            li { flex-direction: row; align-items: center; }
-            .btn-group { width: auto; flex-shrink: 0; }
-            .btn-group button { width: auto; padding: 8px 16px; }
-            .item-title { width: auto; margin-top: 0; }
-        }
-
+        @media(min-width: 600px) { li { flex-direction: row; align-items: center; } .btn-group { width: auto; flex-shrink: 0; } .btn-group button { width: auto; padding: 8px 16px; } .item-title { width: auto; margin-top: 0; } }
         #login-section { display: block; } #admin-section { display: none; }
     </style>
 </head>
 <body>
-
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="suicune-bg">
-
     <div class="container">
         <h1>PBM ADMIN</h1>
-
         <div id="login-section" class="card">
             <label>Username</label><input type="text" id="login-username">
             <label>Password</label><input type="password" id="login-password">
             <button onclick="login()">ENTER SYSTEM</button>
         </div>
-
         <div id="admin-section">
             <div class="card">
                 <h3 style="margin-top:0; margin-bottom:1rem;">Add / Edit Item</h3>
-                
                 <div style="display:flex; gap:10px;">
                     <div style="flex:1">
                         <label>Break Type</label>
-                        <select id="item-type">
-                            <option value="msrp">✅ MSRP Break</option>
-                            <option value="bundle">💎 Bundle Break (Premium)</option>
-                        </select>
+                        <select id="item-type"><option value="msrp">✅ MSRP Break</option><option value="bundle">💎 Bundle Break (Premium)</option></select>
                     </div>
                     <div style="flex:1">
                         <label>Visibility</label>
-                        <select id="item-hidden" style="border: 1px solid #555;">
-                            <option value="false">👁️ Public</option>
-                            <option value="true" style="color:#ff6666">🚫 Hidden</option>
-                        </select>
+                        <select id="item-hidden" style="border: 1px solid #555;"><option value="false">👁️ Public</option><option value="true" style="color:#ff6666">🚫 Hidden</option></select>
                     </div>
                 </div>
-
                 <label>Break Schedule / Time</label>
                 <input type="text" id="item-schedule" placeholder="e.g. Friday @ 8PM EST (Leave empty if N/A)">
-
                 <label>Name</label><input type="text" id="item-name">
                 <label>Description</label><input type="text" id="item-description">
-                
                 <div style="display:flex; gap:10px;">
                     <div style="flex:1"><label>Price</label><input type="number" id="item-price"></div>
                     <div style="flex:1"><label>Stock</label><input type="number" id="item-stock"></div>
                 </div>
-                
                 <label>Form Link</label><input type="url" id="item-google-form-link">
                 <label>Image</label><input type="file" id="item-image">
-                
                 <button id="submit-btn" onclick="submitItem()">Save Item</button>
             </div>
-
             <h3 style="color:#888; font-size:0.9rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:1rem;">Inventory</h3>
             <ul id="item-list"></ul>
-            
             <button onclick="logout()" style="background:#333; margin-top:2rem;">Log Out</button>
             <a href="index.html" style="display:block; text-align:center; margin-top:1rem; color:#666; text-decoration:none;">Back to Store</a>
         </div>
     </div>
-
     <script>
+        // --- ENSURE THIS URL IS CORRECT ---
         const API_URL = 'https://pokeballer-worker.kronborgnielsen.workers.dev/api';
+        
         let editingId = null;
         let currentImage = '';
         let currentCreatedAt = null;
@@ -161,8 +101,11 @@
                 const res = await fetch(`${API_URL}/login`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({username:u, password:p}) });
                 const data = await res.json();
                 if(data.success) { localStorage.setItem('adminToken','1'); location.reload(); } 
-                else alert('Invalid Credentials');
-            } catch(e) { alert('Server Error'); }
+                else alert('Invalid Credentials. Check Console for details.');
+            } catch(e) { 
+                console.error(e);
+                alert('Server Connection Error. Is your Worker running? Check Console (F12).'); 
+            }
         }
 
         async function submitItem() {
@@ -171,7 +114,7 @@
             
             const type = document.getElementById('item-type').value;
             const hidden = document.getElementById('item-hidden').value === 'true';
-            const schedule = document.getElementById('item-schedule').value; // Get Schedule
+            const schedule = document.getElementById('item-schedule').value; 
             const name = document.getElementById('item-name').value;
             const desc = document.getElementById('item-description').value;
             const price = parseFloat(document.getElementById('item-price').value);
@@ -187,80 +130,94 @@
             }
 
             const body = { 
-                type, 
-                name, 
-                description:desc, 
-                price, 
-                stock, 
-                googleFormLink:form, 
-                image:img, 
+                type, name, description:desc, price, stock, googleFormLink:form, image:img, 
                 clickCount: editingId ? currentClicks : 0,
                 createdAt: editingId ? currentCreatedAt : Date.now(),
                 hidden: hidden,
-                scheduleText: schedule // SENDING THE SCHEDULE TO BACKEND
+                scheduleText: schedule 
             };
             
             const url = editingId ? `${API_URL}/items/${editingId}` : `${API_URL}/items`;
             const method = editingId ? 'PUT' : 'POST';
 
-            await fetch(url, { method, headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
-            
-            editingId = null; currentImage = ''; currentCreatedAt = null; currentClicks = 0;
-            
-            // Reset Form
-            document.getElementById('item-name').value = '';
-            document.getElementById('item-description').value = '';
-            document.getElementById('item-price').value = '';
-            document.getElementById('item-stock').value = '';
-            document.getElementById('item-google-form-link').value = '';
-            document.getElementById('item-image').value = '';
-            document.getElementById('item-type').value = 'msrp';
-            document.getElementById('item-hidden').value = 'false';
-            document.getElementById('item-schedule').value = ''; // Reset schedule
-            btn.innerText = "Save Item";
-            
-            loadItems();
+            try {
+                const response = await fetch(url, { method, headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
+                const result = await response.json();
+                
+                if(response.status === 500) {
+                    alert("SERVER ERROR: " + (result.error || "Check KV Binding"));
+                    btn.innerText = "Save Failed";
+                    return;
+                }
+
+                editingId = null; currentImage = ''; currentCreatedAt = null; currentClicks = 0;
+                
+                // Reset Form
+                document.getElementById('item-name').value = '';
+                document.getElementById('item-description').value = '';
+                document.getElementById('item-price').value = '';
+                document.getElementById('item-stock').value = '';
+                document.getElementById('item-google-form-link').value = '';
+                document.getElementById('item-image').value = '';
+                document.getElementById('item-type').value = 'msrp';
+                document.getElementById('item-hidden').value = 'false';
+                document.getElementById('item-schedule').value = ''; 
+                btn.innerText = "Save Item";
+                
+                loadItems();
+            } catch(e) {
+                console.error(e);
+                alert("Save Failed. See Console.");
+                btn.innerText = "Save Failed";
+            }
         }
 
         async function loadItems() {
-            const res = await fetch(`${API_URL}/items`);
-            const items = await res.json();
-            items.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
-            
-            const list = document.getElementById('item-list');
-            list.innerHTML = '';
-            items.forEach(item => {
-                const badgeClass = item.type === 'bundle' ? 'b-bundle' : 'b-msrp';
-                const badgeText = item.type === 'bundle' ? 'BUNDLE BREAK' : 'MSRP BREAK';
-                const hiddenBadge = item.hidden ? '<span class="badge b-hidden">HIDDEN</span>' : '';
-                const opacity = item.hidden ? 'opacity: 0.6;' : '';
+            try {
+                const res = await fetch(`${API_URL}/items`);
+                const items = await res.json();
                 
-                // NEW: Logic to show Time Badge if schedule text exists
-                const timeBadge = item.scheduleText 
-                    ? `<span class="badge b-time">⏱️ ${item.scheduleText}</span>` 
-                    : '';
+                // If the worker returns an error object instead of an array
+                if(items.error) {
+                    alert("DATABASE ERROR: " + items.error);
+                    return;
+                }
 
-                list.innerHTML += `
-                    <li style="${opacity}">
-                        <div class="item-content">
-                            <div class="item-header">
-                                ${hiddenBadge}
-                                <span class="badge ${badgeClass}">${badgeText}</span> 
-                                ${timeBadge}
-                                <span class="item-title">${item.name}</span>
+                items.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
+                
+                const list = document.getElementById('item-list');
+                list.innerHTML = '';
+                items.forEach(item => {
+                    const badgeClass = item.type === 'bundle' ? 'b-bundle' : 'b-msrp';
+                    const badgeText = item.type === 'bundle' ? 'BUNDLE BREAK' : 'MSRP BREAK';
+                    const hiddenBadge = item.hidden ? '<span class="badge b-hidden">HIDDEN</span>' : '';
+                    const opacity = item.hidden ? 'opacity: 0.6;' : '';
+                    const timeBadge = item.scheduleText ? `<span class="badge b-time">⏱️ ${item.scheduleText}</span>` : '';
+
+                    list.innerHTML += `
+                        <li style="${opacity}">
+                            <div class="item-content">
+                                <div class="item-header">
+                                    ${hiddenBadge}
+                                    <span class="badge ${badgeClass}">${badgeText}</span> 
+                                    ${timeBadge}
+                                    <span class="item-title">${item.name}</span>
+                                </div>
+                                <div class="item-meta">
+                                    <span>$${item.price}</span>
+                                    <span>• Stock: ${item.stock}</span>
+                                    <span class="click-badge">🖱️ ${item.clickCount||0} clicks</span>
+                                </div>
                             </div>
-                            <div class="item-meta">
-                                <span>$${item.price}</span>
-                                <span>• Stock: ${item.stock}</span>
-                                <span class="click-badge">🖱️ ${item.clickCount||0} clicks</span>
+                            <div class="btn-group">
+                                <button class="btn-edit" onclick='editItem(${JSON.stringify(item)})'>Edit</button>
+                                <button class="btn-del" onclick="deleteItem('${item.id}')">Del</button>
                             </div>
-                        </div>
-                        <div class="btn-group">
-                            <button class="btn-edit" onclick='editItem(${JSON.stringify(item)})'>Edit</button>
-                            <button class="btn-del" onclick="deleteItem('${item.id}')">Del</button>
-                        </div>
-                    </li>`;
-            });
+                        </li>`;
+                });
+            } catch(e) {
+                console.error("Load Error", e);
+            }
         }
 
         function editItem(item) {
@@ -268,10 +225,9 @@
             currentImage = item.image; 
             currentCreatedAt = item.createdAt;
             currentClicks = item.clickCount || 0; 
-
             document.getElementById('item-type').value = item.type || 'msrp';
             document.getElementById('item-hidden').value = item.hidden ? 'true' : 'false';
-            document.getElementById('item-schedule').value = item.scheduleText || ''; // Load schedule
+            document.getElementById('item-schedule').value = item.scheduleText || ''; 
             document.getElementById('item-name').value = item.name;
             document.getElementById('item-description').value = item.description;
             document.getElementById('item-price').value = item.price;
