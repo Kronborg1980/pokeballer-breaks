@@ -29,22 +29,12 @@
         
         /* --- UPDATED BADGE STYLES FOR ADMIN --- */
         .badge { padding: 4px 10px; font-size: 0.7rem; border-radius: 6px; font-weight: 800; text-transform: uppercase; white-space: nowrap; flex-shrink: 0; display: flex; align-items: center; gap: 4px; }
-        
-        /* New Electric Cyan/Green MSRP Badge */
-        .b-msrp { 
-            color: #00ff9d; border: 1px solid #00ff9d; 
-            background: linear-gradient(135deg, rgba(0, 255, 157, 0.15), transparent);
-        }
-        /* New Amethyst Crystal Bundle Badge */
-        .b-bundle { 
-            color: #f0dfff; border: 1px solid var(--purple);
-            background: linear-gradient(135deg, rgba(213, 0, 255, 0.25), rgba(100, 0, 255, 0.15));
-            box-shadow: 0 0 10px rgba(213, 0, 255, 0.3);
-        }
+        .b-msrp { color: #00ff9d; border: 1px solid #00ff9d; background: linear-gradient(135deg, rgba(0, 255, 157, 0.15), transparent); }
+        .b-bundle { color: #f0dfff; border: 1px solid var(--purple); background: linear-gradient(135deg, rgba(213, 0, 255, 0.25), rgba(100, 0, 255, 0.15)); box-shadow: 0 0 10px rgba(213, 0, 255, 0.3); }
         .b-hidden { background: rgba(255, 68, 68, 0.2); color: #ff6666; border: 1px solid #ff4444; }
         .b-time { background: rgba(157, 78, 221, 0.2); color: #e0aaff; border: 1px solid var(--purple); }
-
         .click-badge { background: rgba(0, 184, 255, 0.15); color: #00b8ff; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
+        
         .btn-group { display: flex; gap: 10px; width: 100%; }
         .btn-group button { padding: 10px; font-size: 0.9rem; flex: 1; }
         .btn-edit { background: #00b8ff; box-shadow: none; }
@@ -101,6 +91,9 @@
     <script>
         const API_URL = 'https://pokeballer-worker.kronborgnielsen.workers.dev/api';
         
+        // --- SAFE STORAGE FOR ITEMS ---
+        let allItems = [];
+
         let editingId = null;
         let currentImage = '';
         let currentCreatedAt = null;
@@ -196,11 +189,13 @@
 
                 items.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
                 
+                // --- SAVE TO GLOBAL VAR FOR SAFE EDITING ---
+                allItems = items;
+
                 const list = document.getElementById('item-list');
                 list.innerHTML = '';
                 items.forEach(item => {
                     const badgeClass = item.type === 'bundle' ? 'b-bundle' : 'b-msrp';
-                    // Added icons to the admin list view too
                     const badgeText = item.type === 'bundle' ? '<i class="ph-fill ph-sketch-logo"></i> BUNDLE' : '<i class="ph-fill ph-seal-check"></i> MSRP';
                     const hiddenBadge = item.hidden ? '<span class="badge b-hidden"><i class="ph-fill ph-eye-slash"></i> HIDDEN</span>' : '';
                     const opacity = item.hidden ? 'opacity: 0.6;' : '';
@@ -223,12 +218,17 @@
                                 </div>
                             </div>
                             <div class="btn-group">
-                                <button class="btn-edit" onclick='editItem(${JSON.stringify(item)})'>Edit</button>
+                                <button class="btn-edit" onclick="startEditing('${item.id}')">Edit</button>
                                 <button class="btn-del" onclick="deleteItem('${item.id}')">Del</button>
                             </div>
                         </li>`;
                 });
             } catch(e) { console.error("Load Error", e); }
+        }
+
+        function startEditing(id) {
+            const item = allItems.find(i => i.id === id);
+            if(item) editItem(item);
         }
 
         function editItem(item) {
