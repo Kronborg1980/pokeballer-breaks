@@ -35,9 +35,7 @@
         .badge { padding: 4px 10px; font-size: 0.7rem; border-radius: 6px; font-weight: 800; text-transform: uppercase; white-space: nowrap; flex-shrink: 0; display: flex; align-items: center; gap: 4px; }
         .b-msrp { color: #00ff9d; border: 1px solid #00ff9d; background: linear-gradient(135deg, rgba(0, 255, 157, 0.15), transparent); }
         .b-bundle { color: #f0dfff; border: 1px solid var(--purple); background: linear-gradient(135deg, rgba(213, 0, 255, 0.25), rgba(100, 0, 255, 0.15)); }
-        
         .b-baller { background: var(--gold); color: #000; border: 1px solid var(--gold); box-shadow: 0 0 10px rgba(255, 215, 0, 0.4); }
-
         .b-hidden { background: rgba(255, 68, 68, 0.2); color: #ff6666; border: 1px solid #ff4444; }
         .b-time { background: rgba(157, 78, 221, 0.2); color: #e0aaff; border: 1px solid var(--purple); }
         .click-badge { background: rgba(0, 184, 255, 0.15); color: #00b8ff; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
@@ -77,7 +75,7 @@
                     </div>
                 </div>
                 
-                <label>Set Break Date & Time (Use this to set Central Time)</label>
+                <label>Set Break Date & Time (Assume Central Time)</label>
                 <input type="datetime-local" id="item-schedule-date">
                 
                 <label>Name</label><input type="text" id="item-name">
@@ -129,7 +127,7 @@
             const type = document.getElementById('item-type').value;
             const hidden = document.getElementById('item-hidden').value === 'true';
             
-            // GRAB THE DATE (This grabs the literal values you typed)
+            // GRAB THE DATE
             const scheduleDate = document.getElementById('item-schedule-date').value; 
             
             const name = document.getElementById('item-name').value;
@@ -151,7 +149,7 @@
                 clickCount: editingId ? currentClicks : 0,
                 createdAt: editingId ? currentCreatedAt : Date.now(),
                 hidden: hidden,
-                scheduleDate: scheduleDate // Sends raw "2026-01-12T20:00"
+                scheduleDate: scheduleDate 
             };
             
             const url = editingId ? `${API_URL}/items/${editingId}` : `${API_URL}/items`;
@@ -178,22 +176,32 @@
             } catch(e) { alert("Save Failed."); btn.innerText = "Save Failed"; }
         }
 
-        // --- MANUALLY FORMAT DATE TO AM/PM WITHOUT TIMEZONES ---
-        function formatLiteralDate(isoString) {
-            // Input: "2026-01-12T20:00"
-            if (!isoString) return "";
-            const [datePart, timePart] = isoString.split('T');
-            const [year, month, day] = datePart.split('-');
-            let [hour, minute] = timePart.split(':');
+        // --- SAFE FORMATTER (Handles old text AND new ISO dates) ---
+        function formatLiteralDate(val) {
+            if (!val) return "";
             
-            // Manual 12-hour conversion
-            let h = parseInt(hour);
-            let ampm = 'AM';
-            if (h >= 12) { ampm = 'PM'; if (h > 12) h -= 12; }
-            if (h === 0) h = 12;
-            
-            // Returns: "01/12/2026, 8:00 PM CT"
-            return `${month}/${day}/${year}, ${h}:${minute} ${ampm} CT`;
+            // Check if it's new format (contains "T" like 2023-01-01T20:00)
+            if (val.indexOf('T') === -1) {
+                // It's OLD data (text), just return it as is
+                return val; 
+            }
+
+            try {
+                const [datePart, timePart] = val.split('T');
+                if(!timePart) return val;
+
+                const [year, month, day] = datePart.split('-');
+                let [hour, minute] = timePart.split(':');
+                
+                let h = parseInt(hour);
+                let ampm = 'AM';
+                if (h >= 12) { ampm = 'PM'; if (h > 12) h -= 12; }
+                if (h === 0) h = 12;
+                
+                return `${month}/${day}/${year}, ${h}:${minute} ${ampm} CT`;
+            } catch(e) {
+                return val; // Fallback if parsing fails
+            }
         }
 
         async function loadItems() {
@@ -223,7 +231,7 @@
                     const hiddenBadge = item.hidden ? '<span class="badge b-hidden"><i class="ph-fill ph-eye-slash"></i> HIDDEN</span>' : '';
                     const opacity = item.hidden ? 'opacity: 0.6;' : '';
                     
-                    // USE CUSTOM FORMATTER
+                    // Use Safe Formatter
                     let timeBadge = '';
                     if (item.scheduleDate) {
                         const dateStr = formatLiteralDate(item.scheduleDate);
@@ -264,8 +272,14 @@
                 document.getElementById('item-type').value = item.type || 'msrp';
                 document.getElementById('item-hidden').value = item.hidden ? 'true' : 'false';
                 
-                // LOAD RAW DATE VALUE
-                document.getElementById('item-schedule-date').value = item.scheduleDate || ''; 
+                // POPULATE DATE PICKER (Only works if format is ISO)
+                const dateVal = item.scheduleDate || '';
+                // Only set value if it matches date picker format (contains T)
+                if(dateVal.indexOf('T') > -1) {
+                     document.getElementById('item-schedule-date').value = dateVal;
+                } else {
+                     document.getElementById('item-schedule-date').value = ''; 
+                }
                 
                 document.getElementById('item-name').value = item.name;
                 document.getElementById('item-description').value = item.description;
