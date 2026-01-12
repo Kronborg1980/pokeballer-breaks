@@ -535,13 +535,21 @@
                     if (item.scheduleDate) {
                         const targetDate = new Date(item.scheduleDate).getTime();
                         
-                        // NEW: Create USA formatted date string with ICONS
+                        // NEW: Create USA formatted date string locked to NEBRASKA (America/Chicago)
                         const dateObj = new Date(item.scheduleDate);
-                        const dateString = dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-                        const timeString = dateObj.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+                        
+                        const dateString = dateObj.toLocaleDateString('en-US', { 
+                            timeZone: 'America/Chicago',
+                            weekday: 'short', month: 'short', day: 'numeric' 
+                        });
+                        
+                        const timeString = dateObj.toLocaleTimeString('en-US', { 
+                            timeZone: 'America/Chicago',
+                            hour: 'numeric', minute: '2-digit' 
+                        });
 
-                        // THIS CREATES THE GOLD ROW UNDER TITLE
-                        dateDisplayHTML = `<div class="date-row"><i class="ph-fill ph-calendar-blank"></i> ${dateString} <span style="color:#666; margin:0 5px;">•</span> <i class="ph-fill ph-clock"></i> ${timeString}</div>`;
+                        // THIS CREATES THE GOLD ROW UNDER TITLE WITH "CT" (Central Time)
+                        dateDisplayHTML = `<div class="date-row"><i class="ph-fill ph-calendar-blank"></i> ${dateString} <span style="color:#666; margin:0 5px;">•</span> <i class="ph-fill ph-clock"></i> ${timeString} CT</div>`;
 
                         // Check if already expired on load
                         if (targetDate <= now) {
@@ -578,7 +586,8 @@
                                 </div>
                                 <div class="item-content">
                                     <h3>${item.name}</h3>
-                                    ${dateDisplayHTML} <p>${item.description}</p>
+                                    ${dateDisplayHTML} 
+                                    <p>${item.description}</p>
                                     
                                     <div class="price-row">
                                         <span class="price">$${item.price.toFixed(2)}</span>
