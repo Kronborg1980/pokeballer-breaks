@@ -494,7 +494,7 @@
 
         // --- NEW: HELPER TO FORMAT LITERAL DATE ---
         function formatLiteralDate(isoString) {
-            // Parses "2023-11-25T20:00" directly into text "Nov 25 • 8:00 PM"
+            // Parses "2023-11-25T20:00" directly into text "Nov 25 • 8:00 PM CST"
             // IGNORES BROWSER TIMEZONE COMPLETELY
             if (!isoString) return "";
             const [datePart, timePart] = isoString.split('T');
@@ -511,7 +511,7 @@
             if (h >= 12) { ampm = 'PM'; if (h > 12) h -= 12; }
             if (h === 0) h = 12;
             
-            return `${monthStr} ${parseInt(day)} • ${h}:${minute} ${ampm}`;
+            return `${monthStr} ${parseInt(day)} • ${h}:${minute} ${ampm} CST`;
         }
 
         async function loadStore() {
@@ -557,7 +557,7 @@
                     if (item.scheduleDate) {
                         // 1. DISPLAY TEXT: Use literal string parsing (WYSIWYG)
                         const displayText = formatLiteralDate(item.scheduleDate);
-                        dateDisplayHTML = `<div class="date-row"><i class="ph-fill ph-calendar-blank"></i> ${displayText} CT</div>`;
+                        dateDisplayHTML = `<div class="date-row"><i class="ph-fill ph-calendar-blank"></i> ${displayText}</div>`;
                         
                         // 2. COUNTDOWN LOGIC: 
                         // We append "-06:00" to force Central Standard Time offset logic for the timer
