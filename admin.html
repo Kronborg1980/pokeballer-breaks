@@ -20,8 +20,8 @@
         input, select { width: 100%; padding: 12px; margin-bottom: 1rem; background: rgba(0,0,0,0.5); border: 1px solid #444; color: white; border-radius: 8px; font-size: 1rem; }
         input:focus, select:focus { outline: none; border-color: var(--accent); }
         
-        /* DATE PICKER STYLING */
-        input[type="datetime-local"] { color-scheme: dark; cursor: pointer; }
+        /* DATE PICKER STYLE */
+        input[type="datetime-local"] { color-scheme: dark; cursor: pointer; border: 1px solid var(--accent); }
         
         button { width: 100%; padding: 1rem; background: linear-gradient(135deg, var(--accent), var(--purple)); color: white; font-weight: 900; border: none; border-radius: 8px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; font-size: 1rem; }
         ul { padding: 0; margin: 0; }
@@ -35,7 +35,9 @@
         .badge { padding: 4px 10px; font-size: 0.7rem; border-radius: 6px; font-weight: 800; text-transform: uppercase; white-space: nowrap; flex-shrink: 0; display: flex; align-items: center; gap: 4px; }
         .b-msrp { color: #00ff9d; border: 1px solid #00ff9d; background: linear-gradient(135deg, rgba(0, 255, 157, 0.15), transparent); }
         .b-bundle { color: #f0dfff; border: 1px solid var(--purple); background: linear-gradient(135deg, rgba(213, 0, 255, 0.25), rgba(100, 0, 255, 0.15)); }
+        
         .b-baller { background: var(--gold); color: #000; border: 1px solid var(--gold); box-shadow: 0 0 10px rgba(255, 215, 0, 0.4); }
+
         .b-hidden { background: rgba(255, 68, 68, 0.2); color: #ff6666; border: 1px solid #ff4444; }
         .b-time { background: rgba(157, 78, 221, 0.2); color: #e0aaff; border: 1px solid var(--purple); }
         .click-badge { background: rgba(0, 184, 255, 0.15); color: #00b8ff; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
@@ -75,7 +77,7 @@
                     </div>
                 </div>
                 
-                <label>Countdown Target (Click calendar icon)</label>
+                <label>Set Break Date & Time (Countdown)</label>
                 <input type="datetime-local" id="item-schedule-date">
                 
                 <label>Name</label><input type="text" id="item-name">
@@ -127,7 +129,7 @@
             const type = document.getElementById('item-type').value;
             const hidden = document.getElementById('item-hidden').value === 'true';
             
-            // GRAB DATE FROM PICKER
+            // GRAB THE DATE
             const scheduleDate = document.getElementById('item-schedule-date').value; 
             
             const name = document.getElementById('item-name').value;
@@ -203,11 +205,14 @@
                     const hiddenBadge = item.hidden ? '<span class="badge b-hidden"><i class="ph-fill ph-eye-slash"></i> HIDDEN</span>' : '';
                     const opacity = item.hidden ? 'opacity: 0.6;' : '';
                     
-                    // Format Date for Badge
+                    // --- USA FORMAT DATE IN ADMIN LIST ---
                     let timeBadge = '';
                     if (item.scheduleDate) {
                         const dateObj = new Date(item.scheduleDate);
-                        const dateStr = dateObj.toLocaleDateString() + ' ' + dateObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                        const dateStr = dateObj.toLocaleString('en-US', {
+                             weekday: 'short', month: 'short', day: 'numeric',
+                             hour: 'numeric', minute: '2-digit', hour12: true
+                        });
                         timeBadge = `<span class="badge b-time"><i class="ph-fill ph-clock"></i> ${dateStr}</span>`;
                     }
 
