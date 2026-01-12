@@ -495,6 +495,7 @@
         // --- NEW: HELPER TO FORMAT LITERAL DATE ---
         function formatLiteralDate(isoString) {
             // Parses "2023-11-25T20:00" directly into text "Nov 25 • 8:00 PM"
+            // IGNORES BROWSER TIMEZONE COMPLETELY
             if (!isoString) return "";
             const [datePart, timePart] = isoString.split('T');
             const [year, monthNum, day] = datePart.split('-');
@@ -558,22 +559,16 @@
                         const displayText = formatLiteralDate(item.scheduleDate);
                         dateDisplayHTML = `<div class="date-row"><i class="ph-fill ph-calendar-blank"></i> ${displayText} CT</div>`;
                         
-                        // 2. COUNTDOWN LOGIC: Calculate absolute time assuming input is CST
-                        // We append "-06:00" (Standard Time) or let's use a robust constructor
-                        // Simplest hack: Treat it as UTC then subtract offset? 
-                        // Let's use the Date constructor but assume the input string is in "-05:00" (CDT) or "-06:00" (CST)
-                        // A safe bet for Nebraska generally is to treat the ISO string as local, 
-                        // then tell the timer to calculate distance to THAT moment.
-                        
-                        // However, to keep it simple as requested: We rely on the text being correct.
-                        // The timer is visually "cool", so strict precision isn't as critical as the text reading 8pm.
-                        
-                        const targetDate = new Date(item.scheduleDate).getTime(); // Uses user's browser time for countdown basis
+                        // 2. COUNTDOWN LOGIC: 
+                        // We append "-06:00" to force Central Standard Time offset logic for the timer
+                        // This makes the countdown accurate globally relative to CT.
+                        const targetDate = new Date(item.scheduleDate + "-06:00").getTime(); 
                         
                         if (targetDate <= now) {
                             isExpired = true;
                             timeBadgeHTML = `<div class="time-tag-bottom" style="color:#ff4444; border-color:#ff4444;"><i class="ph-fill ph-clock-afternoon"></i> TIME UP</div>`;
                         } else {
+                            // Pass the RAW string to the timer, we will handle offset there too
                             timeBadgeHTML = `<div class="time-tag-bottom countdown-timer" data-date="${item.scheduleDate}" data-id="${item.id}"><i class="ph-fill ph-clock-countdown"></i> CALC...</div>`;
                         }
                     }
@@ -629,9 +624,8 @@
                 const now = new Date().getTime();
 
                 timers.forEach(timer => {
-                    // For countdown, we treat the time as local to browser for simplicity
-                    // or ideally we would parse it as UTC-6. 
-                    const target = new Date(timer.dataset.date).getTime();
+                    // For countdown, append -06:00 to force CST offset
+                    const target = new Date(timer.dataset.date + "-06:00").getTime();
                     const distance = target - now;
                     const itemId = timer.dataset.id;
 
