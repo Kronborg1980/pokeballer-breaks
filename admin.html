@@ -75,7 +75,7 @@
                     </div>
                 </div>
                 
-                <label>Set Break Date & Time (Assume Central Time)</label>
+                <label>Set Break Date & Time (This will be shown as CST)</label>
                 <input type="datetime-local" id="item-schedule-date">
                 
                 <label>Name</label><input type="text" id="item-name">
@@ -180,10 +180,9 @@
         function formatLiteralDate(val) {
             if (!val) return "";
             
-            // Check if it's new format (contains "T" like 2023-01-01T20:00)
+            // Check if it's new format (contains "T")
             if (val.indexOf('T') === -1) {
-                // It's OLD data (text), just return it as is
-                return val; 
+                return val; // Return old text as is
             }
 
             try {
@@ -198,9 +197,10 @@
                 if (h >= 12) { ampm = 'PM'; if (h > 12) h -= 12; }
                 if (h === 0) h = 12;
                 
-                return `${month}/${day}/${year}, ${h}:${minute} ${ampm} CT`;
+                // FORCE CST DISPLAY
+                return `${month}/${day}/${year}, ${h}:${minute} ${ampm} CST`;
             } catch(e) {
-                return val; // Fallback if parsing fails
+                return val; 
             }
         }
 
@@ -274,7 +274,6 @@
                 
                 // POPULATE DATE PICKER (Only works if format is ISO)
                 const dateVal = item.scheduleDate || '';
-                // Only set value if it matches date picker format (contains T)
                 if(dateVal.indexOf('T') > -1) {
                      document.getElementById('item-schedule-date').value = dateVal;
                 } else {
