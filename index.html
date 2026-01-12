@@ -267,15 +267,16 @@
         }
         .item-content p { color: var(--text-dim); font-size: 1rem; line-height: 1.6; margin-bottom: 1.5rem; flex: 1; }
         
-        /* UPDATED VISIBLE DATE DISPLAY */
-        .date-display { 
+        /* NEW DATE ROW STYLE */
+        .date-row { 
+            display: flex; align-items: center; gap: 8px;
             color: var(--accent-gold); 
-            font-weight: 800; 
-            font-size: 0.95rem; 
+            font-weight: 700; font-size: 0.95rem; 
             margin-bottom: 10px; 
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
             text-transform: uppercase; 
             letter-spacing: 0.5px; 
-            display: flex; align-items: center; gap: 6px;
             text-shadow: 0 0 15px rgba(255, 215, 0, 0.4); 
         }
 
@@ -534,13 +535,13 @@
                     if (item.scheduleDate) {
                         const targetDate = new Date(item.scheduleDate).getTime();
                         
-                        // NEW: Create USA formatted date string
+                        // NEW: Create USA formatted date string with ICONS
                         const dateObj = new Date(item.scheduleDate);
-                        const usDate = dateObj.toLocaleString('en-US', {
-                            weekday: 'short', month: 'short', day: 'numeric',
-                            hour: 'numeric', minute: '2-digit', hour12: true
-                        });
-                        dateDisplayHTML = `<div class="date-display"><i class="ph-fill ph-calendar-check"></i> ${usDate}</div>`;
+                        const dateString = dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                        const timeString = dateObj.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+
+                        // THIS CREATES THE GOLD ROW UNDER TITLE
+                        dateDisplayHTML = `<div class="date-row"><i class="ph-fill ph-calendar-blank"></i> ${dateString} <span style="color:#666; margin:0 5px;">•</span> <i class="ph-fill ph-clock"></i> ${timeString}</div>`;
 
                         // Check if already expired on load
                         if (targetDate <= now) {
@@ -555,7 +556,6 @@
                     // --- BUTTON LOGIC ---
                     let btn = `<div class="buy-btn sold-out">SOLD OUT</div>`;
                     
-                    // Logic: Must have stock, AND (No date set OR Date is in future)
                     if (item.stock > 0 && !isExpired) {
                         if (item.googleFormLink) {
                              btn = `<a href="${item.googleFormLink}" target="_blank" id="btn-${item.id}" class="${btnClass}" onclick="trackClick('${item.id}')">JOIN BREAK</a>`;
@@ -578,8 +578,7 @@
                                 </div>
                                 <div class="item-content">
                                     <h3>${item.name}</h3>
-                                    ${dateDisplayHTML} 
-                                    <p>${item.description}</p>
+                                    ${dateDisplayHTML} <p>${item.description}</p>
                                     
                                     <div class="price-row">
                                         <span class="price">$${item.price.toFixed(2)}</span>
