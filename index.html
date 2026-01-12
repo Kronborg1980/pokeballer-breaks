@@ -267,6 +267,17 @@
         }
         .item-content p { color: var(--text-dim); font-size: 1rem; line-height: 1.6; margin-bottom: 1.5rem; flex: 1; }
         
+        /* DATE DISPLAY LINE - USA FORMAT */
+        .date-display { 
+            color: var(--accent-gold); 
+            font-weight: 700; 
+            font-size: 0.9rem; 
+            margin-bottom: 5px; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px; 
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3); 
+        }
+
         .price-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(0, 255, 242, 0.2); }
         .price { font-size: 2rem; font-weight: 900; color: var(--accent-cyan); text-shadow: 0 0 25px rgba(0, 255, 242, 0.6); }
         .stock { font-size: 0.9rem; color: var(--text-dim); background: rgba(0, 255, 242, 0.08); padding: 6px 14px; border-radius: 30px; font-weight: 700; border: 1px solid rgba(0, 255, 242, 0.2); }
@@ -516,11 +527,20 @@
                     
                     // --- TIME / COUNTDOWN LOGIC ---
                     let timeBadgeHTML = '';
+                    let dateDisplayHTML = ''; 
                     let isExpired = false;
 
                     if (item.scheduleDate) {
                         const targetDate = new Date(item.scheduleDate).getTime();
                         
+                        // NEW: Create USA formatted date string
+                        const dateObj = new Date(item.scheduleDate);
+                        const usDate = dateObj.toLocaleString('en-US', {
+                            weekday: 'short', month: 'short', day: 'numeric',
+                            hour: 'numeric', minute: '2-digit', hour12: true
+                        });
+                        dateDisplayHTML = `<div class="date-display">📅 ${usDate}</div>`;
+
                         // Check if already expired on load
                         if (targetDate <= now) {
                             isExpired = true;
@@ -542,7 +562,6 @@
                              btn = `<div class="buy-btn sold-out" style="background:#555; border-color:#777;">COMING SOON</div>`;
                         }
                     } else if (item.stock > 0 && isExpired) {
-                        // Stock exists, but time passed -> Show Sold Out
                          btn = `<div class="buy-btn sold-out">SOLD OUT</div>`;
                     }
                     
@@ -559,6 +578,9 @@
                                 <div class="item-content">
                                     <h3>${item.name}</h3>
                                     <p>${item.description}</p>
+                                    
+                                    ${dateDisplayHTML} 
+                                    
                                     <div class="price-row">
                                         <span class="price">$${item.price.toFixed(2)}</span>
                                         <span class="stock">${item.stock} Spots Left</span>
