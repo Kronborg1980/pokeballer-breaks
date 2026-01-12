@@ -178,6 +178,24 @@
             } catch(e) { alert("Save Failed."); btn.innerText = "Save Failed"; }
         }
 
+        // --- HELPER TO FORMAT DATE EXACTLY AS TYPED ---
+        function formatLiteralDate(isoString) {
+            // isoString looks like "2023-11-25T20:00"
+            if (!isoString) return "";
+            const [datePart, timePart] = isoString.split('T');
+            const [year, month, day] = datePart.split('-');
+            let [hour, minute] = timePart.split(':');
+            
+            // Convert 24h to 12h
+            let ampm = 'AM';
+            let h = parseInt(hour);
+            if (h >= 12) { ampm = 'PM'; if (h > 12) h -= 12; }
+            if (h === 0) h = 12;
+            
+            // Create nice string e.g. "11/25/2023, 8:00 PM"
+            return `${month}/${day}/${year}, ${h}:${minute} ${ampm}`;
+        }
+
         async function loadItems() {
             try {
                 const res = await fetch(`${API_URL}/items`);
@@ -205,14 +223,10 @@
                     const hiddenBadge = item.hidden ? '<span class="badge b-hidden"><i class="ph-fill ph-eye-slash"></i> HIDDEN</span>' : '';
                     const opacity = item.hidden ? 'opacity: 0.6;' : '';
                     
-                    // --- USA FORMAT DATE IN ADMIN LIST ---
+                    // --- LITERAL DATE FORMATTING ---
                     let timeBadge = '';
                     if (item.scheduleDate) {
-                        const dateObj = new Date(item.scheduleDate);
-                        const dateStr = dateObj.toLocaleString('en-US', {
-                             weekday: 'short', month: 'short', day: 'numeric',
-                             hour: 'numeric', minute: '2-digit', hour12: true
-                        });
+                        const dateStr = formatLiteralDate(item.scheduleDate);
                         timeBadge = `<span class="badge b-time"><i class="ph-fill ph-clock"></i> ${dateStr}</span>`;
                     }
 
