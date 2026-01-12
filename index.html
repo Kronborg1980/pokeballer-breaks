@@ -251,6 +251,7 @@
             box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
             display: flex; align-items: center; gap: 5px;
             pointer-events: none;
+            transition: 0.3s;
         }
 
         .item-img-box { height: 260px; overflow:hidden; position: relative; cursor: pointer; border-bottom: 1px solid rgba(0, 255, 242, 0.2); }
@@ -490,11 +491,11 @@
                 items.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
                 
                 let storeHTML = '';
+                const now = new Date().getTime();
                 
                 items.forEach(item => {
                     if (item.hidden) return; 
 
-                    // --- CATEGORY LOGIC ---
                     const isBaller = item.type === 'baller';
                     const isBundle = item.type === 'bundle';
                     
@@ -503,7 +504,6 @@
                     let wrapperClass = '';
                     let btnClass = 'buy-btn';
 
-                    // --- APPLY PREMIUM STYLES ---
                     if (isBaller) {
                         tagClass = 'tag-baller';
                         tagText = '<i class="ph-fill ph-crown"></i> BALLER BUNDLE';
@@ -514,21 +514,36 @@
                         tagText = '<i class="ph-fill ph-sketch-logo"></i> BUNDLE BREAK';
                     }
                     
-                    // --- TIME BADGE ---
+                    // --- TIME / COUNTDOWN LOGIC ---
                     let timeBadgeHTML = '';
-                    if (item.scheduleText) {
-                        const displayText = item.scheduleText.includes('CST') ? item.scheduleText : `${item.scheduleText} CST`;
-                        timeBadgeHTML = `<div class="time-tag-bottom"><i class="ph-fill ph-clock-countdown"></i> ${displayText}</div>`;
+                    let isExpired = false;
+
+                    if (item.scheduleDate) {
+                        const targetDate = new Date(item.scheduleDate).getTime();
+                        
+                        // Check if already expired on load
+                        if (targetDate <= now) {
+                            isExpired = true;
+                            timeBadgeHTML = `<div class="time-tag-bottom" style="color:#ff4444; border-color:#ff4444;"><i class="ph-fill ph-clock-afternoon"></i> TIME UP</div>`;
+                        } else {
+                            // Render Countdown Badge with data attributes
+                            timeBadgeHTML = `<div class="time-tag-bottom countdown-timer" data-date="${item.scheduleDate}" data-id="${item.id}"><i class="ph-fill ph-clock-countdown"></i> CALC...</div>`;
+                        }
                     }
 
                     // --- BUTTON LOGIC ---
                     let btn = `<div class="buy-btn sold-out">SOLD OUT</div>`;
-                    if (item.stock > 0) {
+                    
+                    // Logic: Must have stock, AND (No date set OR Date is in future)
+                    if (item.stock > 0 && !isExpired) {
                         if (item.googleFormLink) {
-                             btn = `<a href="${item.googleFormLink}" target="_blank" class="${btnClass}" onclick="trackClick('${item.id}')">JOIN BREAK</a>`;
+                             btn = `<a href="${item.googleFormLink}" target="_blank" id="btn-${item.id}" class="${btnClass}" onclick="trackClick('${item.id}')">JOIN BREAK</a>`;
                         } else {
                              btn = `<div class="buy-btn sold-out" style="background:#555; border-color:#777;">COMING SOON</div>`;
                         }
+                    } else if (item.stock > 0 && isExpired) {
+                        // Stock exists, but time passed -> Show Sold Out
+                         btn = `<div class="buy-btn sold-out">SOLD OUT</div>`;
                     }
                     
                     const img = item.image || 'https://assets.pokemon.com/assets/cms2/img/misc/trading-card-games/cards/tcg_default_card.png';
@@ -548,15 +563,56 @@
                                         <span class="price">$${item.price.toFixed(2)}</span>
                                         <span class="stock">${item.stock} Spots Left</span>
                                     </div>
-                                    ${btn}
+                                    <div id="btn-container-${item.id}">
+                                        ${btn}
+                                    </div>
                                 </div>
                             </div>
                         </div>`;
                 });
                 
                 container.innerHTML = storeHTML;
+                startCountdownTimer();
 
             } catch(e) { console.error(e); }
+        }
+
+        function startCountdownTimer() {
+            setInterval(() => {
+                const timers = document.querySelectorAll('.countdown-timer');
+                const now = new Date().getTime();
+
+                timers.forEach(timer => {
+                    const target = new Date(timer.dataset.date).getTime();
+                    const distance = target - now;
+                    const itemId = timer.dataset.id;
+
+                    if (distance < 0) {
+                        // TIME IS UP!
+                        timer.innerHTML = `<i class="ph-fill ph-clock-afternoon"></i> TIME UP`;
+                        timer.style.color = "#ff4444";
+                        timer.style.borderColor = "#ff4444";
+                        
+                        // KILL BUTTON
+                        const btnContainer = document.getElementById(`btn-container-${itemId}`);
+                        if(btnContainer && !btnContainer.innerHTML.includes('SOLD OUT')) {
+                            btnContainer.innerHTML = `<div class="buy-btn sold-out">SOLD OUT</div>`;
+                        }
+                    } else {
+                        // CALC TIME
+                        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                        let timeString = "";
+                        if(days > 0) timeString += `${days}d `;
+                        timeString += `${hours}h ${minutes}m ${seconds}s`;
+                        
+                        timer.innerHTML = `<i class="ph-fill ph-clock-countdown"></i> ${timeString}`;
+                    }
+                });
+            }, 1000);
         }
 
         function trackClick(id) {
