@@ -77,7 +77,7 @@
                     </div>
                 </div>
                 
-                <label>Set Break Date & Time (Countdown)</label>
+                <label>Set Break Date & Time (Use this to set Central Time)</label>
                 <input type="datetime-local" id="item-schedule-date">
                 
                 <label>Name</label><input type="text" id="item-name">
@@ -129,7 +129,7 @@
             const type = document.getElementById('item-type').value;
             const hidden = document.getElementById('item-hidden').value === 'true';
             
-            // GRAB THE DATE
+            // GRAB THE DATE (This grabs the literal values you typed)
             const scheduleDate = document.getElementById('item-schedule-date').value; 
             
             const name = document.getElementById('item-name').value;
@@ -151,7 +151,7 @@
                 clickCount: editingId ? currentClicks : 0,
                 createdAt: editingId ? currentCreatedAt : Date.now(),
                 hidden: hidden,
-                scheduleDate: scheduleDate // SEND ISO DATE
+                scheduleDate: scheduleDate // Sends raw "2026-01-12T20:00"
             };
             
             const url = editingId ? `${API_URL}/items/${editingId}` : `${API_URL}/items`;
@@ -178,22 +178,22 @@
             } catch(e) { alert("Save Failed."); btn.innerText = "Save Failed"; }
         }
 
-        // --- HELPER TO FORMAT DATE EXACTLY AS TYPED ---
+        // --- MANUALLY FORMAT DATE TO AM/PM WITHOUT TIMEZONES ---
         function formatLiteralDate(isoString) {
-            // isoString looks like "2023-11-25T20:00"
+            // Input: "2026-01-12T20:00"
             if (!isoString) return "";
             const [datePart, timePart] = isoString.split('T');
             const [year, month, day] = datePart.split('-');
             let [hour, minute] = timePart.split(':');
             
-            // Convert 24h to 12h
-            let ampm = 'AM';
+            // Manual 12-hour conversion
             let h = parseInt(hour);
+            let ampm = 'AM';
             if (h >= 12) { ampm = 'PM'; if (h > 12) h -= 12; }
             if (h === 0) h = 12;
             
-            // Create nice string e.g. "11/25/2023, 8:00 PM"
-            return `${month}/${day}/${year}, ${h}:${minute} ${ampm}`;
+            // Returns: "01/12/2026, 8:00 PM CT"
+            return `${month}/${day}/${year}, ${h}:${minute} ${ampm} CT`;
         }
 
         async function loadItems() {
@@ -223,7 +223,7 @@
                     const hiddenBadge = item.hidden ? '<span class="badge b-hidden"><i class="ph-fill ph-eye-slash"></i> HIDDEN</span>' : '';
                     const opacity = item.hidden ? 'opacity: 0.6;' : '';
                     
-                    // --- LITERAL DATE FORMATTING ---
+                    // USE CUSTOM FORMATTER
                     let timeBadge = '';
                     if (item.scheduleDate) {
                         const dateStr = formatLiteralDate(item.scheduleDate);
@@ -264,7 +264,7 @@
                 document.getElementById('item-type').value = item.type || 'msrp';
                 document.getElementById('item-hidden').value = item.hidden ? 'true' : 'false';
                 
-                // POPULATE DATE PICKER
+                // LOAD RAW DATE VALUE
                 document.getElementById('item-schedule-date').value = item.scheduleDate || ''; 
                 
                 document.getElementById('item-name').value = item.name;
