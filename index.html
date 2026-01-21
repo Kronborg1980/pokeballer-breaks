@@ -619,12 +619,13 @@
                             let finalBtnClass = btnBaseClass;
 
                             if (isLive) {
-                                btnText = "JOIN LIVE BREAK";
+                                btnText = "JOIN LIVE DRAW";
                                 btnSub = "HAPPENING NOW!";
                                 finalBtnClass = "buy-btn live-btn"; // Red Alert Style
                             } else if (startTime) {
-                                btnText = "PRE-ORDER SPOT";
-                                btnSub = "SECURE ENTRY BEFORE START";
+                                // HERE IS THE CHANGE
+                                btnText = "ENTER THE DRAW";
+                                btnSub = "SECURE A WHEEL SPOT";
                             }
 
                             btnHTML = `<a href="${item.googleFormLink}" target="_blank" id="btn-${item.id}" class="${finalBtnClass}" onclick="trackClick('${item.id}')">
@@ -723,7 +724,7 @@
                             const anchor = btnContainer.querySelector('a');
                             if(anchor) {
                                 anchor.className += " live-btn";
-                                anchor.querySelector('span').innerText = "JOIN LIVE BREAK";
+                                anchor.querySelector('span').innerText = "JOIN LIVE DRAW";
                                 anchor.querySelector('.btn-subtext').innerText = "HAPPENING NOW!";
                             }
                         }
