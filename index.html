@@ -16,6 +16,7 @@
             --accent-cyan: #00fff2;
             --accent-purple: #d500ff;
             --accent-gold: #ffd700;
+            --accent-live: #ff0040;
             --text-bright: #ffffff;
             --text-dim: #b0b0d0;
             --guardian-size: clamp(120px, 14vw, 200px);
@@ -167,16 +168,27 @@
         }
         @keyframes spinBorder { 100% { transform: rotate(360deg); } }
         
-        /* --- SUPER PREMIUM: BALLER BUNDLES --- */
+        /* --- LIVE & BALLER STYLES --- */
         .card-baller-bundle {
             border: 2px solid #ffd700 !important;
             box-shadow: 0 0 50px rgba(255, 215, 0, 0.35) !important;
         }
-        /* Overwrite spin animation with gold */
         .card-baller-bundle::before {
             background: conic-gradient(transparent 0deg, transparent 90deg, #bf953f 130deg, #fcf6ba 155deg, #b38728 180deg, transparent 220deg) !important;
         }
         
+        /* LIVE PULSE ANIMATION */
+        .card-live-now {
+            border: 2px solid var(--accent-live) !important;
+            box-shadow: 0 0 60px rgba(255, 0, 64, 0.5) !important;
+            animation: livePulse 2s infinite !important;
+        }
+        .card-live-now::before {
+            background: conic-gradient(transparent 0deg, transparent 90deg, #ff0040 130deg, #ffffff 155deg, #ff0040 180deg, transparent 220deg) !important;
+            animation: spinBorder 2s linear infinite !important;
+        }
+        @keyframes livePulse { 0% { box-shadow: 0 0 40px rgba(255,0,64,0.4); } 50% { box-shadow: 0 0 80px rgba(255,0,64,0.8); } 100% { box-shadow: 0 0 40px rgba(255,0,64,0.4); } }
+
         .glass-panel {
             position: relative; 
             background: linear-gradient(160deg, rgba(20, 20, 35, 0.6) 0%, rgba(10, 10, 20, 0.8) 100%);
@@ -230,7 +242,6 @@
             text-shadow: 0 1px 3px black; box-shadow: 0 0 20px rgba(213, 0, 255, 0.4);
         }
 
-        /* BALLER BUNDLE PREMIUM TAG */
         .tag-baller {
             background: rgba(0, 0, 0, 0.95);
             border: 1px solid #ffd700;
@@ -239,6 +250,7 @@
             box-shadow: 0 0 20px rgba(255, 215, 0, 0.5), inset 0 0 10px rgba(255, 215, 0, 0.2);
         }
         
+        /* BOTTOM TIMER BADGE */
         .time-tag-bottom {
             position: absolute; bottom: 10px; left: 10px; 
             padding: 6px 12px; border-radius: 8px; font-weight: 800; font-size: 0.75rem; z-index: 3; letter-spacing: 0.5px;
@@ -254,6 +266,16 @@
             transition: 0.3s;
         }
 
+        /* LIVE BADGE OVERRIDE */
+        .tag-is-live {
+            background: #ff0040 !important;
+            border-color: #ffaaaa !important;
+            color: white !important;
+            box-shadow: 0 0 25px #ff0040 !important;
+            animation: badgePulse 1s infinite alternate;
+        }
+        @keyframes badgePulse { from { transform: scale(1); } to { transform: scale(1.05); } }
+
         .item-img-box { height: 260px; overflow:hidden; position: relative; cursor: pointer; border-bottom: 1px solid rgba(0, 255, 242, 0.2); }
         .item-img-box::after { content:''; position:absolute; bottom:0; left:0; width:100%; height:100%; background: linear-gradient(to top, rgba(10, 10, 25, 0.9), transparent 60%); pointer-events: none; }
         .item-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); }
@@ -267,7 +289,7 @@
         }
         .item-content p { color: var(--text-dim); font-size: 1rem; line-height: 1.6; margin-bottom: 1.5rem; flex: 1; }
         
-        /* NEW DATE ROW STYLE */
+        /* DATE ROW STYLE */
         .date-row { 
             display: flex; align-items: center; gap: 8px;
             color: var(--accent-gold); 
@@ -292,19 +314,15 @@
             transition: 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; overflow: hidden;
             border: 1px solid rgba(255,255,255,0.3); cursor: pointer;
             box-shadow: 0 10px 30px rgba(0, 255, 242, 0.3), inset 0 2px 0 rgba(255,255,255,0.4);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1;
         }
         .buy-btn:hover { transform: translateY(-5px); box-shadow: 0 0 50px rgba(189, 0, 255, 0.8); border-color: white; }
         
+        .btn-subtext { font-size: 0.75rem; opacity: 0.9; margin-top: 4px; font-weight: 700; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
+
         /* --- SHINY GOLD BALLER BUTTON --- */
         .baller-btn {
-            background: linear-gradient(
-                135deg, 
-                #bf953f 0%, 
-                #fcf6ba 25%, 
-                #b38728 50%, 
-                #fcf6ba 75%, 
-                #aa771c 100%
-            ) !important;
+            background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 25%, #b38728 50%, #fcf6ba 75%, #aa771c 100%) !important;
             background-size: 200% auto !important;
             color: #000 !important;
             text-shadow: 0 1px 0 rgba(255,255,255,0.4) !important;
@@ -312,6 +330,7 @@
             border: 1px solid #7a5d1a !important;
             position: relative; overflow: hidden; animation: goldShine 3s linear infinite;
         }
+        .baller-btn .btn-subtext { color: #333 !important; text-shadow: none !important; }
         .baller-btn::after {
             content: ''; position: absolute; top: -50%; left: -60%; width: 20%; height: 200%;
             background: rgba(255, 255, 255, 0.8); transform: rotate(30deg); animation: sweep 4s infinite;
@@ -320,7 +339,17 @@
         @keyframes goldShine { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         .baller-btn:hover { box-shadow: 0 0 40px rgba(255, 215, 0, 0.8) !important; filter: brightness(1.1); }
 
-        .sold-out { background: #0f0f1a; color: #666; pointer-events: none; border: 2px solid #2a2a3a; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
+        /* --- LIVE BUTTON STYLE --- */
+        .live-btn {
+            background: linear-gradient(135deg, #ff0000, #ff4444) !important;
+            border: 2px solid #ffffff !important;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.8), inset 0 0 10px rgba(255,255,255,0.5) !important;
+            animation: liveBtnPulse 1s infinite alternate;
+        }
+        @keyframes liveBtnPulse { from { transform: scale(1); box-shadow: 0 0 30px red; } to { transform: scale(1.03); box-shadow: 0 0 50px red; } }
+
+        .sold-out { background: #0f0f1a !important; color: #666 !important; pointer-events: none; border: 2px solid #2a2a3a !important; box-shadow: inset 0 0 20px rgba(0,0,0,0.5) !important; }
+        .sold-out .btn-subtext { display: none; }
         
         footer { text-align: center; padding: 3rem 0 4rem; color: var(--text-dim); font-size: 0.9rem; position: relative; z-index: 2; letter-spacing: 1px; }
         
@@ -339,35 +368,11 @@
             .store-grid { grid-template-columns: 1fr; gap: 30px; }
             .item-content { padding: 1.5rem; } .buy-btn { padding: 1.1rem; }
             
-            /* --- FIXED JOIN CARD LAYOUT --- */
-            .sub-info-panel { 
-                flex-direction: column; 
-                text-align: center; 
-                gap: 1.5rem; 
-                padding: 2rem 1.2rem; /* Reduced padding prevents squishing */
-            }
-            .sub-text { 
-                min-width: 0; /* allows shrinking */
-                width: 100%; 
-            }
-            .sub-text h3 { 
-                justify-content: center; /* Center icon and text */
-                font-size: 1.4rem; 
-                margin-bottom: 1rem;
-            }
-            .sub-actions {
-                width: 100%;
-                justify-content: center;
-                gap: 15px;
-                flex-wrap: nowrap; /* Keep button and bell on same line if preferred */
-            }
-            .sub-btn { 
-                transform: none !important; 
-                flex: 1; /* Button takes remaining space */
-                justify-content: center;
-                padding: 14px 20px;
-                font-size: 1rem;
-            }
+            .sub-info-panel { flex-direction: column; text-align: center; gap: 1.5rem; padding: 2rem 1.2rem; }
+            .sub-text { min-width: 0; width: 100%; }
+            .sub-text h3 { justify-content: center; font-size: 1.4rem; margin-bottom: 1rem; }
+            .sub-actions { width: 100%; justify-content: center; gap: 15px; flex-wrap: nowrap; }
+            .sub-btn { transform: none !important; flex: 1; justify-content: center; padding: 14px 20px; font-size: 1rem; }
             .bell-btn { transform: none !important; }
         }
 
@@ -492,20 +497,16 @@
             }
         }
 
-        // --- NEW: HELPER TO FORMAT LITERAL DATE ---
+        // --- HELPER: LITERAL DATE PARSER ---
         function formatLiteralDate(isoString) {
-            // Parses "2023-11-25T20:00" directly into text "Nov 25 • 8:00 PM CST"
-            // IGNORES BROWSER TIMEZONE COMPLETELY
             if (!isoString) return "";
             const [datePart, timePart] = isoString.split('T');
             const [year, monthNum, day] = datePart.split('-');
             let [hour, minute] = timePart.split(':');
             
-            // Month Names
             const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
             const monthStr = months[parseInt(monthNum)-1];
 
-            // Convert 24h to 12h
             let ampm = 'AM';
             let h = parseInt(hour);
             if (h >= 12) { ampm = 'PM'; if (h > 12) h -= 12; }
@@ -537,64 +538,113 @@
                     let tagClass = 'tag-msrp';
                     let tagText = '<i class="ph-fill ph-seal-check"></i> MSRP BREAK';
                     let wrapperClass = '';
-                    let btnClass = 'buy-btn';
+                    let btnBaseClass = 'buy-btn';
 
                     if (isBaller) {
                         tagClass = 'tag-baller';
                         tagText = '<i class="ph-fill ph-crown"></i> BALLER BUNDLE';
                         wrapperClass = 'card-baller-bundle';
-                        btnClass = 'buy-btn baller-btn';
+                        btnBaseClass = 'buy-btn baller-btn';
                     } else if (isBundle) {
                         tagClass = 'tag-bundle';
                         tagText = '<i class="ph-fill ph-sketch-logo"></i> BUNDLE BREAK';
                     }
                     
-                    // --- TIME / COUNTDOWN LOGIC ---
+                    // --- 3-PHASE TIMELINE LOGIC ---
+                    // Phase 1: Countdown (now < startTime)
+                    // Phase 2: LIVE (startTime <= now < endTime)
+                    // Phase 3: SOLD OUT (now >= endTime) OR (stock <= 0)
+                    
                     let timeBadgeHTML = '';
                     let dateDisplayHTML = ''; 
-                    let isExpired = false;
+                    
+                    let startTime = null;
+                    let endTime = null;
+                    let isLive = false;
+                    let isEnded = false;
 
+                    // Parse Dates if they exist
                     if (item.scheduleDate) {
-                        // 1. DISPLAY TEXT: Use literal string parsing (WYSIWYG)
                         const displayText = formatLiteralDate(item.scheduleDate);
                         dateDisplayHTML = `<div class="date-row"><i class="ph-fill ph-calendar-blank"></i> ${displayText}</div>`;
-                        
-                        // 2. COUNTDOWN LOGIC: 
-                        // We append "-06:00" to force Central Standard Time offset logic for the timer
-                        // This makes the countdown accurate globally relative to CT.
-                        const targetDate = new Date(item.scheduleDate + "-06:00").getTime(); 
-                        
-                        if (targetDate <= now) {
-                            isExpired = true;
-                            timeBadgeHTML = `<div class="time-tag-bottom" style="color:#ff4444; border-color:#ff4444;"><i class="ph-fill ph-clock-afternoon"></i> TIME UP</div>`;
-                        } else {
-                            // Pass the RAW string to the timer, we will handle offset there too
-                            timeBadgeHTML = `<div class="time-tag-bottom countdown-timer" data-date="${item.scheduleDate}" data-id="${item.id}"><i class="ph-fill ph-clock-countdown"></i> CALC...</div>`;
+                        startTime = new Date(item.scheduleDate + "-06:00").getTime();
+                    }
+                    
+                    if (item.scheduleEnd) {
+                        endTime = new Date(item.scheduleEnd + "-06:00").getTime();
+                    }
+
+                    // --- DETERMINE STATE ---
+                    // 1. Force sold out if stock is manually 0
+                    if(item.stock <= 0) {
+                        isEnded = true; 
+                    } 
+                    // 2. Check Time Phases
+                    else if (startTime) {
+                        if (endTime && now >= endTime) {
+                            // Time passed end date
+                            isEnded = true;
+                        } else if (now >= startTime) {
+                            // Started, but not ended (or no end date set)
+                            isLive = true;
                         }
                     }
 
-                    // --- BUTTON LOGIC ---
-                    let btn = `<div class="buy-btn sold-out">SOLD OUT</div>`;
+                    // --- GENERATE UI BASED ON STATE ---
+
+                    if (isEnded) {
+                        // STATE: SOLD OUT
+                        // No badge or specialized "Closed" badge if you prefer
+                    } else if (isLive) {
+                         // STATE: LIVE
+                         timeBadgeHTML = `<div class="time-tag-bottom tag-is-live"><i class="ph-fill ph-broadcast"></i> LIVE NOW</div>`;
+                         wrapperClass += ' card-live-now';
+                    } else if (startTime) {
+                        // STATE: COUNTDOWN
+                        // Pass End Time to data-end attribute so JS can handle transition later
+                        const endAttr = item.scheduleEnd ? `data-end="${item.scheduleEnd}"` : '';
+                        timeBadgeHTML = `<div class="time-tag-bottom countdown-timer" data-date="${item.scheduleDate}" ${endAttr} data-id="${item.id}"><i class="ph-fill ph-clock-countdown"></i> CALC...</div>`;
+                    }
+
+                    // --- BUTTON HTML ---
+                    let btnHTML = '';
                     
-                    if (item.stock > 0 && !isExpired) {
+                    if (isEnded) {
+                        btnHTML = `<div class="buy-btn sold-out">SOLD OUT</div>`;
+                    } else {
+                        // Available (Pre-order or Live)
                         if (item.googleFormLink) {
-                             btn = `<a href="${item.googleFormLink}" target="_blank" id="btn-${item.id}" class="${btnClass}" onclick="trackClick('${item.id}')">JOIN BREAK</a>`;
+                            let btnText = "JOIN BREAK";
+                            let btnSub = "RESERVE YOUR SPOT";
+                            let finalBtnClass = btnBaseClass;
+
+                            if (isLive) {
+                                btnText = "JOIN LIVE BREAK";
+                                btnSub = "HAPPENING NOW!";
+                                finalBtnClass = "buy-btn live-btn"; // Red Alert Style
+                            } else if (startTime) {
+                                btnText = "PRE-ORDER SPOT";
+                                btnSub = "SECURE ENTRY BEFORE START";
+                            }
+
+                            btnHTML = `<a href="${item.googleFormLink}" target="_blank" id="btn-${item.id}" class="${finalBtnClass}" onclick="trackClick('${item.id}')">
+                                            <span>${btnText}</span>
+                                            <span class="btn-subtext" id="subtext-${item.id}">${btnSub}</span>
+                                       </a>`;
                         } else {
-                             btn = `<div class="buy-btn sold-out" style="background:#555; border-color:#777;">COMING SOON</div>`;
+                             btnHTML = `<div class="buy-btn sold-out" style="background:#555; border-color:#777;">COMING SOON</div>`;
                         }
-                    } else if (item.stock > 0 && isExpired) {
-                         btn = `<div class="buy-btn sold-out">SOLD OUT</div>`;
                     }
                     
                     const img = item.image || 'https://assets.pokemon.com/assets/cms2/img/misc/trading-card-games/cards/tcg_default_card.png';
                     
                     storeHTML += `
-                        <div class="neon-card-wrapper ${wrapperClass}">
+                        <div class="neon-card-wrapper ${wrapperClass}" id="card-${item.id}">
                             <div class="item-card glass-panel">
                                 <div class="type-tag ${tagClass}">${tagText}</div>
                                 <div class="item-img-box" onclick="openModal('${img}')">
                                     <img src="${img}" class="item-img" alt="${item.name}">
-                                    ${timeBadgeHTML}
+                                    <div id="badge-container-${item.id}">${timeBadgeHTML}</div>
                                 </div>
                                 <div class="item-content">
                                     <h3>${item.name}</h3>
@@ -606,7 +656,7 @@
                                         <span class="stock">${item.stock} Spots Left</span>
                                     </div>
                                     <div id="btn-container-${item.id}">
-                                        ${btn}
+                                        ${btnHTML}
                                     </div>
                                 </div>
                             </div>
@@ -624,21 +674,61 @@
                 const now = new Date().getTime();
 
                 timers.forEach(timer => {
-                    // For countdown, append -06:00 to force CST offset
-                    const target = new Date(timer.dataset.date + "-06:00").getTime();
-                    const distance = target - now;
+                    const dateStr = timer.dataset.date;
+                    const endDateStr = timer.dataset.end; // Might be empty
                     const itemId = timer.dataset.id;
+                    
+                    const startTarget = new Date(dateStr + "-06:00").getTime();
+                    let endTarget = endDateStr ? new Date(endDateStr + "-06:00").getTime() : null;
 
-                    if (distance < 0) {
-                        timer.innerHTML = `<i class="ph-fill ph-clock-afternoon"></i> TIME UP`;
-                        timer.style.color = "#ff4444";
-                        timer.style.borderColor = "#ff4444";
-                        
+                    // CHECK 1: Have we passed the END time? (Auto-close)
+                    if (endTarget && now >= endTarget) {
+                        // Force Sold Out State
                         const btnContainer = document.getElementById(`btn-container-${itemId}`);
                         if(btnContainer && !btnContainer.innerHTML.includes('SOLD OUT')) {
-                            btnContainer.innerHTML = `<div class="buy-btn sold-out">SOLD OUT</div>`;
+                             btnContainer.innerHTML = `<div class="buy-btn sold-out">SOLD OUT</div>`;
+                        }
+                        
+                        // Remove Live Badge if it exists (or timer)
+                        const badgeContainer = document.getElementById(`badge-container-${itemId}`);
+                        if(badgeContainer) badgeContainer.innerHTML = '';
+                        
+                        // Remove Pulse
+                        const card = document.getElementById(`card-${itemId}`);
+                        if(card) card.classList.remove('card-live-now');
+                        return; // Stop processing this item
+                    }
+
+                    // CHECK 2: Have we passed the START time? (Go Live)
+                    const distance = startTarget - now;
+
+                    if (distance < 0) {
+                        // --- LIVE MODE ---
+                        const badgeContainer = document.getElementById(`badge-container-${itemId}`);
+                        if(badgeContainer && !badgeContainer.innerHTML.includes('LIVE NOW')) {
+                            badgeContainer.innerHTML = `<div class="time-tag-bottom tag-is-live"><i class="ph-fill ph-broadcast"></i> LIVE NOW</div>`;
+                        }
+
+                        // Add Pulse
+                        const card = document.getElementById(`card-${itemId}`);
+                        if(card) card.classList.add('card-live-now');
+
+                        // Update Button to "Live" style (if not sold out)
+                        const btnContainer = document.getElementById(`btn-container-${itemId}`);
+                        if(btnContainer && !btnContainer.innerHTML.includes('sold-out') && !btnContainer.innerHTML.includes('live-btn')) {
+                            // Note: This replaces the HTML, ensure href is preserved if you want purely dynamic updates, 
+                            // but reloading store is easier. For now we assume button is already there.
+                            // To be safe, we just let the "Refresh" logic happen on page load, 
+                            // but for live counting, we can just change class/text:
+                            const anchor = btnContainer.querySelector('a');
+                            if(anchor) {
+                                anchor.className += " live-btn";
+                                anchor.querySelector('span').innerText = "JOIN LIVE BREAK";
+                                anchor.querySelector('.btn-subtext').innerText = "HAPPENING NOW!";
+                            }
                         }
                     } else {
+                        // --- COUNTDOWN MODE ---
                         const days = Math.floor(distance / (1000 * 60 * 60 * 24));
                         const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                         const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
