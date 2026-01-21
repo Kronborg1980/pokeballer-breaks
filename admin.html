@@ -75,14 +75,22 @@
                     </div>
                 </div>
                 
-                <label>Set Break Date & Time (This will be shown as CST)</label>
-                <input type="datetime-local" id="item-schedule-date">
+                <div style="display:flex; gap:10px; margin-bottom: 0.5rem;">
+                    <div style="flex:1">
+                        <label>🟢 Start Time (Go Live)</label>
+                        <input type="datetime-local" id="item-schedule-date">
+                    </div>
+                    <div style="flex:1">
+                        <label>🔴 Close Time (Auto Sell Out)</label>
+                        <input type="datetime-local" id="item-schedule-end">
+                    </div>
+                </div>
                 
                 <label>Name</label><input type="text" id="item-name">
                 <label>Description</label><input type="text" id="item-description">
                 <div style="display:flex; gap:10px;">
                     <div style="flex:1"><label>Price</label><input type="number" id="item-price"></div>
-                    <div style="flex:1"><label>Stock</label><input type="number" id="item-stock"></div>
+                    <div style="flex:1"><label>Stock (Visual)</label><input type="number" id="item-stock"></div>
                 </div>
                 <label>Form Link</label><input type="url" id="item-google-form-link">
                 <label>Image</label><input type="file" id="item-image">
@@ -127,8 +135,9 @@
             const type = document.getElementById('item-type').value;
             const hidden = document.getElementById('item-hidden').value === 'true';
             
-            // GRAB THE DATE
+            // GRAB BOTH DATES
             const scheduleDate = document.getElementById('item-schedule-date').value; 
+            const scheduleEnd = document.getElementById('item-schedule-end').value; 
             
             const name = document.getElementById('item-name').value;
             const desc = document.getElementById('item-description').value;
@@ -149,7 +158,8 @@
                 clickCount: editingId ? currentClicks : 0,
                 createdAt: editingId ? currentCreatedAt : Date.now(),
                 hidden: hidden,
-                scheduleDate: scheduleDate 
+                scheduleDate: scheduleDate,
+                scheduleEnd: scheduleEnd // SENDING END DATE
             };
             
             const url = editingId ? `${API_URL}/items/${editingId}` : `${API_URL}/items`;
@@ -170,38 +180,28 @@
                 document.getElementById('item-type').value = 'msrp';
                 document.getElementById('item-hidden').value = 'false';
                 document.getElementById('item-schedule-date').value = ''; 
+                document.getElementById('item-schedule-end').value = ''; 
                 btn.innerText = "Save Item";
                 
                 loadItems();
             } catch(e) { alert("Save Failed."); btn.innerText = "Save Failed"; }
         }
 
-        // --- SAFE FORMATTER (Handles old text AND new ISO dates) ---
+        // --- SAFE FORMATTER ---
         function formatLiteralDate(val) {
             if (!val) return "";
-            
-            // Check if it's new format (contains "T")
-            if (val.indexOf('T') === -1) {
-                return val; // Return old text as is
-            }
-
+            if (val.indexOf('T') === -1) return val;
             try {
                 const [datePart, timePart] = val.split('T');
                 if(!timePart) return val;
-
                 const [year, month, day] = datePart.split('-');
                 let [hour, minute] = timePart.split(':');
-                
                 let h = parseInt(hour);
                 let ampm = 'AM';
                 if (h >= 12) { ampm = 'PM'; if (h > 12) h -= 12; }
                 if (h === 0) h = 12;
-                
-                // FORCE CST DISPLAY
-                return `${month}/${day}/${year}, ${h}:${minute} ${ampm} CST`;
-            } catch(e) {
-                return val; 
-            }
+                return `${month}/${day}, ${h}:${minute} ${ampm}`;
+            } catch(e) { return val; }
         }
 
         async function loadItems() {
@@ -231,11 +231,12 @@
                     const hiddenBadge = item.hidden ? '<span class="badge b-hidden"><i class="ph-fill ph-eye-slash"></i> HIDDEN</span>' : '';
                     const opacity = item.hidden ? 'opacity: 0.6;' : '';
                     
-                    // Use Safe Formatter
                     let timeBadge = '';
                     if (item.scheduleDate) {
-                        const dateStr = formatLiteralDate(item.scheduleDate);
-                        timeBadge = `<span class="badge b-time"><i class="ph-fill ph-clock"></i> ${dateStr}</span>`;
+                        const start = formatLiteralDate(item.scheduleDate);
+                        const end = item.scheduleEnd ? formatLiteralDate(item.scheduleEnd) : '...';
+                        // Shows simplified range: 10/24 8:00 PM -> 10:00 PM
+                        timeBadge = `<span class="badge b-time"><i class="ph-fill ph-clock"></i> ${start} ➔ ${end}</span>`;
                     }
 
                     list.innerHTML += `
@@ -245,6 +246,8 @@
                                     <span class="item-title">${item.name}</span>
                                     ${hiddenBadge}
                                     <span class="badge ${badgeClass}">${badgeText}</span> 
+                                </div>
+                                <div class="item-meta">
                                     ${timeBadge}
                                 </div>
                                 <div class="item-meta">
@@ -272,14 +275,15 @@
                 document.getElementById('item-type').value = item.type || 'msrp';
                 document.getElementById('item-hidden').value = item.hidden ? 'true' : 'false';
                 
-                // POPULATE DATE PICKER (Only works if format is ISO)
+                // POPULATE BOTH DATES
                 const dateVal = item.scheduleDate || '';
-                if(dateVal.indexOf('T') > -1) {
-                     document.getElementById('item-schedule-date').value = dateVal;
-                } else {
-                     document.getElementById('item-schedule-date').value = ''; 
-                }
+                if(dateVal.indexOf('T') > -1) document.getElementById('item-schedule-date').value = dateVal;
+                else document.getElementById('item-schedule-date').value = ''; 
                 
+                const endVal = item.scheduleEnd || '';
+                if(endVal.indexOf('T') > -1) document.getElementById('item-schedule-end').value = endVal;
+                else document.getElementById('item-schedule-end').value = '';
+
                 document.getElementById('item-name').value = item.name;
                 document.getElementById('item-description').value = item.description;
                 document.getElementById('item-price').value = item.price;
