@@ -551,10 +551,6 @@
                     }
                     
                     // --- 3-PHASE TIMELINE LOGIC ---
-                    // Phase 1: Countdown (now < startTime)
-                    // Phase 2: LIVE (startTime <= now < endTime)
-                    // Phase 3: SOLD OUT (now >= endTime) OR (stock <= 0)
-                    
                     let timeBadgeHTML = '';
                     let dateDisplayHTML = ''; 
                     
@@ -563,7 +559,6 @@
                     let isLive = false;
                     let isEnded = false;
 
-                    // Parse Dates if they exist
                     if (item.scheduleDate) {
                         const displayText = formatLiteralDate(item.scheduleDate);
                         dateDisplayHTML = `<div class="date-row"><i class="ph-fill ph-calendar-blank"></i> ${displayText}</div>`;
@@ -574,45 +569,31 @@
                         endTime = new Date(item.scheduleEnd + "-06:00").getTime();
                     }
 
-                    // --- DETERMINE STATE ---
-                    // 1. Force sold out if stock is manually 0
                     if(item.stock <= 0) {
                         isEnded = true; 
                     } 
-                    // 2. Check Time Phases
                     else if (startTime) {
                         if (endTime && now >= endTime) {
-                            // Time passed end date
                             isEnded = true;
                         } else if (now >= startTime) {
-                            // Started, but not ended (or no end date set)
                             isLive = true;
                         }
                     }
 
-                    // --- GENERATE UI BASED ON STATE ---
-
                     if (isEnded) {
-                        // STATE: SOLD OUT
-                        // No badge or specialized "Closed" badge if you prefer
                     } else if (isLive) {
-                         // STATE: LIVE
                          timeBadgeHTML = `<div class="time-tag-bottom tag-is-live"><i class="ph-fill ph-broadcast"></i> LIVE NOW</div>`;
                          wrapperClass += ' card-live-now';
                     } else if (startTime) {
-                        // STATE: COUNTDOWN
-                        // Pass End Time to data-end attribute so JS can handle transition later
                         const endAttr = item.scheduleEnd ? `data-end="${item.scheduleEnd}"` : '';
                         timeBadgeHTML = `<div class="time-tag-bottom countdown-timer" data-date="${item.scheduleDate}" ${endAttr} data-id="${item.id}"><i class="ph-fill ph-clock-countdown"></i> CALC...</div>`;
                     }
 
-                    // --- BUTTON HTML ---
                     let btnHTML = '';
                     
                     if (isEnded) {
                         btnHTML = `<div class="buy-btn sold-out">SOLD OUT</div>`;
                     } else {
-                        // Available (Pre-order or Live)
                         if (item.googleFormLink) {
                             let btnText = "JOIN BREAK";
                             let btnSub = "RESERVE YOUR SPOT";
@@ -621,11 +602,10 @@
                             if (isLive) {
                                 btnText = "JOIN LIVE DRAW";
                                 btnSub = "HAPPENING NOW!";
-                                finalBtnClass = "buy-btn live-btn"; // Red Alert Style
+                                finalBtnClass = "buy-btn live-btn";
                             } else if (startTime) {
-                                // HERE IS THE CHANGE
-                                btnText = "ENTER THE DRAW";
-                                btnSub = "SECURE A WHEEL SPOT";
+                                btnText = "JOIN BREAK";
+                                btnSub = "RESERVE YOUR SPOT";
                             }
 
                             btnHTML = `<a href="${item.googleFormLink}" target="_blank" id="btn-${item.id}" class="${finalBtnClass}" onclick="trackClick('${item.id}')">
@@ -654,7 +634,7 @@
                                     
                                     <div class="price-row">
                                         <span class="price">$${item.price.toFixed(2)}</span>
-                                        <span class="stock">${item.stock} Spots Left</span>
+                                        <span class="stock">${item.stock} Break Spots</span>
                                     </div>
                                     <div id="btn-container-${item.id}">
                                         ${btnHTML}
@@ -676,51 +656,39 @@
 
                 timers.forEach(timer => {
                     const dateStr = timer.dataset.date;
-                    const endDateStr = timer.dataset.end; // Might be empty
+                    const endDateStr = timer.dataset.end;
                     const itemId = timer.dataset.id;
                     
                     const startTarget = new Date(dateStr + "-06:00").getTime();
                     let endTarget = endDateStr ? new Date(endDateStr + "-06:00").getTime() : null;
 
-                    // CHECK 1: Have we passed the END time? (Auto-close)
                     if (endTarget && now >= endTarget) {
-                        // Force Sold Out State
                         const btnContainer = document.getElementById(`btn-container-${itemId}`);
                         if(btnContainer && !btnContainer.innerHTML.includes('SOLD OUT')) {
                              btnContainer.innerHTML = `<div class="buy-btn sold-out">SOLD OUT</div>`;
                         }
                         
-                        // Remove Live Badge if it exists (or timer)
                         const badgeContainer = document.getElementById(`badge-container-${itemId}`);
                         if(badgeContainer) badgeContainer.innerHTML = '';
                         
-                        // Remove Pulse
                         const card = document.getElementById(`card-${itemId}`);
                         if(card) card.classList.remove('card-live-now');
-                        return; // Stop processing this item
+                        return;
                     }
 
-                    // CHECK 2: Have we passed the START time? (Go Live)
                     const distance = startTarget - now;
 
                     if (distance < 0) {
-                        // --- LIVE MODE ---
                         const badgeContainer = document.getElementById(`badge-container-${itemId}`);
                         if(badgeContainer && !badgeContainer.innerHTML.includes('LIVE NOW')) {
                             badgeContainer.innerHTML = `<div class="time-tag-bottom tag-is-live"><i class="ph-fill ph-broadcast"></i> LIVE NOW</div>`;
                         }
 
-                        // Add Pulse
                         const card = document.getElementById(`card-${itemId}`);
                         if(card) card.classList.add('card-live-now');
 
-                        // Update Button to "Live" style (if not sold out)
                         const btnContainer = document.getElementById(`btn-container-${itemId}`);
                         if(btnContainer && !btnContainer.innerHTML.includes('sold-out') && !btnContainer.innerHTML.includes('live-btn')) {
-                            // Note: This replaces the HTML, ensure href is preserved if you want purely dynamic updates, 
-                            // but reloading store is easier. For now we assume button is already there.
-                            // To be safe, we just let the "Refresh" logic happen on page load, 
-                            // but for live counting, we can just change class/text:
                             const anchor = btnContainer.querySelector('a');
                             if(anchor) {
                                 anchor.className += " live-btn";
@@ -729,7 +697,6 @@
                             }
                         }
                     } else {
-                        // --- COUNTDOWN MODE ---
                         const days = Math.floor(distance / (1000 * 60 * 60 * 24));
                         const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                         const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
