@@ -353,7 +353,7 @@
         
         footer { text-align: center; padding: 3rem 0 4rem; color: var(--text-dim); font-size: 0.9rem; position: relative; z-index: 2; letter-spacing: 1px; }
 
-        /* --- EPIC EMPTY STORE STATE (LETTER STYLE) --- */
+        /* --- EPIC EMPTY STORE STATE (LETTER STYLE WITH KLINKLANG) --- */
         .epic-empty-wrapper {
             grid-column: 1 / -1;
             position: relative;
@@ -388,7 +388,7 @@
         }
         .empty-icon-container {
             position: relative;
-            width: 120px; height: 120px;
+            width: 140px; height: 140px;
             margin-bottom: 2rem;
             display: flex; align-items: center; justify-content: center;
         }
@@ -402,12 +402,26 @@
             0% { transform: scale(0.8); opacity: 0.5; } 
             100% { transform: scale(1.5); opacity: 1; box-shadow: 0 0 30px var(--accent-cyan); } 
         }
-        .empty-icon {
-            width: 140px;
-            height: auto;
+        
+        /* The wrapper handles the floating up and down */
+        .icon-float-wrapper {
+            animation: float 4s infinite ease-in-out;
             z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* The image itself handles the mechanical spinning */
+        .empty-icon {
+            width: 130px;
+            height: auto;
             filter: drop-shadow(0 0 20px var(--accent-cyan)) drop-shadow(0 0 40px var(--accent-purple));
-            animation: float 3s infinite ease-in-out;
+            animation: gearSpin 12s linear infinite;
+        }
+        
+        @keyframes gearSpin {
+            100% { transform: rotate(360deg); }
         }
         
         .letter-content {
@@ -720,18 +734,20 @@
                         </div>`;
                 });
                 
-                // NEW EPIC EMPTY STATE WITH MAGIKARP & LETTER STYLE
+                // NEW EPIC EMPTY STATE WITH KLINKLANG & LETTER STYLE
                 if (visibleCount === 0) {
                     storeHTML = `
                         <div class="epic-empty-wrapper">
                             <div class="epic-empty-inner">
                                 <div class="empty-icon-container">
-                                    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/129.png" class="empty-icon" alt="Splashing Magikarp">
+                                    <div class="icon-float-wrapper">
+                                        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/601.png" class="empty-icon" alt="Spinning Klinklang">
+                                    </div>
                                 </div>
                                 <div class="letter-content">
                                     <p style="color: #fff; font-size: 1.2rem;"><strong>Trainers,</strong></p>
                                     <p>The vault is currently empty. Every pack has been ripped, the dust has settled, and all the latest legendary hits have been sleeved up.</p>
-                                    <p>We're currently grinding in the Wild Area to secure the next massive drop. Keep dropping back in to check the store—you never know when the next epic break will suddenly appear.</p>
+                                    <p>The gears are turning behind the scenes as we secure the next massive drop. Keep dropping back in to check the store—you never know when the next epic break will suddenly appear.</p>
                                     <p>Until then, make sure to smash that <i class="ph-fill ph-bell-ringing" style="color:var(--accent-gold);"></i> bell icon above so you don't miss out when we go live.</p>
                                     <p style="color: var(--accent-cyan); font-family: 'Inter', sans-serif; font-style: italic; font-size: 1.2rem; margin-top: 2rem; margin-bottom: 0;">Best regards,</p>
                                     <h3 style="color: #fff; font-size: 1.8rem; margin-top: 0.2rem; text-shadow: 0 0 15px var(--accent-cyan);">— Pokeballer Mike</h3>
