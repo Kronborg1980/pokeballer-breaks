@@ -353,47 +353,88 @@
         
         footer { text-align: center; padding: 3rem 0 4rem; color: var(--text-dim); font-size: 0.9rem; position: relative; z-index: 2; letter-spacing: 1px; }
 
-        /* --- EMPTY STORE STATE --- */
-        .empty-store-wrapper {
+        /* --- EPIC EMPTY STORE STATE --- */
+        .epic-empty-wrapper {
             grid-column: 1 / -1;
+            position: relative;
+            margin: 2rem auto;
+            max-width: 800px;
+            padding: 4px; /* for border */
+            border-radius: 30px;
+            background: rgba(0,0,0,0.5);
+            box-shadow: 0 0 50px rgba(0, 255, 242, 0.2), 0 0 80px rgba(213, 0, 255, 0.2);
+            overflow: hidden;
+            transform: translateZ(0);
+        }
+        .epic-empty-wrapper::before {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: conic-gradient(transparent 0deg, var(--accent-cyan) 60deg, #fff 90deg, var(--accent-purple) 120deg, transparent 180deg, var(--accent-gold) 240deg, #fff 270deg, var(--accent-live) 300deg, transparent 360deg);
+            animation: spinBorder 4s linear infinite; z-index: 0;
+            opacity: 0.8; filter: blur(8px);
+        }
+        .epic-empty-inner {
+            position: relative;
+            z-index: 1;
+            background: linear-gradient(160deg, rgba(10, 10, 20, 0.85) 0%, rgba(5, 5, 15, 0.95) 100%);
+            backdrop-filter: blur(20px);
+            border-radius: 26px;
+            padding: 5rem 3rem;
             text-align: center;
-            padding: 5rem 2rem;
-            background: linear-gradient(160deg, rgba(20, 20, 35, 0.4) 0%, rgba(10, 10, 20, 0.6) 100%);
-            backdrop-filter: blur(10px);
-            border-radius: 24px;
-            border: 1px dashed rgba(0, 255, 242, 0.4);
-            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 255, 242, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            animation: pulseEmpty 4s infinite alternate;
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
         }
-        @keyframes pulseEmpty {
-            0% { box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 255, 242, 0.05); }
-            100% { box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5), 0 0 40px rgba(213, 0, 255, 0.15); }
+        .empty-icon-container {
+            position: relative;
+            width: 100px; height: 100px;
+            margin-bottom: 2rem;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .empty-icon-container::before {
+            content: ''; position: absolute; inset: 0;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0,255,242,0.4) 0%, transparent 70%);
+            animation: pulseCore 2s infinite alternate;
+        }
+        @keyframes pulseCore { 
+            0% { transform: scale(0.8); opacity: 0.5; } 
+            100% { transform: scale(1.5); opacity: 1; box-shadow: 0 0 30px var(--accent-cyan); } 
         }
         .empty-icon {
             font-size: 4.5rem;
-            color: var(--accent-purple);
-            margin-bottom: 1.5rem;
-            filter: drop-shadow(0 0 25px var(--accent-purple));
-            animation: float 4s infinite ease-in-out;
+            color: #fff;
+            z-index: 2;
+            text-shadow: 0 0 20px var(--accent-cyan), 0 0 40px var(--accent-purple);
+            animation: float 3s infinite ease-in-out;
         }
-        .empty-store-wrapper h2 {
-            font-size: clamp(1.8rem, 4vw, 2.5rem);
-            color: #ffffff;
-            margin-bottom: 1rem;
-            text-shadow: 0 0 15px var(--accent-cyan), 0 2px 5px rgba(0,0,0,0.8);
-            text-transform: uppercase;
-            letter-spacing: 2px;
+        .epic-empty-inner h2 {
+            font-size: clamp(1.8rem, 5vw, 2.8rem);
             font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(90deg, var(--accent-cyan), #ffffff, var(--accent-purple));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 15px rgba(213, 0, 255, 0.4));
         }
-        .empty-store-wrapper p {
-            color: var(--text-dim);
+        .epic-empty-inner p {
+            color: #c0c0d0;
             font-size: 1.1rem;
-            line-height: 1.6;
-            max-width: 500px;
+            line-height: 1.7;
+            max-width: 600px;
+            margin: 0 auto;
+            font-weight: 500;
+        }
+        .epic-empty-inner p strong {
+            display: block;
+            margin-top: 1.5rem;
+            color: var(--accent-gold);
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
         }
         
         /* --- MOBILE RESPONSIVENESS FIXES --- */
@@ -417,6 +458,9 @@
             .sub-actions { width: 100%; justify-content: center; gap: 15px; flex-wrap: nowrap; }
             .sub-btn { transform: none !important; flex: 1; justify-content: center; padding: 14px 20px; font-size: 1rem; }
             .bell-btn { transform: none !important; }
+            
+            .epic-empty-inner { padding: 3rem 1.5rem; }
+            .epic-empty-wrapper { margin: 1rem; }
         }
 
         .image-modal { display: none; position: fixed; z-index: 9999; padding-top: 50px; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.9); align-items: center; justify-content: center; backdrop-filter: blur(20px); }
@@ -571,11 +615,11 @@
                 
                 let storeHTML = '';
                 const now = new Date().getTime();
-                let visibleCount = 0; // NEW: Track visible items
+                let visibleCount = 0; // Tracks visible items
                 
                 items.forEach(item => {
                     if (item.hidden) return; 
-                    visibleCount++; // NEW: Increment if not hidden
+                    visibleCount++;
 
                     const isBaller = item.type === 'baller';
                     const isBundle = item.type === 'bundle';
@@ -689,13 +733,18 @@
                         </div>`;
                 });
                 
-                // NEW: IF NO ITEMS ARE VISIBLE, SHOW THE COOL EMPTY STATE
+                // NEW EPIC EMPTY STATE
                 if (visibleCount === 0) {
                     storeHTML = `
-                        <div class="empty-store-wrapper">
-                            <i class="ph-fill ph-shooting-star empty-icon"></i>
-                            <h2>Next Drop Loading...</h2>
-                            <p>The shelves are wiped clean. We're currently cooking up the next massive break behind the scenes in the Crystal Realm.<br><br>Stay tuned and get your wallets ready!</p>
+                        <div class="epic-empty-wrapper">
+                            <div class="epic-empty-inner">
+                                <div class="empty-icon-container">
+                                    <i class="ph-fill ph-meteor empty-icon"></i>
+                                </div>
+                                <h2>The Vault is Sealed</h2>
+                                <p>The dust has settled and the latest legendary hits have been sleeved. We are currently traversing the Wild Area to secure the next massive drop.<br></p>
+                                <p><strong>Keep your notifications on and prepare for the next hunt!</strong></p>
+                            </div>
                         </div>
                     `;
                 }
