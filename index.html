@@ -376,7 +376,7 @@
         
         footer { text-align: center; padding: 3rem 0 4rem; color: var(--text-dim); font-size: 0.9rem; position: relative; z-index: 2; letter-spacing: 1px; }
 
-        /* --- EPIC EMPTY STORE STATE (LETTER STYLE WITH ANIMATED KLINKLANG) --- */
+        /* --- EPIC EMPTY STORE STATE (AIRPLANE! STYLE) --- */
         .epic-empty-wrapper {
             grid-column: 1 / -1;
             position: relative;
@@ -426,7 +426,6 @@
             100% { transform: scale(1.5); opacity: 1; box-shadow: 0 0 30px var(--accent-cyan); } 
         }
         
-        /* The wrapper handles the floating up and down */
         .icon-float-wrapper {
             animation: float 4s infinite ease-in-out;
             z-index: 2;
@@ -435,7 +434,6 @@
             justify-content: center;
         }
         
-        /* The GIF handles the internal spinning, we just add the shadow */
         .empty-icon {
             width: 120px;
             height: auto;
@@ -443,8 +441,8 @@
         }
         
         .letter-content {
-            text-align: left;
-            max-width: 600px;
+            text-align: center;
+            max-width: 650px;
             margin: 0 auto;
             color: #c0c0d0;
             font-size: 1.1rem;
@@ -752,7 +750,7 @@
                         </div>`;
                 });
                 
-                // NEW EPIC EMPTY STATE WITH KLINKLANG & AIRPLANE HUMOR (MOOMOO MILK)
+                // NEW EPIC EMPTY STATE WITH KLINKLANG & AIRPLANE! HUMOR
                 if (visibleCount === 0) {
                     storeHTML = `
                         <div class="epic-empty-wrapper">
@@ -762,13 +760,16 @@
                                         <img src="https://play.pokemonshowdown.com/sprites/xyani/klinklang.gif" class="empty-icon" alt="Spinning Klinklang">
                                     </div>
                                 </div>
-                                <h2 style="font-size: clamp(1.8rem, 5vw, 2.5rem); font-weight: 900; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 1.5rem; text-align: center; background: linear-gradient(90deg, var(--accent-cyan), #ffffff, var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 15px rgba(213, 0, 255, 0.4));">Oh no! There's nothing here.</h2>
                                 <div class="letter-content">
-                                    <p>The vault is completely empty. Looks like I picked the wrong week to quit drinking Moomoo Milk.</p>
-                                    <p>Klinklang is currently working on a restock. What is a Klinklang? It's a Gear Pokémon, but that's not important right now. What <em>is</em> important is that we're grinding to prep the next massive break.</p>
-                                    <p>Please remain calm, return your tray tables to their upright positions, and smash that <i class="ph-fill ph-bell-ringing" style="color:var(--accent-gold);"></i> bell icon above so you don't miss the drop.</p>
-                                    <p style="color: var(--accent-cyan); font-family: 'Inter', sans-serif; font-style: italic; font-size: 1.2rem; margin-top: 2rem; margin-bottom: 0;">Good luck, we're all counting on you.</p>
-                                    <h3 style="color: #fff; font-size: 1.8rem; margin-top: 0.2rem; text-shadow: 0 0 15px var(--accent-cyan);">— Pokeballer Mike</h3>
+                                    <p style="font-size: 1.3rem; color: #fff; font-style: italic;">"Hey Jimmy, have you ever been to a store that is completely empty?"</p>
+                                    <p style="font-size: 1.3rem; color: #fff; font-style: italic; margin-bottom: 2rem;">"Jimmy... do you like movies about gladiator Pokémon?"</p>
+                                    
+                                    <p>The vault is officially wiped clean! Right now, Klinklang is working overtime in the engine room to prep the next massive break.</p>
+                                    <p>Make sure to smash that <i class="ph-fill ph-bell-ringing" style="color:var(--accent-gold); vertical-align: middle;"></i> bell icon above so you get notified the second we restock and go live.</p>
+                                    
+                                    <p style="color: var(--accent-cyan); font-weight: 700; font-size: 1.4rem; margin-top: 3rem; margin-bottom: 0;">I just want to tell you good luck.</p>
+                                    <p style="color: var(--accent-cyan); font-weight: 700; font-size: 1.4rem; margin-top: 0.5rem; margin-bottom: 0;">We're all counting on you.</p>
+                                    <h3 style="color: #fff; font-size: 1.2rem; margin-top: 1.5rem; text-shadow: 0 0 15px var(--accent-cyan); text-transform: uppercase; letter-spacing: 2px;">— Pokeballer Mike</h3>
                                 </div>
                             </div>
                         </div>
