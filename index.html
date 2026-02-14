@@ -352,6 +352,49 @@
         .sold-out .btn-subtext { display: none; }
         
         footer { text-align: center; padding: 3rem 0 4rem; color: var(--text-dim); font-size: 0.9rem; position: relative; z-index: 2; letter-spacing: 1px; }
+
+        /* --- EMPTY STORE STATE --- */
+        .empty-store-wrapper {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 5rem 2rem;
+            background: linear-gradient(160deg, rgba(20, 20, 35, 0.4) 0%, rgba(10, 10, 20, 0.6) 100%);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            border: 1px dashed rgba(0, 255, 242, 0.4);
+            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 255, 242, 0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            animation: pulseEmpty 4s infinite alternate;
+        }
+        @keyframes pulseEmpty {
+            0% { box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 255, 242, 0.05); }
+            100% { box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5), 0 0 40px rgba(213, 0, 255, 0.15); }
+        }
+        .empty-icon {
+            font-size: 4.5rem;
+            color: var(--accent-purple);
+            margin-bottom: 1.5rem;
+            filter: drop-shadow(0 0 25px var(--accent-purple));
+            animation: float 4s infinite ease-in-out;
+        }
+        .empty-store-wrapper h2 {
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            color: #ffffff;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 15px var(--accent-cyan), 0 2px 5px rgba(0,0,0,0.8);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 900;
+        }
+        .empty-store-wrapper p {
+            color: var(--text-dim);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            max-width: 500px;
+        }
         
         /* --- MOBILE RESPONSIVENESS FIXES --- */
         @media (max-width: 1300px) { .p-gengar, .p-gardevoir { display: none; } }
@@ -528,9 +571,11 @@
                 
                 let storeHTML = '';
                 const now = new Date().getTime();
+                let visibleCount = 0; // NEW: Track visible items
                 
                 items.forEach(item => {
                     if (item.hidden) return; 
+                    visibleCount++; // NEW: Increment if not hidden
 
                     const isBaller = item.type === 'baller';
                     const isBundle = item.type === 'bundle';
@@ -643,6 +688,17 @@
                             </div>
                         </div>`;
                 });
+                
+                // NEW: IF NO ITEMS ARE VISIBLE, SHOW THE COOL EMPTY STATE
+                if (visibleCount === 0) {
+                    storeHTML = `
+                        <div class="empty-store-wrapper">
+                            <i class="ph-fill ph-shooting-star empty-icon"></i>
+                            <h2>Next Drop Loading...</h2>
+                            <p>The shelves are wiped clean. We're currently cooking up the next massive break behind the scenes in the Crystal Realm.<br><br>Stay tuned and get your wallets ready!</p>
+                        </div>
+                    `;
+                }
                 
                 container.innerHTML = storeHTML;
                 startCountdownTimer();
