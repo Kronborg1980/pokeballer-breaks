@@ -388,7 +388,7 @@
         }
         .empty-icon-container {
             position: relative;
-            width: 100px; height: 100px;
+            width: 120px; height: 120px;
             margin-bottom: 2rem;
             display: flex; align-items: center; justify-content: center;
         }
@@ -403,10 +403,10 @@
             100% { transform: scale(1.5); opacity: 1; box-shadow: 0 0 30px var(--accent-cyan); } 
         }
         .empty-icon {
-            font-size: 4.5rem;
-            color: #fff;
+            width: 140px; /* Adjusted size for image */
+            height: auto;
             z-index: 2;
-            text-shadow: 0 0 20px var(--accent-cyan), 0 0 40px var(--accent-purple);
+            filter: drop-shadow(0 0 20px var(--accent-cyan)) drop-shadow(0 0 40px var(--accent-purple));
             animation: float 3s infinite ease-in-out;
         }
         .epic-empty-inner h2 {
@@ -430,11 +430,10 @@
         .epic-empty-inner p strong {
             display: block;
             margin-top: 1.5rem;
-            color: var(--accent-gold);
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
-            font-size: 1.2rem;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+            font-size: 1.1rem;
             letter-spacing: 1px;
-            text-transform: uppercase;
         }
         
         /* --- MOBILE RESPONSIVENESS FIXES --- */
@@ -733,17 +732,17 @@
                         </div>`;
                 });
                 
-                // NEW EPIC EMPTY STATE
+                // NEW EPIC EMPTY STATE WITH MAGIKARP
                 if (visibleCount === 0) {
                     storeHTML = `
                         <div class="epic-empty-wrapper">
                             <div class="epic-empty-inner">
                                 <div class="empty-icon-container">
-                                    <i class="ph-fill ph-meteor empty-icon"></i>
+                                    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/129.png" class="empty-icon" alt="Splashing Magikarp">
                                 </div>
                                 <h2>The Vault is Sealed</h2>
-                                <p>The dust has settled and the latest legendary hits have been sleeved. We are currently traversing the Wild Area to secure the next massive drop.<br></p>
-                                <p><strong>Keep your notifications on and prepare for the next hunt!</strong></p>
+                                <p>The dust has settled and the latest legendary hits have been sleeved. We are currently grinding xp to secure the next massive drop.<br></p>
+                                <p><strong>Don't miss the restock! Smash the Bell Icon <i class="ph-fill ph-bell-ringing" style="color:var(--accent-gold); vertical-align: middle;"></i> above to get notified instantly when we go live!</strong></p>
                             </div>
                         </div>
                     `;
