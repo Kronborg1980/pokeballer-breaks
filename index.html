@@ -412,7 +412,7 @@
         .empty-icon-container {
             position: relative;
             width: 140px; height: 140px;
-            margin-bottom: 2rem;
+            margin-bottom: 3.5rem; /* Increased spacing below the animation */
             display: flex; align-items: center; justify-content: center;
         }
         .empty-icon-container::before {
@@ -755,17 +755,17 @@
                     storeHTML = `
                         <div class="epic-empty-wrapper">
                             <div class="epic-empty-inner">
-                                <div class="empty-icon-container">
+                                <div class="empty-icon-container" style="margin-bottom: 3.5rem;">
                                     <div class="icon-float-wrapper">
                                         <img src="https://play.pokemonshowdown.com/sprites/xyani/klinklang.gif" class="empty-icon" alt="Spinning Klinklang">
                                     </div>
                                 </div>
                                 <div class="letter-content">
-                                    <p style="font-size: 1.3rem; color: #fff; font-style: italic;">"Hey Jimmy, have you ever been to a store that is completely empty?"</p>
-                                    <p style="font-size: 1.3rem; color: #fff; font-style: italic; margin-bottom: 2rem;">"Jimmy... do you like movies about gladiator Pokémon?"</p>
+                                    <p style="font-size: 1.3rem; color: #fff; font-style: italic; margin-bottom: 2rem;">"Hey Jimmy, have you ever been to a store that is completely empty?"</p>
                                     
-                                    <p>The vault is officially wiped clean! Right now, Klinklang is working overtime in the engine room to prep the next massive break.</p>
-                                    <p>Make sure to smash that <i class="ph-fill ph-bell-ringing" style="color:var(--accent-gold); vertical-align: middle;"></i> bell icon above so you get notified the second we restock and go live.</p>
+                                    <p>The vault is wiped clean! Klinklang is currently working overtime in the engine room on a restock.</p>
+                                    <p>What is a Klinklang? It's a Gear Pokémon, but that's not important right now. What <em>is</em> important is that we're grinding to prep the next massive break.</p>
+                                    <p>Please remain calm, return your tray tables to their upright positions, and smash that <i class="ph-fill ph-bell-ringing" style="color:var(--accent-gold); vertical-align: middle;"></i> bell icon above so you don't miss the drop.</p>
                                     
                                     <p style="color: var(--accent-cyan); font-weight: 700; font-size: 1.4rem; margin-top: 3rem; margin-bottom: 0;">I just want to tell you good luck.</p>
                                     <p style="color: var(--accent-cyan); font-weight: 700; font-size: 1.4rem; margin-top: 0.5rem; margin-bottom: 0;">We're all counting on you.</p>
