@@ -76,17 +76,40 @@
         @keyframes floatMid { 0%, 100% { transform: translate3d(0, -50%, 0); } 50% { transform: translate3d(15px, calc(-50% - 20px), 0); } }
         @keyframes sway { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(4deg); } }
 
-        /* MAIN LAYOUT */
+        /* MAIN LAYOUT - UPDATED WITH OUTER GLOW */
         main {
             position: relative; z-index: 2; max-width: 1250px; margin: 0 auto; padding: 2.5rem;
-            border: 2px solid rgba(0, 255, 242, 0.2);
-            border-top-color: rgba(0, 255, 242, 0.5);
-            border-bottom-color: rgba(213, 0, 255, 0.3);
             border-radius: 35px;
-            box-shadow: 0 0 100px rgba(0,0,0,0.8), inset 0 0 30px rgba(0, 255, 242, 0.05);
             background: rgba(5, 5, 14, 0.75);
             backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
             margin-top: 2rem; margin-bottom: 4rem;
+            /* Initial State */
+            border: 2px solid rgba(0, 255, 242, 0.3);
+            box-shadow: 
+                0 0 100px rgba(0,0,0,0.8), 
+                inset 0 0 30px rgba(0, 255, 242, 0.05),
+                0 0 20px rgba(0, 255, 242, 0.1),
+                0 0 40px rgba(213, 0, 255, 0.1);
+            animation: outerGlowPulse 6s ease-in-out infinite;
+        }
+
+        @keyframes outerGlowPulse {
+            0%, 100% {
+                box-shadow:
+                    0 0 100px rgba(0,0,0,0.8),
+                    inset 0 0 30px rgba(0, 255, 242, 0.05),
+                    0 0 20px rgba(0, 255, 242, 0.1),
+                    0 0 40px rgba(213, 0, 255, 0.1);
+                border-color: rgba(0, 255, 242, 0.3);
+            }
+            50% {
+                box-shadow:
+                    0 0 100px rgba(0,0,0,0.8),
+                    inset 0 0 50px rgba(0, 255, 242, 0.1),
+                    0 0 35px rgba(0, 255, 242, 0.25),
+                    0 0 60px rgba(213, 0, 255, 0.2);
+                 border-color: rgba(0, 255, 242, 0.5);
+            }
         }
 
         header { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 4rem 1rem 1rem; position: relative; z-index: 2; }
@@ -353,7 +376,7 @@
         
         footer { text-align: center; padding: 3rem 0 4rem; color: var(--text-dim); font-size: 0.9rem; position: relative; z-index: 2; letter-spacing: 1px; }
 
-        /* --- EPIC EMPTY STORE STATE (LETTER STYLE WITH KLINKLANG) --- */
+        /* --- EPIC EMPTY STORE STATE (LETTER STYLE WITH ANIMATED KLINKLANG) --- */
         .epic-empty-wrapper {
             grid-column: 1 / -1;
             position: relative;
