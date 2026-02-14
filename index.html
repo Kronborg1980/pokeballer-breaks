@@ -353,7 +353,7 @@
         
         footer { text-align: center; padding: 3rem 0 4rem; color: var(--text-dim); font-size: 0.9rem; position: relative; z-index: 2; letter-spacing: 1px; }
 
-        /* --- EPIC EMPTY STORE STATE (LETTER STYLE WITH KLINKLANG) --- */
+        /* --- EPIC EMPTY STORE STATE (LETTER STYLE WITH ANIMATED KLINKLANG) --- */
         .epic-empty-wrapper {
             grid-column: 1 / -1;
             position: relative;
@@ -412,16 +412,11 @@
             justify-content: center;
         }
         
-        /* The image itself handles the mechanical spinning */
+        /* The GIF handles the internal spinning, we just add the shadow */
         .empty-icon {
-            width: 130px;
+            width: 120px;
             height: auto;
             filter: drop-shadow(0 0 20px var(--accent-cyan)) drop-shadow(0 0 40px var(--accent-purple));
-            animation: gearSpin 12s linear infinite;
-        }
-        
-        @keyframes gearSpin {
-            100% { transform: rotate(360deg); }
         }
         
         .letter-content {
@@ -734,14 +729,14 @@
                         </div>`;
                 });
                 
-                // NEW EPIC EMPTY STATE WITH KLINKLANG & LETTER STYLE
+                // NEW EPIC EMPTY STATE WITH ANIMATED KLINKLANG
                 if (visibleCount === 0) {
                     storeHTML = `
                         <div class="epic-empty-wrapper">
                             <div class="epic-empty-inner">
                                 <div class="empty-icon-container">
                                     <div class="icon-float-wrapper">
-                                        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/601.png" class="empty-icon" alt="Spinning Klinklang">
+                                        <img src="https://play.pokemonshowdown.com/sprites/xyani/klinklang.gif" class="empty-icon" alt="Spinning Klinklang">
                                     </div>
                                 </div>
                                 <div class="letter-content">
