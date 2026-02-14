@@ -353,7 +353,7 @@
         
         footer { text-align: center; padding: 3rem 0 4rem; color: var(--text-dim); font-size: 0.9rem; position: relative; z-index: 2; letter-spacing: 1px; }
 
-        /* --- EPIC EMPTY STORE STATE --- */
+        /* --- EPIC EMPTY STORE STATE (LETTER STYLE) --- */
         .epic-empty-wrapper {
             grid-column: 1 / -1;
             position: relative;
@@ -378,7 +378,7 @@
             background: linear-gradient(160deg, rgba(10, 10, 20, 0.85) 0%, rgba(5, 5, 15, 0.95) 100%);
             backdrop-filter: blur(20px);
             border-radius: 26px;
-            padding: 5rem 3rem;
+            padding: 4rem 3rem;
             text-align: center;
             border: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
@@ -403,37 +403,25 @@
             100% { transform: scale(1.5); opacity: 1; box-shadow: 0 0 30px var(--accent-cyan); } 
         }
         .empty-icon {
-            width: 140px; /* Adjusted size for image */
+            width: 140px;
             height: auto;
             z-index: 2;
             filter: drop-shadow(0 0 20px var(--accent-cyan)) drop-shadow(0 0 40px var(--accent-purple));
             animation: float 3s infinite ease-in-out;
         }
-        .epic-empty-inner h2 {
-            font-size: clamp(1.8rem, 5vw, 2.8rem);
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(90deg, var(--accent-cyan), #ffffff, var(--accent-purple));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 15px rgba(213, 0, 255, 0.4));
-        }
-        .epic-empty-inner p {
+        
+        .letter-content {
+            text-align: left;
+            max-width: 600px;
+            margin: 0 auto;
             color: #c0c0d0;
             font-size: 1.1rem;
             line-height: 1.7;
-            max-width: 600px;
-            margin: 0 auto;
             font-weight: 500;
         }
-        .epic-empty-inner p strong {
-            display: block;
-            margin-top: 1.5rem;
-            color: #ffffff;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
-            font-size: 1.1rem;
-            letter-spacing: 1px;
+        
+        .letter-content p {
+            margin-bottom: 1.2rem;
         }
         
         /* --- MOBILE RESPONSIVENESS FIXES --- */
@@ -732,7 +720,7 @@
                         </div>`;
                 });
                 
-                // NEW EPIC EMPTY STATE WITH MAGIKARP
+                // NEW EPIC EMPTY STATE WITH MAGIKARP & LETTER STYLE
                 if (visibleCount === 0) {
                     storeHTML = `
                         <div class="epic-empty-wrapper">
@@ -740,9 +728,14 @@
                                 <div class="empty-icon-container">
                                     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/129.png" class="empty-icon" alt="Splashing Magikarp">
                                 </div>
-                                <h2>The Vault is Sealed</h2>
-                                <p>The dust has settled and the latest legendary hits have been sleeved. We are currently grinding xp to secure the next massive drop.<br></p>
-                                <p><strong>Don't miss the restock! Smash the Bell Icon <i class="ph-fill ph-bell-ringing" style="color:var(--accent-gold); vertical-align: middle;"></i> above to get notified instantly when we go live!</strong></p>
+                                <div class="letter-content">
+                                    <p style="color: #fff; font-size: 1.2rem;"><strong>Trainers,</strong></p>
+                                    <p>The vault is currently empty. Every pack has been ripped, the dust has settled, and all the latest legendary hits have been sleeved up.</p>
+                                    <p>We're currently grinding in the Wild Area to secure the next massive drop. Keep dropping back in to check the store—you never know when the next epic break will suddenly appear.</p>
+                                    <p>Until then, make sure to smash that <i class="ph-fill ph-bell-ringing" style="color:var(--accent-gold);"></i> bell icon above so you don't miss out when we go live.</p>
+                                    <p style="color: var(--accent-cyan); font-family: 'Inter', sans-serif; font-style: italic; font-size: 1.2rem; margin-top: 2rem; margin-bottom: 0;">Best regards,</p>
+                                    <h3 style="color: #fff; font-size: 1.8rem; margin-top: 0.2rem; text-shadow: 0 0 15px var(--accent-cyan);">— Pokeballer Mike</h3>
+                                </div>
                             </div>
                         </div>
                     `;
