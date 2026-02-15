@@ -83,7 +83,6 @@
             background: rgba(5, 5, 14, 0.75);
             backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
             margin-top: 2rem; margin-bottom: 4rem;
-            /* Initial State */
             border: 2px solid rgba(0, 255, 242, 0.3);
             box-shadow: 
                 0 0 100px rgba(0,0,0,0.8), 
@@ -191,7 +190,6 @@
         }
         @keyframes spinBorder { 100% { transform: rotate(360deg); } }
         
-        /* --- LIVE & BALLER STYLES --- */
         .card-baller-bundle {
             border: 2px solid #ffd700 !important;
             box-shadow: 0 0 50px rgba(255, 215, 0, 0.35) !important;
@@ -200,7 +198,6 @@
             background: conic-gradient(transparent 0deg, transparent 90deg, #bf953f 130deg, #fcf6ba 155deg, #b38728 180deg, transparent 220deg) !important;
         }
         
-        /* LIVE PULSE ANIMATION */
         .card-live-now {
             border: 2px solid var(--accent-live) !important;
             box-shadow: 0 0 60px rgba(255, 0, 64, 0.5) !important;
@@ -249,7 +246,6 @@
         .store-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 35px; }
         .item-card { display: flex; flex-direction: column; height: 100%; }
         
-        /* TAG STYLES */
         .type-tag {
             position: absolute; top: 20px; right: 20px; padding: 8px 14px; border-radius: 10px; font-weight: 800; font-size: 0.75rem; z-index: 2; letter-spacing: 1px;
             text-transform: uppercase; backdrop-filter: blur(10px); display: flex; align-items: center; gap: 6px;
@@ -273,7 +269,6 @@
             box-shadow: 0 0 20px rgba(255, 215, 0, 0.5), inset 0 0 10px rgba(255, 215, 0, 0.2);
         }
         
-        /* BOTTOM TIMER BADGE */
         .time-tag-bottom {
             position: absolute; bottom: 10px; left: 10px; 
             padding: 6px 12px; border-radius: 8px; font-weight: 800; font-size: 0.75rem; z-index: 3; letter-spacing: 0.5px;
@@ -289,7 +284,6 @@
             transition: 0.3s;
         }
 
-        /* LIVE BADGE OVERRIDE */
         .tag-is-live {
             background: #ff0040 !important;
             border-color: #ffaaaa !important;
@@ -312,7 +306,6 @@
         }
         .item-content p { color: var(--text-dim); font-size: 1rem; line-height: 1.6; margin-bottom: 1.5rem; flex: 1; }
         
-        /* DATE ROW STYLE */
         .date-row { 
             display: flex; align-items: center; gap: 8px;
             color: var(--accent-gold); 
@@ -329,7 +322,6 @@
         .price { font-size: 2rem; font-weight: 900; color: var(--accent-cyan); text-shadow: 0 0 25px rgba(0, 255, 242, 0.6); }
         .stock { font-size: 0.9rem; color: var(--text-dim); background: rgba(0, 255, 242, 0.08); padding: 6px 14px; border-radius: 30px; font-weight: 700; border: 1px solid rgba(0, 255, 242, 0.2); }
         
-        /* STANDARD BUTTON */
         .buy-btn {
             display: block; text-align: center; padding: 1.2rem; border-radius: 16px;
             background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
@@ -343,7 +335,6 @@
         
         .btn-subtext { font-size: 0.75rem; opacity: 0.9; margin-top: 4px; font-weight: 700; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
 
-        /* --- SHINY GOLD BALLER BUTTON --- */
         .baller-btn {
             background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 25%, #b38728 50%, #fcf6ba 75%, #aa771c 100%) !important;
             background-size: 200% auto !important;
@@ -362,7 +353,6 @@
         @keyframes goldShine { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         .baller-btn:hover { box-shadow: 0 0 40px rgba(255, 215, 0, 0.8) !important; filter: brightness(1.1); }
 
-        /* --- LIVE BUTTON STYLE --- */
         .live-btn {
             background: linear-gradient(135deg, #ff0000, #ff4444) !important;
             border: 2px solid #ffffff !important;
@@ -376,13 +366,13 @@
         
         footer { text-align: center; padding: 3rem 0 4rem; color: var(--text-dim); font-size: 0.9rem; position: relative; z-index: 2; letter-spacing: 1px; }
 
-        /* --- EPIC EMPTY STORE STATE (AIRPLANE! STYLE) --- */
+        /* --- UPDATED EMPTY STORE STATE --- */
         .epic-empty-wrapper {
             grid-column: 1 / -1;
             position: relative;
             margin: 2rem auto;
             max-width: 800px;
-            padding: 4px; /* for border */
+            padding: 4px;
             border-radius: 30px;
             background: rgba(0,0,0,0.5);
             box-shadow: 0 0 50px rgba(0, 255, 242, 0.2), 0 0 80px rgba(213, 0, 255, 0.2);
@@ -412,7 +402,7 @@
         .empty-icon-container {
             position: relative;
             width: 140px; height: 140px;
-            margin-bottom: 3.5rem; /* Increased spacing below the animation */
+            margin-bottom: 2.5rem;
             display: flex; align-items: center; justify-content: center;
         }
         .empty-icon-container::before {
@@ -426,35 +416,13 @@
             100% { transform: scale(1.5); opacity: 1; box-shadow: 0 0 30px var(--accent-cyan); } 
         }
         
-        .icon-float-wrapper {
-            animation: float 4s infinite ease-in-out;
-            z-index: 2;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+        .icon-float-wrapper { animation: float 4s infinite ease-in-out; z-index: 2; display: flex; align-items: center; justify-content: center; }
+        .empty-icon { width: 120px; height: auto; filter: drop-shadow(0 0 20px var(--accent-cyan)) drop-shadow(0 0 40px var(--accent-purple)); }
         
-        .empty-icon {
-            width: 120px;
-            height: auto;
-            filter: drop-shadow(0 0 20px var(--accent-cyan)) drop-shadow(0 0 40px var(--accent-purple));
-        }
+        .letter-content { text-align: center; max-width: 650px; margin: 0 auto; color: #c0c0d0; font-size: 1.1rem; line-height: 1.7; font-weight: 500; }
+        .letter-content p { margin-bottom: 1.2rem; }
         
-        .letter-content {
-            text-align: center;
-            max-width: 650px;
-            margin: 0 auto;
-            color: #c0c0d0;
-            font-size: 1.1rem;
-            line-height: 1.7;
-            font-weight: 500;
-        }
-        
-        .letter-content p {
-            margin-bottom: 1.2rem;
-        }
-        
-        /* --- MOBILE RESPONSIVENESS FIXES --- */
+        /* MOBILE RESPONSIVENESS */
         @media (max-width: 1300px) { .p-gengar, .p-gardevoir { display: none; } }
         @media (max-width: 768px) {
             .p-rayquaza, .p-charizard, .p-gengar, .p-gardevoir, .p-vaporeon, .p-cubone { display: none; }
@@ -462,22 +430,13 @@
             .header-wrapper { flex-direction: column; gap: 1.5rem; text-align: center; }
             h1 { font-size: clamp(3rem, 11vw, 4rem); }
             .logo-right { display: none; } .header-logo { width: 110px; } .logo-left .header-logo { transform: scaleX(1); }
-            
             main { padding: 1.5rem 1rem; margin: 1rem auto 3rem; width: 95%; border-radius: 25px; }
             .section-header { width: 100%; padding: 12px 20px; border-radius: 40px; gap: 1rem; margin: 2.5rem auto 2rem; }
             .section-title { font-size: 1.1rem; white-space: nowrap; letter-spacing: 2px; } .section-line { height: 3px; min-width: 30px; } 
             .store-grid { grid-template-columns: 1fr; gap: 30px; }
-            .item-content { padding: 1.5rem; } .buy-btn { padding: 1.1rem; }
-            
             .sub-info-panel { flex-direction: column; text-align: center; gap: 1.5rem; padding: 2rem 1.2rem; }
-            .sub-text { min-width: 0; width: 100%; }
-            .sub-text h3 { justify-content: center; font-size: 1.4rem; margin-bottom: 1rem; }
-            .sub-actions { width: 100%; justify-content: center; gap: 15px; flex-wrap: nowrap; }
-            .sub-btn { transform: none !important; flex: 1; justify-content: center; padding: 14px 20px; font-size: 1rem; }
-            .bell-btn { transform: none !important; }
-            
+            .sub-actions { width: 100%; justify-content: center; gap: 15px; }
             .epic-empty-inner { padding: 3rem 1.5rem; }
-            .epic-empty-wrapper { margin: 1rem; }
         }
 
         .image-modal { display: none; position: fixed; z-index: 9999; padding-top: 50px; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.9); align-items: center; justify-content: center; backdrop-filter: blur(20px); }
@@ -544,7 +503,6 @@
         async function loadVideos() {
             renderSkeletons('yt-container', 2);
             const container = document.getElementById('yt-container');
-            
             try {
                 const res = await fetch(`${API_URL}/youtube`);
                 const text = await res.text();
@@ -594,28 +552,22 @@
                         </div>`;
                 });
                 container.innerHTML = videoHTML;
-
             } catch(e) {
-                console.error("Video Error:", e);
                 container.innerHTML = `<div style="text-align:center; grid-column:1/-1;"><a href="https://www.youtube.com/@PokeballerMike" target="_blank" class="buy-btn" style="max-width:200px; margin:0 auto;">VISIT CHANNEL</a></div>`;
             }
         }
 
-        // --- HELPER: LITERAL DATE PARSER ---
         function formatLiteralDate(isoString) {
             if (!isoString) return "";
             const [datePart, timePart] = isoString.split('T');
             const [year, monthNum, day] = datePart.split('-');
             let [hour, minute] = timePart.split(':');
-            
             const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
             const monthStr = months[parseInt(monthNum)-1];
-
             let ampm = 'AM';
             let h = parseInt(hour);
             if (h >= 12) { ampm = 'PM'; if (h > 12) h -= 12; }
             if (h === 0) h = 12;
-            
             return `${monthStr} ${parseInt(day)} • ${h}:${minute} ${ampm} CST`;
         }
 
@@ -625,14 +577,12 @@
             try {
                 const res = await fetch(`${API_URL}/items`);
                 const items = await res.json();
-                
                 if(items.error) { console.error("DB Error:", items.error); return; }
-
                 items.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
                 
                 let storeHTML = '';
                 const now = new Date().getTime();
-                let visibleCount = 0; // Tracks visible items
+                let visibleCount = 0;
                 
                 items.forEach(item => {
                     if (item.hidden) return; 
@@ -640,91 +590,52 @@
 
                     const isBaller = item.type === 'baller';
                     const isBundle = item.type === 'bundle';
-                    
-                    let tagClass = 'tag-msrp';
-                    let tagText = '<i class="ph-fill ph-seal-check"></i> MSRP BREAK';
-                    let wrapperClass = '';
-                    let btnBaseClass = 'buy-btn';
+                    let tagClass = 'tag-msrp', tagText = '<i class="ph-fill ph-seal-check"></i> MSRP BREAK', wrapperClass = '', btnBaseClass = 'buy-btn';
 
                     if (isBaller) {
-                        tagClass = 'tag-baller';
-                        tagText = '<i class="ph-fill ph-crown"></i> BALLER BUNDLE';
-                        wrapperClass = 'card-baller-bundle';
-                        btnBaseClass = 'buy-btn baller-btn';
+                        tagClass = 'tag-baller'; tagText = '<i class="ph-fill ph-crown"></i> BALLER BUNDLE';
+                        wrapperClass = 'card-baller-bundle'; btnBaseClass = 'buy-btn baller-btn';
                     } else if (isBundle) {
-                        tagClass = 'tag-bundle';
-                        tagText = '<i class="ph-fill ph-sketch-logo"></i> BUNDLE BREAK';
+                        tagClass = 'tag-bundle'; tagText = '<i class="ph-fill ph-sketch-logo"></i> BUNDLE BREAK';
                     }
                     
-                    // --- 3-PHASE TIMELINE LOGIC ---
-                    let timeBadgeHTML = '';
-                    let dateDisplayHTML = ''; 
-                    
-                    let startTime = null;
-                    let endTime = null;
-                    let isLive = false;
-                    let isEnded = false;
+                    let timeBadgeHTML = '', dateDisplayHTML = '', startTime = null, endTime = null, isLive = false, isEnded = false;
 
                     if (item.scheduleDate) {
-                        const displayText = formatLiteralDate(item.scheduleDate);
-                        dateDisplayHTML = `<div class="date-row"><i class="ph-fill ph-calendar-blank"></i> ${displayText}</div>`;
+                        dateDisplayHTML = `<div class="date-row"><i class="ph-fill ph-calendar-blank"></i> ${formatLiteralDate(item.scheduleDate)}</div>`;
                         startTime = new Date(item.scheduleDate + "-06:00").getTime();
                     }
-                    
-                    if (item.scheduleEnd) {
-                        endTime = new Date(item.scheduleEnd + "-06:00").getTime();
-                    }
+                    if (item.scheduleEnd) endTime = new Date(item.scheduleEnd + "-06:00").getTime();
 
-                    if(item.stock <= 0) {
-                        isEnded = true; 
-                    } 
+                    if(item.stock <= 0) isEnded = true; 
                     else if (startTime) {
-                        if (endTime && now >= endTime) {
-                            isEnded = true;
-                        } else if (now >= startTime) {
-                            isLive = true;
-                        }
+                        if (endTime && now >= endTime) isEnded = true;
+                        else if (now >= startTime) isLive = true;
                     }
 
-                    if (isEnded) {
-                    } else if (isLive) {
-                         timeBadgeHTML = `<div class="time-tag-bottom tag-is-live"><i class="ph-fill ph-broadcast"></i> LIVE NOW</div>`;
-                         wrapperClass += ' card-live-now';
-                    } else if (startTime) {
-                        const endAttr = item.scheduleEnd ? `data-end="${item.scheduleEnd}"` : '';
-                        timeBadgeHTML = `<div class="time-tag-bottom countdown-timer" data-date="${item.scheduleDate}" ${endAttr} data-id="${item.id}"><i class="ph-fill ph-clock-countdown"></i> CALC...</div>`;
+                    if (!isEnded) {
+                        if (isLive) {
+                            timeBadgeHTML = `<div class="time-tag-bottom tag-is-live"><i class="ph-fill ph-broadcast"></i> LIVE NOW</div>`;
+                            wrapperClass += ' card-live-now';
+                        } else if (startTime) {
+                            const endAttr = item.scheduleEnd ? `data-end="${item.scheduleEnd}"` : '';
+                            timeBadgeHTML = `<div class="time-tag-bottom countdown-timer" data-date="${item.scheduleDate}" ${endAttr} data-id="${item.id}"><i class="ph-fill ph-clock-countdown"></i> CALC...</div>`;
+                        }
                     }
 
                     let btnHTML = '';
-                    
-                    if (isEnded) {
-                        btnHTML = `<div class="buy-btn sold-out">SOLD OUT</div>`;
+                    if (isEnded) btnHTML = `<div class="buy-btn sold-out">SOLD OUT</div>`;
+                    else if (item.googleFormLink) {
+                        let btnText = isLive ? "JOIN LIVE DRAW" : "JOIN BREAK";
+                        let btnSub = isLive ? "HAPPENING NOW!" : "RESERVE YOUR SPOT";
+                        let finalBtnClass = isLive ? "buy-btn live-btn" : btnBaseClass;
+                        btnHTML = `<a href="${item.googleFormLink}" target="_blank" id="btn-${item.id}" class="${finalBtnClass}" onclick="trackClick('${item.id}')">
+                                    <span>${btnText}</span><span class="btn-subtext" id="subtext-${item.id}">${btnSub}</span></a>`;
                     } else {
-                        if (item.googleFormLink) {
-                            let btnText = "JOIN BREAK";
-                            let btnSub = "RESERVE YOUR SPOT";
-                            let finalBtnClass = btnBaseClass;
-
-                            if (isLive) {
-                                btnText = "JOIN LIVE DRAW";
-                                btnSub = "HAPPENING NOW!";
-                                finalBtnClass = "buy-btn live-btn";
-                            } else if (startTime) {
-                                btnText = "JOIN BREAK";
-                                btnSub = "RESERVE YOUR SPOT";
-                            }
-
-                            btnHTML = `<a href="${item.googleFormLink}" target="_blank" id="btn-${item.id}" class="${finalBtnClass}" onclick="trackClick('${item.id}')">
-                                            <span>${btnText}</span>
-                                            <span class="btn-subtext" id="subtext-${item.id}">${btnSub}</span>
-                                       </a>`;
-                        } else {
-                             btnHTML = `<div class="buy-btn sold-out" style="background:#555; border-color:#777;">COMING SOON</div>`;
-                        }
+                        btnHTML = `<div class="buy-btn sold-out" style="background:#555; border-color:#777;">COMING SOON</div>`;
                     }
                     
                     const img = item.image || 'https://assets.pokemon.com/assets/cms2/img/misc/trading-card-games/cards/tcg_default_card.png';
-                    
                     storeHTML += `
                         <div class="neon-card-wrapper ${wrapperClass}" id="card-${item.id}">
                             <div class="item-card glass-panel">
@@ -737,134 +648,88 @@
                                     <h3>${item.name}</h3>
                                     ${dateDisplayHTML} 
                                     <p>${item.description}</p>
-                                    
                                     <div class="price-row">
                                         <span class="price">$${item.price.toFixed(2)}</span>
                                         <span class="stock">${item.stock} Break Spots</span>
                                     </div>
-                                    <div id="btn-container-${item.id}">
-                                        ${btnHTML}
-                                    </div>
+                                    <div id="btn-container-${item.id}">${btnHTML}</div>
                                 </div>
                             </div>
                         </div>`;
                 });
                 
-                // NEW EPIC EMPTY STATE WITH KLINKLANG & AIRPLANE! HUMOR
                 if (visibleCount === 0) {
                     storeHTML = `
                         <div class="epic-empty-wrapper">
                             <div class="epic-empty-inner">
-                                <div class="empty-icon-container" style="margin-bottom: 3.5rem;">
+                                <div class="empty-icon-container">
                                     <div class="icon-float-wrapper">
-                                        <img src="https://play.pokemonshowdown.com/sprites/xyani/klinklang.gif" class="empty-icon" alt="Spinning Klinklang">
+                                        <img src="https://play.pokemonshowdown.com/sprites/xyani/klinklang.gif" class="empty-icon" alt="Klinklang">
                                     </div>
                                 </div>
                                 <div class="letter-content">
-                                    <p style="font-size: 1.3rem; color: #fff; font-style: italic; margin-bottom: 2rem;">"Hey Jimmy, have you ever been to a store that is completely empty?"</p>
-                                    
-                                    <p>The vault is wiped clean! Klinklang is currently working overtime in the engine room on a restock.</p>
-                                    <p>What is a Klinklang? It's a Gear Pokémon, but that's not important right now. What <em>is</em> important is that we're grinding to prep the next massive break.</p>
-                                    <p>Please remain calm, return your tray tables to their upright positions, and smash that <i class="ph-fill ph-bell-ringing" style="color:var(--accent-gold); vertical-align: middle;"></i> bell icon above so you don't miss the drop.</p>
-                                    
-                                    <p style="color: var(--accent-cyan); font-weight: 700; font-size: 1.4rem; margin-top: 3rem; margin-bottom: 0;">I just want to tell you good luck.</p>
-                                    <p style="color: var(--accent-cyan); font-weight: 700; font-size: 1.4rem; margin-top: 0.5rem; margin-bottom: 0;">We're all counting on you.</p>
+                                    <p style="font-size: 1.6rem; color: #fff; font-weight: 800; margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 1px;">
+                                        The Vault is Currently Empty
+                                    </p>
+                                    <p>Sorry, there are no breaks available at this moment. I'm currently out hitting the shelves at <strong>Costco, Walmart, and Target</strong> to track down the best packs for the next stream.</p>
+                                    <p>The hunt never stops! I'm working on securing some massive sets and exclusive bundles for you guys right now.</p>
+                                    <p>Please keep dropping in and make sure to <strong>sign up for notifications</strong> by hitting the <i class="ph-fill ph-bell-ringing" style="color:var(--accent-gold); vertical-align: middle;"></i> bell icon above so you're the first to know when the new stock drops.</p>
+                                    <p style="color: var(--accent-cyan); font-weight: 700; font-size: 1.4rem; margin-top: 3rem; margin-bottom: 0;">Catch you on the next hunt!</p>
                                     <h3 style="color: #fff; font-size: 1.2rem; margin-top: 1.5rem; text-shadow: 0 0 15px var(--accent-cyan); text-transform: uppercase; letter-spacing: 2px;">— Pokeballer Mike</h3>
                                 </div>
                             </div>
-                        </div>
-                    `;
+                        </div>`;
                 }
-                
                 container.innerHTML = storeHTML;
                 startCountdownTimer();
-
             } catch(e) { console.error(e); }
         }
 
         function updateTimers() {
-             const timers = document.querySelectorAll('.countdown-timer');
-                const now = new Date().getTime();
+            const timers = document.querySelectorAll('.countdown-timer');
+            const now = new Date().getTime();
+            timers.forEach(timer => {
+                const dateStr = timer.dataset.date, endDateStr = timer.dataset.end, itemId = timer.dataset.id;
+                const startTarget = new Date(dateStr + "-06:00").getTime();
+                let endTarget = endDateStr ? new Date(endDateStr + "-06:00").getTime() : null;
 
-                timers.forEach(timer => {
-                    const dateStr = timer.dataset.date;
-                    const endDateStr = timer.dataset.end;
-                    const itemId = timer.dataset.id;
-                    
-                    const startTarget = new Date(dateStr + "-06:00").getTime();
-                    let endTarget = endDateStr ? new Date(endDateStr + "-06:00").getTime() : null;
+                if (endTarget && now >= endTarget) {
+                    const btnContainer = document.getElementById(`btn-container-${itemId}`);
+                    if(btnContainer && !btnContainer.innerHTML.includes('SOLD OUT')) btnContainer.innerHTML = `<div class="buy-btn sold-out">SOLD OUT</div>`;
+                    const badgeContainer = document.getElementById(`badge-container-${itemId}`);
+                    if(badgeContainer) badgeContainer.innerHTML = '';
+                    const card = document.getElementById(`card-${itemId}`);
+                    if(card) card.classList.remove('card-live-now');
+                    return;
+                }
 
-                    if (endTarget && now >= endTarget) {
-                        const btnContainer = document.getElementById(`btn-container-${itemId}`);
-                        if(btnContainer && !btnContainer.innerHTML.includes('SOLD OUT')) {
-                             btnContainer.innerHTML = `<div class="buy-btn sold-out">SOLD OUT</div>`;
-                        }
-                        
-                        const badgeContainer = document.getElementById(`badge-container-${itemId}`);
-                        if(badgeContainer) badgeContainer.innerHTML = '';
-                        
-                        const card = document.getElementById(`card-${itemId}`);
-                        if(card) card.classList.remove('card-live-now');
-                        return;
+                const distance = startTarget - now;
+                if (distance < 0) {
+                    const badgeContainer = document.getElementById(`badge-container-${itemId}`);
+                    if(badgeContainer && !badgeContainer.innerHTML.includes('LIVE NOW')) badgeContainer.innerHTML = `<div class="time-tag-bottom tag-is-live"><i class="ph-fill ph-broadcast"></i> LIVE NOW</div>`;
+                    const card = document.getElementById(`card-${itemId}`);
+                    if(card) card.classList.add('card-live-now');
+                    const btnContainer = document.getElementById(`btn-container-${itemId}`);
+                    const anchor = btnContainer?.querySelector('a');
+                    if(anchor && !anchor.classList.contains('live-btn')) {
+                        anchor.className = "buy-btn live-btn";
+                        anchor.querySelector('span').innerText = "JOIN LIVE DRAW";
+                        anchor.querySelector('.btn-subtext').innerText = "HAPPENING NOW!";
                     }
-
-                    const distance = startTarget - now;
-
-                    if (distance < 0) {
-                        const badgeContainer = document.getElementById(`badge-container-${itemId}`);
-                        if(badgeContainer && !badgeContainer.innerHTML.includes('LIVE NOW')) {
-                            badgeContainer.innerHTML = `<div class="time-tag-bottom tag-is-live"><i class="ph-fill ph-broadcast"></i> LIVE NOW</div>`;
-                        }
-
-                        const card = document.getElementById(`card-${itemId}`);
-                        if(card) card.classList.add('card-live-now');
-
-                        const btnContainer = document.getElementById(`btn-container-${itemId}`);
-                        if(btnContainer && !btnContainer.innerHTML.includes('sold-out') && !btnContainer.innerHTML.includes('live-btn')) {
-                            const anchor = btnContainer.querySelector('a');
-                            if(anchor) {
-                                anchor.className += " live-btn";
-                                anchor.querySelector('span').innerText = "JOIN LIVE DRAW";
-                                anchor.querySelector('.btn-subtext').innerText = "HAPPENING NOW!";
-                            }
-                        }
-                    } else {
-                        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-                        let timeString = "";
-                        if(days > 0) timeString += `${days}d `;
-                        timeString += `${hours}h ${minutes}m ${seconds}s`;
-                        
-                        timer.innerHTML = `<i class="ph-fill ph-clock-countdown"></i> ${timeString}`;
-                    }
-                });
+                } else {
+                    const d = Math.floor(distance / 86400000), h = Math.floor((distance % 86400000) / 3600000), m = Math.floor((distance % 3600000) / 60000), s = Math.floor((distance % 60000) / 1000);
+                    timer.innerHTML = `<i class="ph-fill ph-clock-countdown"></i> ${d > 0 ? d + 'd ' : ''}${h}h ${m}m ${s}s`;
+                }
+            });
         }
 
-        function startCountdownTimer() {
-            updateTimers(); 
-            setInterval(updateTimers, 1000);
-        }
-
-        function trackClick(id) {
-            fetch(`${API_URL}/click`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id: id }),
-                keepalive: true
-            }).catch(e => console.log('Tracking error', e));
-            return true;
-        }
-
+        function startCountdownTimer() { updateTimers(); setInterval(updateTimers, 1000); }
+        function trackClick(id) { fetch(`${API_URL}/click`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: id }), keepalive: true }).catch(() => {}); return true; }
+        
         loadVideos();
         loadStore();
 
-        function openModal(src) {
-            document.getElementById("myModal").style.display = "flex"; 
-            document.getElementById("img01").src = src; 
-        }
+        function openModal(src) { document.getElementById("myModal").style.display = "flex"; document.getElementById("img01").src = src; }
         function closeModal() { document.getElementById("myModal").style.display = "none"; }
         document.addEventListener('keydown', e => { if (e.key === "Escape") closeModal(); });
     </script>
