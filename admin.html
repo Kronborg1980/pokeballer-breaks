@@ -3,112 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PBM Admin</title>
+    <title>PBM Admin Vault</title>
     <link rel="icon" type="image/svg+xml" href="https://upload.wikimedia.org/wikipedia/commons/5/53/Pok%C3%A9_Ball_icon.svg">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --bg: #0a0a15; --card: rgba(26,26,46,0.95); --accent: #00eeff; --purple: #9d4edd; --text: #ffffff; --gold: #ffd700; }
-        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; padding: 1.5rem; min-height: 100vh; }
-        .container { max-width: 700px; margin: 0 auto; position: relative; z-index: 1; }
+        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; padding: 1.5rem; min-height: 100vh; margin: 0; }
+        .container { max-width: 700px; margin: 0 auto; }
         h1 { text-align: center; color: var(--accent); margin-bottom: 2rem; font-weight: 900; font-size: 2rem; text-shadow: 0 0 20px var(--accent); }
         .card { background: var(--card); padding: 1.5rem; border-radius: 16px; border: 1px solid rgba(0,238,255,0.2); margin-bottom: 1.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         label { display: block; margin-bottom: 0.5rem; color: #aaa; font-weight: 600; font-size: 0.85rem; }
         input, select { width: 100%; padding: 12px; margin-bottom: 1rem; background: rgba(0,0,0,0.5); border: 1px solid #444; color: white; border-radius: 8px; font-size: 1rem; box-sizing: border-box; }
         input:focus, select:focus { outline: none; border-color: var(--accent); }
-        input[type="datetime-local"] { color-scheme: dark; cursor: pointer; border: 1px solid var(--accent); }
-        button { width: 100%; padding: 1rem; background: linear-gradient(135deg, var(--accent), var(--purple)); color: white; font-weight: 900; border: none; border-radius: 8px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; font-size: 1rem; }
-        ul { padding: 0; margin: 0; }
-        li { background: rgba(255,255,255,0.05); padding: 1.5rem; margin-bottom: 1rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); list-style: none; display: flex; flex-direction: column; gap: 1rem; }
-        .item-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;}
-        .item-title { font-weight: 900; font-size: 1.3rem; color: #fff;}
-        .item-meta { font-size: 0.9rem; color: #aaa; margin-top: 5px; display: flex; gap: 15px; align-items: center; flex-wrap: wrap;}
-        
-        .badge { padding: 4px 10px; font-size: 0.75rem; border-radius: 6px; font-weight: 800; text-transform: uppercase; }
-        .b-msrp { color: #00ff9d; border: 1px solid #00ff9d; }
-        .b-bundle { color: #f0dfff; border: 1px solid var(--purple); }
-        .b-baller { background: var(--gold); color: #000; border: 1px solid var(--gold); }
-        .b-pbm-auction { background: #ff4500; color: #fff; border: 1px solid #ffaa00; box-shadow: 0 0 10px #ff4500; }
-        .b-auction { background: var(--purple); color: white; box-shadow: 0 0 10px var(--purple); margin-left: 5px;}
-        
-        .btn-group { display: flex; gap: 10px; width: 100%; margin-top: 10px; }
-        .btn-group button { padding: 10px; font-size: 0.9rem; flex: 1; }
-        .btn-edit { background: #00b8ff; } .btn-del { background: #ff0055; } .btn-bids { background: #222; border: 1px solid #555; }
-        
-        .history-panel { display: none; background: #05050a; padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px solid var(--purple); position: relative; }
-        .history-entry { display: flex; justify-content: space-between; border-bottom: 1px solid #222; padding: 8px 0; font-size: 0.85rem; }
-        .history-entry:last-child { border: none; }
-        .winner-text { color: #00ff9d; font-weight: bold; font-size: 1.1rem; margin-bottom: 10px; border-bottom: 1px dashed #00ff9d; padding-bottom: 5px;}
-        
-        .delete-bid-btn { position: absolute; top: 15px; right: 15px; background: #ff0040; color: white; padding: 5px 10px; border-radius: 6px; font-size: 0.7rem; font-weight: bold; border: none; cursor: pointer; width: auto;}
-        .delete-bid-btn:hover { background: #ff4444; }
-
+        button { width: 100%; padding: 1rem; background: linear-gradient(135deg, var(--accent), var(--purple)); color: white; font-weight: 900; border: none; border-radius: 8px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
+        ul { padding: 0; margin: 0; list-style: none; }
+        li { background: rgba(255,255,255,0.05); padding: 1.5rem; margin-bottom: 1rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); }
+        .item-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+        .item-title { font-weight: 900; font-size: 1.2rem; }
+        .badge { padding: 4px 8px; font-size: 0.7rem; border-radius: 4px; font-weight: 800; text-transform: uppercase; margin-left: 5px; }
+        .b-auc { background: var(--purple); color: white; }
+        .btn-group { display: flex; gap: 10px; margin-top: 15px; }
+        .btn-group button { padding: 8px; font-size: 0.8rem; }
         #login-section { display: block; } #admin-section { display: none; }
+        .history-panel { background: #000; padding: 10px; border-radius: 8px; margin-top: 10px; display: none; border: 1px solid var(--purple); }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>PBM ADMIN VAULT</h1>
-        
+        <h1>PBM ADMIN</h1>
         <div id="login-section" class="card">
             <label>Username</label><input type="text" id="login-username">
             <label>Password</label><input type="password" id="login-password">
-            <button onclick="login()">ENTER SYSTEM</button>
+            <button onclick="login()">LOGIN</button>
         </div>
-
         <div id="admin-section">
             <div class="card">
-                <h3 style="margin-top:0; margin-bottom:1rem; color:var(--accent);">ADD / EDIT ITEM</h3>
-                <div style="display:flex; gap:10px;">
-                    <div style="flex:1">
-                        <label>Break Category</label>
-                        <select id="item-type">
-                            <option value="msrp">MSRP Break</option>
-                            <option value="bundle">Bundle Break</option>
-                            <option value="baller">BALLER BUNDLE</option>
-                            <option value="pbm_auction" style="color: #ffaa00; font-weight:bold;">🔥 PBM AUCTION</option>
-                        </select>
-                    </div>
-                    <div style="flex:1">
-                        <label>Visibility</label>
-                        <select id="item-hidden"><option value="false">Public</option><option value="true">Hidden</option></select>
-                    </div>
-                </div>
-                
-                <div style="display:flex; gap:10px; margin-bottom: 0.5rem;">
-                    <div style="flex:1"><label>Start Time</label><input type="datetime-local" id="item-schedule-date"></div>
-                    <div style="flex:1"><label>Close/Auction End</label><input type="datetime-local" id="item-schedule-end"></div>
-                </div>
-                
                 <label>Name</label><input type="text" id="item-name">
                 <label>Description</label><input type="text" id="item-description">
-                
                 <div style="display:flex; gap:10px;">
-                    <div style="flex:1">
-                        <label>Pricing Mode</label>
-                        <select id="item-price-type" style="border-color: #d500ff;">
-                            <option value="fixed">Fixed Price</option>
-                            <option value="auction">Live Auction</option>
-                        </select>
-                    </div>
-                    <div style="flex:1"><label>Price/Start Bid</label><input type="number" id="item-price"></div>
-                    <div style="flex:1"><label>Spots</label><input type="number" id="item-stock" value="1"></div>
+                    <div style="flex:1"><label>Mode</label><select id="item-price-type"><option value="fixed">Fixed</option><option value="auction">Auction</option></select></div>
+                    <div style="flex:1"><label>Price</label><input type="number" id="item-price"></div>
+                    <div style="flex:1"><label>Spots</label><input type="number" id="item-stock"></div>
                 </div>
-
-                <label>Form Link (Leave blank if Auction mode)</label><input type="url" id="item-google-form-link" placeholder="https://forms.gle/...">
-                <label>Image</label><input type="file" id="item-image">
-                <button id="submit-btn" onclick="submitItem()">Save Item</button>
+                <label>Schedule Start (YYYY-MM-DDTHH:mm)</label><input type="datetime-local" id="item-schedule-date">
+                <label>Schedule End / Auction Close</label><input type="datetime-local" id="item-schedule-end">
+                <label>Form Link</label><input type="text" id="item-form">
+                <button onclick="submitItem()">SAVE ITEM</button>
             </div>
-
-            <h3 style="color:#888; font-size:1rem; letter-spacing:1px; margin-bottom:1rem;">INVENTORY</h3>
             <ul id="item-list"></ul>
-            <button onclick="logout()" style="background:#333; margin-top:2rem;">Log Out</button>
         </div>
     </div>
-    
+
     <script>
         const API_URL = 'https://pokeballer-worker.kronborgnielsen.workers.dev/api';
-        let allItems = [], editingId = null, currentImage = '', currentCreatedAt = null; 
-
+        
         if(localStorage.getItem('adminToken')) {
             document.getElementById('login-section').style.display='none';
             document.getElementById('admin-section').style.display='block';
@@ -118,146 +66,44 @@
         async function login() {
             const u = document.getElementById('login-username').value;
             const p = document.getElementById('login-password').value;
-            const res = await fetch(`${API_URL}/login`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({username:u, password:p}) });
-            const data = await res.json();
-            if(data.success) { localStorage.setItem('adminToken','1'); location.reload(); } else alert('Invalid Credentials.');
-        }
-
-        async function submitItem() {
-            const btn = document.getElementById('submit-btn'); btn.innerText = "Saving...";
-            const type = document.getElementById('item-type').value;
-            const hidden = document.getElementById('item-hidden').value === 'true';
-            const priceType = document.getElementById('item-price-type').value; 
-            const scheduleDate = document.getElementById('item-schedule-date').value; 
-            const scheduleEnd = document.getElementById('item-schedule-end').value; 
-            const name = document.getElementById('item-name').value;
-            const desc = document.getElementById('item-description').value;
-            const price = parseFloat(document.getElementById('item-price').value) || 0;
-            const stock = parseInt(document.getElementById('item-stock').value) || 0;
-            const form = document.getElementById('item-google-form-link').value;
-            const file = document.getElementById('item-image').files[0];
-
-            let img = editingId ? currentImage : '';
-            if(file) {
-                const reader = new FileReader(); reader.readAsDataURL(file);
-                await new Promise(r => reader.onload = () => { img = reader.result; r(); });
-            }
-
-            const body = { type, priceType, name, description:desc, price, stock, googleFormLink:form, image:img, createdAt: editingId ? currentCreatedAt : Date.now(), hidden, scheduleDate, scheduleEnd };
-            const url = editingId ? `${API_URL}/items/${editingId}` : `${API_URL}/items`;
-            const method = editingId ? 'PUT' : 'POST';
-
-            await fetch(url, { method, headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
-            editingId = null; btn.innerText = "Save Item"; loadItems();
-        }
-
-        function toggleHistory(id) {
-            const el = document.getElementById(`hist-${id}`);
-            el.style.display = el.style.display === 'block' ? 'none' : 'block';
-        }
-
-        async function removeTopBid(id) {
-            if(!confirm("Are you sure you want to delete the highest bid? This cannot be undone.")) return;
-            try {
-                const res = await fetch(`${API_URL}/bid/delete`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ itemId: id }) });
-                const data = await res.json();
-                if (data.success) {
-                    alert("Top bid deleted!");
-                    loadItems();
-                } else { alert(data.error); }
-            } catch(e) { alert("Error deleting bid."); }
+            const res = await fetch(`${API_URL}/login`, { method:'POST', body: JSON.stringify({username:u, password:p}) });
+            if(res.ok) { localStorage.setItem('adminToken','1'); location.reload(); } else alert('Fail');
         }
 
         async function loadItems() {
             const res = await fetch(`${API_URL}/items`);
             const items = await res.json();
-            allItems = items.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
-            const list = document.getElementById('item-list'); list.innerHTML = '';
-            
+            const list = document.getElementById('item-list');
+            list.innerHTML = '';
             items.forEach(item => {
-                let badgeClass = 'b-msrp';
-                if (item.type === 'baller') badgeClass = 'b-baller';
-                else if (item.type === 'bundle') badgeClass = 'b-bundle';
-                else if (item.type === 'pbm_auction') badgeClass = 'b-pbm-auction';
-
-                let isAuction = item.priceType === 'auction';
-                let aucBadge = isAuction ? '<span class="badge b-auction">AUCTION</span>' : '';
-                
-                let historyHtml = '';
-                if (isAuction) {
-                    let rows = '<div style="color:#888; font-size:0.8rem; text-align:center;">No bids yet</div>';
-                    let winnerEmail = item.topBidder || 'None';
-                    let winnerName = item.topBidderName || 'None';
-                    let deleteBtn = '';
-                    
-                    if (item.bidHistory && item.bidHistory.length > 0) {
-                        deleteBtn = `<button class="delete-bid-btn" onclick="removeTopBid('${item.id}')">🗑️ REMOVE TOP BID</button>`;
-                        rows = item.bidHistory.slice().reverse().map(b => 
-                            `<div class="history-entry">
-                                <span><b>${b.name}</b> (${b.email})</span>
-                                <span style="color:var(--gold);">$${b.amount}</span>
-                                ${b.auto ? `<span style="font-size:0.7rem; color:#888;">(Auto Proxy)</span>` : ''}
-                             </div>`
-                        ).join('');
-                    }
-
-                    historyHtml = `
-                        <div id="hist-${item.id}" class="history-panel">
-                            ${deleteBtn}
-                            <div class="winner-text">TOP BIDDER: ${winnerName} <br><span style="font-size:0.8rem; color:#888;">${winnerEmail}</span></div>
-                            <div style="margin-top:10px;">${rows}</div>
-                        </div>
-                    `;
-                }
-
-                list.innerHTML += `
-                    <li style="${item.hidden ? 'opacity:0.5;' : ''}">
-                        <div class="item-header">
-                            <span class="item-title">${item.name}</span>
-                            <div><span class="badge ${badgeClass}">${item.type}</span> ${aucBadge}</div>
-                        </div>
-                        <div class="item-meta">
-                            <span style="color:var(--accent); font-weight:bold; font-size:1.1rem;">$${item.price}</span>
-                            <span>Stock: ${item.stock}</span>
-                            <span>Clicks: ${item.clickCount || 0}</span>
-                        </div>
-                        
-                        <div class="btn-group">
-                            <button class="btn-edit" onclick="startEditing('${item.id}')">Edit</button>
-                            ${isAuction ? `<button class="btn-bids" onclick="toggleHistory('${item.id}')">View Bids</button>` : ''}
-                            <button class="btn-del" onclick="deleteItem('${item.id}')">Delete</button>
-                        </div>
-                        ${historyHtml}
-                    </li>`;
+                list.innerHTML += `<li>
+                    <div class="item-header"><span class="item-title">${item.name}</span> <span>$${item.price} ${item.priceType==='auction'?'<span class="badge b-auc">Auction</span>':''}</span></div>
+                    <div class="btn-group">
+                        <button style="background:#00b8ff;" onclick="deleteItem('${item.id}')">DELETE</button>
+                    </div>
+                </li>`;
             });
         }
 
-        function startEditing(id) {
-            const item = allItems.find(i => i.id === id);
-            if(item) {
-                editingId = item.id; currentImage = item.image; currentCreatedAt = item.createdAt;
-                document.getElementById('item-type').value = item.type || 'msrp';
-                document.getElementById('item-price-type').value = item.priceType || 'fixed';
-                document.getElementById('item-hidden').value = item.hidden ? 'true' : 'false';
-                
-                const dateVal = item.scheduleDate || '';
-                document.getElementById('item-schedule-date').value = dateVal.indexOf('T') > -1 ? dateVal : ''; 
-                
-                const endVal = item.scheduleEnd || '';
-                document.getElementById('item-schedule-end').value = endVal.indexOf('T') > -1 ? endVal : '';
-
-                document.getElementById('item-name').value = item.name;
-                document.getElementById('item-description').value = item.description;
-                document.getElementById('item-price').value = item.price;
-                document.getElementById('item-stock').value = item.stock;
-                document.getElementById('item-google-form-link').value = item.googleFormLink || '';
-                document.getElementById('submit-btn').innerText = "Update Item";
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
+        async function submitItem() {
+            const body = {
+                name: document.getElementById('item-name').value,
+                description: document.getElementById('item-description').value,
+                price: parseFloat(document.getElementById('item-price').value),
+                stock: parseInt(document.getElementById('item-stock').value),
+                priceType: document.getElementById('item-price-type').value,
+                scheduleDate: document.getElementById('item-schedule-date').value,
+                scheduleEnd: document.getElementById('item-schedule-end').value,
+                googleFormLink: document.getElementById('item-form').value
+            };
+            await fetch(`${API_URL}/items`, { method:'POST', body: JSON.stringify(body) });
+            location.reload();
         }
 
-        async function deleteItem(id) { if(confirm('Delete permanently?')) { await fetch(`${API_URL}/items/${id}`, {method:'DELETE'}); loadItems(); } }
-        function logout() { localStorage.removeItem('adminToken'); location.reload(); }
+        async function deleteItem(id) {
+            await fetch(`${API_URL}/items/${id}`, { method:'DELETE' });
+            loadItems();
+        }
     </script>
 </body>
 </html>
