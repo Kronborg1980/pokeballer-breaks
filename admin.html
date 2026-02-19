@@ -132,8 +132,8 @@
             const scheduleEnd = document.getElementById('item-schedule-end').value; 
             const name = document.getElementById('item-name').value;
             const desc = document.getElementById('item-description').value;
-            const price = parseFloat(document.getElementById('item-price').value);
-            const stock = parseInt(document.getElementById('item-stock').value);
+            const price = parseFloat(document.getElementById('item-price').value) || 0;
+            const stock = parseInt(document.getElementById('item-stock').value) || 0;
             const form = document.getElementById('item-google-form-link').value;
             const file = document.getElementById('item-image').files[0];
 
