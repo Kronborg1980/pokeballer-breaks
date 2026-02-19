@@ -22,11 +22,14 @@
         .item-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;}
         .item-title { font-weight: 900; font-size: 1.3rem; color: #fff;}
         .item-meta { font-size: 0.9rem; color: #aaa; margin-top: 5px; display: flex; gap: 15px; align-items: center; flex-wrap: wrap;}
+        
         .badge { padding: 4px 10px; font-size: 0.75rem; border-radius: 6px; font-weight: 800; text-transform: uppercase; }
         .b-msrp { color: #00ff9d; border: 1px solid #00ff9d; }
         .b-bundle { color: #f0dfff; border: 1px solid var(--purple); }
         .b-baller { background: var(--gold); color: #000; border: 1px solid var(--gold); }
-        .b-auction { background: var(--purple); color: white; box-shadow: 0 0 10px var(--purple); }
+        .b-pbm-auction { background: #ff4500; color: #fff; border: 1px solid #ffaa00; box-shadow: 0 0 10px #ff4500; }
+        .b-auction { background: var(--purple); color: white; box-shadow: 0 0 10px var(--purple); margin-left: 5px;}
+        
         .btn-group { display: flex; gap: 10px; width: 100%; margin-top: 10px; }
         .btn-group button { padding: 10px; font-size: 0.9rem; flex: 1; }
         .btn-edit { background: #00b8ff; } .btn-del { background: #ff0055; } .btn-bids { background: #222; border: 1px solid #555; }
@@ -54,11 +57,12 @@
                 <h3 style="margin-top:0; margin-bottom:1rem; color:var(--accent);">ADD / EDIT ITEM</h3>
                 <div style="display:flex; gap:10px;">
                     <div style="flex:1">
-                        <label>Break Type</label>
+                        <label>Break Category</label>
                         <select id="item-type">
                             <option value="msrp">MSRP Break</option>
                             <option value="bundle">Bundle Break</option>
                             <option value="baller">BALLER BUNDLE</option>
+                            <option value="pbm_auction" style="color: #ffaa00; font-weight:bold;">🔥 PBM AUCTION</option>
                         </select>
                     </div>
                     <div style="flex:1">
@@ -87,7 +91,7 @@
                     <div style="flex:1"><label>Spots</label><input type="number" id="item-stock" value="1"></div>
                 </div>
 
-                <label>Form Link (Leave blank if Auction)</label><input type="url" id="item-google-form-link" placeholder="https://forms.gle/...">
+                <label>Form Link (Leave blank if Auction mode)</label><input type="url" id="item-google-form-link" placeholder="https://forms.gle/...">
                 <label>Image</label><input type="file" id="item-image">
                 <button id="submit-btn" onclick="submitItem()">Save Item</button>
             </div>
@@ -156,7 +160,11 @@
             const list = document.getElementById('item-list'); list.innerHTML = '';
             
             items.forEach(item => {
-                let badgeClass = item.type === 'baller' ? 'b-baller' : (item.type === 'bundle' ? 'b-bundle' : 'b-msrp');
+                let badgeClass = 'b-msrp';
+                if (item.type === 'baller') badgeClass = 'b-baller';
+                else if (item.type === 'bundle') badgeClass = 'b-bundle';
+                else if (item.type === 'pbm_auction') badgeClass = 'b-pbm-auction';
+
                 let isAuction = item.priceType === 'auction';
                 let aucBadge = isAuction ? '<span class="badge b-auction">AUCTION</span>' : '';
                 
