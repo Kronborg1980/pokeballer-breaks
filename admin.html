@@ -14,8 +14,8 @@
         .card { background: var(--card); padding: 1.5rem; border-radius: 16px; border: 1px solid rgba(0,238,255,0.2); margin-bottom: 1.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         label { display: block; margin-bottom: 0.5rem; color: #aaa; font-weight: 600; font-size: 0.85rem; }
         input, select, textarea { width: 100%; padding: 12px; margin-bottom: 1rem; background: rgba(0,0,0,0.5); border: 1px solid #444; color: white; border-radius: 8px; font-size: 1rem; box-sizing: border-box; }
-        input:focus, select:focus { outline: none; border-color: var(--accent); }
-        button { width: 100%; padding: 1rem; background: linear-gradient(135deg, var(--accent), var(--purple)); color: white; font-weight: 900; border: none; border-radius: 8px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
+        button { width: 100%; padding: 1rem; background: linear-gradient(135deg, var(--accent), var(--purple)); color: white; font-weight: 900; border: none; border-radius: 8px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; }
+        button:hover { filter: brightness(1.2); transform: translateY(-2px); }
         ul { padding: 0; margin: 0; list-style: none; }
         li { background: rgba(255,255,255,0.05); padding: 1.5rem; margin-bottom: 1rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); }
         .item-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; flex-wrap: wrap; gap: 10px; }
@@ -24,7 +24,8 @@
         .b-msrp { color: #00ff9d; border: 1px solid #00ff9d; }
         .b-bundle { color: #f0dfff; border: 1px solid var(--purple); }
         .b-baller { background: var(--gold); color: #000; }
-        .b-auc { background: var(--purple); color: white; box-shadow: 0 0 10px var(--purple); }
+        .b-pbm-auc { background: #ff4500; color: #fff; border: 1px solid #ffaa00; }
+        .b-auc { background: var(--purple); color: white; margin-left: 5px; }
         .btn-group { display: flex; gap: 10px; margin-top: 15px; }
         .btn-group button { padding: 10px; font-size: 0.85rem; flex: 1; }
         .btn-edit { background: #00b8ff; } .btn-del { background: #ff0055; } .btn-bids { background: #222; border: 1px solid #555; }
@@ -37,7 +38,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>PBM ADMIN</h1>
+        <h1>PBM ADMIN VAULT</h1>
         <div id="login-section" class="card">
             <label>Username</label><input type="text" id="login-username">
             <label>Password</label><input type="password" id="login-password">
@@ -48,12 +49,12 @@
             <div class="card">
                 <h3 style="margin:0 0 1rem 0; color:var(--accent);">ADD / EDIT ITEM</h3>
                 <div style="display:flex; gap:10px;">
-                    <div style="flex:1"><label>Type</label>
+                    <div style="flex:1"><label>Category</label>
                         <select id="item-type">
                             <option value="msrp">MSRP Break</option>
                             <option value="bundle">Bundle Break</option>
                             <option value="baller">Baller Bundle</option>
-                            <option value="pbm_auction">PBM Auction</option>
+                            <option value="pbm_auction">🔥 PBM Auction</option>
                         </select>
                     </div>
                     <div style="flex:1"><label>Mode</label>
@@ -67,13 +68,13 @@
                 <label>Description</label><textarea id="item-description" rows="2"></textarea>
                 <div style="display:flex; gap:10px;">
                     <div style="flex:1"><label>Price / Start Bid</label><input type="number" id="item-price"></div>
-                    <div style="flex:1"><label>Total Spots</label><input type="number" id="item-stock"></div>
+                    <div style="flex:1"><label>Spots</label><input type="number" id="item-stock"></div>
                 </div>
                 <div style="display:flex; gap:10px;">
-                    <div style="flex:1"><label>Start Date</label><input type="datetime-local" id="item-schedule-date"></div>
-                    <div style="flex:1"><label>End Date</label><input type="datetime-local" id="item-schedule-end"></div>
+                    <div style="flex:1"><label>Start Time (CST)</label><input type="datetime-local" id="item-schedule-date"></div>
+                    <div style="flex:1"><label>End/Auction Close</label><input type="datetime-local" id="item-schedule-end"></div>
                 </div>
-                <label>Google Form Link</label><input type="text" id="item-form">
+                <label>Form Link (Leave blank for Auction)</label><input type="text" id="item-form">
                 <label>Image Upload</label><input type="file" id="item-image" accept="image/*">
                 <button id="save-btn" onclick="submitItem()">SAVE ITEM TO VAULT</button>
             </div>
@@ -107,14 +108,20 @@
             list.innerHTML = '';
             allItems.sort((a,b) => b.createdAt - a.createdAt).forEach(item => {
                 const isAuc = item.priceType === 'auction';
-                const badgeClass = item.type === 'baller' ? 'b-baller' : (item.type === 'bundle' ? 'b-bundle' : 'b-msrp');
+                let badgeClass = 'b-msrp';
+                if(item.type === 'bundle') badgeClass = 'b-bundle';
+                if(item.type === 'baller') badgeClass = 'b-baller';
+                if(item.type === 'pbm_auction') badgeClass = 'b-pbm-auc';
                 
                 let histHtml = '';
                 if(isAuc) {
-                    const bids = item.bidHistory ? item.bidHistory.slice().reverse().map(b => `<div class="history-entry"><span>${b.name}</span><span>$${b.amount}</span></div>`).join('') : 'No bids';
+                    const bids = item.bidHistory && item.bidHistory.length > 0 ? 
+                        item.bidHistory.slice().reverse().map(b => `<div class="history-entry"><span>${b.name}</span><span>$${b.amount} ${b.auto ? '(Auto)' : ''}</span></div>`).join('') : 
+                        '<div style="text-align:center; padding:10px; color:#666;">No bids yet</div>';
+                    
                     histHtml = `<div id="hist-${item.id}" class="history-panel">
-                        <button class="delete-bid-btn" onclick="deleteBid('${item.id}')">DELETE TOP BID</button>
-                        <div class="winner-text">TOP: ${item.topBidderName || 'None'}</div>
+                        <button class="delete-bid-btn" onclick="deleteBid('${item.id}')">🗑️ DELETE TOP BID</button>
+                        <div class="winner-text">TOP BIDDER: ${item.topBidderName || 'None'}</div>
                         ${bids}
                     </div>`;
                 }
@@ -127,7 +134,7 @@
                     <div style="font-size:1.1rem; font-weight:bold; color:var(--accent);">$${item.price}</div>
                     <div class="btn-group">
                         <button class="btn-edit" onclick="editItem('${item.id}')">EDIT</button>
-                        ${isAuc ? `<button class="btn-bids" onclick="toggleBids('${item.id}')">BIDS</button>` : ''}
+                        ${isAuc ? `<button class="btn-bids" onclick="toggleBids('${item.id}')">VIEW BIDS</button>` : ''}
                         <button class="btn-del" onclick="deleteItem('${item.id}')">DELETE</button>
                     </div>
                     ${histHtml}
@@ -149,21 +156,22 @@
             const body = {
                 name: document.getElementById('item-name').value,
                 description: document.getElementById('item-description').value,
-                price: parseFloat(document.getElementById('item-price').value),
-                stock: parseInt(document.getElementById('item-stock').value),
+                price: parseFloat(document.getElementById('item-price').value) || 0,
+                stock: parseInt(document.getElementById('item-stock').value) || 0,
                 type: document.getElementById('item-type').value,
                 priceType: document.getElementById('item-price-type').value,
                 scheduleDate: document.getElementById('item-schedule-date').value,
                 scheduleEnd: document.getElementById('item-schedule-end').value,
                 googleFormLink: document.getElementById('item-form').value,
-                image: imgData
+                image: imgData,
+                createdAt: editingId ? allItems.find(x => x.id === editingId).createdAt : Date.now()
             };
 
             const method = editingId ? 'PUT' : 'POST';
             const url = editingId ? `${API_URL}/items/${editingId}` : `${API_URL}/items`;
             
-            await fetch(url, { method, headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
-            editingId = null; location.reload();
+            const res = await fetch(url, { method, headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+            if(res.ok) { editingId = null; location.reload(); } else { alert("Error saving"); saveBtn.innerText = "SAVE ITEM TO VAULT"; }
         }
 
         function editItem(id) {
@@ -177,13 +185,13 @@
             document.getElementById('item-price-type').value = i.priceType;
             document.getElementById('item-schedule-date').value = i.scheduleDate;
             document.getElementById('item-schedule-end').value = i.scheduleEnd;
-            document.getElementById('item-form').value = i.googleFormLink;
+            document.getElementById('item-form').value = i.googleFormLink || '';
             document.getElementById('save-btn').innerText = "UPDATE ITEM";
-            window.scrollTo(0,0);
+            window.scrollTo({top: 0, behavior: 'smooth'});
         }
 
-        async function deleteItem(id) { if(confirm('Delete?')) { await fetch(`${API_URL}/items/${id}`, {method:'DELETE'}); loadItems(); } }
-        async function deleteBid(id) { if(confirm('Delete top bid?')) { await fetch(`${API_URL}/bid/delete`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({itemId:id})}); loadItems(); } }
+        async function deleteItem(id) { if(confirm('Delete this item?')) { await fetch(`${API_URL}/items/${id}`, {method:'DELETE'}); loadItems(); } }
+        async function deleteBid(id) { if(confirm('Remove the highest bid?')) { await fetch(`${API_URL}/bid/delete`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({itemId:id})}); loadItems(); } }
         function toggleBids(id) { const el = document.getElementById(`hist-${id}`); el.style.display = el.style.display === 'block' ? 'none' : 'block'; }
         function logout() { localStorage.removeItem('adminToken'); location.reload(); }
     </script>
