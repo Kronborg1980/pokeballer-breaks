@@ -1,696 +1,3558 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>PBM Breaks - The Crystal League</title>
+
     
+
     <link rel="icon" type="image/svg+xml" href="https://upload.wikimedia.org/wikipedia/commons/5/53/Pok%C3%A9_Ball_icon.svg">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
+
         :root {
-            --bg-dark: #02020a; --accent-cyan: #00fff2; --accent-purple: #d500ff; 
-            --accent-gold: #ffd700; --accent-live: #ff0040; --text-bright: #ffffff; --text-dim: #b0b0d0;
+
+            --bg-dark: #02020a;
+
+            --accent-cyan: #00fff2;
+
+            --accent-purple: #d500ff;
+
+            --accent-gold: #ffd700;
+
+            --accent-live: #ff0040;
+
+            --text-bright: #ffffff;
+
+            --text-dim: #b0b0d0;
+
+            --guardian-size: clamp(120px, 14vw, 200px);
+
         }
+
         * { margin:0; padding:0; box-sizing:border-box; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg-dark); color: var(--text-bright); min-height: 100vh; overflow-x: hidden; position: relative; }
-        
-        /* BACKGROUND & PARTICLES */
-        body::before { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 50% 0%, rgba(0, 255, 242, 0.1) 0%, transparent 50%), radial-gradient(circle at 50% 100%, rgba(213, 0, 255, 0.1) 0%, transparent 50%), linear-gradient(to bottom, #02020a, #0a0514); z-index: -10; pointer-events: none; }
-        .particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; background-image: radial-gradient(circle at 20% 30%, var(--accent-cyan) 1px, transparent 3px), radial-gradient(circle at 80% 70%, var(--accent-purple) 1px, transparent 3px); background-size: 120px 120px; opacity: 0.4; }
-        
-        /* POKEMONS - Faded and pushed to edges */
-        .poke-bg { position: fixed; pointer-events: none; z-index: -5; opacity: 0.08; filter: blur(1px); will-change: transform; transform: translateZ(0); }
-        .p-suicune { top: 50%; left: 50%; transform: translate(-50%, -50%); width: clamp(600px, 80vw, 1200px); opacity: 0.03; animation: breathe 8s ease-in-out infinite; filter: none;}
-        @keyframes breathe { 0%,100% { opacity:0.03; } 50% { opacity:0.05; } }
-        
-        .p-rayquaza { top: 5%; left: -6%; width: 280px; animation: float 14s infinite ease-in-out; }
-        .p-charizard { top: 10%; right: -6%; width: 260px; animation: floatFlipped 13s infinite ease-in-out; }
-        .p-gengar { top: 45%; left: -4%; width: 200px; animation: floatMid 9s infinite ease-in-out 1s; }
-        .p-gardevoir { top: 50%; right: -4%; width: 220px; animation: floatMid 10s infinite ease-in-out 2s; }
-        .p-vaporeon { bottom: -2%; left: 0%; width: 180px; transform-origin: bottom center; animation: sway 12s infinite ease-in-out; }
-        .p-cubone { bottom: 5%; right: 0%; width: 160px; }
 
-        @keyframes float { 0%, 100% { transform: translate3d(0, 0, 0); } 50% { transform: translate3d(15px, -20px, 0); } }
-        @keyframes floatFlipped { 0%, 100% { transform: scaleX(-1) translate3d(0, 0, 0); } 50% { transform: scaleX(-1) translate3d(-15px, -20px, 0); } }
-        @keyframes floatMid { 0%, 100% { transform: translate3d(0, -30px, 0); } 50% { transform: translate3d(10px, 10px, 0); } }
-        @keyframes sway { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(4deg); } }
         
-        /* MAIN LAYOUT */
-        main { position: relative; z-index: 2; max-width: 1300px; margin: 0 auto; padding: 2.5rem; border-radius: 35px; background: rgba(5, 5, 14, 0.75); backdrop-filter: blur(10px); margin-top: 2rem; margin-bottom: 4rem; border: 2px solid rgba(0, 255, 242, 0.3); box-shadow: 0 0 100px rgba(0,0,0,0.8), inset 0 0 30px rgba(0, 255, 242, 0.05), 0 0 20px rgba(0, 255, 242, 0.1), 0 0 40px rgba(213, 0, 255, 0.1); animation: outerGlowPulse 6s ease-in-out infinite; }
-        @keyframes outerGlowPulse { 0%, 100% { box-shadow: 0 0 100px rgba(0,0,0,0.8), inset 0 0 30px rgba(0, 255, 242, 0.05), 0 0 20px rgba(0, 255, 242, 0.1), 0 0 40px rgba(213, 0, 255, 0.1); border-color: rgba(0, 255, 242, 0.3); } 50% { box-shadow: 0 0 100px rgba(0,0,0,0.8), inset 0 0 50px rgba(0, 255, 242, 0.1), 0 0 35px rgba(0, 255, 242, 0.25), 0 0 60px rgba(213, 0, 255, 0.2); border-color: rgba(0, 255, 242, 0.5); } }
-        
-        header { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 4rem 1rem 1rem; position: relative; z-index: 2; }
-        .header-wrapper { display: flex; align-items: center; gap: 2rem; }
-        .header-logo { width: 160px; display: block; filter: drop-shadow(0 0 35px var(--accent-cyan)); }
-        .logo-left .header-logo { transform: scaleX(-1); }
-        .logo-animator { animation: float 6s infinite ease-in-out; } 
-        h1 { font-size: clamp(3.5rem, 9vw, 6.5rem); font-weight: 900; letter-spacing: -2px; text-transform: uppercase; margin: 0; line-height: 1; background: linear-gradient(180deg, #ffffff 20%, #cafffc 50%, #00fff2 55%, #d500ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-align: center; position: relative; display: inline-block; z-index: 1; filter: drop-shadow(0 0 25px rgba(0, 255, 242, 0.6)); }
-        
-        .section-header { display: flex; align-items: center; justify-content: center; gap: 1.5rem; margin: 3rem auto 2.5rem; background: linear-gradient(90deg, rgba(0,255,242,0.1), rgba(213,0,255,0.1)); border: 1px solid rgba(0,255,242,0.4); padding: 15px 50px; border-radius: 60px; max-width: 700px; box-shadow: 0 0 30px rgba(0, 255, 242, 0.2), inset 0 2px 0 rgba(255,255,255,0.2); backdrop-filter: blur(10px); }
-        .section-line { height: 4px; background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent); flex: 1; border-radius: 10px; box-shadow: 0 0 15px var(--accent-cyan); opacity: 0.7; }
-        .section-title { color: #fff; font-weight: 900; letter-spacing: 4px; font-size: 1.5rem; text-shadow: 0 0 20px var(--accent-cyan), 0 0 40px var(--accent-purple); text-align: center; white-space: nowrap; }
-        
-        /* SLEEK NARROW SUBSCRIBE PANEL */
-        .sleek-banner { max-width: 850px; margin: 2rem auto 4rem; border-radius: 16px; padding: 2px; background: rgba(0,0,0,0.3); position: relative; overflow: hidden; box-shadow: 0 0 25px rgba(0, 255, 242, 0.2); }
-        .sleek-banner::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: conic-gradient(transparent 0deg, var(--accent-cyan) 90deg, transparent 180deg, var(--accent-purple) 270deg, transparent 360deg); animation: spinBorder 6s linear infinite; z-index: 0; filter: blur(4px); }
-        .sleek-panel-inner { position: relative; z-index: 1; background: linear-gradient(160deg, rgba(20,20,35,0.95), rgba(10,10,20,0.98)); backdrop-filter: blur(16px); border-radius: 14px; padding: 1rem 1.5rem; display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 1rem; }
-        .sleek-text { flex: 1; text-align: left; }
-        .sleek-text h3 { color: var(--accent-gold); margin: 0 0 4px 0; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; text-shadow: 0 0 10px rgba(255, 215, 0, 0.4); }
-        .sleek-text p { margin: 0; color: var(--text-dim); font-size: 0.85rem; line-height: 1.4; }
-        .sleek-actions { display: flex; gap: 10px; align-items: center; flex-shrink: 0; }
-        .sleek-btn { background: linear-gradient(135deg, #ff0000, #dd0000); color: white; padding: 10px 20px; border-radius: 30px; text-decoration: none; font-weight: 900; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; border: 1px solid rgba(255, 50, 50, 0.8); box-shadow: 0 0 20px rgba(255, 0, 0, 0.4); transition: 0.3s; white-space: nowrap;}
-        .sleek-btn:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(255, 0, 0, 0.6); }
-        .sleek-bell { background: rgba(20, 20, 20, 0.6); color: var(--accent-gold); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1.2rem; border: 2px solid var(--accent-gold); transition: 0.3s; }
-        .sleek-bell:hover { transform: translateY(-2px); box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); background: rgba(255, 215, 0, 0.1); }
 
-        /* YOUTUBE FEED */
-        .yt-container { display: grid; gap: 35px; grid-template-columns: 1fr; }
-        @media (min-width: 900px) { .yt-container { grid-template-columns: 1fr 1fr; } }
-        .yt-card { aspect-ratio: 16/9; cursor: pointer; border-radius: 24px; overflow: hidden; }
-        .yt-label { position: absolute; top: 20px; left: 20px; padding: 10px 20px; border-radius: 12px; font-weight: 900; font-size: 0.85rem; letter-spacing: 0.8px; z-index: 2; box-shadow: 0 5px 20px rgba(0,0,0,0.6); text-transform: uppercase; display:flex; align-items:center; gap:8px; background: rgba(0,0,0,0.7); border: 1px solid rgba(255,255,255,0.25); backdrop-filter: blur(8px); }
-        .lbl-hunt { color: #00eeff; border-color: #00eeff; text-shadow: 0 0 10px #00eeff; }
-        .lbl-universal { background: linear-gradient(135deg, #ff0055, #ff0000); color: white; border: none; box-shadow: 0 0 25px rgba(255, 0, 85, 0.5); }
+        body {
 
-        /* STORE CARDS */
-        .store-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 35px; }
-        
-        .store-item-shell { position: relative; padding-top: 18px; } /* Ensures badge floats above container */
-        
-        .neon-card-wrapper { position: relative; border-radius: 26px; padding: 3px; box-shadow: 0 0 25px rgba(0, 255, 242, 0.2); background: rgba(255,255,255,0.05); overflow: hidden; transition: all 0.4s; transform: translateZ(0); }
-        .neon-card-wrapper:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 0 40px rgba(0, 255, 242, 0.6); }
-        
-        /* The Glorious Spinning Neon Glow */
-        .neon-card-wrapper::before { 
-            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; 
-            background: conic-gradient(transparent 0deg, var(--accent-cyan) 90deg, transparent 180deg, var(--accent-purple) 270deg, transparent 360deg); 
-            animation: spinBorder 4s linear infinite; z-index: 0; 
+            font-family: 'Inter', sans-serif;
+
+            background: var(--bg-dark);
+
+            color: var(--text-bright);
+
+            min-height: 100vh;
+
+            overflow-x: hidden;
+
+            position: relative;
+
         }
+
+
+
+        /* Static background layer */
+
+        body::before {
+
+            content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+
+            background:
+
+                radial-gradient(circle at 50% 0%, rgba(0, 255, 242, 0.1) 0%, transparent 50%),
+
+                radial-gradient(circle at 50% 100%, rgba(213, 0, 255, 0.1) 0%, transparent 50%),
+
+                linear-gradient(to bottom, #02020a, #0a0514);
+
+            z-index: -10;
+
+            pointer-events: none;
+
+        }
+
+
+
+        /* PARTICLES */
+
+        .particles {
+
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1;
+
+            background-image:
+
+                radial-gradient(circle at 20% 30%, var(--accent-cyan) 1px, transparent 3px),
+
+                radial-gradient(circle at 80% 70%, var(--accent-purple) 1px, transparent 3px);
+
+            background-size: 120px 120px;
+
+            opacity: 0.4;
+
+        }
+
+        
+
+        /* --- POKEMON BG ASSETS --- */
+
+        .poke-bg {
+
+            position: fixed; pointer-events: none; z-index: -5;
+
+            opacity: 0.3; 
+
+            will-change: transform; 
+
+            transform: translateZ(0);
+
+            backface-visibility: hidden;
+
+        }
+
+        
+
+        .p-suicune { top: 50%; left: 50%; transform: translate(-50%, -50%); width: clamp(500px, 70vw, 1000px); opacity: 0.05; animation: breathe 8s ease-in-out infinite; z-index: -6; }
+
+        @keyframes breathe { 0%,100% { opacity:0.05; } 50% { opacity:0.08; } }
+
+        .p-rayquaza { top: -5%; left: -5%; width: var(--guardian-size); animation: float 14s infinite ease-in-out; }
+
+        .p-charizard { top: -5%; right: -5%; width: var(--guardian-size); animation: floatFlipped 13s infinite ease-in-out; }
+
+        .p-gengar { top: 45%; left: -2%; width: calc(var(--guardian-size)*0.8); animation: floatMid 9s infinite ease-in-out 1s; opacity: 0.2; }
+
+        .p-gardevoir { top: 45%; right: -2%; width: calc(var(--guardian-size)*0.8); animation: floatMid 10s infinite ease-in-out 2s; opacity: 0.2; }
+
+        .p-vaporeon { bottom: 5%; left: 5%; width: calc(var(--guardian-size)*0.7); transform-origin: bottom center; animation: sway 12s infinite ease-in-out; opacity: 0.25; }
+
+        .p-cubone { bottom: 5%; right: 5%; width: calc(var(--guardian-size) * 0.6); z-index: -3; opacity: 0.25; }
+
+
+
+        @keyframes float { 0%, 100% { transform: translate3d(0, 0, 0); } 50% { transform: translate3d(20px, -30px, 0); } }
+
+        @keyframes floatFlipped { 0%, 100% { transform: scaleX(-1) translate3d(0, 0, 0); } 50% { transform: scaleX(-1) translate3d(-20px, -30px, 0); } }
+
+        @keyframes floatMid { 0%, 100% { transform: translate3d(0, -50%, 0); } 50% { transform: translate3d(15px, calc(-50% - 20px), 0); } }
+
+        @keyframes sway { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(4deg); } }
+
+
+
+        /* MAIN LAYOUT - WITH OUTER GLOW */
+
+        main {
+
+            position: relative; z-index: 2; max-width: 1250px; margin: 0 auto; padding: 2.5rem;
+
+            border-radius: 35px;
+
+            background: rgba(5, 5, 14, 0.75);
+
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+
+            margin-top: 2rem; margin-bottom: 4rem;
+
+            border: 2px solid rgba(0, 255, 242, 0.3);
+
+            box-shadow: 
+
+                0 0 100px rgba(0,0,0,0.8), 
+
+                inset 0 0 30px rgba(0, 255, 242, 0.05),
+
+                0 0 20px rgba(0, 255, 242, 0.1),
+
+                0 0 40px rgba(213, 0, 255, 0.1);
+
+            animation: outerGlowPulse 6s ease-in-out infinite;
+
+        }
+
+
+
+        @keyframes outerGlowPulse {
+
+            0%, 100% {
+
+                box-shadow:
+
+                    0 0 100px rgba(0,0,0,0.8),
+
+                    inset 0 0 30px rgba(0, 255, 242, 0.05),
+
+                    0 0 20px rgba(0, 255, 242, 0.1),
+
+                    0 0 40px rgba(213, 0, 255, 0.1);
+
+                border-color: rgba(0, 255, 242, 0.3);
+
+            }
+
+            50% {
+
+                box-shadow:
+
+                    0 0 100px rgba(0,0,0,0.8),
+
+                    inset 0 0 50px rgba(0, 255, 242, 0.1),
+
+                    0 0 35px rgba(0, 255, 242, 0.25),
+
+                    0 0 60px rgba(213, 0, 255, 0.2);
+
+                 border-color: rgba(0, 255, 242, 0.5);
+
+            }
+
+        }
+
+
+
+        header { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 4rem 1rem 1rem; position: relative; z-index: 2; }
+
+        .header-wrapper { display: flex; align-items: center; gap: 2rem; }
+
+        .header-logo { width: 160px; display: block; filter: drop-shadow(0 0 35px var(--accent-cyan)); }
+
+        .logo-left .header-logo { transform: scaleX(-1); }
+
+        .logo-animator { animation: float 6s infinite ease-in-out; } 
+
+
+
+        h1 {
+
+            font-size: clamp(3.5rem, 9vw, 6.5rem); font-weight: 900; letter-spacing: -2px;
+
+            text-transform: uppercase; margin: 0; line-height: 1;
+
+            background: linear-gradient(180deg, #ffffff 20%, #cafffc 50%, #00fff2 55%, #d500ff 100%);
+
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+
+            text-align: center; position: relative; display: inline-block; z-index: 1;
+
+            filter: drop-shadow(0 0 25px rgba(0, 255, 242, 0.6));
+
+        }
+
+        h1::after {
+
+            content: attr(data-text); position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 2;
+
+            background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.9) 45%, #fff 50%, rgba(255, 255, 255, 0.9) 55%, transparent 70%);
+
+            background-size: 200% 100%; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+
+            animation: glassShimmer 5s infinite linear; pointer-events: none;
+
+            mix-blend-mode: overlay;
+
+        }
+
+        @keyframes glassShimmer { 0% { background-position: 150% 0; } 100% { background-position: -150% 0; } }
+
+        
+
+        /* PANELS & CARDS */
+
+        .sub-info-panel { display: flex; align-items: center; justify-content: space-between; padding: 2.5rem; gap: 3rem; flex-wrap: wrap; }
+
+        .sub-text { flex: 1; min-width: 300px; }
+
+        .sub-text h3 { display: flex; align-items: center; gap: 10px; font-size: 1.6rem; color: var(--accent-gold); margin-bottom: 0.8rem; text-shadow: 0 0 15px rgba(255, 215, 0, 0.4); }
+
+        .sub-text p { color: var(--text-dim); line-height: 1.7; font-size: 1rem; }
+
+        .sub-actions { display: flex; gap: 20px; align-items: center; justify-content: center; }
+
+
+
+        .sub-btn {
+
+            background: linear-gradient(135deg, #ff0000, #dd0000); color: white; padding: 14px 32px; border-radius: 50px;
+
+            text-decoration: none; font-weight: 900; display: flex; align-items: center; gap: 10px;
+
+            box-shadow: 0 0 25px rgba(255, 0, 0, 0.5), inset 0 2px 0 rgba(255,255,255,0.4);
+
+            border: 1px solid rgba(255, 50, 50, 0.8); letter-spacing: 1px; font-size: 1.2rem; white-space: nowrap; transition: 0.3s;
+
+        }
+
+        .sub-btn:hover { transform: translateY(-3px); box-shadow: 0 0 40px rgba(255, 0, 0, 0.8); }
+
+
+
+        .bell-btn {
+
+            background: rgba(20, 20, 20, 0.6); color: var(--accent-gold); width: 55px; height: 55px; border-radius: 50%;
+
+            display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1.6rem;
+
+            border: 2px solid var(--accent-gold); box-shadow: 0 0 20px rgba(255, 215, 0, 0.3), inset 0 2px 5px rgba(255,255,255,0.2); flex-shrink: 0;
+
+            backdrop-filter: blur(5px); transition: 0.3s;
+
+        }
+
+        .bell-btn:hover { transform: translateY(-3px); box-shadow: 0 0 30px rgba(255, 215, 0, 0.6); background: rgba(255, 215, 0, 0.1); }
+
+
+
+        .section-header { 
+
+            display: flex; align-items: center; justify-content: center; gap: 1.5rem; margin: 4rem auto 2.5rem;
+
+            background: linear-gradient(90deg, rgba(0, 255, 242, 0.1), rgba(213, 0, 255, 0.1));
+
+            border: 1px solid rgba(0, 255, 242, 0.4);
+
+            padding: 15px 50px; border-radius: 60px; max-width: 700px;
+
+            box-shadow: 0 0 30px rgba(0, 255, 242, 0.2), inset 0 2px 0 rgba(255,255,255,0.2);
+
+            backdrop-filter: blur(10px);
+
+        }
+
+        .section-line { height: 4px; background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent); flex: 1; border-radius: 10px; box-shadow: 0 0 15px var(--accent-cyan); opacity: 0.7; }
+
+        .section-title {
+
+            color: #fff; font-weight: 900; letter-spacing: 4px; font-size: 1.5rem;
+
+            text-shadow: 0 0 20px var(--accent-cyan), 0 0 40px var(--accent-purple); text-align: center;
+
+        }
+
+
+
+        .neon-card-wrapper {
+
+            position: relative; border-radius: 26px; padding: 3px;
+
+            box-shadow: 0 0 25px rgba(0, 255, 242, 0.2), 0 0 50px rgba(213, 0, 255, 0.15);
+
+            background: rgba(0,0,0,0.2); 
+
+            overflow: hidden; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+            transform: translateZ(0);
+
+        }
+
+        .neon-card-wrapper:hover { 
+
+            transform: translateY(-10px) scale(1.02); 
+
+            box-shadow: 0 0 50px rgba(0, 255, 242, 0.6), 0 0 80px rgba(213, 0, 255, 0.5);
+
+        }
+
+        .neon-card-wrapper::before {
+
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+
+            background: conic-gradient(transparent 0deg, transparent 90deg, var(--accent-cyan) 130deg, #ffffff 155deg, var(--accent-purple) 180deg, transparent 220deg);
+
+            animation: spinBorder 5s linear infinite; z-index: 0;
+
+            opacity: 1; filter: blur(5px);
+
+        }
+
         @keyframes spinBorder { 100% { transform: rotate(360deg); } }
-        
-        .card-baller-bundle::before { background: conic-gradient(transparent 0deg, #ffd700 90deg, transparent 180deg, #ffaa00 270deg, transparent 360deg) !important; }
-        .card-pbm-auction::before { background: conic-gradient(transparent 0deg, #ff0000 90deg, transparent 180deg, #ff4500 270deg, transparent 360deg) !important; }
-        
-        .state-winning { box-shadow: 0 0 40px rgba(0,255,0,0.5) !important; }
-        .state-winning::before { background: conic-gradient(transparent 0deg, #00ff00 90deg, transparent 180deg, #00ff00 270deg, transparent 360deg) !important; animation: spinBorder 2s linear infinite !important;}
-        
-        .state-outbid { box-shadow: 0 0 40px rgba(255,0,64,0.5) !important; }
-        .state-outbid::before { background: conic-gradient(transparent 0deg, #ff0040 90deg, transparent 180deg, #ff0040 270deg, transparent 360deg) !important; animation: spinBorder 2s linear infinite !important;}
-        
-        /* Floating Badge */
-        .status-badge { position:absolute; top:-2px; left:50%; transform:translateX(-50%); padding: 6px 18px; border-radius:20px; font-weight:900; font-size:0.8rem; z-index:10; text-transform:uppercase; display:none; white-space:nowrap; }
-        .state-winning-badge { display:block; background:#00ff00; color:#000; box-shadow:0 0 15px #00ff00; }
-        .state-outbid-badge { display:block; background:#ff0040; color:#fff; box-shadow:0 0 15px #ff0040; }
 
-        .glass-panel { position: relative; background: linear-gradient(160deg, rgba(20,20,35,0.95), rgba(10,10,20,0.98)); backdrop-filter: blur(16px); border-radius: 24px; height: 100%; width: 100%; z-index: 1; border: 1px solid rgba(0,255,242,0.1); display:flex; flex-direction:column; overflow:hidden; }
         
-        .item-img-box { height: 260px; position: relative; border-bottom: 1px solid rgba(0,255,242,0.2); cursor: pointer; overflow:hidden; }
-        .item-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s; }
-        .neon-card-wrapper:hover .item-img { transform: scale(1.1) rotate(1deg); }
-        .item-content { padding: 1.5rem; flex: 1; display: flex; flex-direction: column; }
-        .item-content h3 { font-size: 1.4rem; font-weight: 900; margin-bottom: 0.5rem; color: #ffffff;}
-        .price-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); }
-        .price { font-size: 2rem; font-weight: 900; color: var(--accent-cyan); transition: 0.3s; }
+
+        .card-baller-bundle {
+
+            border: 2px solid #ffd700 !important;
+
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.35) !important;
+
+        }
+
+        .card-baller-bundle::before {
+
+            background: conic-gradient(transparent 0deg, transparent 90deg, #bf953f 130deg, #fcf6ba 155deg, #b38728 180deg, transparent 220deg) !important;
+
+        }
+
         
-        .type-tag { position: absolute; top: 15px; right: 15px; padding: 6px 12px; border-radius: 8px; font-weight: 800; font-size: 0.7rem; z-index: 2; background: rgba(0,0,0,0.8); border: 1px solid var(--accent-cyan); color: #fff; text-transform:uppercase; letter-spacing:1px; }
-        .tag-bundle { background: rgba(40, 0, 60, 0.85); border: 1px solid var(--accent-purple); color: #ffffff; box-shadow: 0 0 20px rgba(213, 0, 255, 0.4); }
-        .tag-auction { background: rgba(40, 0, 60, 0.95); border: 1px solid var(--accent-purple); color: #fff; box-shadow: 0 0 20px var(--accent-purple); animation: aucPulse 1.5s infinite alternate; }
-        @keyframes aucPulse { from { box-shadow: 0 0 10px var(--accent-purple); } to { box-shadow: 0 0 30px var(--accent-purple); } }
-        
-        .time-tag-bottom { position: absolute; bottom: 10px; left: 10px; padding: 6px 12px; border-radius: 8px; font-weight: 800; font-size: 0.8rem; z-index: 3; background: rgba(0,0,0,0.8); border: 1px solid #fff; color: #ffffff; backdrop-filter: blur(5px);}
-        .tag-is-live { background: #ff0040 !important; border-color: #ffaaaa !important; box-shadow: 0 0 20px #ff0040 !important; }
 
-        .buy-btn { text-align: center; padding: 1.2rem; border-radius: 12px; background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple)); color: white; font-weight: 900; font-size: 1.1rem; border: none; cursor:pointer; text-decoration:none; display:flex; flex-direction:column; align-items:center; width: 100%; box-shadow: 0 10px 30px rgba(0, 255, 242, 0.3); transition: 0.3s; }
-        .buy-btn:hover { transform: translateY(-5px); box-shadow: 0 0 50px rgba(189, 0, 255, 0.8); }
-        .btn-subtext { font-size: 0.75rem; font-weight: 700; margin-top: 4px; color:#fff; }
-        .sold-out { background: #0f0f1a !important; color: #666 !important; pointer-events: none; border: 2px solid #2a2a3a !important; box-shadow:none; }
-        
-        .bid-input-container { display: flex; flex-direction: column; gap: 8px; width: 100%; margin-top: 10px; }
-        .bid-input-row { display: flex; gap: 10px; width: 100%; }
-        .bid-input { flex: 1; padding: 0.8rem; border-radius: 12px; border: 2px solid var(--accent-purple); background: #000; color: white; font-weight: 900; font-size: 1.1rem; text-align: center; transition:0.3s; width:100%;}
-        .bid-input:focus { outline: none; box-shadow: 0 0 20px var(--accent-purple); }
-        .submit-bid-btn { flex: 1; background: var(--accent-purple); border-radius: 12px; border: none; color: white; font-weight: 900; font-size: 1.1rem; cursor: pointer; box-shadow: 0 0 20px rgba(213, 0, 255, 0.4); transition:0.3s; }
-        .submit-bid-btn:hover { background: #e040ff; box-shadow: 0 0 30px rgba(213, 0, 255, 0.8); transform: translateY(-2px);}
-        .proxy-helper-text { font-size: 0.7rem; color: #888; text-align: center; margin-top: 2px; }
+        .card-live-now {
 
-        .bid-history-box { background: rgba(0,0,0,0.6); border: 1px solid rgba(213,0,255,0.3); border-radius: 8px; padding: 10px; margin-top: 10px; min-height: 100px; display: flex; flex-direction: column; justify-content: flex-end; }
-        .bid-entry { display: flex; justify-content: space-between; font-size: 0.85rem; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.05); animation: slideIn 0.3s; }
-        .bid-entry:last-child { border: none; }
-        .bid-entry .name { color: var(--accent-cyan); font-weight: 700; }
-        .bid-entry .amount { color: var(--accent-gold); font-weight: 900; }
+            border: 2px solid var(--accent-live) !important;
 
-        /* EMPTY STORE STATE */
-        .epic-empty-wrapper { grid-column: 1 / -1; position: relative; margin: 2rem auto; max-width: 800px; padding: 4px; border-radius: 30px; background: rgba(0,0,0,0.5); box-shadow: 0 0 50px rgba(0, 255, 242, 0.2), 0 0 80px rgba(213, 0, 255, 0.2); overflow: hidden; transform: translateZ(0); }
-        .epic-empty-wrapper::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: conic-gradient(transparent 0deg, var(--accent-cyan) 60deg, #fff 90deg, var(--accent-purple) 120deg, transparent 180deg, var(--accent-gold) 240deg, #fff 270deg, var(--accent-live) 300deg, transparent 360deg); animation: spinBorder 4s linear infinite; z-index: 0; opacity: 0.8; filter: blur(8px); }
-        .epic-empty-inner { position: relative; z-index: 1; background: linear-gradient(160deg, rgba(10, 10, 20, 0.85) 0%, rgba(5, 5, 15, 0.95) 100%); backdrop-filter: blur(20px); border-radius: 26px; padding: 4rem 3rem; text-align: center; border: 1px solid rgba(255, 255, 255, 0.1); display: flex; flex-direction: column; align-items: center; box-shadow: inset 0 0 40px rgba(0,0,0,0.8); }
-        .empty-icon-container { position: relative; width: 140px; height: 140px; margin-bottom: 2.5rem; display: flex; align-items: center; justify-content: center; }
-        .empty-icon-container::before { content: ''; position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle, rgba(0,255,242,0.4) 0%, transparent 70%); animation: pulseCore 2s infinite alternate; }
-        @keyframes pulseCore { 0% { transform: scale(0.8); opacity: 0.5; } 100% { transform: scale(1.5); opacity: 1; box-shadow: 0 0 30px var(--accent-cyan); } }
-        .icon-float-wrapper { animation: float 4s infinite ease-in-out; z-index: 2; display: flex; align-items: center; justify-content: center; }
-        .empty-icon { width: 120px; height: auto; filter: drop-shadow(0 0 20px var(--accent-cyan)) drop-shadow(0 0 40px var(--accent-purple)); }
-        .letter-content { text-align: center; max-width: 650px; margin: 0 auto; color: #c0c0d0; font-size: 1.1rem; line-height: 1.7; font-weight: 500; }
-        .letter-content p { margin-bottom: 1.2rem; }
+            box-shadow: 0 0 60px rgba(255, 0, 64, 0.5) !important;
 
-        /* MISC */
-        #user-profile { position: absolute; top: 20px; right: 20px; background: rgba(0,0,0,0.8); padding: 10px 20px; border-radius: 30px; border: 1px solid var(--accent-cyan); display: none; align-items: center; gap: 10px; z-index: 100; font-weight: bold; font-size:0.9rem;}
-        .logout-btn { background: none; border: none; color: #ff4444; cursor: pointer; text-decoration: underline; font-size:0.8rem; }
-        
-        #toast-container { position: fixed; bottom: 30px; right: 30px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
-        .toast { background: rgba(10,10,20,0.95); border: 1px solid var(--accent-cyan); padding: 15px 25px; border-radius: 12px; color: #fff; font-weight: bold; box-shadow: 0 10px 30px rgba(0,0,0,0.8); animation: slideUp 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); backdrop-filter: blur(10px); }
-        .toast.error { border-color: #ff0040; box-shadow: 0 0 20px rgba(255,0,64,0.4); }
-        .toast.success { border-color: #00ff00; box-shadow: 0 0 20px rgba(0,255,0,0.4); }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(50px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
-        @keyframes fadeOut { to { opacity: 0; transform: translateY(-20px); } }
+            animation: livePulse 2s infinite !important;
 
-        .skeleton { background: rgba(255, 255, 255, 0.03); border-radius: 24px; min-height: 450px; border: 1px solid rgba(0, 255, 242, 0.15); box-shadow: 0 0 30px rgba(0, 255, 242, 0.05); animation: pulse 2s infinite; }
+        }
+
+        .card-live-now::before {
+
+            background: conic-gradient(transparent 0deg, transparent 90deg, #ff0040 130deg, #ffffff 155deg, #ff0040 180deg, transparent 220deg) !important;
+
+            animation: spinBorder 2s linear infinite !important;
+
+        }
+
+        @keyframes livePulse { 0% { box-shadow: 0 0 40px rgba(255,0,64,0.4); } 50% { box-shadow: 0 0 80px rgba(255,0,64,0.8); } 100% { box-shadow: 0 0 40px rgba(255,0,64,0.4); } }
+
+
+
+        .glass-panel {
+
+            position: relative; 
+
+            background: linear-gradient(160deg, rgba(20, 20, 35, 0.6) 0%, rgba(10, 10, 20, 0.8) 100%);
+
+            backdrop-filter: blur(16px) saturate(120%); -webkit-backdrop-filter: blur(16px) saturate(120%);
+
+            border-radius: 24px; height: 100%; width: 100%; z-index: 1; overflow: hidden;
+
+            border: 1px solid rgba(0, 255, 242, 0.1);
+
+            border-top: 2px solid rgba(255, 255, 255, 0.4);
+
+            border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+
+            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.7), inset 0 5px 10px rgba(255, 255, 255, 0.1), 0 10px 30px rgba(0,0,0,0.5);
+
+        }
+
+
+
+        .skeleton { 
+
+            background: rgba(255, 255, 255, 0.03); border-radius: 24px; min-height: 450px; 
+
+            border: 1px solid rgba(0, 255, 242, 0.15); 
+
+            box-shadow: 0 0 30px rgba(0, 255, 242, 0.05);
+
+            animation: pulse 2s infinite;
+
+        }
+
         @keyframes pulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
 
-        .image-modal { display: none; position: fixed; z-index: 9999; padding-top: 50px; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.9); align-items: center; justify-content: center; backdrop-filter: blur(20px); }
-        .modal-content { margin: auto; display: block; max-width: 90%; max-height: 85vh; border: 3px solid var(--accent-cyan); box-shadow: 0 0 100px rgba(0, 255, 242, 0.8); border-radius: 20px; }
-        .close-modal { position: absolute; top: 30px; right: 40px; color: var(--accent-cyan); font-size: 50px; font-weight: 900; cursor: pointer; z-index: 10000; text-shadow: 0 0 20px var(--accent-cyan); }
+
+
+        .yt-container { display: grid; gap: 35px; grid-template-columns: 1fr; }
+
+        @media (min-width: 900px) { .yt-container { grid-template-columns: 1fr 1fr; } }
+
+        .yt-card { aspect-ratio: 16/9; cursor: pointer; }
+
+        
+
+        .yt-label {
+
+            position: absolute; top: 20px; left: 20px; padding: 10px 20px; border-radius: 12px; font-weight: 900; font-size: 0.85rem; letter-spacing: 0.8px; z-index: 2;
+
+            box-shadow: 0 5px 20px rgba(0,0,0,0.6); text-transform: uppercase; display:flex; align-items:center; gap:8px;
+
+            background: rgba(0,0,0,0.7); 
+
+            border: 1px solid rgba(255,255,255,0.25);
+
+            backdrop-filter: blur(8px);
+
+        }
+
+        .lbl-upcoming { color: #ffd700; border-color: #ffd700; text-shadow: 0 0 10px #ffd700; }
+
+        .lbl-hunt { color: #00eeff; border-color: #00eeff; text-shadow: 0 0 10px #00eeff; }
+
+        .lbl-universal { background: linear-gradient(135deg, #ff0055, #ff0000); color: white; border: none; box-shadow: 0 0 25px rgba(255, 0, 85, 0.5); }
+
+
+
+        .store-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 35px; }
+
+        .item-card { display: flex; flex-direction: column; height: 100%; }
+
+        
+
+        .type-tag {
+
+            position: absolute; top: 20px; right: 20px; padding: 8px 14px; border-radius: 10px; font-weight: 800; font-size: 0.75rem; z-index: 2; letter-spacing: 1px;
+
+            text-transform: uppercase; backdrop-filter: blur(10px); display: flex; align-items: center; gap: 6px;
+
+        }
+
+        
+
+        .tag-msrp { 
+
+            background: rgba(0, 40, 40, 0.85); border: 1px solid #00ff9d; color: #ffffff; 
+
+            text-shadow: 0 1px 3px black; box-shadow: 0 0 15px rgba(0, 255, 157, 0.3);
+
+        }
+
+
+
+        .tag-bundle { 
+
+            background: rgba(40, 0, 60, 0.85); border: 1px solid #bd00ff; color: #ffffff; 
+
+            text-shadow: 0 1px 3px black; box-shadow: 0 0 20px rgba(213, 0, 255, 0.4);
+
+        }
+
+
+
+        .tag-baller {
+
+            background: rgba(0, 0, 0, 0.95);
+
+            border: 1px solid #ffd700;
+
+            color: #ffd700;
+
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5), inset 0 0 10px rgba(255, 215, 0, 0.2);
+
+        }
+
+        
+
+        .time-tag-bottom {
+
+            position: absolute; bottom: 10px; left: 10px; 
+
+            padding: 6px 12px; border-radius: 8px; font-weight: 800; font-size: 0.75rem; z-index: 3; letter-spacing: 0.5px;
+
+            text-transform: uppercase; 
+
+            background: rgba(0, 0, 0, 0.85); 
+
+            backdrop-filter: blur(5px);
+
+            border: 1px solid #ffffff; 
+
+            color: #ffffff;
+
+            text-shadow: 0 1px 2px black;
+
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+
+            display: flex; align-items: center; gap: 5px;
+
+            pointer-events: none;
+
+            transition: 0.3s;
+
+        }
+
+
+
+        .tag-is-live {
+
+            background: #ff0040 !important;
+
+            border-color: #ffaaaa !important;
+
+            color: white !important;
+
+            box-shadow: 0 0 25px #ff0040 !important;
+
+            animation: badgePulse 1s infinite alternate;
+
+        }
+
+        @keyframes badgePulse { from { transform: scale(1); } to { transform: scale(1.05); } }
+
+
+
+        .item-img-box { height: 260px; overflow:hidden; position: relative; cursor: pointer; border-bottom: 1px solid rgba(0, 255, 242, 0.2); }
+
+        .item-img-box::after { content:''; position:absolute; bottom:0; left:0; width:100%; height:100%; background: linear-gradient(to top, rgba(10, 10, 25, 0.9), transparent 60%); pointer-events: none; }
+
+        .item-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); }
+
+        .neon-card-wrapper:hover .item-img { transform: scale(1.12) rotate(1deg); }
+
+        
+
+        .item-content { padding: 1.8rem; flex: 1; display: flex; flex-direction: column; position: relative; }
+
+        
+
+        .item-content h3 { 
+
+            font-size: 1.5rem; margin-bottom: 0.8rem; font-weight: 800; line-height: 1.2;
+
+            color: #ffffff; text-shadow: 0 2px 5px rgba(0,0,0,0.8); letter-spacing: 0.5px;
+
+        }
+
+        .item-content p { color: var(--text-dim); font-size: 1rem; line-height: 1.6; margin-bottom: 1.5rem; flex: 1; }
+
+        
+
+        .date-row { 
+
+            display: flex; align-items: center; gap: 8px;
+
+            color: var(--accent-gold); 
+
+            font-weight: 700; font-size: 0.95rem; 
+
+            margin-bottom: 10px; 
+
+            padding-bottom: 10px;
+
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+
+            text-transform: uppercase; 
+
+            letter-spacing: 0.5px; 
+
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.4); 
+
+        }
+
+
+
+        .price-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(0, 255, 242, 0.2); }
+
+        .price { font-size: 2rem; font-weight: 900; color: var(--accent-cyan); text-shadow: 0 0 25px rgba(0, 255, 242, 0.6); }
+
+        .stock { font-size: 0.9rem; color: var(--text-dim); background: rgba(0, 255, 242, 0.08); padding: 6px 14px; border-radius: 30px; font-weight: 700; border: 1px solid rgba(0, 255, 242, 0.2); }
+
+        
+
+        .buy-btn {
+
+            display: block; text-align: center; padding: 1.2rem; border-radius: 16px;
+
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
+
+            color: white; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 1.1rem; letter-spacing: 1.5px;
+
+            transition: 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; overflow: hidden;
+
+            border: 1px solid rgba(255,255,255,0.3); cursor: pointer;
+
+            box-shadow: 0 10px 30px rgba(0, 255, 242, 0.3), inset 0 2px 0 rgba(255,255,255,0.4);
+
+            display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1;
+
+        }
+
+        .buy-btn:hover { transform: translateY(-5px); box-shadow: 0 0 50px rgba(189, 0, 255, 0.8); border-color: white; }
+
+        
+
+        .btn-subtext { font-size: 0.75rem; opacity: 0.9; margin-top: 4px; font-weight: 700; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
+
+
+
+        .baller-btn {
+
+            background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 25%, #b38728 50%, #fcf6ba 75%, #aa771c 100%) !important;
+
+            background-size: 200% auto !important;
+
+            color: #000 !important;
+
+            text-shadow: 0 1px 0 rgba(255,255,255,0.4) !important;
+
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5), inset 0 0 10px rgba(255,255,255,0.5) !important;
+
+            border: 1px solid #7a5d1a !important;
+
+            position: relative; overflow: hidden; animation: goldShine 3s linear infinite;
+
+        }
+
+        .baller-btn .btn-subtext { color: #333 !important; text-shadow: none !important; }
+
+        .baller-btn::after {
+
+            content: ''; position: absolute; top: -50%; left: -60%; width: 20%; height: 200%;
+
+            background: rgba(255, 255, 255, 0.8); transform: rotate(30deg); animation: sweep 4s infinite;
+
+        }
+
+        @keyframes sweep { 0% { left: -60%; } 20% { left: 120%; } 100% { left: 120%; } }
+
+        @keyframes goldShine { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        .baller-btn:hover { box-shadow: 0 0 40px rgba(255, 215, 0, 0.8) !important; filter: brightness(1.1); }
+
+
+
+        .live-btn {
+
+            background: linear-gradient(135deg, #ff0000, #ff4444) !important;
+
+            border: 2px solid #ffffff !important;
+
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.8), inset 0 0 10px rgba(255,255,255,0.5) !important;
+
+            animation: liveBtnPulse 1s infinite alternate;
+
+        }
+
+        @keyframes liveBtnPulse { from { transform: scale(1); box-shadow: 0 0 30px red; } to { transform: scale(1.03); box-shadow: 0 0 50px red; } }
+
+
+
+        .sold-out { background: #0f0f1a !important; color: #666 !important; pointer-events: none; border: 2px solid #2a2a3a !important; box-shadow: inset 0 0 20px rgba(0,0,0,0.5) !important; }
+
+        .sold-out .btn-subtext { display: none; }
+
+        
+
         footer { text-align: center; padding: 3rem 0 4rem; color: var(--text-dim); font-size: 0.9rem; position: relative; z-index: 2; letter-spacing: 1px; }
 
-        @media (max-width: 900px) {
-            .p-rayquaza, .p-charizard, .p-gengar, .p-gardevoir, .p-vaporeon, .p-cubone { display: none; }
-            .p-suicune { width: 120vw; opacity: 0.05; top: 40%; }
-            .header-wrapper { flex-direction: column; gap: 1.5rem; text-align: center; }
-            h1 { font-size: clamp(3rem, 11vw, 4rem); }
-            .logo-right { display: none; } .header-logo { width: 110px; } .logo-left .header-logo { transform: scaleX(1); }
-            main { padding: 1.5rem 1rem; margin: 1rem auto 3rem; width: 95%; border-radius: 25px; }
-            .store-grid { grid-template-columns: 1fr; gap: 30px; }
-            
-            .sleek-panel-inner { flex-direction: column; text-align: center; gap: 1.5rem; padding: 1.5rem; }
-            .sleek-text h3 { justify-content: center; }
-            .sleek-actions { width: 100%; justify-content: center; gap: 15px; flex-wrap: wrap; }
-            .epic-empty-inner { padding: 3rem 1.5rem; }
+
+
+        /* --- UPDATED EMPTY STORE STATE --- */
+
+        .epic-empty-wrapper {
+
+            grid-column: 1 / -1;
+
+            position: relative;
+
+            margin: 2rem auto;
+
+            max-width: 800px;
+
+            padding: 4px;
+
+            border-radius: 30px;
+
+            background: rgba(0,0,0,0.5);
+
+            box-shadow: 0 0 50px rgba(0, 255, 242, 0.2), 0 0 80px rgba(213, 0, 255, 0.2);
+
+            overflow: hidden;
+
+            transform: translateZ(0);
+
         }
+
+        .epic-empty-wrapper::before {
+
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+
+            background: conic-gradient(transparent 0deg, var(--accent-cyan) 60deg, #fff 90deg, var(--accent-purple) 120deg, transparent 180deg, var(--accent-gold) 240deg, #fff 270deg, var(--accent-live) 300deg, transparent 360deg);
+
+            animation: spinBorder 4s linear infinite; z-index: 0;
+
+            opacity: 0.8; filter: blur(8px);
+
+        }
+
+        .epic-empty-inner {
+
+            position: relative;
+
+            z-index: 1;
+
+            background: linear-gradient(160deg, rgba(10, 10, 20, 0.85) 0%, rgba(5, 5, 15, 0.95) 100%);
+
+            backdrop-filter: blur(20px);
+
+            border-radius: 26px;
+
+            padding: 4rem 3rem;
+
+            text-align: center;
+
+            border: 1px solid rgba(255, 255, 255, 0.1);
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
+
+        }
+
+        .empty-icon-container {
+
+            position: relative;
+
+            width: 140px; height: 140px;
+
+            margin-bottom: 2.5rem;
+
+            display: flex; align-items: center; justify-content: center;
+
+        }
+
+        .empty-icon-container::before {
+
+            content: ''; position: absolute; inset: 0;
+
+            border-radius: 50%;
+
+            background: radial-gradient(circle, rgba(0,255,242,0.4) 0%, transparent 70%);
+
+            animation: pulseCore 2s infinite alternate;
+
+        }
+
+        @keyframes pulseCore { 
+
+            0% { transform: scale(0.8); opacity: 0.5; } 
+
+            100% { transform: scale(1.5); opacity: 1; box-shadow: 0 0 30px var(--accent-cyan); } 
+
+        }
+
+        
+
+        .icon-float-wrapper { animation: float 4s infinite ease-in-out; z-index: 2; display: flex; align-items: center; justify-content: center; }
+
+        .empty-icon { width: 120px; height: auto; filter: drop-shadow(0 0 20px var(--accent-cyan)) drop-shadow(0 0 40px var(--accent-purple)); }
+
+        
+
+        .letter-content { text-align: center; max-width: 650px; margin: 0 auto; color: #c0c0d0; font-size: 1.1rem; line-height: 1.7; font-weight: 500; }
+
+        .letter-content p { margin-bottom: 1.2rem; }
+
+        
+
+        /* MOBILE RESPONSIVENESS */
+
+        @media (max-width: 1300px) { .p-gengar, .p-gardevoir { display: none; } }
+
+        @media (max-width: 768px) {
+
+            .p-rayquaza, .p-charizard, .p-gengar, .p-gardevoir, .p-vaporeon, .p-cubone { display: none; }
+
+            .p-suicune { width: 120vw; opacity: 0.08; top: 40%; }
+
+            .header-wrapper { flex-direction: column; gap: 1.5rem; text-align: center; }
+
+            h1 { font-size: clamp(3rem, 11vw, 4rem); }
+
+            .logo-right { display: none; } .header-logo { width: 110px; } .logo-left .header-logo { transform: scaleX(1); }
+
+            main { padding: 1.5rem 1rem; margin: 1rem auto 3rem; width: 95%; border-radius: 25px; }
+
+            .section-header { width: 100%; padding: 12px 20px; border-radius: 40px; gap: 1rem; margin: 2.5rem auto 2rem; }
+
+            .section-title { font-size: 1.1rem; white-space: nowrap; letter-spacing: 2px; } .section-line { height: 3px; min-width: 30px; } 
+
+            .store-grid { grid-template-columns: 1fr; gap: 30px; }
+
+            .sub-info-panel { flex-direction: column; text-align: center; gap: 1.5rem; padding: 2rem 1.2rem; }
+
+            .sub-actions { width: 100%; justify-content: center; gap: 15px; }
+
+            .epic-empty-inner { padding: 3rem 1.5rem; }
+
+        }
+
+
+
+        .image-modal { display: none; position: fixed; z-index: 9999; padding-top: 50px; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.9); align-items: center; justify-content: center; backdrop-filter: blur(20px); }
+
+        .modal-content { margin: auto; display: block; max-width: 90%; max-height: 85vh; border: 3px solid var(--accent-cyan); box-shadow: 0 0 100px rgba(0, 255, 242, 0.8); border-radius: 20px; }
+
+        .close-modal { position: absolute; top: 30px; right: 40px; color: var(--accent-cyan); font-size: 50px; font-weight: 900; cursor: pointer; z-index: 10000; text-shadow: 0 0 20px var(--accent-cyan); }
+
     </style>
+
 </head>
+
 <body>
+
     <div class="particles"></div>
+
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="poke-bg p-suicune">
+
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/384.png" class="poke-bg p-rayquaza">
+
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/006.png" class="poke-bg p-charizard">
+
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/094.png" class="poke-bg p-gengar">
+
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/282.png" class="poke-bg p-gardevoir">
+
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/134.png" class="poke-bg p-vaporeon">
+
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/104.png" class="poke-bg p-cubone">
+
     
-    <div id="user-profile">
-        <i class="ph-fill ph-user-circle" style="color:var(--accent-cyan); font-size:1.5rem;"></i>
-        <span id="user-name-display"></span>
-        <button class="logout-btn" onclick="logoutUser()">Logout</button>
-    </div>
-
-    <div id="g_id_onload"
-         data-client_id="711987460323-a0lgvotg3ppn16gek8qe8o8s3bf9vv9j.apps.googleusercontent.com"
-         data-callback="handleGoogleLogin"
-         data-auto_prompt="false">
-    </div>
-
-    <div id="toast-container"></div>
 
     <header>
+
         <div class="header-wrapper">
+
             <div class="logo-animator logo-left"><img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="header-logo"></div>
+
             <h1 data-text="PBM BREAKS">PBM BREAKS</h1>
-            <div class="logo-animator logo-right"><img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="header-logo" style="transform:scaleX(-1);"></div>
+
+            <div class="logo-animator logo-right"><img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="header-logo"></div>
+
         </div>
+
     </header>
 
+
+
     <main>
+
         <div class="section-header"><span class="section-line"></span><span class="section-title">CHANNEL FEED</span><span class="section-line"></span></div>
+
         <div id="yt-container" class="yt-container"></div>
+
         
-        <div class="sleek-banner">
-            <div class="sleek-panel-inner">
-                <div class="sleek-text">
+
+        <div class="neon-card-wrapper" style="margin-top: 40px; margin-bottom: 60px;">
+
+            <div class="glass-panel sub-info-panel">
+
+                <div class="sub-text">
+
                     <h3><i class="ph-fill ph-crown"></i> JOIN POKEBALLER MIKE</h3>
-                    <p>Support the channel, watch every hit live, and get notified instantly when the Vault opens!</p>
+
+                    <p><strong>Why Subscribe?</strong> Support the channel and watch every hit live! <br><strong>Turn on Notifications:</strong> Be the first to know when a Break goes live.</p>
+
                 </div>
-                <div class="sleek-actions">
-                    <a href="https://www.youtube.com/@PokeballerMike?sub_confirmation=1" target="_blank" class="sleek-btn"><i class="ph-fill ph-youtube-logo"></i> SUBSCRIBE</a>
-                    <a href="https://www.youtube.com/@PokeballerMike?sub_confirmation=1" target="_blank" class="sleek-bell" title="Turn on Notifications"><i class="ph-fill ph-bell-ringing"></i></a>
+
+                <div class="sub-actions">
+
+                    <a href="https://www.youtube.com/@PokeballerMike?sub_confirmation=1" target="_blank" class="sub-btn"><i class="ph-fill ph-youtube-logo"></i> SUBSCRIBE</a>
+
+                    <a href="https://www.youtube.com/@PokeballerMike?sub_confirmation=1" target="_blank" class="bell-btn" title="Turn on Notifications"><i class="ph-fill ph-bell-ringing"></i></a>
+
                 </div>
+
             </div>
+
         </div>
 
-        <div class="section-header"><span class="section-line"></span><span class="section-title">THE VAULT</span><span class="section-line"></span></div>
+
+
+        <div class="section-header"><span class="section-line"></span><span class="section-title">AVAILABLE BREAKS</span><span class="section-line"></span></div>
+
         <div class="store-grid" id="store-container"></div>
+
     </main>
 
     <footer><p>© 2025 PBM Breaks • Not affiliated with Nintendo • Crafted in the Crystal Realm</p></footer>
 
+
+
     <div id="myModal" class="image-modal" onclick="closeModal()">
+
         <span class="close-modal">&times;</span>
+
         <img class="modal-content" id="img01">
+
+    </div>
+
+
+
+    <script>
+
+        const API_URL = 'https://pokeballer-worker.kronborgnielsen.workers.dev/api';
+
+
+
+        function renderSkeletons(containerId, count) {
+
+            const container = document.getElementById(containerId);
+
+            container.innerHTML = '';
+
+            let html = '';
+
+            for(let i=0; i<count; i++) html += `<div class="skeleton"></div>`;
+
+            container.innerHTML = html;
+
+        }
+
+
+
+        async function loadVideos() {
+
+            renderSkeletons('yt-container', 2);
+
+            const container = document.getElementById('yt-container');
+
+            try {
+
+                const res = await fetch(`${API_URL}/youtube`);
+
+                const text = await res.text();
+
+                const doc = new DOMParser().parseFromString(text, "text/xml");
+
+                const entries = Array.from(doc.querySelectorAll("entry")).slice(0, 20);
+
+                
+
+                let streamVideo = null, huntVideo = null;
+
+
+
+                for (let entry of entries) {
+
+                    const rawTitle = entry.querySelector("title").textContent;
+
+                    if (rawTitle.toLowerCase().match(/stream|live|break/)) {
+
+                        streamVideo = { id: entry.querySelector("videoId").textContent, title: rawTitle, badgeStatus: 'stream' };
+
+                        break;
+
+                    }
+
+                }
+
+                for (let entry of entries) {
+
+                    const rawTitle = entry.querySelector("title").textContent;
+
+                    const id = entry.querySelector("videoId").textContent;
+
+                    if (!rawTitle.toLowerCase().match(/stream|live/) && (!streamVideo || id !== streamVideo.id)) {
+
+                        huntVideo = { id, title: rawTitle };
+
+                        break;
+
+                    }
+
+                }
+
+                
+
+                const videos = [];
+
+                if (streamVideo) videos.push({ ...streamVideo, type: 'stream' });
+
+                if (huntVideo) videos.push({ ...huntVideo, type: 'hunt' });
+
+                
+
+                if (videos.length === 0) { container.innerHTML = '<div style="text-align:center; color:#888;">No videos found</div>'; return; }
+
+                
+
+                let videoHTML = '';
+
+                videos.forEach(v => {
+
+                    const isStream = v.type === 'stream';
+
+                    const badgeHTML = isStream 
+
+                        ? `<div class="yt-label lbl-universal"><i class="ph-fill ph-broadcast"></i> OFFICIAL LIVE FEED</div>`
+
+                        : `<div class="yt-label lbl-hunt"><i class="ph-fill ph-video"></i> LATEST HUNT</div>`;
+
+                    
+
+                    videoHTML += `
+
+                        <div class="neon-card-wrapper">
+
+                            <div class="yt-card glass-panel">
+
+                                <iframe src="https://www.youtube.com/embed/${v.id}?autoplay=${isStream?'1':'0'}&mute=1&playsinline=1&controls=1&modestbranding=1&rel=0" 
+
+                                    style="width:100%; height:100%; border:none;" 
+
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+
+                                </iframe>
+
+                                ${badgeHTML}
+
+                            </div>
+
+                        </div>`;
+
+                });
+
+                container.innerHTML = videoHTML;
+
+            } catch(e) {
+
+                container.innerHTML = `<div style="text-align:center; grid-column:1/-1;"><a href="https://www.youtube.com/@PokeballerMike" target="_blank" class="buy-btn" style="max-width:200px; margin:0 auto;">VISIT CHANNEL</a></div>`;
+
+            }
+
+        }
+
+
+
+        function formatLiteralDate(isoString) {
+
+            if (!isoString) return "";
+
+            const [datePart, timePart] = isoString.split('T');
+
+            const [year, monthNum, day] = datePart.split('-');
+
+            let [hour, minute] = timePart.split(':');
+
+            const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+            const monthStr = months[parseInt(monthNum)-1];
+
+            let ampm = 'AM';
+
+            let h = parseInt(hour);
+
+            if (h >= 12) { ampm = 'PM'; if (h > 12) h -= 12; }
+
+            if (h === 0) h = 12;
+
+            return `${monthStr} ${parseInt(day)} • ${h}:${minute} ${ampm} CST`;
+
+        }
+
+
+
+        async function loadStore() {
+
+            renderSkeletons('store-container', 4);
+
+            const container = document.getElementById('store-container');
+
+            try {
+
+                const res = await fetch(`${API_URL}/items`);
+
+                const items = await res.json();
+
+                if(items.error) { console.error("DB Error:", items.error); return; }
+
+                items.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
+
+                
+
+                let storeHTML = '';
+
+                const now = new Date().getTime();
+
+                let visibleCount = 0;
+
+                
+
+                items.forEach(item => {
+
+                    if (item.hidden) return; 
+
+                    visibleCount++;
+
+
+
+                    const isBaller = item.type === 'baller';
+
+                    const isBundle = item.type === 'bundle';
+
+                    let tagClass = 'tag-msrp', tagText = '<i class="ph-fill ph-seal-check"></i> MSRP BREAK', wrapperClass = '', btnBaseClass = 'buy-btn';
+
+
+
+                    if (isBaller) {
+
+                        tagClass = 'tag-baller'; tagText = '<i class="ph-fill ph-crown"></i> BALLER BUNDLE';
+
+                        wrapperClass = 'card-baller-bundle'; btnBaseClass = 'buy-btn baller-btn';
+
+                    } else if (isBundle) {
+
+                        tagClass = 'tag-bundle'; tagText = '<i class="ph-fill ph-sketch-logo"></i> BUNDLE BREAK';
+
+                    }
+
+                    
+
+                    let timeBadgeHTML = '', dateDisplayHTML = '', startTime = null, endTime = null, isLive = false, isEnded = false;
+
+
+
+                    if (item.scheduleDate) {
+
+                        dateDisplayHTML = `<div class="date-row"><i class="ph-fill ph-calendar-blank"></i> ${formatLiteralDate(item.scheduleDate)}</div>`;
+
+                        startTime = new Date(item.scheduleDate + "-06:00").getTime();
+
+                    }
+
+                    if (item.scheduleEnd) endTime = new Date(item.scheduleEnd + "-06:00").getTime();
+
+
+
+                    if(item.stock <= 0) isEnded = true; 
+
+                    else if (startTime) {
+
+                        if (endTime && now >= endTime) isEnded = true;
+
+                        else if (now >= startTime) isLive = true;
+
+                    }
+
+
+
+                    if (!isEnded) {
+
+                        if (isLive) {
+
+                            timeBadgeHTML = `<div class="time-tag-bottom tag-is-live"><i class="ph-fill ph-broadcast"></i> LIVE NOW</div>`;
+
+                            wrapperClass += ' card-live-now';
+
+                        } else if (startTime) {
+
+                            const endAttr = item.scheduleEnd ? `data-end="${item.scheduleEnd}"` : '';
+
+                            timeBadgeHTML = `<div class="time-tag-bottom countdown-timer" data-date="${item.scheduleDate}" ${endAttr} data-id="${item.id}"><i class="ph-fill ph-clock-countdown"></i> CALC...</div>`;
+
+                        }
+
+                    }
+
+
+
+                    let btnHTML = '';
+
+                    if (isEnded) btnHTML = `<div class="buy-btn sold-out">SOLD OUT</div>`;
+
+                    else if (item.googleFormLink) {
+
+                        let btnText = isLive ? "JOIN LIVE DRAW" : "JOIN BREAK";
+
+                        let btnSub = isLive ? "HAPPENING NOW!" : "RESERVE YOUR SPOT";
+
+                        let finalBtnClass = isLive ? "buy-btn live-btn" : btnBaseClass;
+
+                        btnHTML = `<a href="${item.googleFormLink}" target="_blank" id="btn-${item.id}" class="${finalBtnClass}" onclick="trackClick('${item.id}')">
+
+                                    <span>${btnText}</span><span class="btn-subtext" id="subtext-${item.id}">${btnSub}</span></a>`;
+
+                    } else {
+
+                        btnHTML = `<div class="buy-btn sold-out" style="background:#555; border-color:#777;">COMING SOON</div>`;
+
+                    }
+
+                    
+
+                    const img = item.image || 'https://assets.pokemon.com/assets/cms2/img/misc/trading-card-games/cards/tcg_default_card.png';
+
+                    storeHTML += `
+
+                        <div class="neon-card-wrapper ${wrapperClass}" id="card-${item.id}">
+
+                            <div class="item-card glass-panel">
+
+                                <div class="type-tag ${tagClass}">${tagText}</div>
+
+                                <div class="item-img-box" onclick="openModal('${img}')">
+
+                                    <img src="${img}" class="item-img" alt="${item.name}">
+
+                                    <div id="badge-container-${item.id}">${timeBadgeHTML}</div>
+
+                                </div>
+
+                                <div class="item-content">
+
+                                    <h3>${item.name}</h3>
+
+                                    ${dateDisplayHTML} 
+
+                                    <p>${item.description}</p>
+
+                                    <div class="price-row">
+
+                                        <span class="price">$${item.price.toFixed(2)}</span>
+
+                                        <span class="stock">${item.stock} Break Spots</span>
+
+                                    </div>
+
+                                    <div id="btn-container-${item.id}">${btnHTML}</div>
+
+                                </div>
+
+                            </div>
+
+                        </div>`;
+
+                });
+
+                
+
+                if (visibleCount === 0) {
+
+                    storeHTML = `
+
+                        <div class="epic-empty-wrapper">
+
+                            <div class="epic-empty-inner">
+
+                                <div class="empty-icon-container">
+
+                                    <div class="icon-float-wrapper">
+
+                                        <img src="https://play.pokemonshowdown.com/sprites/xyani/klinklang.gif" class="empty-icon" alt="Klinklang">
+
+                                    </div>
+
+                                </div>
+
+                                <div class="letter-content">
+
+                                    <p style="font-size: 1.6rem; color: #fff; font-weight: 800; margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 1px;">
+
+                                        The Vault is Currently Empty
+
+                                    </p>
+
+                                    <p>Sorry, there are no breaks available at this moment. I'm currently out hitting the shelves at <strong>Costco, Walmart, and Target</strong> to track down the best packs for the next stream.</p>
+
+                                    <p>The hunt never stops! I'm working on securing some massive sets and exclusive bundles for you guys right now.</p>
+
+                                    <p>Please keep dropping in and make sure to <strong>sign up for notifications</strong> by hitting the <i class="ph-fill ph-bell-ringing" style="color:var(--accent-gold); vertical-align: middle;"></i> bell icon above so you're the first to know when the new stock drops.</p>
+
+                                    <p style="color: var(--accent-cyan); font-weight: 700; font-size: 1.4rem; margin-top: 3rem; margin-bottom: 0;">Catch you on the next hunt!</p>
+
+                                    <h3 style="color: #fff; font-size: 1.2rem; margin-top: 1.5rem; text-shadow: 0 0 15px var(--accent-cyan); text-transform: uppercase; letter-spacing: 2px;">— Pokeballer Mike</h3>
+
+                                </div>
+
+                            </div>
+
+                        </div>`;
+
+                }
+
+                container.innerHTML = storeHTML;
+
+                startCountdownTimer();
+
+            } catch(e) { console.error(e); }
+
+        }
+
+
+
+        function updateTimers() {
+
+            const timers = document.querySelectorAll('.countdown-timer');
+
+            const now = new Date().getTime();
+
+            timers.forEach(timer => {
+
+                const dateStr = timer.dataset.date, endDateStr = timer.dataset.end, itemId = timer.dataset.id;
+
+                const startTarget = new Date(dateStr + "-06:00").getTime();
+
+                let endTarget = endDateStr ? new Date(endDateStr + "-06:00").getTime() : null;
+
+
+
+                if (endTarget && now >= endTarget) {
+
+                    const btnContainer = document.getElementById(`btn-container-${itemId}`);
+
+                    if(btnContainer && !btnContainer.innerHTML.includes('SOLD OUT')) btnContainer.innerHTML = `<div class="buy-btn sold-out">SOLD OUT</div>`;
+
+                    const badgeContainer = document.getElementById(`badge-container-${itemId}`);
+
+                    if(badgeContainer) badgeContainer.innerHTML = '';
+
+                    const card = document.getElementById(`card-${itemId}`);
+
+                    if(card) card.classList.remove('card-live-now');
+
+                    return;
+
+                }
+
+
+
+                const distance = startTarget - now;
+
+                if (distance < 0) {
+
+                    const badgeContainer = document.getElementById(`badge-container-${itemId}`);
+
+                    if(badgeContainer && !badgeContainer.innerHTML.includes('LIVE NOW')) badgeContainer.innerHTML = `<div class="time-tag-bottom tag-is-live"><i class="ph-fill ph-broadcast"></i> LIVE NOW</div>`;
+
+                    const card = document.getElementById(`card-${itemId}`);
+
+                    if(card) card.classList.add('card-live-now');
+
+                    const btnContainer = document.getElementById(`btn-container-${itemId}`);
+
+                    const anchor = btnContainer?.querySelector('a');
+
+                    if(anchor && !anchor.classList.contains('live-btn')) {
+
+                        anchor.className = "buy-btn live-btn";
+
+                        anchor.querySelector('span').innerText = "JOIN LIVE DRAW";
+
+                        anchor.querySelector('.btn-subtext').innerText = "HAPPENING NOW!";
+
+                    }
+
+                } else {
+
+                    const d = Math.floor(distance / 86400000), h = Math.floor((distance % 86400000) / 3600000), m = Math.floor((distance % 3600000) / 60000), s = Math.floor((distance % 60000) / 1000);
+
+                    timer.innerHTML = `<i class="ph-fill ph-clock-countdown"></i> ${d > 0 ? d + 'd ' : ''}${h}h ${m}m ${s}s`;
+
+                }
+
+            });
+
+        }
+
+
+
+        function startCountdownTimer() { updateTimers(); setInterval(updateTimers, 1000); }
+
+        function trackClick(id) { fetch(`${API_URL}/click`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: id }), keepalive: true }).catch(() => {}); return true; }
+
+        
+
+        loadVideos();
+
+        loadStore();
+
+
+
+        function openModal(src) { document.getElementById("myModal").style.display = "flex"; document.getElementById("img01").src = src; }
+
+        function closeModal() { document.getElementById("myModal").style.display = "none"; }
+
+        document.addEventListener('keydown', e => { if (e.key === "Escape") closeModal(); });
+
+    </script>
+
+</body>
+
+</html>
+
+
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>PBM Admin</title>
+
+    <link rel="icon" type="image/svg+xml" href="https://upload.wikimedia.org/wikipedia/commons/5/53/Pok%C3%A9_Ball_icon.svg">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+
+        :root { --bg: #0a0a15; --card: rgba(26,26,46,0.95); --accent: #00eeff; --purple: #9d4edd; --text: #ffffff; --gold: #ffd700; }
+
+        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; padding: 1.5rem; min-height: 100vh; }
+
+        .suicune-bg { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 800px; opacity: 0.1; z-index: -1; pointer-events: none; filter: drop-shadow(0 0 80px var(--accent)); }
+
+        .container { max-width: 600px; margin: 0 auto; position: relative; z-index: 1; }
+
+        h1 { text-align: center; color: var(--accent); margin-bottom: 2rem; font-weight: 900; font-size: 2rem; }
+
+        .card { background: var(--card); padding: 1.5rem; border-radius: 16px; border: 1px solid rgba(0,238,255,0.2); margin-bottom: 1.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+
+        label { display: block; margin-bottom: 0.5rem; color: #aaa; font-weight: 600; font-size: 0.85rem; }
+
+        input, select { width: 100%; padding: 12px; margin-bottom: 1rem; background: rgba(0,0,0,0.5); border: 1px solid #444; color: white; border-radius: 8px; font-size: 1rem; }
+
+        input:focus, select:focus { outline: none; border-color: var(--accent); }
+
+        
+
+        /* DATE PICKER STYLE */
+
+        input[type="datetime-local"] { color-scheme: dark; cursor: pointer; border: 1px solid var(--accent); }
+
+        
+
+        button { width: 100%; padding: 1rem; background: linear-gradient(135deg, var(--accent), var(--purple)); color: white; font-weight: 900; border: none; border-radius: 8px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; font-size: 1rem; }
+
+        ul { padding: 0; margin: 0; }
+
+        li { background: rgba(255,255,255,0.05); padding: 1rem; margin-bottom: 1rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); list-style: none; display: flex; flex-direction: column; gap: 1rem; }
+
+        .item-content { flex: 1; }
+
+        .item-header { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; flex-wrap: wrap; }
+
+        .item-title { font-weight: 700; font-size: 1.1rem; line-height: 1.3; }
+
+        .item-meta { font-size: 0.85rem; color: #888; margin-top: 5px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;}
+
+        
+
+        /* --- ADMIN BADGES --- */
+
+        .badge { padding: 4px 10px; font-size: 0.7rem; border-radius: 6px; font-weight: 800; text-transform: uppercase; white-space: nowrap; flex-shrink: 0; display: flex; align-items: center; gap: 4px; }
+
+        .b-msrp { color: #00ff9d; border: 1px solid #00ff9d; background: linear-gradient(135deg, rgba(0, 255, 157, 0.15), transparent); }
+
+        .b-bundle { color: #f0dfff; border: 1px solid var(--purple); background: linear-gradient(135deg, rgba(213, 0, 255, 0.25), rgba(100, 0, 255, 0.15)); }
+
+        .b-baller { background: var(--gold); color: #000; border: 1px solid var(--gold); box-shadow: 0 0 10px rgba(255, 215, 0, 0.4); }
+
+        .b-hidden { background: rgba(255, 68, 68, 0.2); color: #ff6666; border: 1px solid #ff4444; }
+
+        .b-time { background: rgba(157, 78, 221, 0.2); color: #e0aaff; border: 1px solid var(--purple); }
+
+        .click-badge { background: rgba(0, 184, 255, 0.15); color: #00b8ff; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
+
+        
+
+        .btn-group { display: flex; gap: 10px; width: 100%; }
+
+        .btn-group button { padding: 10px; font-size: 0.9rem; flex: 1; }
+
+        .btn-edit { background: #00b8ff; box-shadow: none; }
+
+        .btn-del { background: #ff0055; box-shadow: none; }
+
+        @media(min-width: 600px) { li { flex-direction: row; align-items: center; } .btn-group { width: auto; flex-shrink: 0; } .btn-group button { width: auto; padding: 8px 16px; } }
+
+        #login-section { display: block; } #admin-section { display: none; }
+
+    </style>
+
+</head>
+
+<body>
+
+    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="suicune-bg">
+
+    <div class="container">
+
+        <h1>PBM ADMIN</h1>
+
+        <div id="login-section" class="card">
+
+            <label>Username</label><input type="text" id="login-username">
+
+            <label>Password</label><input type="password" id="login-password">
+
+            <button onclick="login()">ENTER SYSTEM</button>
+
+        </div>
+
+        <div id="admin-section">
+
+            <div class="card">
+
+                <h3 style="margin-top:0; margin-bottom:1rem;">Add / Edit Item</h3>
+
+                <div style="display:flex; gap:10px;">
+
+                    <div style="flex:1">
+
+                        <label>Break Type</label>
+
+                        <select id="item-type">
+
+                            <option value="msrp">✅ MSRP Break (Standard)</option>
+
+                            <option value="bundle">💎 Bundle Break (Premium)</option>
+
+                            <option value="baller">👑 BALLER BUNDLE (Super Premium)</option>
+
+                        </select>
+
+                    </div>
+
+                    <div style="flex:1">
+
+                        <label>Visibility</label>
+
+                        <select id="item-hidden" style="border: 1px solid #555;"><option value="false">👁️ Public</option><option value="true" style="color:#ff6666">🚫 Hidden</option></select>
+
+                    </div>
+
+                </div>
+
+                
+
+                <div style="display:flex; gap:10px; margin-bottom: 0.5rem;">
+
+                    <div style="flex:1">
+
+                        <label>🟢 Start Time (Go Live)</label>
+
+                        <input type="datetime-local" id="item-schedule-date">
+
+                    </div>
+
+                    <div style="flex:1">
+
+                        <label>🔴 Close Time (Auto Sell Out)</label>
+
+                        <input type="datetime-local" id="item-schedule-end">
+
+                    </div>
+
+                </div>
+
+                
+
+                <label>Name</label><input type="text" id="item-name">
+
+                <label>Description</label><input type="text" id="item-description">
+
+                <div style="display:flex; gap:10px;">
+
+                    <div style="flex:1"><label>Price</label><input type="number" id="item-price"></div>
+
+                    <div style="flex:1"><label>Stock (Visual)</label><input type="number" id="item-stock"></div>
+
+                </div>
+
+                <label>Form Link</label><input type="url" id="item-google-form-link">
+
+                <label>Image</label><input type="file" id="item-image">
+
+                <button id="submit-btn" onclick="submitItem()">Save Item</button>
+
+            </div>
+
+            <h3 style="color:#888; font-size:0.9rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:1rem;">Inventory</h3>
+
+            <ul id="item-list"></ul>
+
+            <button onclick="logout()" style="background:#333; margin-top:2rem;">Log Out</button>
+
+            <a href="index.html" style="display:block; text-align:center; margin-top:1rem; color:#666; text-decoration:none;">Back to Store</a>
+
+        </div>
+
     </div>
 
     <script>
+
         const API_URL = 'https://pokeballer-worker.kronborgnielsen.workers.dev/api';
-        let loggedInEmail = localStorage.getItem('bidderEmail') || null;
-        let loggedInName = localStorage.getItem('bidderName') || null;
-        let lastKnownState = {}; 
 
-        const sfxBid = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
-        const sfxWin = new Audio('https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3');
-        const sfxLose = new Audio('https://assets.mixkit.co/active_storage/sfx/2997/2997-preview.mp3');
-        sfxBid.volume = 0.5; sfxWin.volume = 0.7; sfxLose.volume = 0.5;
+        
 
-        function playSound(type) {
-            try { 
-                if(type === 'bid') { sfxBid.currentTime=0; sfxBid.play().catch(e=>{}); }
-                if(type === 'win') { sfxWin.currentTime=0; sfxWin.play().catch(e=>{}); }
-                if(type === 'lose') { sfxLose.currentTime=0; sfxLose.play().catch(e=>{}); }
-            } catch(e) {}
+        let allItems = [];
+
+        let editingId = null;
+
+        let currentImage = '';
+
+        let currentCreatedAt = null;
+
+        let currentClicks = 0; 
+
+
+
+        if(localStorage.getItem('adminToken')) {
+
+            document.getElementById('login-section').style.display='none';
+
+            document.getElementById('admin-section').style.display='block';
+
+            loadItems();
+
         }
 
-        function openModal(src) { document.getElementById("myModal").style.display = "flex"; document.getElementById("img01").src = src; }
-        function closeModal() { document.getElementById("myModal").style.display = "none"; }
-        document.addEventListener('keydown', e => { if (e.key === "Escape") closeModal(); });
 
-        function renderSkeletons(containerId, count) {
-            const container = document.getElementById(containerId);
-            container.innerHTML = ''; let html = '';
-            for(let i=0; i<count; i++) html += `<div class="skeleton"></div>`;
-            container.innerHTML = html;
-        }
 
-        async function loadVideos() {
-            renderSkeletons('yt-container', 2);
-            const container = document.getElementById('yt-container');
+        async function login() {
+
+            const u = document.getElementById('login-username').value;
+
+            const p = document.getElementById('login-password').value;
+
             try {
-                const res = await fetch(`${API_URL}/youtube?t=${Date.now()}`);
-                if(!res.ok) throw new Error();
-                const text = await res.text();
-                const doc = new DOMParser().parseFromString(text, "text/xml");
-                const entries = Array.from(doc.querySelectorAll("entry")).slice(0, 20);
-                
-                let streamVideo = null, huntVideo = null;
-                for (let entry of entries) {
-                    const rawTitle = entry.querySelector("title").textContent;
-                    if (rawTitle.toLowerCase().match(/stream|live|break/)) {
-                        streamVideo = { id: entry.querySelector("videoId").textContent, title: rawTitle, badgeStatus: 'stream' };
-                        break;
-                    }
-                }
-                for (let entry of entries) {
-                    const rawTitle = entry.querySelector("title").textContent;
-                    const id = entry.querySelector("videoId").textContent;
-                    if (!rawTitle.toLowerCase().match(/stream|live/) && (!streamVideo || id !== streamVideo.id)) {
-                        huntVideo = { id, title: rawTitle };
-                        break;
-                    }
-                }
-                
-                const videos = [];
-                if (streamVideo) videos.push({ ...streamVideo, type: 'stream' });
-                if (huntVideo) videos.push({ ...huntVideo, type: 'hunt' });
-                
-                if (videos.length === 0) { container.innerHTML = '<div style="text-align:center; color:#888;">No videos found</div>'; return; }
-                
-                let videoHTML = '';
-                videos.forEach(v => {
-                    const isStream = v.type === 'stream';
-                    const badgeHTML = isStream ? `<div class="yt-label lbl-universal"><i class="ph-fill ph-broadcast"></i> OFFICIAL LIVE FEED</div>` : `<div class="yt-label lbl-hunt"><i class="ph-fill ph-video"></i> LATEST HUNT</div>`;
-                    videoHTML += `
-                        <div class="neon-card-wrapper" style="border-radius:26px;">
-                            <div class="yt-card glass-panel" style="border-radius:24px;">
-                                <iframe src="https://www.youtube.com/embed/${v.id}?autoplay=${isStream?'1':'0'}&mute=1&playsinline=1&controls=1&modestbranding=1&rel=0" style="width:100%; height:100%; border:none;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                                ${badgeHTML}
-                            </div>
-                        </div>`;
-                });
-                container.innerHTML = videoHTML;
-            } catch(e) {
-                container.innerHTML = `<div style="text-align:center; grid-column:1/-1;"><a href="https://www.youtube.com/@PokeballerMike" target="_blank" class="buy-btn" style="max-width:200px; margin:0 auto;">VISIT CHANNEL</a></div>`;
-            }
-        }
 
-        if (loggedInEmail) {
-            document.getElementById('user-profile').style.display = 'flex';
-            document.getElementById('user-name-display').innerText = loggedInName;
-        }
+                const res = await fetch(`${API_URL}/login`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({username:u, password:p}) });
 
-        function parseJwt(token) {
-            var base64Url = token.split('.')[1];
-            var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-            return JSON.parse(decodeURIComponent(window.atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')));
-        }
-
-        function handleGoogleLogin(response) {
-            const data = parseJwt(response.credential);
-            loggedInEmail = data.email; loggedInName = data.name; 
-            localStorage.setItem('bidderEmail', loggedInEmail); localStorage.setItem('bidderName', loggedInName);
-            document.getElementById('user-profile').style.display = 'flex';
-            document.getElementById('user-name-display').innerText = loggedInName;
-            showToast(`Welcome back, ${loggedInName}!`, 'success');
-            loadStore();
-        }
-
-        function logoutUser() {
-            loggedInEmail = null; loggedInName = null;
-            localStorage.removeItem('bidderEmail'); localStorage.removeItem('bidderName');
-            document.getElementById('user-profile').style.display = 'none';
-            loadStore();
-        }
-
-        function showToast(message, type = 'info') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.innerHTML = message;
-            container.appendChild(toast);
-            setTimeout(() => {
-                toast.style.animation = 'fadeOut 0.4s forwards';
-                setTimeout(() => toast.remove(), 400);
-            }, 4000);
-        }
-
-        function generateBidHistoryHTML(historyArray) {
-            if (!historyArray || historyArray.length === 0) return `<div style="text-align:center; color:#888; padding: 20px 0;">No bids yet.</div>`;
-            return historyArray.slice(-5).map(bid => `
-                <div class="bid-entry">
-                    <span class="name"><i class="ph-fill ph-user-circle"></i> ${bid.name}</span>
-                    <span class="amount">$${parseFloat(bid.amount).toFixed(2)}</span>
-                </div>
-            `).join('');
-        }
-
-        async function submitBid(itemId) {
-            const inputEl = document.getElementById(`bid-val-${itemId}`);
-            const bidAmount = parseFloat(inputEl.value);
-            const currentPrice = parseFloat(document.getElementById(`price-val-${itemId}`).innerText.replace('$',''));
-            
-            if (!bidAmount || bidAmount < currentPrice + 1) {
-                showToast("Bid must be at least $1 higher than current price!", "error");
-                inputEl.value = currentPrice + 1;
-                return;
-            }
-
-            inputEl.disabled = true;
-            try {
-                const res = await fetch(`${API_URL}/bid`, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ itemId, bidAmount, userEmail: loggedInEmail, userName: loggedInName })
-                });
                 const data = await res.json();
-                
-                if (data.error) {
-                    showToast(data.error, "error");
-                } else {
-                    document.getElementById(`price-val-${itemId}`).innerText = `$${parseFloat(data.newPrice).toFixed(2)}`;
-                    inputEl.value = parseFloat(data.newPrice) + 1;
-                    document.getElementById(`history-${itemId}`).innerHTML = generateBidHistoryHTML(data.bidHistory);
-                    
-                    const badgeStatus = document.getElementById(`badge-status-${itemId}`);
-                    const shellClass = document.getElementById(`card-${itemId}`);
-                    
-                    if (data.isWinning) {
-                        playSound('bid');
-                        showToast(data.message, "success");
-                        shellClass.classList.remove('state-outbid'); shellClass.classList.add('state-winning');
-                        badgeStatus.className = "status-badge state-winning-badge"; badgeStatus.innerText = "YOU HOLD THE HIGH BID";
-                    } else {
-                        playSound('lose');
-                        showToast(data.message, "error");
-                        shellClass.classList.remove('state-winning'); shellClass.classList.add('state-outbid');
-                        badgeStatus.className = "status-badge state-outbid-badge"; badgeStatus.innerText = "YOU HAVE BEEN OUTBID!";
-                    }
-                }
-            } catch (e) { showToast("Network error.", "error"); }
-            inputEl.disabled = false;
+
+                if(data.success) { localStorage.setItem('adminToken','1'); location.reload(); } 
+
+                else alert('Invalid Credentials.');
+
+            } catch(e) { alert('Server Error. Check console.'); }
+
         }
 
-        function formatLiteralDate(isoString) {
-            if (!isoString) return "";
-            try {
-                const [datePart, timePart] = isoString.split('T');
-                if(!timePart) return isoString;
-                const [year, monthNum, day] = datePart.split('-');
-                let [hour, minute] = timePart.split(':');
-                const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-                let h = parseInt(hour); let ampm = h >= 12 ? 'PM' : 'AM';
-                if (h > 12) h -= 12; if (h === 0) h = 12;
-                return `${months[parseInt(monthNum)-1]} ${parseInt(day)} • ${h}:${minute} ${ampm} CST`;
-            } catch(e) { return isoString; }
-        }
 
-        async function loadStore() {
-            renderSkeletons('store-container', 4);
-            const container = document.getElementById('store-container');
+
+        async function submitItem() {
+
+            const btn = document.getElementById('submit-btn');
+
+            btn.innerText = "Saving...";
+
             
+
+            const type = document.getElementById('item-type').value;
+
+            const hidden = document.getElementById('item-hidden').value === 'true';
+
+            
+
+            // GRAB BOTH DATES
+
+            const scheduleDate = document.getElementById('item-schedule-date').value; 
+
+            const scheduleEnd = document.getElementById('item-schedule-end').value; 
+
+            
+
+            const name = document.getElementById('item-name').value;
+
+            const desc = document.getElementById('item-description').value;
+
+            const price = parseFloat(document.getElementById('item-price').value);
+
+            const stock = parseInt(document.getElementById('item-stock').value);
+
+            const form = document.getElementById('item-google-form-link').value;
+
+            const file = document.getElementById('item-image').files[0];
+
+
+
+            let img = editingId ? currentImage : '';
+
+            if(file) {
+
+                const reader = new FileReader();
+
+                reader.readAsDataURL(file);
+
+                await new Promise(r => reader.onload = () => { img = reader.result; r(); });
+
+            }
+
+
+
+            const body = { 
+
+                type, name, description:desc, price, stock, googleFormLink:form, image:img, 
+
+                clickCount: editingId ? currentClicks : 0,
+
+                createdAt: editingId ? currentCreatedAt : Date.now(),
+
+                hidden: hidden,
+
+                scheduleDate: scheduleDate,
+
+                scheduleEnd: scheduleEnd // SENDING END DATE
+
+            };
+
+            
+
+            const url = editingId ? `${API_URL}/items/${editingId}` : `${API_URL}/items`;
+
+            const method = editingId ? 'PUT' : 'POST';
+
+
+
             try {
-                const res = await fetch(`${API_URL}/items?t=${Date.now()}`);
-                if (!res.ok) throw new Error("Network response was not ok");
+
+                const response = await fetch(url, { method, headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
+
+                if(response.status === 500) { alert("SERVER ERROR"); btn.innerText = "Save Failed"; return; }
+
+
+
+                editingId = null; currentImage = ''; currentCreatedAt = null; currentClicks = 0;
+
                 
-                const rawText = await res.text();
-                if (!rawText) throw new Error("Empty DB response");
-                const items = JSON.parse(rawText);
-                if(items.error) throw new Error(items.error);
+
+                document.getElementById('item-name').value = '';
+
+                document.getElementById('item-description').value = '';
+
+                document.getElementById('item-price').value = '';
+
+                document.getElementById('item-stock').value = '';
+
+                document.getElementById('item-google-form-link').value = '';
+
+                document.getElementById('item-image').value = '';
+
+                document.getElementById('item-type').value = 'msrp';
+
+                document.getElementById('item-hidden').value = 'false';
+
+                document.getElementById('item-schedule-date').value = ''; 
+
+                document.getElementById('item-schedule-end').value = ''; 
+
+                btn.innerText = "Save Item";
+
+                
+
+                loadItems();
+
+            } catch(e) { alert("Save Failed."); btn.innerText = "Save Failed"; }
+
+        }
+
+
+
+        // --- SAFE FORMATTER ---
+
+        function formatLiteralDate(val) {
+
+            if (!val) return "";
+
+            if (val.indexOf('T') === -1) return val;
+
+            try {
+
+                const [datePart, timePart] = val.split('T');
+
+                if(!timePart) return val;
+
+                const [year, month, day] = datePart.split('-');
+
+                let [hour, minute] = timePart.split(':');
+
+                let h = parseInt(hour);
+
+                let ampm = 'AM';
+
+                if (h >= 12) { ampm = 'PM'; if (h > 12) h -= 12; }
+
+                if (h === 0) h = 12;
+
+                return `${month}/${day}, ${h}:${minute} ${ampm}`;
+
+            } catch(e) { return val; }
+
+        }
+
+
+
+        async function loadItems() {
+
+            try {
+
+                const res = await fetch(`${API_URL}/items`);
+
+                const items = await res.json();
+
+                
+
+                if(items.error) { alert("DATABASE ERROR: " + items.error); return; }
+
+
 
                 items.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
-                
-                let storeHTML = '';
-                const now = Date.now();
-                let visibleCount = 0;
-                
+
+                allItems = items;
+
+
+
+                const list = document.getElementById('item-list');
+
+                list.innerHTML = '';
+
                 items.forEach(item => {
-                    try {
-                        if (item.hidden) return; 
-                        visibleCount++;
 
-                        const isAuction = item.priceType === 'auction';
-                        const safePrice = parseFloat(item.price) || 0;
-                        const safeStock = parseInt(item.stock) || 0;
-                        
-                        let tagClass = 'tag-msrp', tagText = 'MSRP BREAK', wrapperClass = '';
-                        if (item.type === 'pbm_auction') {
-                            tagClass = 'tag-pbm-auction'; tagText = '🔥 PBM AUCTION'; wrapperClass = 'card-pbm-auction';
-                        } else if (item.type === 'baller') {
-                            tagClass = 'tag-baller'; tagText = '👑 BALLER BUNDLE'; wrapperClass = 'card-baller-bundle';
-                        } else if (item.type === 'bundle') {
-                            tagClass = 'tag-bundle'; tagText = '💎 BUNDLE BREAK';
-                        } else if (isAuction) {
-                            tagClass = 'tag-auction'; tagText = '⚖️ LIVE AUCTION';
-                        }
+                    let badgeClass = 'b-msrp';
 
-                        let startTime = item.scheduleDate ? new Date(item.scheduleDate + "-06:00").getTime() : null;
-                        let endTime = item.scheduleEnd ? new Date(item.scheduleEnd + "-06:00").getTime() : null;
-                        let isEnded = safeStock <= 0 || (endTime && now >= endTime);
-                        let isLive = !isEnded && startTime && now >= startTime;
+                    let badgeText = 'MSRP';
 
-                        let timeHTML = '';
-                        if (!isEnded) {
-                            if (isLive) timeHTML = `<div class="time-tag-bottom tag-is-live">LIVE NOW</div>`;
-                            else if (startTime) timeHTML = `<div class="time-tag-bottom countdown-timer" data-date="${item.scheduleDate}" data-end="${item.scheduleEnd||''}" data-id="${item.id}">CALC...</div>`;
-                        }
 
-                        lastKnownState[item.id] = { price: safePrice, topBidder: item.topBidder, isEnded: isEnded };
 
-                        let stateClass = wrapperClass; 
-                        let statusText = '';
-                        let badgeClassStr = 'status-badge';
+                    if (item.type === 'baller') {
 
-                        if (isAuction && !isEnded && item.topBidder) {
-                            if (item.topBidder === loggedInEmail) {
-                                stateClass += ' state-winning'; statusText = 'YOU HOLD THE HIGH BID'; badgeClassStr += ' state-winning-badge';
-                            } else if (item.bidHistory && item.bidHistory.some(b => b.email === loggedInEmail)) {
-                                stateClass += ' state-outbid'; statusText = 'YOU HAVE BEEN OUTBID!'; badgeClassStr += ' state-outbid-badge';
-                            }
-                        }
+                        badgeClass = 'b-baller';
 
-                        let actionArea = ''; let priceArea = ''; let histArea = '';
+                        badgeText = '<i class="ph-fill ph-crown"></i> BALLER';
 
-                        if (isEnded) {
-                            priceArea = `<span class="price">$${safePrice.toFixed(2)}</span>`;
-                            actionArea = `<div class="buy-btn sold-out"><span style="color:#666;">SOLD OUT</span></div>`;
-                            if(isAuction) histArea = `<div class="bid-history-box" id="history-${item.id}">${generateBidHistoryHTML(item.bidHistory)}</div>`;
-                        } else if (isAuction) {
-                            histArea = `<div class="bid-history-box" id="history-${item.id}">${generateBidHistoryHTML(item.bidHistory)}</div>`;
-                            priceArea = `<div style="display:flex; flex-direction:column;"><span style="font-size:0.75rem; color:var(--accent-purple); font-weight:bold;">CURRENT BID</span><span class="price" id="price-val-${item.id}">$${safePrice.toFixed(2)}</span></div>`;
-                            
-                            if (!loggedInEmail) {
-                                actionArea = `<div style="text-align:center; margin-top:10px;"><div style="font-size:0.8rem; color:#aaa; margin-bottom:5px;">Sign in with Google to bid</div><div id="g-btn-${item.id}" style="display:flex; justify-content:center;"></div></div>`;
-                            } else {
-                                actionArea = `
-                                    <div class="bid-input-container">
-                                        <div class="bid-input-row">
-                                            <input type="number" id="bid-val-${item.id}" class="bid-input" value="${safePrice + 1}" min="${safePrice + 1}" placeholder="Max Bid">
-                                            <button class="submit-bid-btn" onclick="submitBid('${item.id}')">BID</button>
-                                        </div>
-                                        <div class="proxy-helper-text">Enter your max bid. The system will auto-bid for you.</div>
-                                    </div>`;
-                            }
-                        } else {
-                            priceArea = `<span class="price">$${safePrice.toFixed(2)}</span>`;
-                            actionArea = `<a href="${item.googleFormLink || '#'}" target="_blank" class="buy-btn"><span>${isLive ? "JOIN LIVE DRAW" : "JOIN BREAK"}</span><span class="btn-subtext">RESERVE YOUR SPOT</span></a>`;
-                        }
+                    } else if (item.type === 'bundle') {
 
-                        const img = item.image || 'https://assets.pokemon.com/assets/cms2/img/misc/trading-card-games/cards/tcg_default_card.png';
-                        
-                        storeHTML += `
-                            <div class="store-item-shell" id="shell-${item.id}">
-                                <div class="${badgeClassStr}" id="badge-status-${item.id}">${statusText}</div>
-                                <div class="neon-card-wrapper ${stateClass}" id="card-${item.id}">
-                                    <div class="glass-panel">
-                                        <div class="type-tag ${tagClass}">${tagText}</div>
-                                        <div class="item-img-box" onclick="openModal('${img}')">
-                                            <img src="${img}" class="item-img">
-                                            <div id="badge-container-${item.id}">${timeHTML}</div>
-                                        </div>
-                                        <div class="item-content">
-                                            <h3>${item.name}</h3>
-                                            ${item.scheduleDate ? `<div class="date-row"><i class="ph-fill ph-calendar-blank"></i> ${formatLiteralDate(item.scheduleDate)}</div>` : ''}
-                                            <p style="color:#aaa; font-size:0.9rem;">${item.description}</p>
-                                            <div class="price-row">${priceArea}<span class="stock">${safeStock} Spots</span></div>
-                                            ${histArea}
-                                            <div style="margin-top:15px;" id="btn-container-${item.id}">${actionArea}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>`;
-                    } catch(err) {
-                        console.error("Error rendering item:", item, err);
+                        badgeClass = 'b-bundle';
+
+                        badgeText = '<i class="ph-fill ph-sketch-logo"></i> BUNDLE';
+
                     }
-                });
-                
-                if (visibleCount === 0) {
-                    storeHTML = `
-                        <div class="epic-empty-wrapper">
-                            <div class="epic-empty-inner">
-                                <div class="empty-icon-container">
-                                    <div class="icon-float-wrapper"><img src="https://play.pokemonshowdown.com/sprites/xyani/klinklang.gif" class="empty-icon" alt="Klinklang"></div>
-                                </div>
-                                <div class="letter-content">
-                                    <p style="font-size: 1.6rem; color: #fff; font-weight: 800; margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 1px;">The Vault is Currently Empty</p>
-                                    <p>Sorry, there are no breaks available at this moment. I'm currently out hitting the shelves to track down the best packs for the next stream.</p>
-                                    <p>The hunt never stops! I'm working on securing some massive sets and exclusive bundles for you guys right now.</p>
-                                    <p>Please keep dropping in and make sure to <strong>sign up for notifications</strong> so you're the first to know when the new stock drops.</p>
-                                    <p style="color: var(--accent-cyan); font-weight: 700; font-size: 1.4rem; margin-top: 3rem; margin-bottom: 0;">Catch you on the next hunt!</p>
-                                    <h3 style="color: #fff; font-size: 1.2rem; margin-top: 1.5rem; text-shadow: 0 0 15px var(--accent-cyan); text-transform: uppercase; letter-spacing: 2px;">— Pokeballer Mike</h3>
-                                </div>
-                            </div>
-                        </div>`;
-                }
-                
-                container.innerHTML = storeHTML;
 
-                if (!loggedInEmail) {
-                    items.forEach(i => {
-                        if (i.priceType === 'auction' && !lastKnownState[i.id].isEnded && document.getElementById(`g-btn-${i.id}`)) {
-                            google.accounts.id.renderButton(document.getElementById(`g-btn-${i.id}`), { theme: "filled_black", size: "large", width: "100%" });
-                        }
-                    });
-                }
-            } catch (err) {
-                container.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:#ff4444; padding:3rem; background:rgba(0,0,0,0.5); border-radius:20px; border:1px solid #ff4444;">⚠️ Unable to load the vault database. Error: ${err.message}</div>`;
-            }
+                    
+
+                    const hiddenBadge = item.hidden ? '<span class="badge b-hidden"><i class="ph-fill ph-eye-slash"></i> HIDDEN</span>' : '';
+
+                    const opacity = item.hidden ? 'opacity: 0.6;' : '';
+
+                    
+
+                    let timeBadge = '';
+
+                    if (item.scheduleDate) {
+
+                        const start = formatLiteralDate(item.scheduleDate);
+
+                        const end = item.scheduleEnd ? formatLiteralDate(item.scheduleEnd) : '...';
+
+                        // Shows simplified range: 10/24 8:00 PM -> 10:00 PM
+
+                        timeBadge = `<span class="badge b-time"><i class="ph-fill ph-clock"></i> ${start} ➔ ${end}</span>`;
+
+                    }
+
+
+
+                    list.innerHTML += `
+
+                        <li style="${opacity}">
+
+                            <div class="item-content">
+
+                                <div class="item-header">
+
+                                    <span class="item-title">${item.name}</span>
+
+                                    ${hiddenBadge}
+
+                                    <span class="badge ${badgeClass}">${badgeText}</span> 
+
+                                </div>
+
+                                <div class="item-meta">
+
+                                    ${timeBadge}
+
+                                </div>
+
+                                <div class="item-meta">
+
+                                    <span>$${item.price}</span>
+
+                                    <span>• Stock: ${item.stock}</span>
+
+                                    <span class="click-badge">🖱️ ${item.clickCount||0}</span>
+
+                                </div>
+
+                            </div>
+
+                            <div class="btn-group">
+
+                                <button class="btn-edit" onclick="startEditing('${item.id}')">Edit</button>
+
+                                <button class="btn-del" onclick="deleteItem('${item.id}')">Del</button>
+
+                            </div>
+
+                        </li>`;
+
+                });
+
+            } catch(e) { console.error("Load Error", e); }
+
         }
 
-        setInterval(async () => {
+
+
+        function startEditing(id) {
+
+            const item = allItems.find(i => i.id === id);
+
+            if(item) {
+
+                editingId = item.id; 
+
+                currentImage = item.image; 
+
+                currentCreatedAt = item.createdAt;
+
+                currentClicks = item.clickCount || 0; 
+
+                document.getElementById('item-type').value = item.type || 'msrp';
+
+                document.getElementById('item-hidden').value = item.hidden ? 'true' : 'false';
+
+                
+
+                // POPULATE BOTH DATES
+
+                const dateVal = item.scheduleDate || '';
+
+                if(dateVal.indexOf('T') > -1) document.getElementById('item-schedule-date').value = dateVal;
+
+                else document.getElementById('item-schedule-date').value = ''; 
+
+                
+
+                const endVal = item.scheduleEnd || '';
+
+                if(endVal.indexOf('T') > -1) document.getElementById('item-schedule-end').value = endVal;
+
+                else document.getElementById('item-schedule-end').value = '';
+
+
+
+                document.getElementById('item-name').value = item.name;
+
+                document.getElementById('item-description').value = item.description;
+
+                document.getElementById('item-price').value = item.price;
+
+                document.getElementById('item-stock').value = item.stock;
+
+                document.getElementById('item-google-form-link').value = item.googleFormLink;
+
+                document.getElementById('submit-btn').innerText = "Update Item";
+
+                window.scrollTo(0,0);
+
+            }
+
+        }
+
+
+
+        async function deleteItem(id) { if(confirm('Delete?')) { await fetch(`${API_URL}/items/${id}`, {method:'DELETE'}); loadItems(); } }
+
+        function logout() { localStorage.removeItem('adminToken'); location.reload(); }
+
+    </script>
+
+</body>
+
+</html>
+
+
+
+would i be able to choose between fix price, or auction mode when adding the price
+
+Gemini said
+You stopped this response
+You said
+maybe i should have like an extra bundle, like a promo bundle. could you make that it should also stand out <!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>PBM Breaks - The Crystal League</title>
+
+    
+
+    <link rel="icon" type="image/svg+xml" href="https://upload.wikimedia.org/wikipedia/commons/5/53/Pok%C3%A9_Ball_icon.svg">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+
+        :root {
+
+            --bg-dark: #02020a;
+
+            --accent-cyan: #00fff2;
+
+            --accent-purple: #d500ff;
+
+            --accent-gold: #ffd700;
+
+            --accent-live: #ff0040;
+
+            --text-bright: #ffffff;
+
+            --text-dim: #b0b0d0;
+
+            --guardian-size: clamp(120px, 14vw, 200px);
+
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; }
+
+        
+
+        body {
+
+            font-family: 'Inter', sans-serif;
+
+            background: var(--bg-dark);
+
+            color: var(--text-bright);
+
+            min-height: 100vh;
+
+            overflow-x: hidden;
+
+            position: relative;
+
+        }
+
+
+
+        /* Static background layer */
+
+        body::before {
+
+            content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+
+            background:
+
+                radial-gradient(circle at 50% 0%, rgba(0, 255, 242, 0.1) 0%, transparent 50%),
+
+                radial-gradient(circle at 50% 100%, rgba(213, 0, 255, 0.1) 0%, transparent 50%),
+
+                linear-gradient(to bottom, #02020a, #0a0514);
+
+            z-index: -10;
+
+            pointer-events: none;
+
+        }
+
+
+
+        /* PARTICLES */
+
+        .particles {
+
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1;
+
+            background-image:
+
+                radial-gradient(circle at 20% 30%, var(--accent-cyan) 1px, transparent 3px),
+
+                radial-gradient(circle at 80% 70%, var(--accent-purple) 1px, transparent 3px);
+
+            background-size: 120px 120px;
+
+            opacity: 0.4;
+
+        }
+
+        
+
+        /* --- POKEMON BG ASSETS --- */
+
+        .poke-bg {
+
+            position: fixed; pointer-events: none; z-index: -5;
+
+            opacity: 0.3; 
+
+            will-change: transform; 
+
+            transform: translateZ(0);
+
+            backface-visibility: hidden;
+
+        }
+
+        
+
+        .p-suicune { top: 50%; left: 50%; transform: translate(-50%, -50%); width: clamp(500px, 70vw, 1000px); opacity: 0.05; animation: breathe 8s ease-in-out infinite; z-index: -6; }
+
+        @keyframes breathe { 0%,100% { opacity:0.05; } 50% { opacity:0.08; } }
+
+        .p-rayquaza { top: -5%; left: -5%; width: var(--guardian-size); animation: float 14s infinite ease-in-out; }
+
+        .p-charizard { top: -5%; right: -5%; width: var(--guardian-size); animation: floatFlipped 13s infinite ease-in-out; }
+
+        .p-gengar { top: 45%; left: -2%; width: calc(var(--guardian-size)*0.8); animation: floatMid 9s infinite ease-in-out 1s; opacity: 0.2; }
+
+        .p-gardevoir { top: 45%; right: -2%; width: calc(var(--guardian-size)*0.8); animation: floatMid 10s infinite ease-in-out 2s; opacity: 0.2; }
+
+        .p-vaporeon { bottom: 5%; left: 5%; width: calc(var(--guardian-size)*0.7); transform-origin: bottom center; animation: sway 12s infinite ease-in-out; opacity: 0.25; }
+
+        .p-cubone { bottom: 5%; right: 5%; width: calc(var(--guardian-size) * 0.6); z-index: -3; opacity: 0.25; }
+
+
+
+        @keyframes float { 0%, 100% { transform: translate3d(0, 0, 0); } 50% { transform: translate3d(20px, -30px, 0); } }
+
+        @keyframes floatFlipped { 0%, 100% { transform: scaleX(-1) translate3d(0, 0, 0); } 50% { transform: scaleX(-1) translate3d(-20px, -30px, 0); } }
+
+        @keyframes floatMid { 0%, 100% { transform: translate3d(0, -50%, 0); } 50% { transform: translate3d(15px, calc(-50% - 20px), 0); } }
+
+        @keyframes sway { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(4deg); } }
+
+
+
+        /* MAIN LAYOUT - WITH OUTER GLOW */
+
+        main {
+
+            position: relative; z-index: 2; max-width: 1250px; margin: 0 auto; padding: 2.5rem;
+
+            border-radius: 35px;
+
+            background: rgba(5, 5, 14, 0.75);
+
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+
+            margin-top: 2rem; margin-bottom: 4rem;
+
+            border: 2px solid rgba(0, 255, 242, 0.3);
+
+            box-shadow: 
+
+                0 0 100px rgba(0,0,0,0.8), 
+
+                inset 0 0 30px rgba(0, 255, 242, 0.05),
+
+                0 0 20px rgba(0, 255, 242, 0.1),
+
+                0 0 40px rgba(213, 0, 255, 0.1);
+
+            animation: outerGlowPulse 6s ease-in-out infinite;
+
+        }
+
+
+
+        @keyframes outerGlowPulse {
+
+            0%, 100% {
+
+                box-shadow:
+
+                    0 0 100px rgba(0,0,0,0.8),
+
+                    inset 0 0 30px rgba(0, 255, 242, 0.05),
+
+                    0 0 20px rgba(0, 255, 242, 0.1),
+
+                    0 0 40px rgba(213, 0, 255, 0.1);
+
+                border-color: rgba(0, 255, 242, 0.3);
+
+            }
+
+            50% {
+
+                box-shadow:
+
+                    0 0 100px rgba(0,0,0,0.8),
+
+                    inset 0 0 50px rgba(0, 255, 242, 0.1),
+
+                    0 0 35px rgba(0, 255, 242, 0.25),
+
+                    0 0 60px rgba(213, 0, 255, 0.2);
+
+                 border-color: rgba(0, 255, 242, 0.5);
+
+            }
+
+        }
+
+
+
+        header { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 4rem 1rem 1rem; position: relative; z-index: 2; }
+
+        .header-wrapper { display: flex; align-items: center; gap: 2rem; }
+
+        .header-logo { width: 160px; display: block; filter: drop-shadow(0 0 35px var(--accent-cyan)); }
+
+        .logo-left .header-logo { transform: scaleX(-1); }
+
+        .logo-animator { animation: float 6s infinite ease-in-out; } 
+
+
+
+        h1 {
+
+            font-size: clamp(3.5rem, 9vw, 6.5rem); font-weight: 900; letter-spacing: -2px;
+
+            text-transform: uppercase; margin: 0; line-height: 1;
+
+            background: linear-gradient(180deg, #ffffff 20%, #cafffc 50%, #00fff2 55%, #d500ff 100%);
+
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+
+            text-align: center; position: relative; display: inline-block; z-index: 1;
+
+            filter: drop-shadow(0 0 25px rgba(0, 255, 242, 0.6));
+
+        }
+
+        h1::after {
+
+            content: attr(data-text); position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 2;
+
+            background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.9) 45%, #fff 50%, rgba(255, 255, 255, 0.9) 55%, transparent 70%);
+
+            background-size: 200% 100%; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+
+            animation: glassShimmer 5s infinite linear; pointer-events: none;
+
+            mix-blend-mode: overlay;
+
+        }
+
+        @keyframes glassShimmer { 0% { background-position: 150% 0; } 100% { background-position: -150% 0; } }
+
+        
+
+        /* PANELS & CARDS */
+
+        .sub-info-panel { display: flex; align-items: center; justify-content: space-between; padding: 2.5rem; gap: 3rem; flex-wrap: wrap; }
+
+        .sub-text { flex: 1; min-width: 300px; }
+
+        .sub-text h3 { display: flex; align-items: center; gap: 10px; font-size: 1.6rem; color: var(--accent-gold); margin-bottom: 0.8rem; text-shadow: 0 0 15px rgba(255, 215, 0, 0.4); }
+
+        .sub-text p { color: var(--text-dim); line-height: 1.7; font-size: 1rem; }
+
+        .sub-actions { display: flex; gap: 20px; align-items: center; justify-content: center; }
+
+
+
+        .sub-btn {
+
+            background: linear-gradient(135deg, #ff0000, #dd0000); color: white; padding: 14px 32px; border-radius: 50px;
+
+            text-decoration: none; font-weight: 900; display: flex; align-items: center; gap: 10px;
+
+            box-shadow: 0 0 25px rgba(255, 0, 0, 0.5), inset 0 2px 0 rgba(255,255,255,0.4);
+
+            border: 1px solid rgba(255, 50, 50, 0.8); letter-spacing: 1px; font-size: 1.2rem; white-space: nowrap; transition: 0.3s;
+
+        }
+
+        .sub-btn:hover { transform: translateY(-3px); box-shadow: 0 0 40px rgba(255, 0, 0, 0.8); }
+
+
+
+        .bell-btn {
+
+            background: rgba(20, 20, 20, 0.6); color: var(--accent-gold); width: 55px; height: 55px; border-radius: 50%;
+
+            display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1.6rem;
+
+            border: 2px solid var(--accent-gold); box-shadow: 0 0 20px rgba(255, 215, 0, 0.3), inset 0 2px 5px rgba(255,255,255,0.2); flex-shrink: 0;
+
+            backdrop-filter: blur(5px); transition: 0.3s;
+
+        }
+
+        .bell-btn:hover { transform: translateY(-3px); box-shadow: 0 0 30px rgba(255, 215, 0, 0.6); background: rgba(255, 215, 0, 0.1); }
+
+
+
+        .section-header { 
+
+            display: flex; align-items: center; justify-content: center; gap: 1.5rem; margin: 4rem auto 2.5rem;
+
+            background: linear-gradient(90deg, rgba(0, 255, 242, 0.1), rgba(213, 0, 255, 0.1));
+
+            border: 1px solid rgba(0, 255, 242, 0.4);
+
+            padding: 15px 50px; border-radius: 60px; max-width: 700px;
+
+            box-shadow: 0 0 30px rgba(0, 255, 242, 0.2), inset 0 2px 0 rgba(255,255,255,0.2);
+
+            backdrop-filter: blur(10px);
+
+        }
+
+        .section-line { height: 4px; background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent); flex: 1; border-radius: 10px; box-shadow: 0 0 15px var(--accent-cyan); opacity: 0.7; }
+
+        .section-title {
+
+            color: #fff; font-weight: 900; letter-spacing: 4px; font-size: 1.5rem;
+
+            text-shadow: 0 0 20px var(--accent-cyan), 0 0 40px var(--accent-purple); text-align: center;
+
+        }
+
+
+
+        .neon-card-wrapper {
+
+            position: relative; border-radius: 26px; padding: 3px;
+
+            box-shadow: 0 0 25px rgba(0, 255, 242, 0.2), 0 0 50px rgba(213, 0, 255, 0.15);
+
+            background: rgba(0,0,0,0.2); 
+
+            overflow: hidden; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+            transform: translateZ(0);
+
+        }
+
+        .neon-card-wrapper:hover { 
+
+            transform: translateY(-10px) scale(1.02); 
+
+            box-shadow: 0 0 50px rgba(0, 255, 242, 0.6), 0 0 80px rgba(213, 0, 255, 0.5);
+
+        }
+
+        .neon-card-wrapper::before {
+
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+
+            background: conic-gradient(transparent 0deg, transparent 90deg, var(--accent-cyan) 130deg, #ffffff 155deg, var(--accent-purple) 180deg, transparent 220deg);
+
+            animation: spinBorder 5s linear infinite; z-index: 0;
+
+            opacity: 1; filter: blur(5px);
+
+        }
+
+        @keyframes spinBorder { 100% { transform: rotate(360deg); } }
+
+        
+
+        .card-baller-bundle {
+
+            border: 2px solid #ffd700 !important;
+
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.35) !important;
+
+        }
+
+        .card-baller-bundle::before {
+
+            background: conic-gradient(transparent 0deg, transparent 90deg, #bf953f 130deg, #fcf6ba 155deg, #b38728 180deg, transparent 220deg) !important;
+
+        }
+
+        
+
+        .card-live-now {
+
+            border: 2px solid var(--accent-live) !important;
+
+            box-shadow: 0 0 60px rgba(255, 0, 64, 0.5) !important;
+
+            animation: livePulse 2s infinite !important;
+
+        }
+
+        .card-live-now::before {
+
+            background: conic-gradient(transparent 0deg, transparent 90deg, #ff0040 130deg, #ffffff 155deg, #ff0040 180deg, transparent 220deg) !important;
+
+            animation: spinBorder 2s linear infinite !important;
+
+        }
+
+        @keyframes livePulse { 0% { box-shadow: 0 0 40px rgba(255,0,64,0.4); } 50% { box-shadow: 0 0 80px rgba(255,0,64,0.8); } 100% { box-shadow: 0 0 40px rgba(255,0,64,0.4); } }
+
+
+
+        .glass-panel {
+
+            position: relative; 
+
+            background: linear-gradient(160deg, rgba(20, 20, 35, 0.6) 0%, rgba(10, 10, 20, 0.8) 100%);
+
+            backdrop-filter: blur(16px) saturate(120%); -webkit-backdrop-filter: blur(16px) saturate(120%);
+
+            border-radius: 24px; height: 100%; width: 100%; z-index: 1; overflow: hidden;
+
+            border: 1px solid rgba(0, 255, 242, 0.1);
+
+            border-top: 2px solid rgba(255, 255, 255, 0.4);
+
+            border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+
+            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.7), inset 0 5px 10px rgba(255, 255, 255, 0.1), 0 10px 30px rgba(0,0,0,0.5);
+
+        }
+
+
+
+        .skeleton { 
+
+            background: rgba(255, 255, 255, 0.03); border-radius: 24px; min-height: 450px; 
+
+            border: 1px solid rgba(0, 255, 242, 0.15); 
+
+            box-shadow: 0 0 30px rgba(0, 255, 242, 0.05);
+
+            animation: pulse 2s infinite;
+
+        }
+
+        @keyframes pulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+
+
+
+        .yt-container { display: grid; gap: 35px; grid-template-columns: 1fr; }
+
+        @media (min-width: 900px) { .yt-container { grid-template-columns: 1fr 1fr; } }
+
+        .yt-card { aspect-ratio: 16/9; cursor: pointer; }
+
+        
+
+        .yt-label {
+
+            position: absolute; top: 20px; left: 20px; padding: 10px 20px; border-radius: 12px; font-weight: 900; font-size: 0.85rem; letter-spacing: 0.8px; z-index: 2;
+
+            box-shadow: 0 5px 20px rgba(0,0,0,0.6); text-transform: uppercase; display:flex; align-items:center; gap:8px;
+
+            background: rgba(0,0,0,0.7); 
+
+            border: 1px solid rgba(255,255,255,0.25);
+
+            backdrop-filter: blur(8px);
+
+        }
+
+        .lbl-upcoming { color: #ffd700; border-color: #ffd700; text-shadow: 0 0 10px #ffd700; }
+
+        .lbl-hunt { color: #00eeff; border-color: #00eeff; text-shadow: 0 0 10px #00eeff; }
+
+        .lbl-universal { background: linear-gradient(135deg, #ff0055, #ff0000); color: white; border: none; box-shadow: 0 0 25px rgba(255, 0, 85, 0.5); }
+
+
+
+        .store-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 35px; }
+
+        .item-card { display: flex; flex-direction: column; height: 100%; }
+
+        
+
+        .type-tag {
+
+            position: absolute; top: 20px; right: 20px; padding: 8px 14px; border-radius: 10px; font-weight: 800; font-size: 0.75rem; z-index: 2; letter-spacing: 1px;
+
+            text-transform: uppercase; backdrop-filter: blur(10px); display: flex; align-items: center; gap: 6px;
+
+        }
+
+        
+
+        .tag-msrp { 
+
+            background: rgba(0, 40, 40, 0.85); border: 1px solid #00ff9d; color: #ffffff; 
+
+            text-shadow: 0 1px 3px black; box-shadow: 0 0 15px rgba(0, 255, 157, 0.3);
+
+        }
+
+
+
+        .tag-bundle { 
+
+            background: rgba(40, 0, 60, 0.85); border: 1px solid #bd00ff; color: #ffffff; 
+
+            text-shadow: 0 1px 3px black; box-shadow: 0 0 20px rgba(213, 0, 255, 0.4);
+
+        }
+
+
+
+        .tag-baller {
+
+            background: rgba(0, 0, 0, 0.95);
+
+            border: 1px solid #ffd700;
+
+            color: #ffd700;
+
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5), inset 0 0 10px rgba(255, 215, 0, 0.2);
+
+        }
+
+        
+
+        .time-tag-bottom {
+
+            position: absolute; bottom: 10px; left: 10px; 
+
+            padding: 6px 12px; border-radius: 8px; font-weight: 800; font-size: 0.75rem; z-index: 3; letter-spacing: 0.5px;
+
+            text-transform: uppercase; 
+
+            background: rgba(0, 0, 0, 0.85); 
+
+            backdrop-filter: blur(5px);
+
+            border: 1px solid #ffffff; 
+
+            color: #ffffff;
+
+            text-shadow: 0 1px 2px black;
+
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+
+            display: flex; align-items: center; gap: 5px;
+
+            pointer-events: none;
+
+            transition: 0.3s;
+
+        }
+
+
+
+        .tag-is-live {
+
+            background: #ff0040 !important;
+
+            border-color: #ffaaaa !important;
+
+            color: white !important;
+
+            box-shadow: 0 0 25px #ff0040 !important;
+
+            animation: badgePulse 1s infinite alternate;
+
+        }
+
+        @keyframes badgePulse { from { transform: scale(1); } to { transform: scale(1.05); } }
+
+
+
+        .item-img-box { height: 260px; overflow:hidden; position: relative; cursor: pointer; border-bottom: 1px solid rgba(0, 255, 242, 0.2); }
+
+        .item-img-box::after { content:''; position:absolute; bottom:0; left:0; width:100%; height:100%; background: linear-gradient(to top, rgba(10, 10, 25, 0.9), transparent 60%); pointer-events: none; }
+
+        .item-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); }
+
+        .neon-card-wrapper:hover .item-img { transform: scale(1.12) rotate(1deg); }
+
+        
+
+        .item-content { padding: 1.8rem; flex: 1; display: flex; flex-direction: column; position: relative; }
+
+        
+
+        .item-content h3 { 
+
+            font-size: 1.5rem; margin-bottom: 0.8rem; font-weight: 800; line-height: 1.2;
+
+            color: #ffffff; text-shadow: 0 2px 5px rgba(0,0,0,0.8); letter-spacing: 0.5px;
+
+        }
+
+        .item-content p { color: var(--text-dim); font-size: 1rem; line-height: 1.6; margin-bottom: 1.5rem; flex: 1; }
+
+        
+
+        .date-row { 
+
+            display: flex; align-items: center; gap: 8px;
+
+            color: var(--accent-gold); 
+
+            font-weight: 700; font-size: 0.95rem; 
+
+            margin-bottom: 10px; 
+
+            padding-bottom: 10px;
+
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+
+            text-transform: uppercase; 
+
+            letter-spacing: 0.5px; 
+
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.4); 
+
+        }
+
+
+
+        .price-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(0, 255, 242, 0.2); }
+
+        .price { font-size: 2rem; font-weight: 900; color: var(--accent-cyan); text-shadow: 0 0 25px rgba(0, 255, 242, 0.6); }
+
+        .stock { font-size: 0.9rem; color: var(--text-dim); background: rgba(0, 255, 242, 0.08); padding: 6px 14px; border-radius: 30px; font-weight: 700; border: 1px solid rgba(0, 255, 242, 0.2); }
+
+        
+
+        .buy-btn {
+
+            display: block; text-align: center; padding: 1.2rem; border-radius: 16px;
+
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
+
+            color: white; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 1.1rem; letter-spacing: 1.5px;
+
+            transition: 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; overflow: hidden;
+
+            border: 1px solid rgba(255,255,255,0.3); cursor: pointer;
+
+            box-shadow: 0 10px 30px rgba(0, 255, 242, 0.3), inset 0 2px 0 rgba(255,255,255,0.4);
+
+            display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1;
+
+        }
+
+        .buy-btn:hover { transform: translateY(-5px); box-shadow: 0 0 50px rgba(189, 0, 255, 0.8); border-color: white; }
+
+        
+
+        .btn-subtext { font-size: 0.75rem; opacity: 0.9; margin-top: 4px; font-weight: 700; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
+
+
+
+        .baller-btn {
+
+            background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 25%, #b38728 50%, #fcf6ba 75%, #aa771c 100%) !important;
+
+            background-size: 200% auto !important;
+
+            color: #000 !important;
+
+            text-shadow: 0 1px 0 rgba(255,255,255,0.4) !important;
+
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5), inset 0 0 10px rgba(255,255,255,0.5) !important;
+
+            border: 1px solid #7a5d1a !important;
+
+            position: relative; overflow: hidden; animation: goldShine 3s linear infinite;
+
+        }
+
+        .baller-btn .btn-subtext { color: #333 !important; text-shadow: none !important; }
+
+        .baller-btn::after {
+
+            content: ''; position: absolute; top: -50%; left: -60%; width: 20%; height: 200%;
+
+            background: rgba(255, 255, 255, 0.8); transform: rotate(30deg); animation: sweep 4s infinite;
+
+        }
+
+        @keyframes sweep { 0% { left: -60%; } 20% { left: 120%; } 100% { left: 120%; } }
+
+        @keyframes goldShine { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        .baller-btn:hover { box-shadow: 0 0 40px rgba(255, 215, 0, 0.8) !important; filter: brightness(1.1); }
+
+
+
+        .live-btn {
+
+            background: linear-gradient(135deg, #ff0000, #ff4444) !important;
+
+            border: 2px solid #ffffff !important;
+
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.8), inset 0 0 10px rgba(255,255,255,0.5) !important;
+
+            animation: liveBtnPulse 1s infinite alternate;
+
+        }
+
+        @keyframes liveBtnPulse { from { transform: scale(1); box-shadow: 0 0 30px red; } to { transform: scale(1.03); box-shadow: 0 0 50px red; } }
+
+
+
+        .sold-out { background: #0f0f1a !important; color: #666 !important; pointer-events: none; border: 2px solid #2a2a3a !important; box-shadow: inset 0 0 20px rgba(0,0,0,0.5) !important; }
+
+        .sold-out .btn-subtext { display: none; }
+
+        
+
+        footer { text-align: center; padding: 3rem 0 4rem; color: var(--text-dim); font-size: 0.9rem; position: relative; z-index: 2; letter-spacing: 1px; }
+
+
+
+        /* --- UPDATED EMPTY STORE STATE --- */
+
+        .epic-empty-wrapper {
+
+            grid-column: 1 / -1;
+
+            position: relative;
+
+            margin: 2rem auto;
+
+            max-width: 800px;
+
+            padding: 4px;
+
+            border-radius: 30px;
+
+            background: rgba(0,0,0,0.5);
+
+            box-shadow: 0 0 50px rgba(0, 255, 242, 0.2), 0 0 80px rgba(213, 0, 255, 0.2);
+
+            overflow: hidden;
+
+            transform: translateZ(0);
+
+        }
+
+        .epic-empty-wrapper::before {
+
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+
+            background: conic-gradient(transparent 0deg, var(--accent-cyan) 60deg, #fff 90deg, var(--accent-purple) 120deg, transparent 180deg, var(--accent-gold) 240deg, #fff 270deg, var(--accent-live) 300deg, transparent 360deg);
+
+            animation: spinBorder 4s linear infinite; z-index: 0;
+
+            opacity: 0.8; filter: blur(8px);
+
+        }
+
+        .epic-empty-inner {
+
+            position: relative;
+
+            z-index: 1;
+
+            background: linear-gradient(160deg, rgba(10, 10, 20, 0.85) 0%, rgba(5, 5, 15, 0.95) 100%);
+
+            backdrop-filter: blur(20px);
+
+            border-radius: 26px;
+
+            padding: 4rem 3rem;
+
+            text-align: center;
+
+            border: 1px solid rgba(255, 255, 255, 0.1);
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
+
+        }
+
+        .empty-icon-container {
+
+            position: relative;
+
+            width: 140px; height: 140px;
+
+            margin-bottom: 2.5rem;
+
+            display: flex; align-items: center; justify-content: center;
+
+        }
+
+        .empty-icon-container::before {
+
+            content: ''; position: absolute; inset: 0;
+
+            border-radius: 50%;
+
+            background: radial-gradient(circle, rgba(0,255,242,0.4) 0%, transparent 70%);
+
+            animation: pulseCore 2s infinite alternate;
+
+        }
+
+        @keyframes pulseCore { 
+
+            0% { transform: scale(0.8); opacity: 0.5; } 
+
+            100% { transform: scale(1.5); opacity: 1; box-shadow: 0 0 30px var(--accent-cyan); } 
+
+        }
+
+        
+
+        .icon-float-wrapper { animation: float 4s infinite ease-in-out; z-index: 2; display: flex; align-items: center; justify-content: center; }
+
+        .empty-icon { width: 120px; height: auto; filter: drop-shadow(0 0 20px var(--accent-cyan)) drop-shadow(0 0 40px var(--accent-purple)); }
+
+        
+
+        .letter-content { text-align: center; max-width: 650px; margin: 0 auto; color: #c0c0d0; font-size: 1.1rem; line-height: 1.7; font-weight: 500; }
+
+        .letter-content p { margin-bottom: 1.2rem; }
+
+        
+
+        /* MOBILE RESPONSIVENESS */
+
+        @media (max-width: 1300px) { .p-gengar, .p-gardevoir { display: none; } }
+
+        @media (max-width: 768px) {
+
+            .p-rayquaza, .p-charizard, .p-gengar, .p-gardevoir, .p-vaporeon, .p-cubone { display: none; }
+
+            .p-suicune { width: 120vw; opacity: 0.08; top: 40%; }
+
+            .header-wrapper { flex-direction: column; gap: 1.5rem; text-align: center; }
+
+            h1 { font-size: clamp(3rem, 11vw, 4rem); }
+
+            .logo-right { display: none; } .header-logo { width: 110px; } .logo-left .header-logo { transform: scaleX(1); }
+
+            main { padding: 1.5rem 1rem; margin: 1rem auto 3rem; width: 95%; border-radius: 25px; }
+
+            .section-header { width: 100%; padding: 12px 20px; border-radius: 40px; gap: 1rem; margin: 2.5rem auto 2rem; }
+
+            .section-title { font-size: 1.1rem; white-space: nowrap; letter-spacing: 2px; } .section-line { height: 3px; min-width: 30px; } 
+
+            .store-grid { grid-template-columns: 1fr; gap: 30px; }
+
+            .sub-info-panel { flex-direction: column; text-align: center; gap: 1.5rem; padding: 2rem 1.2rem; }
+
+            .sub-actions { width: 100%; justify-content: center; gap: 15px; }
+
+            .epic-empty-inner { padding: 3rem 1.5rem; }
+
+        }
+
+
+
+        .image-modal { display: none; position: fixed; z-index: 9999; padding-top: 50px; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.9); align-items: center; justify-content: center; backdrop-filter: blur(20px); }
+
+        .modal-content { margin: auto; display: block; max-width: 90%; max-height: 85vh; border: 3px solid var(--accent-cyan); box-shadow: 0 0 100px rgba(0, 255, 242, 0.8); border-radius: 20px; }
+
+        .close-modal { position: absolute; top: 30px; right: 40px; color: var(--accent-cyan); font-size: 50px; font-weight: 900; cursor: pointer; z-index: 10000; text-shadow: 0 0 20px var(--accent-cyan); }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="particles"></div>
+
+    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="poke-bg p-suicune">
+
+    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/384.png" class="poke-bg p-rayquaza">
+
+    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/006.png" class="poke-bg p-charizard">
+
+    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/094.png" class="poke-bg p-gengar">
+
+    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/282.png" class="poke-bg p-gardevoir">
+
+    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/134.png" class="poke-bg p-vaporeon">
+
+    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/104.png" class="poke-bg p-cubone">
+
+    
+
+    <header>
+
+        <div class="header-wrapper">
+
+            <div class="logo-animator logo-left"><img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="header-logo"></div>
+
+            <h1 data-text="PBM BREAKS">PBM BREAKS</h1>
+
+            <div class="logo-animator logo-right"><img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="header-logo"></div>
+
+        </div>
+
+    </header>
+
+
+
+    <main>
+
+        <div class="section-header"><span class="section-line"></span><span class="section-title">CHANNEL FEED</span><span class="section-line"></span></div>
+
+        <div id="yt-container" class="yt-container"></div>
+
+        
+
+        <div class="neon-card-wrapper" style="margin-top: 40px; margin-bottom: 60px;">
+
+            <div class="glass-panel sub-info-panel">
+
+                <div class="sub-text">
+
+                    <h3><i class="ph-fill ph-crown"></i> JOIN POKEBALLER MIKE</h3>
+
+                    <p><strong>Why Subscribe?</strong> Support the channel and watch every hit live! <br><strong>Turn on Notifications:</strong> Be the first to know when a Break goes live.</p>
+
+                </div>
+
+                <div class="sub-actions">
+
+                    <a href="https://www.youtube.com/@PokeballerMike?sub_confirmation=1" target="_blank" class="sub-btn"><i class="ph-fill ph-youtube-logo"></i> SUBSCRIBE</a>
+
+                    <a href="https://www.youtube.com/@PokeballerMike?sub_confirmation=1" target="_blank" class="bell-btn" title="Turn on Notifications"><i class="ph-fill ph-bell-ringing"></i></a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="section-header"><span class="section-line"></span><span class="section-title">AVAILABLE BREAKS</span><span class="section-line"></span></div>
+
+        <div class="store-grid" id="store-container"></div>
+
+    </main>
+
+    <footer><p>© 2025 PBM Breaks • Not affiliated with Nintendo • Crafted in the Crystal Realm</p></footer>
+
+
+
+    <div id="myModal" class="image-modal" onclick="closeModal()">
+
+        <span class="close-modal">&times;</span>
+
+        <img class="modal-content" id="img01">
+
+    </div>
+
+
+
+    <script>
+
+        const API_URL = 'https://pokeballer-worker.kronborgnielsen.workers.dev/api';
+
+
+
+        function renderSkeletons(containerId, count) {
+
+            const container = document.getElementById(containerId);
+
+            container.innerHTML = '';
+
+            let html = '';
+
+            for(let i=0; i<count; i++) html += `<div class="skeleton"></div>`;
+
+            container.innerHTML = html;
+
+        }
+
+
+
+        async function loadVideos() {
+
+            renderSkeletons('yt-container', 2);
+
+            const container = document.getElementById('yt-container');
+
             try {
-                const res = await fetch(`${API_URL}/items?t=${Date.now()}`);
+
+                const res = await fetch(`${API_URL}/youtube`);
+
+                const text = await res.text();
+
+                const doc = new DOMParser().parseFromString(text, "text/xml");
+
+                const entries = Array.from(doc.querySelectorAll("entry")).slice(0, 20);
+
+                
+
+                let streamVideo = null, huntVideo = null;
+
+
+
+                for (let entry of entries) {
+
+                    const rawTitle = entry.querySelector("title").textContent;
+
+                    if (rawTitle.toLowerCase().match(/stream|live|break/)) {
+
+                        streamVideo = { id: entry.querySelector("videoId").textContent, title: rawTitle, badgeStatus: 'stream' };
+
+                        break;
+
+                    }
+
+                }
+
+                for (let entry of entries) {
+
+                    const rawTitle = entry.querySelector("title").textContent;
+
+                    const id = entry.querySelector("videoId").textContent;
+
+                    if (!rawTitle.toLowerCase().match(/stream|live/) && (!streamVideo || id !== streamVideo.id)) {
+
+                        huntVideo = { id, title: rawTitle };
+
+                        break;
+
+                    }
+
+                }
+
+                
+
+                const videos = [];
+
+                if (streamVideo) videos.push({ ...streamVideo, type: 'stream' });
+
+                if (huntVideo) videos.push({ ...huntVideo, type: 'hunt' });
+
+                
+
+                if (videos.length === 0) { container.innerHTML = '<div style="text-align:center; color:#888;">No videos found</div>'; return; }
+
+                
+
+                let videoHTML = '';
+
+                videos.forEach(v => {
+
+                    const isStream = v.type === 'stream';
+
+                    const badgeHTML = isStream 
+
+                        ? `<div class="yt-label lbl-universal"><i class="ph-fill ph-broadcast"></i> OFFICIAL LIVE FEED</div>`
+
+                        : `<div class="yt-label lbl-hunt"><i class="ph-fill ph-video"></i> LATEST HUNT</div>`;
+
+                    
+
+                    videoHTML += `
+
+                        <div class="neon-card-wrapper">
+
+                            <div class="yt-card glass-panel">
+
+                                <iframe src="https://www.youtube.com/embed/${v.id}?autoplay=${isStream?'1':'0'}&mute=1&playsinline=1&controls=1&modestbranding=1&rel=0" 
+
+                                    style="width:100%; height:100%; border:none;" 
+
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+
+                                </iframe>
+
+                                ${badgeHTML}
+
+                            </div>
+
+                        </div>`;
+
+                });
+
+                container.innerHTML = videoHTML;
+
+            } catch(e) {
+
+                container.innerHTML = `<div style="text-align:center; grid-column:1/-1;"><a href="https://www.youtube.com/@PokeballerMike" target="_blank" class="buy-btn" style="max-width:200px; margin:0 auto;">VISIT CHANNEL</a></div>`;
+
+            }
+
+        }
+
+
+
+        function formatLiteralDate(isoString) {
+
+            if (!isoString) return "";
+
+            const [datePart, timePart] = isoString.split('T');
+
+            const [year, monthNum, day] = datePart.split('-');
+
+            let [hour, minute] = timePart.split(':');
+
+            const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+            const monthStr = months[parseInt(monthNum)-1];
+
+            let ampm = 'AM';
+
+            let h = parseInt(hour);
+
+            if (h >= 12) { ampm = 'PM'; if (h > 12) h -= 12; }
+
+            if (h === 0) h = 12;
+
+            return `${monthStr} ${parseInt(day)} • ${h}:${minute} ${ampm} CST`;
+
+        }
+
+
+
+        async function loadStore() {
+
+            renderSkeletons('store-container', 4);
+
+            const container = document.getElementById('store-container');
+
+            try {
+
+                const res = await fetch(`${API_URL}/items`);
+
                 const items = await res.json();
-                const now = Date.now();
+
+                if(items.error) { console.error("DB Error:", items.error); return; }
+
+                items.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
+
+                
+
+                let storeHTML = '';
+
+                const now = new Date().getTime();
+
+                let visibleCount = 0;
+
+                
 
                 items.forEach(item => {
-                    if (item.priceType === 'auction') {
-                        const safePrice = parseFloat(item.price) || 0;
-                        const oldState = lastKnownState[item.id] || {};
-                        const isEnded = item.scheduleEnd && now >= new Date(item.scheduleEnd + "-06:00").getTime();
-                        
-                        if (safePrice > oldState.price) {
-                            if(item.topBidder !== loggedInEmail) playSound('bid');
 
-                            const priceEl = document.getElementById(`price-val-${item.id}`);
-                            if(priceEl) {
-                                priceEl.innerText = `$${safePrice.toFixed(2)}`;
-                                priceEl.style.color = '#fff';
-                                setTimeout(() => priceEl.style.color = 'var(--accent-cyan)', 500);
-                            }
-                            const inputEl = document.getElementById(`bid-val-${item.id}`);
-                            if(inputEl && parseFloat(inputEl.value) <= safePrice) inputEl.value = safePrice + 1;
-                            const histEl = document.getElementById(`history-${item.id}`);
-                            if(histEl) histEl.innerHTML = generateBidHistoryHTML(item.bidHistory);
-                            
-                            const card = document.getElementById(`card-${item.id}`);
-                            const badgeStatus = document.getElementById(`badge-status-${item.id}`);
-                            if (card && badgeStatus) {
-                                if (item.topBidder === loggedInEmail) {
-                                    card.classList.remove('state-outbid'); card.classList.add('state-winning');
-                                    badgeStatus.className = "status-badge state-winning-badge";
-                                    badgeStatus.innerText = "YOU HOLD THE HIGH BID";
-                                } else {
-                                    showToast(`🔥 ${item.topBidderName} bid $${safePrice} on ${item.name}!`);
-                                    if (oldState.topBidder === loggedInEmail) {
-                                        playSound('lose');
-                                        card.classList.remove('state-winning'); card.classList.add('state-outbid');
-                                        badgeStatus.className = "status-badge state-outbid-badge";
-                                        badgeStatus.innerText = "YOU HAVE BEEN OUTBID!";
-                                        showToast("🚨 You were outbid!", "error");
-                                    }
-                                }
-                            }
-                        }
+                    if (item.hidden) return; 
 
-                        if (isEnded && !oldState.isEnded) {
-                            const btnContainer = document.getElementById(`btn-container-${item.id}`);
-                            if(btnContainer) btnContainer.innerHTML = `<div class="buy-btn sold-out"><span style="color:#666;">AUCTION ENDED</span></div>`;
-                            const badgeContainer = document.getElementById(`badge-container-${item.id}`);
-                            if(badgeContainer) badgeContainer.innerHTML = '';
-                            
-                            if (item.topBidder === loggedInEmail) {
-                                playSound('win');
-                                showToast(`🎉 CONGRATS! You won ${item.name}!`, "success");
-                                shootConfetti();
-                            } else if (item.topBidder) {
-                                showToast(`Auction ended! ${item.topBidderName} won ${item.name}.`);
-                            }
-                        }
+                    visibleCount++;
 
-                        lastKnownState[item.id] = { price: safePrice, topBidder: item.topBidder, isEnded: isEnded };
-                        const timerEl = document.querySelector(`.countdown-timer[data-id="${item.id}"]`);
-                        if (timerEl && item.scheduleEnd) timerEl.dataset.end = item.scheduleEnd;
+
+
+                    const isBaller = item.type === 'baller';
+
+                    const isBundle = item.type === 'bundle';
+
+                    let tagClass = 'tag-msrp', tagText = '<i class="ph-fill ph-seal-check"></i> MSRP BREAK', wrapperClass = '', btnBaseClass = 'buy-btn';
+
+
+
+                    if (isBaller) {
+
+                        tagClass = 'tag-baller'; tagText = '<i class="ph-fill ph-crown"></i> BALLER BUNDLE';
+
+                        wrapperClass = 'card-baller-bundle'; btnBaseClass = 'buy-btn baller-btn';
+
+                    } else if (isBundle) {
+
+                        tagClass = 'tag-bundle'; tagText = '<i class="ph-fill ph-sketch-logo"></i> BUNDLE BREAK';
+
                     }
-                });
-            } catch(e) {}
-        }, 5000); 
 
-        setInterval(() => {
-            const now = Date.now();
-            document.querySelectorAll('.countdown-timer').forEach(timer => {
-                const startTarget = new Date(timer.dataset.date + "-06:00").getTime();
-                const endTarget = timer.dataset.end ? new Date(timer.dataset.end + "-06:00").getTime() : null;
-                if (endTarget && now >= endTarget) return;
+                    
+
+                    let timeBadgeHTML = '', dateDisplayHTML = '', startTime = null, endTime = null, isLive = false, isEnded = false;
+
+
+
+                    if (item.scheduleDate) {
+
+                        dateDisplayHTML = `<div class="date-row"><i class="ph-fill ph-calendar-blank"></i> ${formatLiteralDate(item.scheduleDate)}</div>`;
+
+                        startTime = new Date(item.scheduleDate + "-06:00").getTime();
+
+                    }
+
+                    if (item.scheduleEnd) endTime = new Date(item.scheduleEnd + "-06:00").getTime();
+
+
+
+                    if(item.stock <= 0) isEnded = true; 
+
+                    else if (startTime) {
+
+                        if (endTime && now >= endTime) isEnded = true;
+
+                        else if (now >= startTime) isLive = true;
+
+                    }
+
+
+
+                    if (!isEnded) {
+
+                        if (isLive) {
+
+                            timeBadgeHTML = `<div class="time-tag-bottom tag-is-live"><i class="ph-fill ph-broadcast"></i> LIVE NOW</div>`;
+
+                            wrapperClass += ' card-live-now';
+
+                        } else if (startTime) {
+
+                            const endAttr = item.scheduleEnd ? `data-end="${item.scheduleEnd}"` : '';
+
+                            timeBadgeHTML = `<div class="time-tag-bottom countdown-timer" data-date="${item.scheduleDate}" ${endAttr} data-id="${item.id}"><i class="ph-fill ph-clock-countdown"></i> CALC...</div>`;
+
+                        }
+
+                    }
+
+
+
+                    let btnHTML = '';
+
+                    if (isEnded) btnHTML = `<div class="buy-btn sold-out">SOLD OUT</div>`;
+
+                    else if (item.googleFormLink) {
+
+                        let btnText = isLive ? "JOIN LIVE DRAW" : "JOIN BREAK";
+
+                        let btnSub = isLive ? "HAPPENING NOW!" : "RESERVE YOUR SPOT";
+
+                        let finalBtnClass = isLive ? "buy-btn live-btn" : btnBaseClass;
+
+                        btnHTML = `<a href="${item.googleFormLink}" target="_blank" id="btn-${item.id}" class="${finalBtnClass}" onclick="trackClick('${item.id}')">
+
+                                    <span>${btnText}</span><span class="btn-subtext" id="subtext-${item.id}">${btnSub}</span></a>`;
+
+                    } else {
+
+                        btnHTML = `<div class="buy-btn sold-out" style="background:#555; border-color:#777;">COMING SOON</div>`;
+
+                    }
+
+                    
+
+                    const img = item.image || 'https://assets.pokemon.com/assets/cms2/img/misc/trading-card-games/cards/tcg_default_card.png';
+
+                    storeHTML += `
+
+                        <div class="neon-card-wrapper ${wrapperClass}" id="card-${item.id}">
+
+                            <div class="item-card glass-panel">
+
+                                <div class="type-tag ${tagClass}">${tagText}</div>
+
+                                <div class="item-img-box" onclick="openModal('${img}')">
+
+                                    <img src="${img}" class="item-img" alt="${item.name}">
+
+                                    <div id="badge-container-${item.id}">${timeBadgeHTML}</div>
+
+                                </div>
+
+                                <div class="item-content">
+
+                                    <h3>${item.name}</h3>
+
+                                    ${dateDisplayHTML} 
+
+                                    <p>${item.description}</p>
+
+                                    <div class="price-row">
+
+                                        <span class="price">$${item.price.toFixed(2)}</span>
+
+                                        <span class="stock">${item.stock} Break Spots</span>
+
+                                    </div>
+
+                                    <div id="btn-container-${item.id}">${btnHTML}</div>
+
+                                </div>
+
+                            </div>
+
+                        </div>`;
+
+                });
+
+                
+
+                if (visibleCount === 0) {
+
+                    storeHTML = `
+
+                        <div class="epic-empty-wrapper">
+
+                            <div class="epic-empty-inner">
+
+                                <div class="empty-icon-container">
+
+                                    <div class="icon-float-wrapper">
+
+                                        <img src="https://play.pokemonshowdown.com/sprites/xyani/klinklang.gif" class="empty-icon" alt="Klinklang">
+
+                                    </div>
+
+                                </div>
+
+                                <div class="letter-content">
+
+                                    <p style="font-size: 1.6rem; color: #fff; font-weight: 800; margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 1px;">
+
+                                        The Vault is Currently Empty
+
+                                    </p>
+
+                                    <p>Sorry, there are no breaks available at this moment. I'm currently out hitting the shelves at <strong>Costco, Walmart, and Target</strong> to track down the best packs for the next stream.</p>
+
+                                    <p>The hunt never stops! I'm working on securing some massive sets and exclusive bundles for you guys right now.</p>
+
+                                    <p>Please keep dropping in and make sure to <strong>sign up for notifications</strong> by hitting the <i class="ph-fill ph-bell-ringing" style="color:var(--accent-gold); vertical-align: middle;"></i> bell icon above so you're the first to know when the new stock drops.</p>
+
+                                    <p style="color: var(--accent-cyan); font-weight: 700; font-size: 1.4rem; margin-top: 3rem; margin-bottom: 0;">Catch you on the next hunt!</p>
+
+                                    <h3 style="color: #fff; font-size: 1.2rem; margin-top: 1.5rem; text-shadow: 0 0 15px var(--accent-cyan); text-transform: uppercase; letter-spacing: 2px;">— Pokeballer Mike</h3>
+
+                                </div>
+
+                            </div>
+
+                        </div>`;
+
+                }
+
+                container.innerHTML = storeHTML;
+
+                startCountdownTimer();
+
+            } catch(e) { console.error(e); }
+
+        }
+
+
+
+        function updateTimers() {
+
+            const timers = document.querySelectorAll('.countdown-timer');
+
+            const now = new Date().getTime();
+
+            timers.forEach(timer => {
+
+                const dateStr = timer.dataset.date, endDateStr = timer.dataset.end, itemId = timer.dataset.id;
+
+                const startTarget = new Date(dateStr + "-06:00").getTime();
+
+                let endTarget = endDateStr ? new Date(endDateStr + "-06:00").getTime() : null;
+
+
+
+                if (endTarget && now >= endTarget) {
+
+                    const btnContainer = document.getElementById(`btn-container-${itemId}`);
+
+                    if(btnContainer && !btnContainer.innerHTML.includes('SOLD OUT')) btnContainer.innerHTML = `<div class="buy-btn sold-out">SOLD OUT</div>`;
+
+                    const badgeContainer = document.getElementById(`badge-container-${itemId}`);
+
+                    if(badgeContainer) badgeContainer.innerHTML = '';
+
+                    const card = document.getElementById(`card-${itemId}`);
+
+                    if(card) card.classList.remove('card-live-now');
+
+                    return;
+
+                }
+
+
 
                 const distance = startTarget - now;
-                const badge = document.getElementById(`badge-container-${timer.dataset.id}`);
-                
-                if (distance < 0) {
-                    if (endTarget) {
-                        const tr = endTarget - now;
-                        const h = Math.floor(tr / 3600000);
-                        const m = Math.floor((tr % 3600000) / 60000);
-                        const s = Math.floor((tr % 60000) / 1000);
-                        let tStr = h > 0 ? `${h}h ${m}m ${s}s` : `${m}m ${s}s`;
 
-                        if (tr < 120000 && badge) badge.innerHTML = `<div class="time-tag-bottom tag-is-live" style="background:#ff00ff!important; box-shadow:0 0 30px #ff00ff!important;">ENDING: ${tStr}</div>`;
-                        else if (badge) badge.innerHTML = `<div class="time-tag-bottom tag-is-live">${tStr} LEFT</div>`;
+                if (distance < 0) {
+
+                    const badgeContainer = document.getElementById(`badge-container-${itemId}`);
+
+                    if(badgeContainer && !badgeContainer.innerHTML.includes('LIVE NOW')) badgeContainer.innerHTML = `<div class="time-tag-bottom tag-is-live"><i class="ph-fill ph-broadcast"></i> LIVE NOW</div>`;
+
+                    const card = document.getElementById(`card-${itemId}`);
+
+                    if(card) card.classList.add('card-live-now');
+
+                    const btnContainer = document.getElementById(`btn-container-${itemId}`);
+
+                    const anchor = btnContainer?.querySelector('a');
+
+                    if(anchor && !anchor.classList.contains('live-btn')) {
+
+                        anchor.className = "buy-btn live-btn";
+
+                        anchor.querySelector('span').innerText = "JOIN LIVE DRAW";
+
+                        anchor.querySelector('.btn-subtext').innerText = "HAPPENING NOW!";
+
                     }
+
                 } else {
+
                     const d = Math.floor(distance / 86400000), h = Math.floor((distance % 86400000) / 3600000), m = Math.floor((distance % 3600000) / 60000), s = Math.floor((distance % 60000) / 1000);
-                    timer.innerHTML = `${d>0?d+'d ':''}${h}h ${m}m ${s}s`;
+
+                    timer.innerHTML = `<i class="ph-fill ph-clock-countdown"></i> ${d > 0 ? d + 'd ' : ''}${h}h ${m}m ${s}s`;
+
                 }
+
             });
-        }, 1000);
+
+        }
+
+
+
+        function startCountdownTimer() { updateTimers(); setInterval(updateTimers, 1000); }
+
+        function trackClick(id) { fetch(`${API_URL}/click`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: id }), keepalive: true }).catch(() => {}); return true; }
+
+        
 
         loadVideos();
+
         loadStore();
+
+
+
+        function openModal(src) { document.getElementById("myModal").style.display = "flex"; document.getElementById("img01").src = src; }
+
+        function closeModal() { document.getElementById("myModal").style.display = "none"; }
+
+        document.addEventListener('keydown', e => { if (e.key === "Escape") closeModal(); });
+
     </script>
+
 </body>
+
 </html>
