@@ -196,6 +196,7 @@
                             `<div class="history-entry">
                                 <span><b>${b.name}</b> (${b.email})</span>
                                 <span style="color:var(--gold);">$${b.amount}</span>
+                                ${b.auto ? `<span style="font-size:0.7rem; color:#888;">(Auto Proxy)</span>` : ''}
                              </div>`
                         ).join('');
                     }
