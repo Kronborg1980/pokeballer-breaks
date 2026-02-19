@@ -34,11 +34,14 @@
         .btn-group button { padding: 10px; font-size: 0.9rem; flex: 1; }
         .btn-edit { background: #00b8ff; } .btn-del { background: #ff0055; } .btn-bids { background: #222; border: 1px solid #555; }
         
-        .history-panel { display: none; background: #05050a; padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px solid var(--purple); }
+        .history-panel { display: none; background: #05050a; padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px solid var(--purple); position: relative; }
         .history-entry { display: flex; justify-content: space-between; border-bottom: 1px solid #222; padding: 8px 0; font-size: 0.85rem; }
         .history-entry:last-child { border: none; }
         .winner-text { color: #00ff9d; font-weight: bold; font-size: 1.1rem; margin-bottom: 10px; border-bottom: 1px dashed #00ff9d; padding-bottom: 5px;}
         
+        .delete-bid-btn { position: absolute; top: 15px; right: 15px; background: #ff0040; color: white; padding: 5px 10px; border-radius: 6px; font-size: 0.7rem; font-weight: bold; border: none; cursor: pointer; width: auto;}
+        .delete-bid-btn:hover { background: #ff4444; }
+
         #login-section { display: block; } #admin-section { display: none; }
     </style>
 </head>
@@ -153,6 +156,18 @@
             el.style.display = el.style.display === 'block' ? 'none' : 'block';
         }
 
+        async function removeTopBid(id) {
+            if(!confirm("Are you sure you want to delete the highest bid? This cannot be undone.")) return;
+            try {
+                const res = await fetch(`${API_URL}/bid/delete`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ itemId: id }) });
+                const data = await res.json();
+                if (data.success) {
+                    alert("Top bid deleted!");
+                    loadItems();
+                } else { alert(data.error); }
+            } catch(e) { alert("Error deleting bid."); }
+        }
+
         async function loadItems() {
             const res = await fetch(`${API_URL}/items`);
             const items = await res.json();
@@ -173,8 +188,10 @@
                     let rows = '<div style="color:#888; font-size:0.8rem; text-align:center;">No bids yet</div>';
                     let winnerEmail = item.topBidder || 'None';
                     let winnerName = item.topBidderName || 'None';
+                    let deleteBtn = '';
                     
                     if (item.bidHistory && item.bidHistory.length > 0) {
+                        deleteBtn = `<button class="delete-bid-btn" onclick="removeTopBid('${item.id}')">🗑️ REMOVE TOP BID</button>`;
                         rows = item.bidHistory.slice().reverse().map(b => 
                             `<div class="history-entry">
                                 <span><b>${b.name}</b> (${b.email})</span>
@@ -185,8 +202,9 @@
 
                     historyHtml = `
                         <div id="hist-${item.id}" class="history-panel">
-                            <div class="winner-text">TOP BIDDER: ${winnerName} (${winnerEmail})</div>
-                            ${rows}
+                            ${deleteBtn}
+                            <div class="winner-text">TOP BIDDER: ${winnerName} <br><span style="font-size:0.8rem; color:#888;">${winnerEmail}</span></div>
+                            <div style="margin-top:10px;">${rows}</div>
                         </div>
                     `;
                 }
