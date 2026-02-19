@@ -33,6 +33,7 @@
         .header-wrapper { display: flex; align-items: center; gap: 2rem; }
         .header-logo { width: 160px; display: block; filter: drop-shadow(0 0 35px var(--accent-cyan)); }
         .logo-left .header-logo { transform: scaleX(-1); }
+        .logo-animator { animation: float 6s infinite ease-in-out; } 
         h1 { font-size: clamp(3.5rem, 9vw, 6.5rem); font-weight: 900; letter-spacing: -2px; text-transform: uppercase; margin: 0; line-height: 1; background: linear-gradient(180deg, #ffffff 20%, #cafffc 50%, #00fff2 55%, #d500ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-align: center; position: relative; display: inline-block; z-index: 1; filter: drop-shadow(0 0 25px rgba(0, 255, 242, 0.6)); }
         
         /* SECTION HEADERS */
@@ -40,12 +41,13 @@
         .section-line { height: 4px; background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent); flex: 1; border-radius: 10px; box-shadow: 0 0 15px var(--accent-cyan); opacity: 0.7; }
         .section-title { color: #fff; font-weight: 900; letter-spacing: 4px; font-size: 1.5rem; text-shadow: 0 0 20px var(--accent-cyan), 0 0 40px var(--accent-purple); text-align: center; white-space: nowrap; }
         
-        /* CORRECTED SUBSCRIBE PANEL */
-        .sub-info-panel { display: flex; flex-direction: row; align-items: center; justify-content: space-between; padding: 2.5rem; gap: 2rem; flex-wrap: nowrap; }
-        .sub-text { flex: 1; text-align: left; }
+        /* FIX: SUBSCRIBE PANEL LAYOUT */
+        .sub-info-panel { display: flex; align-items: center; justify-content: space-between; padding: 2.5rem; gap: 3rem; flex-wrap: wrap; }
+        .sub-text { flex: 1; min-width: 300px; text-align: left; }
         .sub-text h3 { display: flex; align-items: center; justify-content: flex-start; gap: 10px; font-size: 1.6rem; color: var(--accent-gold); margin-bottom: 0.8rem; text-shadow: 0 0 15px rgba(255, 215, 0, 0.4); }
         .sub-text p { color: var(--text-dim); line-height: 1.7; font-size: 1rem; margin: 0;}
         .sub-actions { display: flex; gap: 15px; align-items: center; flex-shrink: 0; }
+        
         .sub-btn { background: linear-gradient(135deg, #ff0000, #dd0000); color: white; padding: 14px 32px; border-radius: 50px; text-decoration: none; font-weight: 900; display: flex; align-items: center; gap: 10px; box-shadow: 0 0 25px rgba(255, 0, 0, 0.5), inset 0 2px 0 rgba(255,255,255,0.4); border: 1px solid rgba(255, 50, 50, 0.8); letter-spacing: 1px; font-size: 1.2rem; white-space: nowrap; transition: 0.3s; }
         .sub-btn:hover { transform: translateY(-3px); box-shadow: 0 0 40px rgba(255, 0, 0, 0.8); }
         .bell-btn { background: rgba(20, 20, 20, 0.6); color: var(--accent-gold); width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1.6rem; border: 2px solid var(--accent-gold); box-shadow: 0 0 20px rgba(255, 215, 0, 0.3), inset 0 2px 5px rgba(255,255,255,0.2); flex-shrink: 0; backdrop-filter: blur(5px); transition: 0.3s; }
@@ -349,7 +351,7 @@
             return historyArray.slice(-5).map(bid => `
                 <div class="bid-entry">
                     <span class="name"><i class="ph-fill ph-user-circle"></i> ${bid.name}</span>
-                    <span class="amount">$${bid.amount.toFixed(2)}</span>
+                    <span class="amount">$${parseFloat(bid.amount).toFixed(2)}</span>
                 </div>
             `).join('');
         }
@@ -377,10 +379,10 @@
                 if (data.error) {
                     showToast(data.error, "error");
                 } else {
-                    playSound('bid'); // Play bid sound
+                    playSound('bid');
                     showToast("Bid placed successfully!", "success");
-                    document.getElementById(`price-val-${itemId}`).innerText = `$${data.newPrice.toFixed(2)}`;
-                    inputEl.value = data.newPrice + 1;
+                    document.getElementById(`price-val-${itemId}`).innerText = `$${parseFloat(data.newPrice).toFixed(2)}`;
+                    inputEl.value = parseFloat(data.newPrice) + 1;
                     document.getElementById(`history-${itemId}`).innerHTML = generateBidHistoryHTML(data.bidHistory);
                     
                     const card = document.getElementById(`card-${itemId}`);
@@ -395,13 +397,16 @@
         // -- STOREFRONT LOGIC --
         function formatLiteralDate(isoString) {
             if (!isoString) return "";
-            const [datePart, timePart] = isoString.split('T');
-            const [year, monthNum, day] = datePart.split('-');
-            let [hour, minute] = timePart.split(':');
-            const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-            let h = parseInt(hour); let ampm = h >= 12 ? 'PM' : 'AM';
-            if (h > 12) h -= 12; if (h === 0) h = 12;
-            return `${months[parseInt(monthNum)-1]} ${parseInt(day)} • ${h}:${minute} ${ampm} CST`;
+            try {
+                const [datePart, timePart] = isoString.split('T');
+                if(!timePart) return isoString;
+                const [year, monthNum, day] = datePart.split('-');
+                let [hour, minute] = timePart.split(':');
+                const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                let h = parseInt(hour); let ampm = h >= 12 ? 'PM' : 'AM';
+                if (h > 12) h -= 12; if (h === 0) h = 12;
+                return `${months[parseInt(monthNum)-1]} ${parseInt(day)} • ${h}:${minute} ${ampm} CST`;
+            } catch(e) { return isoString; }
         }
 
         async function loadStore() {
@@ -422,89 +427,96 @@
                 let visibleCount = 0;
                 
                 items.forEach(item => {
-                    if (item.hidden) return; 
-                    visibleCount++;
+                    // SAFE DATA FALLBACKS TO PREVENT CRASHES
+                    try {
+                        if (item.hidden) return; 
+                        visibleCount++;
 
-                    const isAuction = item.priceType === 'auction';
-                    
-                    let tagClass = 'tag-msrp', tagText = 'MSRP BREAK', wrapperClass = '';
-                    if (item.type === 'pbm_auction') {
-                        tagClass = 'tag-pbm-auction'; tagText = '🔥 PBM AUCTION'; wrapperClass = 'card-pbm-auction';
-                    } else if (item.type === 'baller') {
-                        tagClass = 'tag-baller'; tagText = '👑 BALLER BUNDLE'; wrapperClass = 'card-baller-bundle';
-                    } else if (item.type === 'bundle') {
-                        tagClass = 'tag-bundle'; tagText = '💎 BUNDLE BREAK';
-                    } else if (isAuction) {
-                        tagClass = 'tag-auction'; tagText = '⚖️ LIVE AUCTION';
-                    }
-
-                    let startTime = item.scheduleDate ? new Date(item.scheduleDate + "-06:00").getTime() : null;
-                    let endTime = item.scheduleEnd ? new Date(item.scheduleEnd + "-06:00").getTime() : null;
-                    let isEnded = item.stock <= 0 || (endTime && now >= endTime);
-                    let isLive = !isEnded && startTime && now >= startTime;
-
-                    let timeHTML = '';
-                    if (!isEnded) {
-                        if (isLive) timeHTML = `<div class="time-tag-bottom tag-is-live">LIVE NOW</div>`;
-                        else if (startTime) timeHTML = `<div class="time-tag-bottom countdown-timer" data-date="${item.scheduleDate}" data-end="${item.scheduleEnd||''}" data-id="${item.id}">CALC...</div>`;
-                    }
-
-                    lastKnownState[item.id] = { price: item.price, topBidder: item.topBidder, isEnded: isEnded };
-
-                    let stateClass = wrapperClass; 
-                    let statusText = '';
-                    if (isAuction && !isEnded && item.topBidder) {
-                        if (item.topBidder === loggedInEmail) {
-                            stateClass += ' state-winning'; statusText = 'YOU HOLD THE HIGH BID';
-                        } else if (item.bidHistory && item.bidHistory.some(b => b.email === loggedInEmail)) {
-                            stateClass += ' state-outbid'; statusText = 'YOU HAVE BEEN OUTBID!';
-                        }
-                    }
-
-                    let actionArea = ''; let priceArea = ''; let histArea = '';
-
-                    if (isEnded) {
-                        priceArea = `<span class="price">$${item.price.toFixed(2)}</span>`;
-                        actionArea = `<div class="buy-btn sold-out"><span style="color:#666;">SOLD OUT</span></div>`;
-                        if(isAuction) histArea = `<div class="bid-history-box" id="history-${item.id}">${generateBidHistoryHTML(item.bidHistory)}</div>`;
-                    } else if (isAuction) {
-                        histArea = `<div class="bid-history-box" id="history-${item.id}">${generateBidHistoryHTML(item.bidHistory)}</div>`;
-                        priceArea = `<div style="display:flex; flex-direction:column;"><span style="font-size:0.75rem; color:var(--accent-purple); font-weight:bold;">CURRENT BID</span><span class="price" id="price-val-${item.id}">$${item.price.toFixed(2)}</span></div>`;
+                        const isAuction = item.priceType === 'auction';
+                        const safePrice = parseFloat(item.price) || 0;
+                        const safeStock = parseInt(item.stock) || 0;
                         
-                        if (!loggedInEmail) {
-                            actionArea = `<div style="text-align:center; margin-top:10px;"><div style="font-size:0.8rem; color:#aaa; margin-bottom:5px;">Sign in with Google to bid</div><div id="g-btn-${item.id}" style="display:flex; justify-content:center;"></div></div>`;
-                        } else {
-                            actionArea = `
-                                <div class="bid-input-container">
-                                    <input type="number" id="bid-val-${item.id}" class="bid-input" value="${item.price + 1}" min="${item.price + 1}">
-                                    <button class="submit-bid-btn" onclick="submitBid('${item.id}')">BID</button>
-                                </div>`;
+                        let tagClass = 'tag-msrp', tagText = 'MSRP BREAK', wrapperClass = '';
+                        if (item.type === 'pbm_auction') {
+                            tagClass = 'tag-pbm-auction'; tagText = '🔥 PBM AUCTION'; wrapperClass = 'card-pbm-auction';
+                        } else if (item.type === 'baller') {
+                            tagClass = 'tag-baller'; tagText = '👑 BALLER BUNDLE'; wrapperClass = 'card-baller-bundle';
+                        } else if (item.type === 'bundle') {
+                            tagClass = 'tag-bundle'; tagText = '💎 BUNDLE BREAK';
+                        } else if (isAuction) {
+                            tagClass = 'tag-auction'; tagText = '⚖️ LIVE AUCTION';
                         }
-                    } else {
-                        priceArea = `<span class="price">$${item.price.toFixed(2)}</span>`;
-                        actionArea = `<a href="${item.googleFormLink}" target="_blank" class="buy-btn"><span>${isLive ? "JOIN LIVE DRAW" : "JOIN BREAK"}</span><span class="btn-subtext">RESERVE YOUR SPOT</span></a>`;
-                    }
 
-                    const img = item.image || 'https://assets.pokemon.com/assets/cms2/img/misc/trading-card-games/cards/tcg_default_card.png';
-                    storeHTML += `
-                        <div class="neon-card-wrapper ${stateClass}" id="card-${item.id}">
-                            <div class="status-badge">${statusText}</div>
-                            <div class="glass-panel">
-                                <div class="type-tag ${tagClass}">${tagText}</div>
-                                <div class="item-img-box" onclick="openModal('${img}')">
-                                    <img src="${img}" class="item-img">
-                                    <div id="badge-container-${item.id}">${timeHTML}</div>
+                        let startTime = item.scheduleDate ? new Date(item.scheduleDate + "-06:00").getTime() : null;
+                        let endTime = item.scheduleEnd ? new Date(item.scheduleEnd + "-06:00").getTime() : null;
+                        let isEnded = safeStock <= 0 || (endTime && now >= endTime);
+                        let isLive = !isEnded && startTime && now >= startTime;
+
+                        let timeHTML = '';
+                        if (!isEnded) {
+                            if (isLive) timeHTML = `<div class="time-tag-bottom tag-is-live">LIVE NOW</div>`;
+                            else if (startTime) timeHTML = `<div class="time-tag-bottom countdown-timer" data-date="${item.scheduleDate}" data-end="${item.scheduleEnd||''}" data-id="${item.id}">CALC...</div>`;
+                        }
+
+                        lastKnownState[item.id] = { price: safePrice, topBidder: item.topBidder, isEnded: isEnded };
+
+                        let stateClass = wrapperClass; 
+                        let statusText = '';
+                        if (isAuction && !isEnded && item.topBidder) {
+                            if (item.topBidder === loggedInEmail) {
+                                stateClass += ' state-winning'; statusText = 'YOU HOLD THE HIGH BID';
+                            } else if (item.bidHistory && item.bidHistory.some(b => b.email === loggedInEmail)) {
+                                stateClass += ' state-outbid'; statusText = 'YOU HAVE BEEN OUTBID!';
+                            }
+                        }
+
+                        let actionArea = ''; let priceArea = ''; let histArea = '';
+
+                        if (isEnded) {
+                            priceArea = `<span class="price">$${safePrice.toFixed(2)}</span>`;
+                            actionArea = `<div class="buy-btn sold-out"><span style="color:#666;">SOLD OUT</span></div>`;
+                            if(isAuction) histArea = `<div class="bid-history-box" id="history-${item.id}">${generateBidHistoryHTML(item.bidHistory)}</div>`;
+                        } else if (isAuction) {
+                            histArea = `<div class="bid-history-box" id="history-${item.id}">${generateBidHistoryHTML(item.bidHistory)}</div>`;
+                            priceArea = `<div style="display:flex; flex-direction:column;"><span style="font-size:0.75rem; color:var(--accent-purple); font-weight:bold;">CURRENT BID</span><span class="price" id="price-val-${item.id}">$${safePrice.toFixed(2)}</span></div>`;
+                            
+                            if (!loggedInEmail) {
+                                actionArea = `<div style="text-align:center; margin-top:10px;"><div style="font-size:0.8rem; color:#aaa; margin-bottom:5px;">Sign in with Google to bid</div><div id="g-btn-${item.id}" style="display:flex; justify-content:center;"></div></div>`;
+                            } else {
+                                actionArea = `
+                                    <div class="bid-input-container">
+                                        <input type="number" id="bid-val-${item.id}" class="bid-input" value="${safePrice + 1}" min="${safePrice + 1}">
+                                        <button class="submit-bid-btn" onclick="submitBid('${item.id}')">BID</button>
+                                    </div>`;
+                            }
+                        } else {
+                            priceArea = `<span class="price">$${safePrice.toFixed(2)}</span>`;
+                            actionArea = `<a href="${item.googleFormLink || '#'}" target="_blank" class="buy-btn"><span>${isLive ? "JOIN LIVE DRAW" : "JOIN BREAK"}</span><span class="btn-subtext">RESERVE YOUR SPOT</span></a>`;
+                        }
+
+                        const img = item.image || 'https://assets.pokemon.com/assets/cms2/img/misc/trading-card-games/cards/tcg_default_card.png';
+                        storeHTML += `
+                            <div class="neon-card-wrapper ${stateClass}" id="card-${item.id}">
+                                <div class="status-badge">${statusText}</div>
+                                <div class="glass-panel">
+                                    <div class="type-tag ${tagClass}">${tagText}</div>
+                                    <div class="item-img-box" onclick="openModal('${img}')">
+                                        <img src="${img}" class="item-img">
+                                        <div id="badge-container-${item.id}">${timeHTML}</div>
+                                    </div>
+                                    <div class="item-content">
+                                        <h3>${item.name}</h3>
+                                        ${item.scheduleDate ? `<div class="date-row"><i class="ph-fill ph-calendar-blank"></i> ${formatLiteralDate(item.scheduleDate)}</div>` : ''}
+                                        <p style="color:#aaa; font-size:0.9rem;">${item.description}</p>
+                                        <div class="price-row">${priceArea}<span class="stock">${safeStock} Spots</span></div>
+                                        ${histArea}
+                                        <div style="margin-top:15px;" id="btn-container-${item.id}">${actionArea}</div>
+                                    </div>
                                 </div>
-                                <div class="item-content">
-                                    <h3>${item.name}</h3>
-                                    ${dateDisplayHTML ? dateDisplayHTML : ''}
-                                    <p style="color:#aaa; font-size:0.9rem;">${item.description}</p>
-                                    <div class="price-row">${priceArea}<span class="stock">${item.stock} Spots</span></div>
-                                    ${histArea}
-                                    <div style="margin-top:15px;" id="btn-container-${item.id}">${actionArea}</div>
-                                </div>
-                            </div>
-                        </div>`;
+                            </div>`;
+                    } catch(err) {
+                        console.error("Error rendering item:", item, err);
+                    }
                 });
                 
                 if (visibleCount === 0) {
@@ -539,8 +551,7 @@
                     });
                 }
             } catch (err) {
-                // FIXED THE MISSING BUNDLE SKELETON BUG
-                container.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:#ff4444; padding:3rem; background:rgba(0,0,0,0.5); border-radius:20px; border:1px solid #ff4444;">⚠️ Unable to load the vault database. Please refresh the page.</div>`;
+                container.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:#ff4444; padding:3rem; background:rgba(0,0,0,0.5); border-radius:20px; border:1px solid #ff4444;">⚠️ Unable to load the vault database. Please refresh the page. Error: ${err.message}</div>`;
             }
         }
 
@@ -553,23 +564,23 @@
 
                 items.forEach(item => {
                     if (item.priceType === 'auction') {
+                        const safePrice = parseFloat(item.price) || 0;
                         const oldState = lastKnownState[item.id] || {};
                         const isEnded = item.scheduleEnd && now >= new Date(item.scheduleEnd + "-06:00").getTime();
                         
                         // 1. Check for New Bids
-                        if (item.price > oldState.price) {
+                        if (safePrice > oldState.price) {
                             
-                            // PLAY SOUND IF SOMEONE ELSE BID
                             if(item.topBidder !== loggedInEmail) playSound('bid');
 
                             const priceEl = document.getElementById(`price-val-${item.id}`);
                             if(priceEl) {
-                                priceEl.innerText = `$${item.price.toFixed(2)}`;
+                                priceEl.innerText = `$${safePrice.toFixed(2)}`;
                                 priceEl.style.color = '#fff';
                                 setTimeout(() => priceEl.style.color = 'var(--accent-cyan)', 500);
                             }
                             const inputEl = document.getElementById(`bid-val-${item.id}`);
-                            if(inputEl && parseFloat(inputEl.value) <= item.price) inputEl.value = item.price + 1;
+                            if(inputEl && parseFloat(inputEl.value) <= safePrice) inputEl.value = safePrice + 1;
                             const histEl = document.getElementById(`history-${item.id}`);
                             if(histEl) histEl.innerHTML = generateBidHistoryHTML(item.bidHistory);
                             
@@ -579,7 +590,7 @@
                                     card.classList.remove('state-outbid'); card.classList.add('state-winning');
                                     card.querySelector('.status-badge').innerText = "YOU HOLD THE HIGH BID";
                                 } else {
-                                    showToast(`🔥 ${item.topBidderName} bid $${item.price} on ${item.name}!`);
+                                    showToast(`🔥 ${item.topBidderName} bid $${safePrice} on ${item.name}!`);
                                     if (oldState.topBidder === loggedInEmail) {
                                         card.classList.remove('state-winning'); card.classList.add('state-outbid');
                                         card.querySelector('.status-badge').innerText = "YOU HAVE BEEN OUTBID!";
@@ -605,7 +616,7 @@
                             }
                         }
 
-                        lastKnownState[item.id] = { price: item.price, topBidder: item.topBidder, isEnded: isEnded };
+                        lastKnownState[item.id] = { price: safePrice, topBidder: item.topBidder, isEnded: isEnded };
                         const timerEl = document.querySelector(`.countdown-timer[data-id="${item.id}"]`);
                         if (timerEl && item.scheduleEnd) timerEl.dataset.end = item.scheduleEnd;
                     }
