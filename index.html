@@ -18,25 +18,29 @@
         }
         * { margin:0; padding:0; box-sizing:border-box; }
         body { font-family: 'Inter', sans-serif; background: var(--bg-dark); color: var(--text-bright); min-height: 100vh; overflow-x: hidden; position: relative; }
+        
+        /* BACKGROUND & PARTICLES */
         body::before { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 50% 0%, rgba(0, 255, 242, 0.1) 0%, transparent 50%), radial-gradient(circle at 50% 100%, rgba(213, 0, 255, 0.1) 0%, transparent 50%), linear-gradient(to bottom, #02020a, #0a0514); z-index: -10; pointer-events: none; }
         .particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; background-image: radial-gradient(circle at 20% 30%, var(--accent-cyan) 1px, transparent 3px), radial-gradient(circle at 80% 70%, var(--accent-purple) 1px, transparent 3px); background-size: 120px 120px; opacity: 0.4; }
         
-        .poke-bg { position: fixed; pointer-events: none; z-index: -5; opacity: 0.1; filter: blur(1px); will-change: transform; transform: translateZ(0); }
+        /* POKEMONS - Faded and pushed to edges */
+        .poke-bg { position: fixed; pointer-events: none; z-index: -5; opacity: 0.08; filter: blur(1px); will-change: transform; transform: translateZ(0); }
         .p-suicune { top: 50%; left: 50%; transform: translate(-50%, -50%); width: clamp(600px, 80vw, 1200px); opacity: 0.03; animation: breathe 8s ease-in-out infinite; filter: none;}
         @keyframes breathe { 0%,100% { opacity:0.03; } 50% { opacity:0.05; } }
         
-        .p-rayquaza { top: 5%; left: -5%; width: 300px; animation: float 14s infinite ease-in-out; }
-        .p-charizard { top: 10%; right: -5%; width: 280px; animation: floatFlipped 13s infinite ease-in-out; }
-        .p-gengar { top: 45%; left: -2%; width: 200px; animation: floatMid 9s infinite ease-in-out 1s; }
-        .p-gardevoir { top: 50%; right: -2%; width: 220px; animation: floatMid 10s infinite ease-in-out 2s; }
-        .p-vaporeon { bottom: -2%; left: 2%; width: 200px; transform-origin: bottom center; animation: sway 12s infinite ease-in-out; }
-        .p-cubone { bottom: 5%; right: 2%; width: 160px; }
+        .p-rayquaza { top: 5%; left: -6%; width: 280px; animation: float 14s infinite ease-in-out; }
+        .p-charizard { top: 10%; right: -6%; width: 260px; animation: floatFlipped 13s infinite ease-in-out; }
+        .p-gengar { top: 45%; left: -4%; width: 200px; animation: floatMid 9s infinite ease-in-out 1s; }
+        .p-gardevoir { top: 50%; right: -4%; width: 220px; animation: floatMid 10s infinite ease-in-out 2s; }
+        .p-vaporeon { bottom: -2%; left: 0%; width: 180px; transform-origin: bottom center; animation: sway 12s infinite ease-in-out; }
+        .p-cubone { bottom: 5%; right: 0%; width: 160px; }
 
         @keyframes float { 0%, 100% { transform: translate3d(0, 0, 0); } 50% { transform: translate3d(15px, -20px, 0); } }
         @keyframes floatFlipped { 0%, 100% { transform: scaleX(-1) translate3d(0, 0, 0); } 50% { transform: scaleX(-1) translate3d(-15px, -20px, 0); } }
         @keyframes floatMid { 0%, 100% { transform: translate3d(0, -30px, 0); } 50% { transform: translate3d(10px, 10px, 0); } }
         @keyframes sway { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(4deg); } }
         
+        /* MAIN LAYOUT */
         main { position: relative; z-index: 2; max-width: 1300px; margin: 0 auto; padding: 2.5rem; border-radius: 35px; background: rgba(5, 5, 14, 0.75); backdrop-filter: blur(10px); margin-top: 2rem; margin-bottom: 4rem; border: 2px solid rgba(0, 255, 242, 0.3); box-shadow: 0 0 100px rgba(0,0,0,0.8), inset 0 0 30px rgba(0, 255, 242, 0.05), 0 0 20px rgba(0, 255, 242, 0.1), 0 0 40px rgba(213, 0, 255, 0.1); animation: outerGlowPulse 6s ease-in-out infinite; }
         @keyframes outerGlowPulse { 0%, 100% { box-shadow: 0 0 100px rgba(0,0,0,0.8), inset 0 0 30px rgba(0, 255, 242, 0.05), 0 0 20px rgba(0, 255, 242, 0.1), 0 0 40px rgba(213, 0, 255, 0.1); border-color: rgba(0, 255, 242, 0.3); } 50% { box-shadow: 0 0 100px rgba(0,0,0,0.8), inset 0 0 50px rgba(0, 255, 242, 0.1), 0 0 35px rgba(0, 255, 242, 0.25), 0 0 60px rgba(213, 0, 255, 0.2); border-color: rgba(0, 255, 242, 0.5); } }
         
@@ -51,6 +55,7 @@
         .section-line { height: 4px; background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent); flex: 1; border-radius: 10px; box-shadow: 0 0 15px var(--accent-cyan); opacity: 0.7; }
         .section-title { color: #fff; font-weight: 900; letter-spacing: 4px; font-size: 1.5rem; text-shadow: 0 0 20px var(--accent-cyan), 0 0 40px var(--accent-purple); text-align: center; white-space: nowrap; }
         
+        /* SLEEK NARROW SUBSCRIBE PANEL */
         .sleek-banner { max-width: 850px; margin: 2rem auto 4rem; border-radius: 16px; padding: 2px; background: rgba(0,0,0,0.3); position: relative; overflow: hidden; box-shadow: 0 0 25px rgba(0, 255, 242, 0.2); }
         .sleek-banner::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: conic-gradient(transparent 0deg, var(--accent-cyan) 90deg, transparent 180deg, var(--accent-purple) 270deg, transparent 360deg); animation: spinBorder 6s linear infinite; z-index: 0; filter: blur(4px); }
         .sleek-panel-inner { position: relative; z-index: 1; background: linear-gradient(160deg, rgba(20,20,35,0.95), rgba(10,10,20,0.98)); backdrop-filter: blur(16px); border-radius: 14px; padding: 1rem 1.5rem; display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 1rem; }
@@ -63,6 +68,7 @@
         .sleek-bell { background: rgba(20, 20, 20, 0.6); color: var(--accent-gold); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1.2rem; border: 2px solid var(--accent-gold); transition: 0.3s; }
         .sleek-bell:hover { transform: translateY(-2px); box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); background: rgba(255, 215, 0, 0.1); }
 
+        /* YOUTUBE FEED */
         .yt-container { display: grid; gap: 35px; grid-template-columns: 1fr; }
         @media (min-width: 900px) { .yt-container { grid-template-columns: 1fr 1fr; } }
         .yt-card { aspect-ratio: 16/9; cursor: pointer; border-radius: 24px; overflow: hidden; }
@@ -70,12 +76,20 @@
         .lbl-hunt { color: #00eeff; border-color: #00eeff; text-shadow: 0 0 10px #00eeff; }
         .lbl-universal { background: linear-gradient(135deg, #ff0055, #ff0000); color: white; border: none; box-shadow: 0 0 25px rgba(255, 0, 85, 0.5); }
 
+        /* STORE CARDS */
         .store-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 35px; }
-        .store-item-shell { position: relative; padding-top: 15px; } 
+        
+        .store-item-shell { position: relative; padding-top: 18px; } /* Ensures badge floats above container */
         
         .neon-card-wrapper { position: relative; border-radius: 26px; padding: 3px; box-shadow: 0 0 25px rgba(0, 255, 242, 0.2); background: rgba(255,255,255,0.05); overflow: hidden; transition: all 0.4s; transform: translateZ(0); }
         .neon-card-wrapper:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 0 40px rgba(0, 255, 242, 0.6); }
-        .neon-card-wrapper::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: conic-gradient(transparent 0deg, var(--accent-cyan) 90deg, transparent 180deg, var(--accent-purple) 270deg, transparent 360deg); animation: spinBorder 4s linear infinite; z-index: 0; }
+        
+        /* The Glorious Spinning Neon Glow */
+        .neon-card-wrapper::before { 
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; 
+            background: conic-gradient(transparent 0deg, var(--accent-cyan) 90deg, transparent 180deg, var(--accent-purple) 270deg, transparent 360deg); 
+            animation: spinBorder 4s linear infinite; z-index: 0; 
+        }
         @keyframes spinBorder { 100% { transform: rotate(360deg); } }
         
         .card-baller-bundle::before { background: conic-gradient(transparent 0deg, #ffd700 90deg, transparent 180deg, #ffaa00 270deg, transparent 360deg) !important; }
@@ -83,14 +97,17 @@
         
         .state-winning { box-shadow: 0 0 40px rgba(0,255,0,0.5) !important; }
         .state-winning::before { background: conic-gradient(transparent 0deg, #00ff00 90deg, transparent 180deg, #00ff00 270deg, transparent 360deg) !important; animation: spinBorder 2s linear infinite !important;}
+        
         .state-outbid { box-shadow: 0 0 40px rgba(255,0,64,0.5) !important; }
         .state-outbid::before { background: conic-gradient(transparent 0deg, #ff0040 90deg, transparent 180deg, #ff0040 270deg, transparent 360deg) !important; animation: spinBorder 2s linear infinite !important;}
         
-        .status-badge { position:absolute; top:-2px; left:50%; transform:translateX(-50%); padding: 5px 15px; border-radius:20px; font-weight:900; font-size:0.8rem; z-index:10; text-transform:uppercase; display:none; white-space:nowrap; }
+        /* Floating Badge */
+        .status-badge { position:absolute; top:-2px; left:50%; transform:translateX(-50%); padding: 6px 18px; border-radius:20px; font-weight:900; font-size:0.8rem; z-index:10; text-transform:uppercase; display:none; white-space:nowrap; }
         .state-winning-badge { display:block; background:#00ff00; color:#000; box-shadow:0 0 15px #00ff00; }
         .state-outbid-badge { display:block; background:#ff0040; color:#fff; box-shadow:0 0 15px #ff0040; }
 
         .glass-panel { position: relative; background: linear-gradient(160deg, rgba(20,20,35,0.95), rgba(10,10,20,0.98)); backdrop-filter: blur(16px); border-radius: 24px; height: 100%; width: 100%; z-index: 1; border: 1px solid rgba(0,255,242,0.1); display:flex; flex-direction:column; overflow:hidden; }
+        
         .item-img-box { height: 260px; position: relative; border-bottom: 1px solid rgba(0,255,242,0.2); cursor: pointer; overflow:hidden; }
         .item-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s; }
         .neon-card-wrapper:hover .item-img { transform: scale(1.1) rotate(1deg); }
@@ -126,6 +143,7 @@
         .bid-entry .name { color: var(--accent-cyan); font-weight: 700; }
         .bid-entry .amount { color: var(--accent-gold); font-weight: 900; }
 
+        /* EMPTY STORE STATE */
         .epic-empty-wrapper { grid-column: 1 / -1; position: relative; margin: 2rem auto; max-width: 800px; padding: 4px; border-radius: 30px; background: rgba(0,0,0,0.5); box-shadow: 0 0 50px rgba(0, 255, 242, 0.2), 0 0 80px rgba(213, 0, 255, 0.2); overflow: hidden; transform: translateZ(0); }
         .epic-empty-wrapper::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: conic-gradient(transparent 0deg, var(--accent-cyan) 60deg, #fff 90deg, var(--accent-purple) 120deg, transparent 180deg, var(--accent-gold) 240deg, #fff 270deg, var(--accent-live) 300deg, transparent 360deg); animation: spinBorder 4s linear infinite; z-index: 0; opacity: 0.8; filter: blur(8px); }
         .epic-empty-inner { position: relative; z-index: 1; background: linear-gradient(160deg, rgba(10, 10, 20, 0.85) 0%, rgba(5, 5, 15, 0.95) 100%); backdrop-filter: blur(20px); border-radius: 26px; padding: 4rem 3rem; text-align: center; border: 1px solid rgba(255, 255, 255, 0.1); display: flex; flex-direction: column; align-items: center; box-shadow: inset 0 0 40px rgba(0,0,0,0.8); }
@@ -137,6 +155,7 @@
         .letter-content { text-align: center; max-width: 650px; margin: 0 auto; color: #c0c0d0; font-size: 1.1rem; line-height: 1.7; font-weight: 500; }
         .letter-content p { margin-bottom: 1.2rem; }
 
+        /* MISC */
         #user-profile { position: absolute; top: 20px; right: 20px; background: rgba(0,0,0,0.8); padding: 10px 20px; border-radius: 30px; border: 1px solid var(--accent-cyan); display: none; align-items: center; gap: 10px; z-index: 100; font-weight: bold; font-size:0.9rem;}
         .logout-btn { background: none; border: none; color: #ff4444; cursor: pointer; text-decoration: underline; font-size:0.8rem; }
         
@@ -237,7 +256,6 @@
         let loggedInName = localStorage.getItem('bidderName') || null;
         let lastKnownState = {}; 
 
-        // SOUND EFFECTS
         const sfxBid = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
         const sfxWin = new Audio('https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3');
         const sfxLose = new Audio('https://assets.mixkit.co/active_storage/sfx/2997/2997-preview.mp3');
@@ -266,7 +284,6 @@
             renderSkeletons('yt-container', 2);
             const container = document.getElementById('yt-container');
             try {
-                // ADDED CACHE BUSTING HERE TOO
                 const res = await fetch(`${API_URL}/youtube?t=${Date.now()}`);
                 if(!res.ok) throw new Error();
                 const text = await res.text();
@@ -428,7 +445,6 @@
             const container = document.getElementById('store-container');
             
             try {
-                // CACHE BUSTING APPENDED HERE
                 const res = await fetch(`${API_URL}/items?t=${Date.now()}`);
                 if (!res.ok) throw new Error("Network response was not ok");
                 
@@ -572,12 +588,7 @@
                     });
                 }
             } catch (err) {
-                // VERY DETAILED ERROR MESSAGE TO HELP DIAGNOSE BROWSER EXTENSION ISSUES
-                let errorDetails = err.message;
-                if (errorDetails.includes("Failed to fetch")) {
-                    errorDetails = "Your browser blocked the connection to the Vault. If you are using a strict Adblocker, Brave Browser, or a Work/School Wi-Fi network, please disable your shields or try using Cellular Data.";
-                }
-                container.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:#ff4444; padding:3rem; background:rgba(0,0,0,0.5); border-radius:20px; border:1px solid #ff4444;">⚠️ Unable to load the vault database.<br><br><span style="font-size:0.9rem; color:#ccc;">${errorDetails}</span></div>`;
+                container.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:#ff4444; padding:3rem; background:rgba(0,0,0,0.5); border-radius:20px; border:1px solid #ff4444;">⚠️ Unable to load the vault database. Error: ${err.message}</div>`;
             }
         }
 
@@ -648,7 +659,7 @@
                     }
                 });
             } catch(e) {}
-        }, 5000); // Polling reduced to 5 seconds to further prevent browser blocking
+        }, 5000); 
 
         setInterval(() => {
             const now = Date.now();
