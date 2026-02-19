@@ -5,111 +5,102 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PBM Admin</title>
     <link rel="icon" type="image/svg+xml" href="https://upload.wikimedia.org/wikipedia/commons/5/53/Pok%C3%A9_Ball_icon.svg">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
         :root { --bg: #0a0a15; --card: rgba(26,26,46,0.95); --accent: #00eeff; --purple: #9d4edd; --text: #ffffff; --gold: #ffd700; }
         body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; padding: 1.5rem; min-height: 100vh; }
-        .suicune-bg { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 800px; opacity: 0.1; z-index: -1; pointer-events: none; filter: drop-shadow(0 0 80px var(--accent)); }
-        .container { max-width: 600px; margin: 0 auto; position: relative; z-index: 1; }
-        h1 { text-align: center; color: var(--accent); margin-bottom: 2rem; font-weight: 900; font-size: 2rem; }
+        .container { max-width: 700px; margin: 0 auto; position: relative; z-index: 1; }
+        h1 { text-align: center; color: var(--accent); margin-bottom: 2rem; font-weight: 900; font-size: 2rem; text-shadow: 0 0 20px var(--accent); }
         .card { background: var(--card); padding: 1.5rem; border-radius: 16px; border: 1px solid rgba(0,238,255,0.2); margin-bottom: 1.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         label { display: block; margin-bottom: 0.5rem; color: #aaa; font-weight: 600; font-size: 0.85rem; }
-        input, select { width: 100%; padding: 12px; margin-bottom: 1rem; background: rgba(0,0,0,0.5); border: 1px solid #444; color: white; border-radius: 8px; font-size: 1rem; }
+        input, select { width: 100%; padding: 12px; margin-bottom: 1rem; background: rgba(0,0,0,0.5); border: 1px solid #444; color: white; border-radius: 8px; font-size: 1rem; box-sizing: border-box; }
         input:focus, select:focus { outline: none; border-color: var(--accent); }
-        
-        /* DATE PICKER STYLE */
         input[type="datetime-local"] { color-scheme: dark; cursor: pointer; border: 1px solid var(--accent); }
-        
         button { width: 100%; padding: 1rem; background: linear-gradient(135deg, var(--accent), var(--purple)); color: white; font-weight: 900; border: none; border-radius: 8px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; font-size: 1rem; }
         ul { padding: 0; margin: 0; }
-        li { background: rgba(255,255,255,0.05); padding: 1rem; margin-bottom: 1rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); list-style: none; display: flex; flex-direction: column; gap: 1rem; }
-        .item-content { flex: 1; }
-        .item-header { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; flex-wrap: wrap; }
-        .item-title { font-weight: 700; font-size: 1.1rem; line-height: 1.3; }
-        .item-meta { font-size: 0.85rem; color: #888; margin-top: 5px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;}
-        
-        /* --- ADMIN BADGES --- */
-        .badge { padding: 4px 10px; font-size: 0.7rem; border-radius: 6px; font-weight: 800; text-transform: uppercase; white-space: nowrap; flex-shrink: 0; display: flex; align-items: center; gap: 4px; }
-        .b-msrp { color: #00ff9d; border: 1px solid #00ff9d; background: linear-gradient(135deg, rgba(0, 255, 157, 0.15), transparent); }
-        .b-bundle { color: #f0dfff; border: 1px solid var(--purple); background: linear-gradient(135deg, rgba(213, 0, 255, 0.25), rgba(100, 0, 255, 0.15)); }
-        .b-baller { background: var(--gold); color: #000; border: 1px solid var(--gold); box-shadow: 0 0 10px rgba(255, 215, 0, 0.4); }
-        .b-hidden { background: rgba(255, 68, 68, 0.2); color: #ff6666; border: 1px solid #ff4444; }
-        .b-time { background: rgba(157, 78, 221, 0.2); color: #e0aaff; border: 1px solid var(--purple); }
-        .click-badge { background: rgba(0, 184, 255, 0.15); color: #00b8ff; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
-        
-        .btn-group { display: flex; gap: 10px; width: 100%; }
+        li { background: rgba(255,255,255,0.05); padding: 1.5rem; margin-bottom: 1rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); list-style: none; display: flex; flex-direction: column; gap: 1rem; }
+        .item-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;}
+        .item-title { font-weight: 900; font-size: 1.3rem; color: #fff;}
+        .item-meta { font-size: 0.9rem; color: #aaa; margin-top: 5px; display: flex; gap: 15px; align-items: center; flex-wrap: wrap;}
+        .badge { padding: 4px 10px; font-size: 0.75rem; border-radius: 6px; font-weight: 800; text-transform: uppercase; }
+        .b-msrp { color: #00ff9d; border: 1px solid #00ff9d; }
+        .b-bundle { color: #f0dfff; border: 1px solid var(--purple); }
+        .b-baller { background: var(--gold); color: #000; border: 1px solid var(--gold); }
+        .b-auction { background: var(--purple); color: white; box-shadow: 0 0 10px var(--purple); }
+        .btn-group { display: flex; gap: 10px; width: 100%; margin-top: 10px; }
         .btn-group button { padding: 10px; font-size: 0.9rem; flex: 1; }
-        .btn-edit { background: #00b8ff; box-shadow: none; }
-        .btn-del { background: #ff0055; box-shadow: none; }
-        @media(min-width: 600px) { li { flex-direction: row; align-items: center; } .btn-group { width: auto; flex-shrink: 0; } .btn-group button { width: auto; padding: 8px 16px; } }
+        .btn-edit { background: #00b8ff; } .btn-del { background: #ff0055; } .btn-bids { background: #222; border: 1px solid #555; }
+        
+        .history-panel { display: none; background: #05050a; padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px solid var(--purple); }
+        .history-entry { display: flex; justify-content: space-between; border-bottom: 1px solid #222; padding: 8px 0; font-size: 0.85rem; }
+        .history-entry:last-child { border: none; }
+        .winner-text { color: #00ff9d; font-weight: bold; font-size: 1.1rem; margin-bottom: 10px; border-bottom: 1px dashed #00ff9d; padding-bottom: 5px;}
+        
         #login-section { display: block; } #admin-section { display: none; }
     </style>
 </head>
 <body>
-    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="suicune-bg">
     <div class="container">
-        <h1>PBM ADMIN</h1>
+        <h1>PBM ADMIN VAULT</h1>
+        
         <div id="login-section" class="card">
             <label>Username</label><input type="text" id="login-username">
             <label>Password</label><input type="password" id="login-password">
             <button onclick="login()">ENTER SYSTEM</button>
         </div>
+
         <div id="admin-section">
             <div class="card">
-                <h3 style="margin-top:0; margin-bottom:1rem;">Add / Edit Item</h3>
+                <h3 style="margin-top:0; margin-bottom:1rem; color:var(--accent);">ADD / EDIT ITEM</h3>
                 <div style="display:flex; gap:10px;">
                     <div style="flex:1">
                         <label>Break Type</label>
                         <select id="item-type">
-                            <option value="msrp">✅ MSRP Break (Standard)</option>
-                            <option value="bundle">💎 Bundle Break (Premium)</option>
-                            <option value="baller">👑 BALLER BUNDLE (Super Premium)</option>
+                            <option value="msrp">MSRP Break</option>
+                            <option value="bundle">Bundle Break</option>
+                            <option value="baller">BALLER BUNDLE</option>
                         </select>
                     </div>
                     <div style="flex:1">
                         <label>Visibility</label>
-                        <select id="item-hidden" style="border: 1px solid #555;"><option value="false">👁️ Public</option><option value="true" style="color:#ff6666">🚫 Hidden</option></select>
+                        <select id="item-hidden"><option value="false">Public</option><option value="true">Hidden</option></select>
                     </div>
                 </div>
                 
                 <div style="display:flex; gap:10px; margin-bottom: 0.5rem;">
-                    <div style="flex:1">
-                        <label>🟢 Start Time (Go Live)</label>
-                        <input type="datetime-local" id="item-schedule-date">
-                    </div>
-                    <div style="flex:1">
-                        <label>🔴 Close Time (Auto Sell Out)</label>
-                        <input type="datetime-local" id="item-schedule-end">
-                    </div>
+                    <div style="flex:1"><label>Start Time</label><input type="datetime-local" id="item-schedule-date"></div>
+                    <div style="flex:1"><label>Close/Auction End</label><input type="datetime-local" id="item-schedule-end"></div>
                 </div>
                 
                 <label>Name</label><input type="text" id="item-name">
                 <label>Description</label><input type="text" id="item-description">
+                
                 <div style="display:flex; gap:10px;">
-                    <div style="flex:1"><label>Price</label><input type="number" id="item-price"></div>
-                    <div style="flex:1"><label>Stock (Visual)</label><input type="number" id="item-stock"></div>
+                    <div style="flex:1">
+                        <label>Pricing Mode</label>
+                        <select id="item-price-type" style="border-color: #d500ff;">
+                            <option value="fixed">Fixed Price</option>
+                            <option value="auction">Live Auction</option>
+                        </select>
+                    </div>
+                    <div style="flex:1"><label>Price/Start Bid</label><input type="number" id="item-price"></div>
+                    <div style="flex:1"><label>Spots</label><input type="number" id="item-stock" value="1"></div>
                 </div>
-                <label>Form Link</label><input type="url" id="item-google-form-link">
+
+                <label>Form Link (Leave blank if Auction)</label><input type="url" id="item-google-form-link" placeholder="https://forms.gle/...">
                 <label>Image</label><input type="file" id="item-image">
                 <button id="submit-btn" onclick="submitItem()">Save Item</button>
             </div>
-            <h3 style="color:#888; font-size:0.9rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:1rem;">Inventory</h3>
+
+            <h3 style="color:#888; font-size:1rem; letter-spacing:1px; margin-bottom:1rem;">INVENTORY</h3>
             <ul id="item-list"></ul>
             <button onclick="logout()" style="background:#333; margin-top:2rem;">Log Out</button>
-            <a href="index.html" style="display:block; text-align:center; margin-top:1rem; color:#666; text-decoration:none;">Back to Store</a>
         </div>
     </div>
+    
     <script>
         const API_URL = 'https://pokeballer-worker.kronborgnielsen.workers.dev/api';
-        
-        let allItems = [];
-        let editingId = null;
-        let currentImage = '';
-        let currentCreatedAt = null;
-        let currentClicks = 0; 
+        let allItems = [], editingId = null, currentImage = '', currentCreatedAt = null; 
 
         if(localStorage.getItem('adminToken')) {
             document.getElementById('login-section').style.display='none';
@@ -120,25 +111,18 @@
         async function login() {
             const u = document.getElementById('login-username').value;
             const p = document.getElementById('login-password').value;
-            try {
-                const res = await fetch(`${API_URL}/login`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({username:u, password:p}) });
-                const data = await res.json();
-                if(data.success) { localStorage.setItem('adminToken','1'); location.reload(); } 
-                else alert('Invalid Credentials.');
-            } catch(e) { alert('Server Error. Check console.'); }
+            const res = await fetch(`${API_URL}/login`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({username:u, password:p}) });
+            const data = await res.json();
+            if(data.success) { localStorage.setItem('adminToken','1'); location.reload(); } else alert('Invalid Credentials.');
         }
 
         async function submitItem() {
-            const btn = document.getElementById('submit-btn');
-            btn.innerText = "Saving...";
-            
+            const btn = document.getElementById('submit-btn'); btn.innerText = "Saving...";
             const type = document.getElementById('item-type').value;
             const hidden = document.getElementById('item-hidden').value === 'true';
-            
-            // GRAB BOTH DATES
+            const priceType = document.getElementById('item-price-type').value; 
             const scheduleDate = document.getElementById('item-schedule-date').value; 
             const scheduleEnd = document.getElementById('item-schedule-end').value; 
-            
             const name = document.getElementById('item-name').value;
             const desc = document.getElementById('item-description').value;
             const price = parseFloat(document.getElementById('item-price').value);
@@ -148,153 +132,104 @@
 
             let img = editingId ? currentImage : '';
             if(file) {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
+                const reader = new FileReader(); reader.readAsDataURL(file);
                 await new Promise(r => reader.onload = () => { img = reader.result; r(); });
             }
 
-            const body = { 
-                type, name, description:desc, price, stock, googleFormLink:form, image:img, 
-                clickCount: editingId ? currentClicks : 0,
-                createdAt: editingId ? currentCreatedAt : Date.now(),
-                hidden: hidden,
-                scheduleDate: scheduleDate,
-                scheduleEnd: scheduleEnd // SENDING END DATE
-            };
-            
+            const body = { type, priceType, name, description:desc, price, stock, googleFormLink:form, image:img, createdAt: editingId ? currentCreatedAt : Date.now(), hidden, scheduleDate, scheduleEnd };
             const url = editingId ? `${API_URL}/items/${editingId}` : `${API_URL}/items`;
             const method = editingId ? 'PUT' : 'POST';
 
-            try {
-                const response = await fetch(url, { method, headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
-                if(response.status === 500) { alert("SERVER ERROR"); btn.innerText = "Save Failed"; return; }
-
-                editingId = null; currentImage = ''; currentCreatedAt = null; currentClicks = 0;
-                
-                document.getElementById('item-name').value = '';
-                document.getElementById('item-description').value = '';
-                document.getElementById('item-price').value = '';
-                document.getElementById('item-stock').value = '';
-                document.getElementById('item-google-form-link').value = '';
-                document.getElementById('item-image').value = '';
-                document.getElementById('item-type').value = 'msrp';
-                document.getElementById('item-hidden').value = 'false';
-                document.getElementById('item-schedule-date').value = ''; 
-                document.getElementById('item-schedule-end').value = ''; 
-                btn.innerText = "Save Item";
-                
-                loadItems();
-            } catch(e) { alert("Save Failed."); btn.innerText = "Save Failed"; }
+            await fetch(url, { method, headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
+            editingId = null; btn.innerText = "Save Item"; loadItems();
         }
 
-        // --- SAFE FORMATTER ---
-        function formatLiteralDate(val) {
-            if (!val) return "";
-            if (val.indexOf('T') === -1) return val;
-            try {
-                const [datePart, timePart] = val.split('T');
-                if(!timePart) return val;
-                const [year, month, day] = datePart.split('-');
-                let [hour, minute] = timePart.split(':');
-                let h = parseInt(hour);
-                let ampm = 'AM';
-                if (h >= 12) { ampm = 'PM'; if (h > 12) h -= 12; }
-                if (h === 0) h = 12;
-                return `${month}/${day}, ${h}:${minute} ${ampm}`;
-            } catch(e) { return val; }
+        function toggleHistory(id) {
+            const el = document.getElementById(`hist-${id}`);
+            el.style.display = el.style.display === 'block' ? 'none' : 'block';
         }
 
         async function loadItems() {
-            try {
-                const res = await fetch(`${API_URL}/items`);
-                const items = await res.json();
+            const res = await fetch(`${API_URL}/items`);
+            const items = await res.json();
+            allItems = items.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
+            const list = document.getElementById('item-list'); list.innerHTML = '';
+            
+            items.forEach(item => {
+                let badgeClass = item.type === 'baller' ? 'b-baller' : (item.type === 'bundle' ? 'b-bundle' : 'b-msrp');
+                let isAuction = item.priceType === 'auction';
+                let aucBadge = isAuction ? '<span class="badge b-auction">AUCTION</span>' : '';
                 
-                if(items.error) { alert("DATABASE ERROR: " + items.error); return; }
-
-                items.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
-                allItems = items;
-
-                const list = document.getElementById('item-list');
-                list.innerHTML = '';
-                items.forEach(item => {
-                    let badgeClass = 'b-msrp';
-                    let badgeText = 'MSRP';
-
-                    if (item.type === 'baller') {
-                        badgeClass = 'b-baller';
-                        badgeText = '<i class="ph-fill ph-crown"></i> BALLER';
-                    } else if (item.type === 'bundle') {
-                        badgeClass = 'b-bundle';
-                        badgeText = '<i class="ph-fill ph-sketch-logo"></i> BUNDLE';
-                    }
+                let historyHtml = '';
+                if (isAuction) {
+                    let rows = '<div style="color:#888; font-size:0.8rem; text-align:center;">No bids yet</div>';
+                    let winnerEmail = item.topBidder || 'None';
+                    let winnerName = item.topBidderName || 'None';
                     
-                    const hiddenBadge = item.hidden ? '<span class="badge b-hidden"><i class="ph-fill ph-eye-slash"></i> HIDDEN</span>' : '';
-                    const opacity = item.hidden ? 'opacity: 0.6;' : '';
-                    
-                    let timeBadge = '';
-                    if (item.scheduleDate) {
-                        const start = formatLiteralDate(item.scheduleDate);
-                        const end = item.scheduleEnd ? formatLiteralDate(item.scheduleEnd) : '...';
-                        // Shows simplified range: 10/24 8:00 PM -> 10:00 PM
-                        timeBadge = `<span class="badge b-time"><i class="ph-fill ph-clock"></i> ${start} ➔ ${end}</span>`;
+                    if (item.bidHistory && item.bidHistory.length > 0) {
+                        rows = item.bidHistory.slice().reverse().map(b => 
+                            `<div class="history-entry">
+                                <span><b>${b.name}</b> (${b.email})</span>
+                                <span style="color:var(--gold);">$${b.amount}</span>
+                             </div>`
+                        ).join('');
                     }
 
-                    list.innerHTML += `
-                        <li style="${opacity}">
-                            <div class="item-content">
-                                <div class="item-header">
-                                    <span class="item-title">${item.name}</span>
-                                    ${hiddenBadge}
-                                    <span class="badge ${badgeClass}">${badgeText}</span> 
-                                </div>
-                                <div class="item-meta">
-                                    ${timeBadge}
-                                </div>
-                                <div class="item-meta">
-                                    <span>$${item.price}</span>
-                                    <span>• Stock: ${item.stock}</span>
-                                    <span class="click-badge">🖱️ ${item.clickCount||0}</span>
-                                </div>
-                            </div>
-                            <div class="btn-group">
-                                <button class="btn-edit" onclick="startEditing('${item.id}')">Edit</button>
-                                <button class="btn-del" onclick="deleteItem('${item.id}')">Del</button>
-                            </div>
-                        </li>`;
-                });
-            } catch(e) { console.error("Load Error", e); }
+                    historyHtml = `
+                        <div id="hist-${item.id}" class="history-panel">
+                            <div class="winner-text">TOP BIDDER: ${winnerName} (${winnerEmail})</div>
+                            ${rows}
+                        </div>
+                    `;
+                }
+
+                list.innerHTML += `
+                    <li style="${item.hidden ? 'opacity:0.5;' : ''}">
+                        <div class="item-header">
+                            <span class="item-title">${item.name}</span>
+                            <div><span class="badge ${badgeClass}">${item.type}</span> ${aucBadge}</div>
+                        </div>
+                        <div class="item-meta">
+                            <span style="color:var(--accent); font-weight:bold; font-size:1.1rem;">$${item.price}</span>
+                            <span>Stock: ${item.stock}</span>
+                            <span>Clicks: ${item.clickCount || 0}</span>
+                        </div>
+                        
+                        <div class="btn-group">
+                            <button class="btn-edit" onclick="startEditing('${item.id}')">Edit</button>
+                            ${isAuction ? `<button class="btn-bids" onclick="toggleHistory('${item.id}')">View Bids</button>` : ''}
+                            <button class="btn-del" onclick="deleteItem('${item.id}')">Delete</button>
+                        </div>
+                        ${historyHtml}
+                    </li>`;
+            });
         }
 
         function startEditing(id) {
             const item = allItems.find(i => i.id === id);
             if(item) {
-                editingId = item.id; 
-                currentImage = item.image; 
-                currentCreatedAt = item.createdAt;
-                currentClicks = item.clickCount || 0; 
+                editingId = item.id; currentImage = item.image; currentCreatedAt = item.createdAt;
                 document.getElementById('item-type').value = item.type || 'msrp';
+                document.getElementById('item-price-type').value = item.priceType || 'fixed';
                 document.getElementById('item-hidden').value = item.hidden ? 'true' : 'false';
                 
-                // POPULATE BOTH DATES
                 const dateVal = item.scheduleDate || '';
-                if(dateVal.indexOf('T') > -1) document.getElementById('item-schedule-date').value = dateVal;
-                else document.getElementById('item-schedule-date').value = ''; 
+                document.getElementById('item-schedule-date').value = dateVal.indexOf('T') > -1 ? dateVal : ''; 
                 
                 const endVal = item.scheduleEnd || '';
-                if(endVal.indexOf('T') > -1) document.getElementById('item-schedule-end').value = endVal;
-                else document.getElementById('item-schedule-end').value = '';
+                document.getElementById('item-schedule-end').value = endVal.indexOf('T') > -1 ? endVal : '';
 
                 document.getElementById('item-name').value = item.name;
                 document.getElementById('item-description').value = item.description;
                 document.getElementById('item-price').value = item.price;
                 document.getElementById('item-stock').value = item.stock;
-                document.getElementById('item-google-form-link').value = item.googleFormLink;
+                document.getElementById('item-google-form-link').value = item.googleFormLink || '';
                 document.getElementById('submit-btn').innerText = "Update Item";
-                window.scrollTo(0,0);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         }
 
-        async function deleteItem(id) { if(confirm('Delete?')) { await fetch(`${API_URL}/items/${id}`, {method:'DELETE'}); loadItems(); } }
+        async function deleteItem(id) { if(confirm('Delete permanently?')) { await fetch(`${API_URL}/items/${id}`, {method:'DELETE'}); loadItems(); } }
         function logout() { localStorage.removeItem('adminToken'); location.reload(); }
     </script>
 </body>
