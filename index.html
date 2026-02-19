@@ -6,10 +6,7 @@
     <title>PBM Breaks - The Crystal League</title>
     
     <link rel="icon" type="image/svg+xml" href="https://upload.wikimedia.org/wikipedia/commons/5/53/Pok%C3%A9_Ball_icon.svg">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -22,27 +19,13 @@
         }
         * { margin:0; padding:0; box-sizing:border-box; }
         body { font-family: 'Inter', sans-serif; background: var(--bg-dark); color: var(--text-bright); min-height: 100vh; overflow-x: hidden; position: relative; }
-        
-        /* BACKGROUNDS & PARTICLES */
         body::before { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 50% 0%, rgba(0, 255, 242, 0.1) 0%, transparent 50%), radial-gradient(circle at 50% 100%, rgba(213, 0, 255, 0.1) 0%, transparent 50%), linear-gradient(to bottom, #02020a, #0a0514); z-index: -10; pointer-events: none; }
         .particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; background-image: radial-gradient(circle at 20% 30%, var(--accent-cyan) 1px, transparent 3px), radial-gradient(circle at 80% 70%, var(--accent-purple) 1px, transparent 3px); background-size: 120px 120px; opacity: 0.4; }
-        .poke-bg { position: fixed; pointer-events: none; z-index: -5; opacity: 0.3; will-change: transform; transform: translateZ(0); backface-visibility: hidden; }
         
+        .poke-bg { position: fixed; pointer-events: none; z-index: -5; opacity: 0.3; will-change: transform; transform: translateZ(0); backface-visibility: hidden; }
         .p-suicune { top: 50%; left: 50%; transform: translate(-50%, -50%); width: clamp(500px, 70vw, 1000px); opacity: 0.05; animation: breathe 8s ease-in-out infinite; z-index: -6; }
         @keyframes breathe { 0%,100% { opacity:0.05; } 50% { opacity:0.08; } }
-        .p-rayquaza { top: -5%; left: -5%; width: var(--guardian-size); animation: float 14s infinite ease-in-out; }
-        .p-charizard { top: -5%; right: -5%; width: var(--guardian-size); animation: floatFlipped 13s infinite ease-in-out; }
-        .p-gengar { top: 45%; left: -2%; width: calc(var(--guardian-size)*0.8); animation: floatMid 9s infinite ease-in-out 1s; opacity: 0.2; }
-        .p-gardevoir { top: 45%; right: -2%; width: calc(var(--guardian-size)*0.8); animation: floatMid 10s infinite ease-in-out 2s; opacity: 0.2; }
-        .p-vaporeon { bottom: 5%; left: 5%; width: calc(var(--guardian-size)*0.7); transform-origin: bottom center; animation: sway 12s infinite ease-in-out; opacity: 0.25; }
-        .p-cubone { bottom: 5%; right: 5%; width: calc(var(--guardian-size) * 0.6); z-index: -3; opacity: 0.25; }
-
-        @keyframes float { 0%, 100% { transform: translate3d(0, 0, 0); } 50% { transform: translate3d(20px, -30px, 0); } }
-        @keyframes floatFlipped { 0%, 100% { transform: scaleX(-1) translate3d(0, 0, 0); } 50% { transform: scaleX(-1) translate3d(-20px, -30px, 0); } }
-        @keyframes floatMid { 0%, 100% { transform: translate3d(0, -50%, 0); } 50% { transform: translate3d(15px, calc(-50% - 20px), 0); } }
-        @keyframes sway { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(4deg); } }
-
-        /* LAYOUT & HEADER */
+        
         main { position: relative; z-index: 2; max-width: 1250px; margin: 0 auto; padding: 2.5rem; border-radius: 35px; background: rgba(5, 5, 14, 0.75); backdrop-filter: blur(10px); margin-top: 2rem; margin-bottom: 4rem; border: 2px solid rgba(0, 255, 242, 0.3); box-shadow: 0 0 100px rgba(0,0,0,0.8), inset 0 0 30px rgba(0, 255, 242, 0.05), 0 0 20px rgba(0, 255, 242, 0.1), 0 0 40px rgba(213, 0, 255, 0.1); animation: outerGlowPulse 6s ease-in-out infinite; }
         @keyframes outerGlowPulse { 0%, 100% { box-shadow: 0 0 100px rgba(0,0,0,0.8), inset 0 0 30px rgba(0, 255, 242, 0.05), 0 0 20px rgba(0, 255, 242, 0.1), 0 0 40px rgba(213, 0, 255, 0.1); border-color: rgba(0, 255, 242, 0.3); } 50% { box-shadow: 0 0 100px rgba(0,0,0,0.8), inset 0 0 50px rgba(0, 255, 242, 0.1), 0 0 35px rgba(0, 255, 242, 0.25), 0 0 60px rgba(213, 0, 255, 0.2); border-color: rgba(0, 255, 242, 0.5); } }
         
@@ -50,22 +33,19 @@
         .header-wrapper { display: flex; align-items: center; gap: 2rem; }
         .header-logo { width: 160px; display: block; filter: drop-shadow(0 0 35px var(--accent-cyan)); }
         .logo-left .header-logo { transform: scaleX(-1); }
-        .logo-animator { animation: float 6s infinite ease-in-out; } 
         h1 { font-size: clamp(3.5rem, 9vw, 6.5rem); font-weight: 900; letter-spacing: -2px; text-transform: uppercase; margin: 0; line-height: 1; background: linear-gradient(180deg, #ffffff 20%, #cafffc 50%, #00fff2 55%, #d500ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-align: center; position: relative; display: inline-block; z-index: 1; filter: drop-shadow(0 0 25px rgba(0, 255, 242, 0.6)); }
-        h1::after { content: attr(data-text); position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 2; background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.9) 45%, #fff 50%, rgba(255, 255, 255, 0.9) 55%, transparent 70%); background-size: 200% 100%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: glassShimmer 5s infinite linear; pointer-events: none; mix-blend-mode: overlay; }
-        @keyframes glassShimmer { 0% { background-position: 150% 0; } 100% { background-position: -150% 0; } }
-
+        
         /* SECTION HEADERS */
         .section-header { display: flex; align-items: center; justify-content: center; gap: 1.5rem; margin: 4rem auto 2.5rem; background: linear-gradient(90deg, rgba(0,255,242,0.1), rgba(213,0,255,0.1)); border: 1px solid rgba(0,255,242,0.4); padding: 15px 50px; border-radius: 60px; max-width: 700px; box-shadow: 0 0 30px rgba(0, 255, 242, 0.2), inset 0 2px 0 rgba(255,255,255,0.2); backdrop-filter: blur(10px); }
         .section-line { height: 4px; background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent); flex: 1; border-radius: 10px; box-shadow: 0 0 15px var(--accent-cyan); opacity: 0.7; }
-        .section-title { color: #fff; font-weight: 900; letter-spacing: 4px; font-size: 1.5rem; text-shadow: 0 0 20px var(--accent-cyan), 0 0 40px var(--accent-purple); text-align: center; }
-
-        /* SUBSCRIBE PANEL */
-        .sub-info-panel { display: flex; align-items: center; justify-content: space-between; padding: 2.5rem; gap: 3rem; flex-wrap: wrap; }
-        .sub-text { flex: 1; min-width: 300px; }
-        .sub-text h3 { display: flex; align-items: center; gap: 10px; font-size: 1.6rem; color: var(--accent-gold); margin-bottom: 0.8rem; text-shadow: 0 0 15px rgba(255, 215, 0, 0.4); }
-        .sub-text p { color: var(--text-dim); line-height: 1.7; font-size: 1rem; }
-        .sub-actions { display: flex; gap: 20px; align-items: center; justify-content: center; }
+        .section-title { color: #fff; font-weight: 900; letter-spacing: 4px; font-size: 1.5rem; text-shadow: 0 0 20px var(--accent-cyan), 0 0 40px var(--accent-purple); text-align: center; white-space: nowrap; }
+        
+        /* CORRECTED SUBSCRIBE PANEL */
+        .sub-info-panel { display: flex; flex-direction: row; align-items: center; justify-content: space-between; padding: 2.5rem; gap: 2rem; flex-wrap: nowrap; }
+        .sub-text { flex: 1; text-align: left; }
+        .sub-text h3 { display: flex; align-items: center; justify-content: flex-start; gap: 10px; font-size: 1.6rem; color: var(--accent-gold); margin-bottom: 0.8rem; text-shadow: 0 0 15px rgba(255, 215, 0, 0.4); }
+        .sub-text p { color: var(--text-dim); line-height: 1.7; font-size: 1rem; margin: 0;}
+        .sub-actions { display: flex; gap: 15px; align-items: center; flex-shrink: 0; }
         .sub-btn { background: linear-gradient(135deg, #ff0000, #dd0000); color: white; padding: 14px 32px; border-radius: 50px; text-decoration: none; font-weight: 900; display: flex; align-items: center; gap: 10px; box-shadow: 0 0 25px rgba(255, 0, 0, 0.5), inset 0 2px 0 rgba(255,255,255,0.4); border: 1px solid rgba(255, 50, 50, 0.8); letter-spacing: 1px; font-size: 1.2rem; white-space: nowrap; transition: 0.3s; }
         .sub-btn:hover { transform: translateY(-3px); box-shadow: 0 0 40px rgba(255, 0, 0, 0.8); }
         .bell-btn { background: rgba(20, 20, 20, 0.6); color: var(--accent-gold); width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1.6rem; border: 2px solid var(--accent-gold); box-shadow: 0 0 20px rgba(255, 215, 0, 0.3), inset 0 2px 5px rgba(255,255,255,0.2); flex-shrink: 0; backdrop-filter: blur(5px); transition: 0.3s; }
@@ -74,32 +54,26 @@
         /* YOUTUBE FEED */
         .yt-container { display: grid; gap: 35px; grid-template-columns: 1fr; }
         @media (min-width: 900px) { .yt-container { grid-template-columns: 1fr 1fr; } }
-        .yt-card { aspect-ratio: 16/9; cursor: pointer; }
+        .yt-card { aspect-ratio: 16/9; cursor: pointer; border-radius: 24px; overflow: hidden; }
         .yt-label { position: absolute; top: 20px; left: 20px; padding: 10px 20px; border-radius: 12px; font-weight: 900; font-size: 0.85rem; letter-spacing: 0.8px; z-index: 2; box-shadow: 0 5px 20px rgba(0,0,0,0.6); text-transform: uppercase; display:flex; align-items:center; gap:8px; background: rgba(0,0,0,0.7); border: 1px solid rgba(255,255,255,0.25); backdrop-filter: blur(8px); }
-        .lbl-upcoming { color: #ffd700; border-color: #ffd700; text-shadow: 0 0 10px #ffd700; }
         .lbl-hunt { color: #00eeff; border-color: #00eeff; text-shadow: 0 0 10px #00eeff; }
         .lbl-universal { background: linear-gradient(135deg, #ff0055, #ff0000); color: white; border: none; box-shadow: 0 0 25px rgba(255, 0, 85, 0.5); }
 
         /* STORE CARDS */
         .store-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 35px; }
-        
         .neon-card-wrapper { position: relative; border-radius: 26px; padding: 3px; box-shadow: 0 0 25px rgba(0, 255, 242, 0.2), 0 0 50px rgba(213, 0, 255, 0.15); background: rgba(0,0,0,0.2); overflow: hidden; transition: all 0.4s; transform: translateZ(0); }
         .neon-card-wrapper:hover { transform: translateY(-10px) scale(1.02); box-shadow: 0 0 50px rgba(0, 255, 242, 0.6), 0 0 80px rgba(213, 0, 255, 0.5); }
         .neon-card-wrapper::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: conic-gradient(transparent 0deg, transparent 90deg, var(--accent-cyan) 130deg, #ffffff 155deg, var(--accent-purple) 180deg, transparent 220deg); animation: spinBorder 5s linear infinite; z-index: 0; opacity: 1; filter: blur(5px); }
         @keyframes spinBorder { 100% { transform: rotate(360deg); } }
         
-        /* CARD THEMES */
         .card-baller-bundle { border: 2px solid #ffd700 !important; box-shadow: 0 0 50px rgba(255, 215, 0, 0.35) !important; }
         .card-baller-bundle::before { background: conic-gradient(transparent 0deg, transparent 90deg, #bf953f 130deg, #fcf6ba 155deg, #b38728 180deg, transparent 220deg) !important; }
-
         .card-pbm-auction { border: 2px solid #ff4500 !important; box-shadow: 0 0 50px rgba(255, 69, 0, 0.4) !important; animation: fireWrapper 3s infinite alternate; }
         .card-pbm-auction::before { background: conic-gradient(transparent 0deg, transparent 90deg, #ff4500 130deg, #ffaa00 155deg, #ff0000 180deg, transparent 220deg) !important; }
         @keyframes fireWrapper { from { box-shadow: 0 0 30px rgba(255,69,0,0.4); } to { box-shadow: 0 0 60px rgba(255,170,0,0.6); } }
-        
         .tag-pbm-auction { background: linear-gradient(90deg, #660000, #330000); border: 1px solid #ff4500; color: #ffaa00; text-shadow: 0 0 10px #ffaa00; box-shadow: 0 0 20px rgba(255, 69, 0, 0.8); animation: firePulse 1.5s infinite alternate; }
         @keyframes firePulse { from { box-shadow: 0 0 15px #ff4500; border-color: #ff4500; color: #ffaa00; } to { box-shadow: 0 0 35px #ffaa00; border-color: #ffaa00; color: #ffffff; } }
 
-        /* AUCTION UI STATES */
         .state-winning { border: 2px solid #00ff00 !important; box-shadow: 0 0 30px rgba(0,255,0,0.4) !important; animation:none;}
         .state-winning::before { background: conic-gradient(transparent, #00ff00, transparent) !important; }
         .state-outbid { border: 2px solid #ff0040 !important; box-shadow: 0 0 30px rgba(255,0,64,0.4) !important; animation:none;}
@@ -154,7 +128,7 @@
         .letter-content { text-align: center; max-width: 650px; margin: 0 auto; color: #c0c0d0; font-size: 1.1rem; line-height: 1.7; font-weight: 500; }
         .letter-content p { margin-bottom: 1.2rem; }
 
-        /* USER PROFILE & TOASTS & MODAL */
+        /* MISC */
         #user-profile { position: absolute; top: 20px; right: 20px; background: rgba(0,0,0,0.8); padding: 10px 20px; border-radius: 30px; border: 1px solid var(--accent-cyan); display: none; align-items: center; gap: 10px; z-index: 100; font-weight: bold; font-size:0.9rem;}
         .logout-btn { background: none; border: none; color: #ff4444; cursor: pointer; text-decoration: underline; font-size:0.8rem; }
         
@@ -182,6 +156,7 @@
             main { padding: 1.5rem 1rem; margin: 1rem auto 3rem; width: 95%; border-radius: 25px; }
             .store-grid { grid-template-columns: 1fr; gap: 30px; }
             .sub-info-panel { flex-direction: column; text-align: center; gap: 1.5rem; padding: 2rem 1.2rem; }
+            .sub-text h3 { justify-content: center; }
             .sub-actions { width: 100%; justify-content: center; gap: 15px; }
             .epic-empty-inner { padding: 3rem 1.5rem; }
         }
@@ -253,6 +228,18 @@
         let loggedInName = localStorage.getItem('bidderName') || null;
         let lastKnownState = {}; 
 
+        // SOUND EFFECTS
+        const sfxBid = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
+        const sfxWin = new Audio('https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3');
+        sfxBid.volume = 0.5; sfxWin.volume = 0.7;
+
+        function playSound(type) {
+            try { 
+                if(type === 'bid') sfxBid.play().catch(e=>{}); 
+                if(type === 'win') sfxWin.play().catch(e=>{}); 
+            } catch(e) {}
+        }
+
         // -- MODAL LOGIC --
         function openModal(src) { document.getElementById("myModal").style.display = "flex"; document.getElementById("img01").src = src; }
         function closeModal() { document.getElementById("myModal").style.display = "none"; }
@@ -261,8 +248,7 @@
         // -- YOUTUBE LOGIC --
         function renderSkeletons(containerId, count) {
             const container = document.getElementById(containerId);
-            container.innerHTML = '';
-            let html = '';
+            container.innerHTML = ''; let html = '';
             for(let i=0; i<count; i++) html += `<div class="skeleton"></div>`;
             container.innerHTML = html;
         }
@@ -358,15 +344,6 @@
             }, 4000);
         }
 
-        function shootConfetti() {
-            var duration = 3 * 1000; var end = Date.now() + duration;
-            (function frame() {
-                confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#00fff2', '#d500ff', '#ffd700'] });
-                confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#00fff2', '#d500ff', '#ffd700'] });
-                if (Date.now() < end) requestAnimationFrame(frame);
-            }());
-        }
-
         function generateBidHistoryHTML(historyArray) {
             if (!historyArray || historyArray.length === 0) return `<div style="text-align:center; color:#888; padding: 20px 0;">No bids yet.</div>`;
             return historyArray.slice(-5).map(bid => `
@@ -400,6 +377,7 @@
                 if (data.error) {
                     showToast(data.error, "error");
                 } else {
+                    playSound('bid'); // Play bid sound
                     showToast("Bid placed successfully!", "success");
                     document.getElementById(`price-val-${itemId}`).innerText = `$${data.newPrice.toFixed(2)}`;
                     inputEl.value = data.newPrice + 1;
@@ -429,130 +407,140 @@
         async function loadStore() {
             renderSkeletons('store-container', 4);
             const container = document.getElementById('store-container');
-            const res = await fetch(`${API_URL}/items`);
-            const items = await res.json();
-            items.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
             
-            let storeHTML = '';
-            const now = Date.now();
-            let visibleCount = 0;
-            
-            items.forEach(item => {
-                if (item.hidden) return; 
-                visibleCount++;
-
-                const isAuction = item.priceType === 'auction';
+            try {
+                const res = await fetch(`${API_URL}/items`);
+                if (!res.ok) throw new Error("Network response was not ok");
+                const items = await res.json();
                 
-                let tagClass = 'tag-msrp', tagText = 'MSRP BREAK', wrapperClass = '';
-                if (item.type === 'pbm_auction') {
-                    tagClass = 'tag-pbm-auction'; tagText = '🔥 PBM AUCTION'; wrapperClass = 'card-pbm-auction';
-                } else if (item.type === 'baller') {
-                    tagClass = 'tag-baller'; tagText = '👑 BALLER BUNDLE'; wrapperClass = 'card-baller-bundle';
-                } else if (item.type === 'bundle') {
-                    tagClass = 'tag-bundle'; tagText = '💎 BUNDLE BREAK';
-                } else if (isAuction) {
-                    tagClass = 'tag-auction'; tagText = '⚖️ LIVE AUCTION';
-                }
+                if(items.error) throw new Error(items.error);
 
-                let startTime = item.scheduleDate ? new Date(item.scheduleDate + "-06:00").getTime() : null;
-                let endTime = item.scheduleEnd ? new Date(item.scheduleEnd + "-06:00").getTime() : null;
-                let isEnded = item.stock <= 0 || (endTime && now >= endTime);
-                let isLive = !isEnded && startTime && now >= startTime;
+                items.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
+                
+                let storeHTML = '';
+                const now = Date.now();
+                let visibleCount = 0;
+                
+                items.forEach(item => {
+                    if (item.hidden) return; 
+                    visibleCount++;
 
-                let timeHTML = '';
-                if (!isEnded) {
-                    if (isLive) timeHTML = `<div class="time-tag-bottom tag-is-live">LIVE NOW</div>`;
-                    else if (startTime) timeHTML = `<div class="time-tag-bottom countdown-timer" data-date="${item.scheduleDate}" data-end="${item.scheduleEnd||''}" data-id="${item.id}">CALC...</div>`;
-                }
-
-                lastKnownState[item.id] = { price: item.price, topBidder: item.topBidder, isEnded: isEnded };
-
-                let stateClass = wrapperClass; 
-                let statusText = '';
-                if (isAuction && !isEnded && item.topBidder) {
-                    if (item.topBidder === loggedInEmail) {
-                        stateClass += ' state-winning'; statusText = 'YOU HOLD THE HIGH BID';
-                    } else if (item.bidHistory && item.bidHistory.some(b => b.email === loggedInEmail)) {
-                        stateClass += ' state-outbid'; statusText = 'YOU HAVE BEEN OUTBID!';
-                    }
-                }
-
-                let actionArea = ''; let priceArea = ''; let histArea = '';
-
-                if (isEnded) {
-                    priceArea = `<span class="price">$${item.price.toFixed(2)}</span>`;
-                    actionArea = `<div class="buy-btn sold-out"><span style="color:#666;">SOLD OUT</span></div>`;
-                    if(isAuction) histArea = `<div class="bid-history-box" id="history-${item.id}">${generateBidHistoryHTML(item.bidHistory)}</div>`;
-                } else if (isAuction) {
-                    histArea = `<div class="bid-history-box" id="history-${item.id}">${generateBidHistoryHTML(item.bidHistory)}</div>`;
-                    priceArea = `<div style="display:flex; flex-direction:column;"><span style="font-size:0.75rem; color:var(--accent-purple); font-weight:bold;">CURRENT BID</span><span class="price" id="price-val-${item.id}">$${item.price.toFixed(2)}</span></div>`;
+                    const isAuction = item.priceType === 'auction';
                     
-                    if (!loggedInEmail) {
-                        actionArea = `<div style="text-align:center; margin-top:10px;"><div style="font-size:0.8rem; color:#aaa; margin-bottom:5px;">Sign in with Google to bid</div><div id="g-btn-${item.id}" style="display:flex; justify-content:center;"></div></div>`;
-                    } else {
-                        actionArea = `
-                            <div class="bid-input-container">
-                                <input type="number" id="bid-val-${item.id}" class="bid-input" value="${item.price + 1}" min="${item.price + 1}">
-                                <button class="submit-bid-btn" onclick="submitBid('${item.id}')">BID</button>
-                            </div>`;
+                    let tagClass = 'tag-msrp', tagText = 'MSRP BREAK', wrapperClass = '';
+                    if (item.type === 'pbm_auction') {
+                        tagClass = 'tag-pbm-auction'; tagText = '🔥 PBM AUCTION'; wrapperClass = 'card-pbm-auction';
+                    } else if (item.type === 'baller') {
+                        tagClass = 'tag-baller'; tagText = '👑 BALLER BUNDLE'; wrapperClass = 'card-baller-bundle';
+                    } else if (item.type === 'bundle') {
+                        tagClass = 'tag-bundle'; tagText = '💎 BUNDLE BREAK';
+                    } else if (isAuction) {
+                        tagClass = 'tag-auction'; tagText = '⚖️ LIVE AUCTION';
                     }
-                } else {
-                    priceArea = `<span class="price">$${item.price.toFixed(2)}</span>`;
-                    actionArea = `<a href="${item.googleFormLink}" target="_blank" class="buy-btn"><span>${isLive ? "JOIN LIVE DRAW" : "JOIN BREAK"}</span><span class="btn-subtext">RESERVE YOUR SPOT</span></a>`;
-                }
 
-                const img = item.image || 'https://assets.pokemon.com/assets/cms2/img/misc/trading-card-games/cards/tcg_default_card.png';
-                storeHTML += `
-                    <div class="neon-card-wrapper ${stateClass}" id="card-${item.id}">
-                        <div class="status-badge">${statusText}</div>
-                        <div class="glass-panel">
-                            <div class="type-tag ${tagClass}">${tagText}</div>
-                            <div class="item-img-box" onclick="openModal('${img}')">
-                                <img src="${img}" class="item-img">
-                                <div id="badge-container-${item.id}">${timeHTML}</div>
-                            </div>
-                            <div class="item-content">
-                                <h3>${item.name}</h3>
-                                ${dateDisplayHTML ? dateDisplayHTML : ''}
-                                <p style="color:#aaa; font-size:0.9rem;">${item.description}</p>
-                                <div class="price-row">${priceArea}<span class="stock">${item.stock} Spots</span></div>
-                                ${histArea}
-                                <div style="margin-top:15px;" id="btn-container-${item.id}">${actionArea}</div>
-                            </div>
-                        </div>
-                    </div>`;
-            });
-            
-            if (visibleCount === 0) {
-                storeHTML = `
-                    <div class="epic-empty-wrapper">
-                        <div class="epic-empty-inner">
-                            <div class="empty-icon-container">
-                                <div class="icon-float-wrapper">
-                                    <img src="https://play.pokemonshowdown.com/sprites/xyani/klinklang.gif" class="empty-icon" alt="Klinklang">
+                    let startTime = item.scheduleDate ? new Date(item.scheduleDate + "-06:00").getTime() : null;
+                    let endTime = item.scheduleEnd ? new Date(item.scheduleEnd + "-06:00").getTime() : null;
+                    let isEnded = item.stock <= 0 || (endTime && now >= endTime);
+                    let isLive = !isEnded && startTime && now >= startTime;
+
+                    let timeHTML = '';
+                    if (!isEnded) {
+                        if (isLive) timeHTML = `<div class="time-tag-bottom tag-is-live">LIVE NOW</div>`;
+                        else if (startTime) timeHTML = `<div class="time-tag-bottom countdown-timer" data-date="${item.scheduleDate}" data-end="${item.scheduleEnd||''}" data-id="${item.id}">CALC...</div>`;
+                    }
+
+                    lastKnownState[item.id] = { price: item.price, topBidder: item.topBidder, isEnded: isEnded };
+
+                    let stateClass = wrapperClass; 
+                    let statusText = '';
+                    if (isAuction && !isEnded && item.topBidder) {
+                        if (item.topBidder === loggedInEmail) {
+                            stateClass += ' state-winning'; statusText = 'YOU HOLD THE HIGH BID';
+                        } else if (item.bidHistory && item.bidHistory.some(b => b.email === loggedInEmail)) {
+                            stateClass += ' state-outbid'; statusText = 'YOU HAVE BEEN OUTBID!';
+                        }
+                    }
+
+                    let actionArea = ''; let priceArea = ''; let histArea = '';
+
+                    if (isEnded) {
+                        priceArea = `<span class="price">$${item.price.toFixed(2)}</span>`;
+                        actionArea = `<div class="buy-btn sold-out"><span style="color:#666;">SOLD OUT</span></div>`;
+                        if(isAuction) histArea = `<div class="bid-history-box" id="history-${item.id}">${generateBidHistoryHTML(item.bidHistory)}</div>`;
+                    } else if (isAuction) {
+                        histArea = `<div class="bid-history-box" id="history-${item.id}">${generateBidHistoryHTML(item.bidHistory)}</div>`;
+                        priceArea = `<div style="display:flex; flex-direction:column;"><span style="font-size:0.75rem; color:var(--accent-purple); font-weight:bold;">CURRENT BID</span><span class="price" id="price-val-${item.id}">$${item.price.toFixed(2)}</span></div>`;
+                        
+                        if (!loggedInEmail) {
+                            actionArea = `<div style="text-align:center; margin-top:10px;"><div style="font-size:0.8rem; color:#aaa; margin-bottom:5px;">Sign in with Google to bid</div><div id="g-btn-${item.id}" style="display:flex; justify-content:center;"></div></div>`;
+                        } else {
+                            actionArea = `
+                                <div class="bid-input-container">
+                                    <input type="number" id="bid-val-${item.id}" class="bid-input" value="${item.price + 1}" min="${item.price + 1}">
+                                    <button class="submit-bid-btn" onclick="submitBid('${item.id}')">BID</button>
+                                </div>`;
+                        }
+                    } else {
+                        priceArea = `<span class="price">$${item.price.toFixed(2)}</span>`;
+                        actionArea = `<a href="${item.googleFormLink}" target="_blank" class="buy-btn"><span>${isLive ? "JOIN LIVE DRAW" : "JOIN BREAK"}</span><span class="btn-subtext">RESERVE YOUR SPOT</span></a>`;
+                    }
+
+                    const img = item.image || 'https://assets.pokemon.com/assets/cms2/img/misc/trading-card-games/cards/tcg_default_card.png';
+                    storeHTML += `
+                        <div class="neon-card-wrapper ${stateClass}" id="card-${item.id}">
+                            <div class="status-badge">${statusText}</div>
+                            <div class="glass-panel">
+                                <div class="type-tag ${tagClass}">${tagText}</div>
+                                <div class="item-img-box" onclick="openModal('${img}')">
+                                    <img src="${img}" class="item-img">
+                                    <div id="badge-container-${item.id}">${timeHTML}</div>
+                                </div>
+                                <div class="item-content">
+                                    <h3>${item.name}</h3>
+                                    ${dateDisplayHTML ? dateDisplayHTML : ''}
+                                    <p style="color:#aaa; font-size:0.9rem;">${item.description}</p>
+                                    <div class="price-row">${priceArea}<span class="stock">${item.stock} Spots</span></div>
+                                    ${histArea}
+                                    <div style="margin-top:15px;" id="btn-container-${item.id}">${actionArea}</div>
                                 </div>
                             </div>
-                            <div class="letter-content">
-                                <p style="font-size: 1.6rem; color: #fff; font-weight: 800; margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 1px;">The Vault is Currently Empty</p>
-                                <p>Sorry, there are no breaks available at this moment. I'm currently out hitting the shelves to track down the best packs for the next stream.</p>
-                                <p>The hunt never stops! I'm working on securing some massive sets and exclusive bundles for you guys right now.</p>
-                                <p>Please keep dropping in and make sure to <strong>sign up for notifications</strong> so you're the first to know when the new stock drops.</p>
-                                <p style="color: var(--accent-cyan); font-weight: 700; font-size: 1.4rem; margin-top: 3rem; margin-bottom: 0;">Catch you on the next hunt!</p>
-                                <h3 style="color: #fff; font-size: 1.2rem; margin-top: 1.5rem; text-shadow: 0 0 15px var(--accent-cyan); text-transform: uppercase; letter-spacing: 2px;">— Pokeballer Mike</h3>
-                            </div>
-                        </div>
-                    </div>`;
-            }
-            
-            container.innerHTML = storeHTML;
-
-            // Render Google Buttons
-            if (!loggedInEmail) {
-                items.forEach(i => {
-                    if (i.priceType === 'auction' && !lastKnownState[i.id].isEnded && document.getElementById(`g-btn-${i.id}`)) {
-                        google.accounts.id.renderButton(document.getElementById(`g-btn-${i.id}`), { theme: "filled_black", size: "large", width: "100%" });
-                    }
+                        </div>`;
                 });
+                
+                if (visibleCount === 0) {
+                    storeHTML = `
+                        <div class="epic-empty-wrapper">
+                            <div class="epic-empty-inner">
+                                <div class="empty-icon-container">
+                                    <div class="icon-float-wrapper">
+                                        <img src="https://play.pokemonshowdown.com/sprites/xyani/klinklang.gif" class="empty-icon" alt="Klinklang">
+                                    </div>
+                                </div>
+                                <div class="letter-content">
+                                    <p style="font-size: 1.6rem; color: #fff; font-weight: 800; margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 1px;">The Vault is Currently Empty</p>
+                                    <p>Sorry, there are no breaks available at this moment. I'm currently out hitting the shelves to track down the best packs for the next stream.</p>
+                                    <p>The hunt never stops! I'm working on securing some massive sets and exclusive bundles for you guys right now.</p>
+                                    <p>Please keep dropping in and make sure to <strong>sign up for notifications</strong> so you're the first to know when the new stock drops.</p>
+                                    <p style="color: var(--accent-cyan); font-weight: 700; font-size: 1.4rem; margin-top: 3rem; margin-bottom: 0;">Catch you on the next hunt!</p>
+                                    <h3 style="color: #fff; font-size: 1.2rem; margin-top: 1.5rem; text-shadow: 0 0 15px var(--accent-cyan); text-transform: uppercase; letter-spacing: 2px;">— Pokeballer Mike</h3>
+                                </div>
+                            </div>
+                        </div>`;
+                }
+                
+                container.innerHTML = storeHTML;
+
+                // Render Google Buttons
+                if (!loggedInEmail) {
+                    items.forEach(i => {
+                        if (i.priceType === 'auction' && !lastKnownState[i.id].isEnded && document.getElementById(`g-btn-${i.id}`)) {
+                            google.accounts.id.renderButton(document.getElementById(`g-btn-${i.id}`), { theme: "filled_black", size: "large", width: "100%" });
+                        }
+                    });
+                }
+            } catch (err) {
+                // FIXED THE MISSING BUNDLE SKELETON BUG
+                container.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:#ff4444; padding:3rem; background:rgba(0,0,0,0.5); border-radius:20px; border:1px solid #ff4444;">⚠️ Unable to load the vault database. Please refresh the page.</div>`;
             }
         }
 
@@ -570,6 +558,10 @@
                         
                         // 1. Check for New Bids
                         if (item.price > oldState.price) {
+                            
+                            // PLAY SOUND IF SOMEONE ELSE BID
+                            if(item.topBidder !== loggedInEmail) playSound('bid');
+
                             const priceEl = document.getElementById(`price-val-${item.id}`);
                             if(priceEl) {
                                 priceEl.innerText = `$${item.price.toFixed(2)}`;
@@ -605,6 +597,7 @@
                             if(badgeContainer) badgeContainer.innerHTML = '';
                             
                             if (item.topBidder === loggedInEmail) {
+                                playSound('win');
                                 showToast(`🎉 CONGRATS! You won ${item.name}!`, "success");
                                 shootConfetti();
                             } else if (item.topBidder) {
@@ -634,9 +627,13 @@
                 if (distance < 0) {
                     if (endTarget) {
                         const tr = endTarget - now;
-                        const m = Math.floor((tr % 3600000) / 60000), s = Math.floor((tr % 60000) / 1000);
-                        if (tr < 120000 && badge) badge.innerHTML = `<div class="time-tag-bottom tag-is-live" style="background:#ff00ff!important; box-shadow:0 0 30px #ff00ff!important;">ENDING: ${m}m ${s}s</div>`;
-                        else if (badge) badge.innerHTML = `<div class="time-tag-bottom tag-is-live">${m}m ${s}s LEFT</div>`;
+                        const h = Math.floor(tr / 3600000);
+                        const m = Math.floor((tr % 3600000) / 60000);
+                        const s = Math.floor((tr % 60000) / 1000);
+                        let tStr = h > 0 ? `${h}h ${m}m ${s}s` : `${m}m ${s}s`;
+
+                        if (tr < 120000 && badge) badge.innerHTML = `<div class="time-tag-bottom tag-is-live" style="background:#ff00ff!important; box-shadow:0 0 30px #ff00ff!important;">ENDING: ${tStr}</div>`;
+                        else if (badge) badge.innerHTML = `<div class="time-tag-bottom tag-is-live">${tStr} LEFT</div>`;
                     }
                 } else {
                     const d = Math.floor(distance / 86400000), h = Math.floor((distance % 86400000) / 3600000), m = Math.floor((distance % 3600000) / 60000), s = Math.floor((distance % 60000) / 1000);
