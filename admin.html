@@ -98,12 +98,12 @@
                 <div id="grader-container" style="display: none; margin-bottom: 0.5rem;">
                     <label style="color: #d500ff;">🔍 Grading Company (Slabs Only)</label>
                     <select id="item-grader" style="border: 1px solid #d500ff;">
-                        <option value="PSA">PSA (Professional Sports Authenticator)</option>
-                        <option value="BGS">BGS (Beckett Grading Services)</option>
-                        <option value="CGC">CGC (Certified Guaranty Company)</option>
-                        <option value="SGC">SGC (Sportscard Guaranty Corporation)</option>
-                        <option value="ACE">ACE Grading</option>
-                        <option value="MANA">Mana Grading</option>
+                        <option value="PSA">PSA</option>
+                        <option value="BGS">BGS</option>
+                        <option value="CGC">CGC</option>
+                        <option value="SGC">SGC</option>
+                        <option value="ACE">ACE</option>
+                        <option value="MANA">Mana</option>
                         <option value="Other">Other Grader</option>
                     </select>
                 </div>
@@ -127,7 +127,10 @@
                 </div>
                 <label>Payment Link (PayPal.me / Stripe Checkout / Form)</label>
                 <input type="url" id="item-google-form-link" placeholder="https://paypal.me/...">
-                <label>Image</label><input type="file" id="item-image">
+                
+                <label>Images (Select multiple files to create a carousel)</label>
+                <input type="file" id="item-image" multiple accept="image/*">
+                
                 <button id="submit-btn" onclick="submitItem()">Save Item</button>
             </div>
             <h3 style="color:#888; font-size:0.9rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:1rem;">Inventory</h3>
@@ -142,6 +145,7 @@
         let allItems = [];
         let editingId = null;
         let currentImage = '';
+        let currentImages = []; // Stores array of images
         let currentCreatedAt = null;
         let currentClicks = 0; 
 
@@ -151,7 +155,6 @@
             loadItems();
         }
 
-        // TOGGLE DYNAMIC DROPDOWNS BASED ON ITEM TYPE
         document.getElementById('item-type').addEventListener('change', function() {
             const condContainer = document.getElementById('condition-container');
             const graderContainer = document.getElementById('grader-container');
@@ -189,17 +192,28 @@
             const price = parseFloat(document.getElementById('item-price').value);
             const stock = parseInt(document.getElementById('item-stock').value);
             const form = document.getElementById('item-google-form-link').value;
-            const file = document.getElementById('item-image').files[0];
-
-            let img = editingId ? currentImage : '';
-            if(file) {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                await new Promise(r => reader.onload = () => { img = reader.result; r(); });
+            
+            const fileInput = document.getElementById('item-image');
+            
+            let imagesArray = editingId ? currentImages : [];
+            
+            // If user selected new files, read all of them
+            if(fileInput.files.length > 0) {
+                imagesArray = [];
+                for(let i = 0; i < fileInput.files.length; i++) {
+                    const reader = new FileReader();
+                    reader.readAsDataURL(fileInput.files[i]);
+                    await new Promise(r => reader.onload = () => { imagesArray.push(reader.result); r(); });
+                }
             }
+            
+            // Fallback for single image reference
+            let img = imagesArray.length > 0 ? imagesArray[0] : (editingId ? currentImage : '');
 
             const body = { 
-                type, name, description:desc, price, stock, googleFormLink:form, image:img, 
+                type, name, description:desc, price, stock, googleFormLink:form, 
+                image: img, 
+                images: imagesArray, // Send full array to DB
                 clickCount: editingId ? currentClicks : 0,
                 createdAt: editingId ? currentCreatedAt : Date.now(),
                 hidden: hidden,
@@ -214,9 +228,9 @@
 
             try {
                 const response = await fetch(url, { method, headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
-                if(response.status === 500) { alert("SERVER ERROR"); btn.innerText = "Save Failed"; return; }
+                if(response.status === 500) { alert("SERVER ERROR - Images might be too large."); btn.innerText = "Save Failed"; return; }
 
-                editingId = null; currentImage = ''; currentCreatedAt = null; currentClicks = 0;
+                editingId = null; currentImage = ''; currentImages = []; currentCreatedAt = null; currentClicks = 0;
                 
                 document.getElementById('item-name').value = '';
                 document.getElementById('item-description').value = '';
@@ -276,6 +290,10 @@
                     
                     const hiddenBadge = item.hidden ? '<span class="badge b-hidden"><i class="ph-fill ph-eye-slash"></i> HIDDEN</span>' : '';
                     const condBadge = item.type === 'raw' && item.condition ? `<span class="badge b-cond">${item.condition}</span>` : '';
+                    
+                    // Show how many images it has
+                    const imgCount = item.images && item.images.length > 1 ? `<span class="badge" style="background:#444; border:1px solid #777;"><i class="ph-fill ph-images"></i> ${item.images.length} Pics</span>` : '';
+                    
                     const opacity = item.hidden ? 'opacity: 0.6;' : '';
                     
                     let timeBadge = '';
@@ -293,6 +311,7 @@
                                     ${hiddenBadge}
                                     <span class="badge ${badgeClass}">${badgeText}</span> 
                                     ${condBadge}
+                                    ${imgCount}
                                 </div>
                                 <div class="item-meta">
                                     ${timeBadge}
@@ -316,9 +335,11 @@
             const item = allItems.find(i => i.id === id);
             if(item) {
                 editingId = item.id; 
-                currentImage = item.image; 
+                currentImage = item.image || ''; 
+                currentImages = item.images || (item.image ? [item.image] : []);
                 currentCreatedAt = item.createdAt;
                 currentClicks = item.clickCount || 0; 
+                
                 document.getElementById('item-type').value = item.type || 'msrp';
                 document.getElementById('item-hidden').value = item.hidden ? 'true' : 'false';
                 
@@ -335,6 +356,7 @@
                 document.getElementById('item-price').value = item.price;
                 document.getElementById('item-stock').value = item.stock;
                 document.getElementById('item-google-form-link').value = item.googleFormLink;
+                document.getElementById('item-image').value = ''; // Reset file input
                 
                 document.getElementById('item-condition').value = item.condition || 'Mint (M)';
                 document.getElementById('item-grader').value = item.grader || 'PSA';
