@@ -76,13 +76,19 @@
         @keyframes floatMid { 0%, 100% { transform: translate3d(0, -50%, 0); } 50% { transform: translate3d(15px, calc(-50% - 20px), 0); } }
         @keyframes sway { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(4deg); } }
 
+        /* NAVIGATION BAR */
+        .top-nav { display: flex; justify-content: center; gap: 20px; padding: 20px; position: relative; z-index: 10; }
+        .nav-link { padding: 10px 24px; border-radius: 30px; color: white; text-decoration: none; font-weight: 800; letter-spacing: 1px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); transition: 0.3s; display: flex; align-items: center; gap: 8px; }
+        .nav-link:hover { background: rgba(255,255,255,0.1); border-color: var(--accent-purple); box-shadow: 0 0 20px rgba(213, 0, 255, 0.4); transform: translateY(-2px); }
+        .nav-active { border-color: var(--accent-cyan); box-shadow: 0 0 20px rgba(0, 255, 242, 0.4); background: linear-gradient(90deg, rgba(0,255,242,0.2), transparent); pointer-events: none; }
+
         /* MAIN LAYOUT - WITH OUTER GLOW */
         main {
             position: relative; z-index: 2; max-width: 1250px; margin: 0 auto; padding: 2.5rem;
             border-radius: 35px;
             background: rgba(5, 5, 14, 0.75);
             backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            margin-top: 2rem; margin-bottom: 4rem;
+            margin-top: 1rem; margin-bottom: 4rem;
             border: 2px solid rgba(0, 255, 242, 0.3);
             box-shadow: 
                 0 0 100px rgba(0,0,0,0.8), 
@@ -111,7 +117,7 @@
             }
         }
 
-        header { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 4rem 1rem 1rem; position: relative; z-index: 2; }
+        header { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1rem 1rem 1rem; position: relative; z-index: 2; }
         .header-wrapper { display: flex; align-items: center; gap: 2rem; }
         .header-logo { width: 160px; display: block; filter: drop-shadow(0 0 35px var(--accent-cyan)); }
         .logo-left .header-logo { transform: scaleX(-1); }
@@ -231,7 +237,6 @@
         .yt-container { display: grid; gap: 35px; grid-template-columns: 1fr; }
         @media (min-width: 900px) { .yt-container { grid-template-columns: 1fr 1fr; } }
         
-        /* Updated yt-card to flex correctly without locked aspect ratio issues */
         .yt-card { display: flex; flex-direction: column; cursor: pointer; padding: 0; }
         
         .yt-label {
@@ -439,7 +444,7 @@
             .store-grid { grid-template-columns: 1fr; gap: 30px; }
             .sub-info-panel { flex-direction: column; text-align: center; gap: 1.5rem; padding: 2rem 1.2rem; }
             .sub-text { min-width: 100%; }
-            .sub-text h3 { font-size: 1.25rem; justify-content: center; } /* Reduced font-size to fit heading on mobile */
+            .sub-text h3 { font-size: 1.25rem; justify-content: center; }
             .sub-actions { width: 100%; justify-content: center; gap: 15px; }
             .epic-empty-inner { padding: 3rem 1.5rem; }
         }
@@ -459,6 +464,11 @@
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/134.png" class="poke-bg p-vaporeon">
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/104.png" class="poke-bg p-cubone">
     
+    <div class="top-nav">
+        <a href="index.html" class="nav-link nav-active"><i class="ph-fill ph-monitor-play"></i> LIVE BREAKS</a>
+        <a href="vault.html" class="nav-link"><i class="ph-fill ph-storefront"></i> THE VAULT</a>
+    </div>
+
     <header>
         <div class="header-wrapper">
             <div class="logo-animator logo-left"><img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="header-logo"></div>
@@ -538,7 +548,6 @@
                 
                 if (videos.length === 0) { container.innerHTML = '<div style="text-align:center; color:#888;">No videos found</div>'; return; }
                 
-                /* UPDATED JS: Removed bottom padding and wrapped iframe to fill bottom of glass panel perfectly */
                 let videoHTML = '';
                 videos.forEach(v => {
                     const isStream = v.type === 'stream';
@@ -595,7 +604,8 @@
                 let visibleCount = 0;
                 
                 items.forEach(item => {
-                    if (item.hidden) return; 
+                    // NEW FILTER: Only show live breaks (msrp, bundle, baller) here! Hide raw/slabs.
+                    if (item.hidden || item.type === 'raw' || item.type === 'slab') return; 
                     visibleCount++;
 
                     const isBaller = item.type === 'baller';
