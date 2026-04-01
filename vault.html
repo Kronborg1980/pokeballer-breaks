@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Vault - PBM Breaks</title>
+    
+    <link rel="icon" type="image/svg+xml" href="https://upload.wikimedia.org/wikipedia/commons/5/53/Pok%C3%A9_Ball_icon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        /* ALL YOUR EXISTING VARIABLES AND BASE STYLES */
+        :root {
+            --bg-dark: #02020a;
+            --accent-cyan: #00fff2;
+            --accent-purple: #d500ff;
+            --accent-gold: #ffd700;
+            --accent-live: #ff0040;
+            --text-bright: #ffffff;
+            --text-dim: #b0b0d0;
+            --guardian-size: clamp(120px, 14vw, 200px);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        
+        body { font-family: 'Inter', sans-serif; background: var(--bg-dark); color: var(--text-bright); min-height: 100vh; overflow-x: hidden; position: relative; }
+
+        body::before {
+            content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% 0%, rgba(0, 255, 242, 0.1) 0%, transparent 50%), radial-gradient(circle at 50% 100%, rgba(213, 0, 255, 0.1) 0%, transparent 50%), linear-gradient(to bottom, #02020a, #0a0514);
+            z-index: -10; pointer-events: none;
+        }
+
+        .particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; background-image: radial-gradient(circle at 20% 30%, var(--accent-cyan) 1px, transparent 3px), radial-gradient(circle at 80% 70%, var(--accent-purple) 1px, transparent 3px); background-size: 120px 120px; opacity: 0.4; }
+        
+        .poke-bg { position: fixed; pointer-events: none; z-index: -5; opacity: 0.3; will-change: transform; transform: translateZ(0); backface-visibility: hidden; }
+        .p-suicune { top: 50%; left: 50%; transform: translate(-50%, -50%); width: clamp(500px, 70vw, 1000px); opacity: 0.05; animation: breathe 8s ease-in-out infinite; z-index: -6; }
+        .p-rayquaza { top: -5%; left: -5%; width: var(--guardian-size); animation: float 14s infinite ease-in-out; }
+        .p-charizard { top: -5%; right: -5%; width: var(--guardian-size); animation: floatFlipped 13s infinite ease-in-out; }
+        @keyframes breathe { 0%,100% { opacity:0.05; } 50% { opacity:0.08; } }
+        @keyframes float { 0%, 100% { transform: translate3d(0, 0, 0); } 50% { transform: translate3d(20px, -30px, 0); } }
+        @keyframes floatFlipped { 0%, 100% { transform: scaleX(-1) translate3d(0, 0, 0); } 50% { transform: scaleX(-1) translate3d(-20px, -30px, 0); } }
+
+        /* NAVIGATION BAR */
+        .top-nav { display: flex; justify-content: center; gap: 20px; padding: 20px; position: relative; z-index: 10; }
+        .nav-link { padding: 10px 24px; border-radius: 30px; color: white; text-decoration: none; font-weight: 800; letter-spacing: 1px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); transition: 0.3s; display: flex; align-items: center; gap: 8px; }
+        .nav-link:hover { background: rgba(255,255,255,0.1); border-color: var(--accent-cyan); box-shadow: 0 0 20px rgba(0, 255, 242, 0.4); transform: translateY(-2px); }
+        .nav-active { border-color: var(--accent-purple); box-shadow: 0 0 20px rgba(213, 0, 255, 0.4); background: linear-gradient(90deg, rgba(213,0,255,0.2), transparent); pointer-events: none; }
+
+        header { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1rem 1rem 2rem; position: relative; z-index: 2; }
+        h1 { font-size: clamp(3rem, 8vw, 5.5rem); font-weight: 900; letter-spacing: -2px; text-transform: uppercase; margin: 0; line-height: 1; background: linear-gradient(180deg, #ffffff 20%, #e0c3fc 50%, #d500ff 55%, #00fff2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-align: center; position: relative; display: inline-block; z-index: 1; filter: drop-shadow(0 0 25px rgba(213, 0, 255, 0.6)); }
+        .subtitle { color: var(--accent-gold); font-weight: 700; letter-spacing: 4px; text-transform: uppercase; margin-top: 10px; text-shadow: 0 0 10px rgba(255,215,0,0.5); }
+
+        main { position: relative; z-index: 2; max-width: 1250px; margin: 0 auto; padding: 2.5rem; border-radius: 35px; background: rgba(5, 5, 14, 0.75); backdrop-filter: blur(10px); margin-bottom: 4rem; border: 2px solid rgba(213, 0, 255, 0.3); box-shadow: 0 0 100px rgba(0,0,0,0.8), inset 0 0 30px rgba(213, 0, 255, 0.05), 0 0 20px rgba(213, 0, 255, 0.1), 0 0 40px rgba(0, 255, 242, 0.1); }
+
+        .store-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 35px; }
+        .item-card { display: flex; flex-direction: column; height: 100%; }
+        
+        .glass-panel { position: relative; background: linear-gradient(160deg, rgba(20, 20, 35, 0.6) 0%, rgba(10, 10, 20, 0.8) 100%); backdrop-filter: blur(16px); border-radius: 24px; height: 100%; width: 100%; z-index: 1; overflow: hidden; border: 1px solid rgba(213, 0, 255, 0.1); border-top: 2px solid rgba(255, 255, 255, 0.4); box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.7), inset 0 5px 10px rgba(255, 255, 255, 0.1), 0 10px 30px rgba(0,0,0,0.5); }
+        .neon-card-wrapper { position: relative; border-radius: 26px; padding: 3px; box-shadow: 0 0 25px rgba(213, 0, 255, 0.2), 0 0 50px rgba(0, 255, 242, 0.15); background: rgba(0,0,0,0.2); overflow: hidden; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        .neon-card-wrapper:hover { transform: translateY(-10px) scale(1.02); box-shadow: 0 0 50px rgba(213, 0, 255, 0.6), 0 0 80px rgba(0, 255, 242, 0.5); }
+        
+        /* THE HOLOGRAPHIC SHINE EFFECT FOR CARDS */
+        .item-img-box { height: 350px; overflow:hidden; position: relative; cursor: pointer; border-bottom: 1px solid rgba(213, 0, 255, 0.2); display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); }
+        .item-img-box::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent);
+            transform: skewX(-20deg); z-index: 10; transition: 0.7s; pointer-events: none;
+        }
+        .neon-card-wrapper:hover .item-img-box::before { left: 150%; transition: 0.7s ease-in-out; }
+        .item-img { max-width: 90%; max-height: 90%; object-fit: contain; transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); filter: drop-shadow(0 10px 15px rgba(0,0,0,0.8)); }
+        .neon-card-wrapper:hover .item-img { transform: scale(1.08) rotate(2deg); }
+
+        .type-tag { position: absolute; top: 20px; right: 20px; padding: 8px 14px; border-radius: 10px; font-weight: 800; font-size: 0.75rem; z-index: 2; letter-spacing: 1px; text-transform: uppercase; backdrop-filter: blur(10px); display: flex; align-items: center; gap: 6px; }
+        .tag-slab { background: rgba(40, 0, 60, 0.85); border: 1px solid #bd00ff; color: #ffffff; text-shadow: 0 1px 3px black; box-shadow: 0 0 20px rgba(213, 0, 255, 0.4); }
+        .tag-raw { background: rgba(0, 40, 40, 0.85); border: 1px solid #00ff9d; color: #ffffff; text-shadow: 0 1px 3px black; box-shadow: 0 0 15px rgba(0, 255, 157, 0.3); }
+
+        .item-content { padding: 1.8rem; flex: 1; display: flex; flex-direction: column; position: relative; }
+        .item-content h3 { font-size: 1.5rem; margin-bottom: 0.8rem; font-weight: 800; line-height: 1.2; color: #ffffff; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
+        .item-content p { color: var(--text-dim); font-size: 1rem; line-height: 1.6; margin-bottom: 1.5rem; flex: 1; }
+        .price-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(213, 0, 255, 0.2); }
+        .price { font-size: 2rem; font-weight: 900; color: var(--accent-gold); text-shadow: 0 0 25px rgba(255, 215, 0, 0.4); }
+        .stock { font-size: 0.9rem; color: var(--text-bright); background: rgba(213, 0, 255, 0.2); padding: 6px 14px; border-radius: 30px; font-weight: 700; border: 1px solid rgba(213, 0, 255, 0.4); }
+
+        .buy-btn {
+            display: block; text-align: center; padding: 1.2rem; border-radius: 16px;
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan));
+            color: white; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 1.1rem; letter-spacing: 1.5px;
+            transition: 0.4s; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.3); cursor: pointer;
+            box-shadow: 0 10px 30px rgba(213, 0, 255, 0.3), inset 0 2px 0 rgba(255,255,255,0.4);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1;
+        }
+        .buy-btn:hover { transform: translateY(-5px); box-shadow: 0 0 50px rgba(0, 255, 242, 0.8); border-color: white; }
+        .btn-subtext { font-size: 0.75rem; opacity: 0.9; margin-top: 4px; font-weight: 700; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
+        .sold-out { background: #0f0f1a !important; color: #666 !important; pointer-events: none; border: 2px solid #2a2a3a !important; box-shadow: inset 0 0 20px rgba(0,0,0,0.5) !important; }
+
+        .skeleton { background: rgba(255, 255, 255, 0.03); border-radius: 24px; min-height: 450px; border: 1px solid rgba(213, 0, 255, 0.15); animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+
+        /* IMAGE MODAL */
+        .image-modal { display: none; position: fixed; z-index: 9999; padding-top: 50px; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.9); align-items: center; justify-content: center; backdrop-filter: blur(20px); }
+        .modal-content { margin: auto; display: block; max-width: 90%; max-height: 85vh; border: 3px solid var(--accent-purple); box-shadow: 0 0 100px rgba(213, 0, 255, 0.8); border-radius: 20px; }
+        .close-modal { position: absolute; top: 30px; right: 40px; color: var(--accent-purple); font-size: 50px; font-weight: 900; cursor: pointer; z-index: 10000; text-shadow: 0 0 20px var(--accent-purple); }
+        
+        footer { text-align: center; padding: 3rem 0 4rem; color: var(--text-dim); font-size: 0.9rem; position: relative; z-index: 2; letter-spacing: 1px; }
+    </style>
+</head>
+<body>
+    <div class="particles"></div>
+    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="poke-bg p-suicune">
+    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/384.png" class="poke-bg p-rayquaza">
+    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/006.png" class="poke-bg p-charizard">
+
+    <div class="top-nav">
+        <a href="index.html" class="nav-link"><i class="ph-fill ph-monitor-play"></i> LIVE BREAKS</a>
+        <a href="vault.html" class="nav-link nav-active"><i class="ph-fill ph-storefront"></i> THE VAULT</a>
+    </div>
+
+    <header>
+        <h1>THE VAULT</h1>
+        <div class="subtitle">Singles & Graded Slabs</div>
+    </header>
+
+    <main>
+        <div class="store-grid" id="store-container"></div>
+    </main>
+
+    <footer><p>© 2025 PBM Breaks • Not affiliated with Nintendo • Crafted in the Crystal Realm</p></footer>
+
+    <div id="myModal" class="image-modal" onclick="closeModal()">
+        <span class="close-modal">&times;</span>
+        <img class="modal-content" id="img01">
+    </div>
+
+    <script>
+        const API_URL = 'https://pokeballer-worker.kronborgnielsen.workers.dev/api';
+
+        function renderSkeletons(containerId, count) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            for(let i=0; i<count; i++) container.innerHTML += `<div class="skeleton"></div>`;
+        }
+
+        async function loadVault() {
+            renderSkeletons('store-container', 3);
+            const container = document.getElementById('store-container');
+            
+            try {
+                const res = await fetch(`${API_URL}/items`);
+                const items = await res.json();
+                if(items.error) return;
+
+                items.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
+                let storeHTML = '';
+                let visibleCount = 0;
+
+                items.forEach(item => {
+                    // ONLY SHOW SLABS AND RAW CARDS ON THIS PAGE
+                    if (item.hidden || (item.type !== 'slab' && item.type !== 'raw')) return; 
+                    visibleCount++;
+
+                    const isSlab = item.type === 'slab';
+                    const tagClass = isSlab ? 'tag-slab' : 'tag-raw';
+                    const tagText = isSlab ? '<i class="ph-fill ph-certificate"></i> GRADED SLAB' : '<i class="ph-fill ph-cards"></i> RAW CARD';
+                    
+                    const isEnded = item.stock <= 0;
+                    let btnHTML = '';
+                    
+                    if (isEnded) {
+                        btnHTML = `<div class="buy-btn sold-out">SOLD OUT</div>`;
+                    } else if (item.googleFormLink) {
+                        // The form link here will be your PayPal Checkout, Stripe, or Streamlabs link
+                        btnHTML = `<a href="${item.googleFormLink}" target="_blank" class="buy-btn" onclick="trackClick('${item.id}')">
+                                    <span>PURCHASE NOW</span><span class="btn-subtext">SECURE THIS CARD</span></a>`;
+                    } else {
+                        btnHTML = `<div class="buy-btn sold-out" style="background:#555; border-color:#777;">COMING SOON</div>`;
+                    }
+                    
+                    const img = item.image || 'https://assets.pokemon.com/assets/cms2/img/misc/trading-card-games/cards/tcg_default_card.png';
+                    
+                    storeHTML += `
+                        <div class="neon-card-wrapper" id="card-${item.id}">
+                            <div class="item-card glass-panel">
+                                <div class="type-tag ${tagClass}">${tagText}</div>
+                                <div class="item-img-box" onclick="openModal('${img}')">
+                                    <img src="${img}" class="item-img" alt="${item.name}">
+                                </div>
+                                <div class="item-content">
+                                    <h3>${item.name}</h3>
+                                    <p>${item.description}</p>
+                                    <div class="price-row">
+                                        <span class="price">$${item.price.toFixed(2)}</span>
+                                        <span class="stock">${item.stock > 1 ? item.stock + ' Available' : '1 of 1'}</span>
+                                    </div>
+                                    <div id="btn-container-${item.id}">${btnHTML}</div>
+                                </div>
+                            </div>
+                        </div>`;
+                });
+                
+                if (visibleCount === 0) {
+                    storeHTML = `<div style="grid-column: 1/-1; text-align:center; padding: 4rem; background: rgba(0,0,0,0.5); border-radius: 20px; border: 1px solid rgba(213, 0, 255, 0.3);">
+                        <h2 style="color: #fff; margin-bottom: 1rem;">The Vault is Locked</h2>
+                        <p style="color: var(--text-dim);">No singles or slabs are currently available. Check back soon!</p>
+                    </div>`;
+                }
+                container.innerHTML = storeHTML;
+            } catch(e) { console.error(e); }
+        }
+
+        function trackClick(id) { fetch(`${API_URL}/click`, { method: 'POST', body: JSON.stringify({ id: id }) }).catch(()=>{}); return true; }
+        
+        function openModal(src) { document.getElementById("myModal").style.display = "flex"; document.getElementById("img01").src = src; }
+        function closeModal() { document.getElementById("myModal").style.display = "none"; }
+        document.addEventListener('keydown', e => { if (e.key === "Escape") closeModal(); });
+
+        loadVault();
+    </script>
+</body>
+</html>
