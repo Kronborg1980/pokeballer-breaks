@@ -24,20 +24,29 @@
         input:focus, select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 10px rgba(0,238,255,0.2); }
         input[type="datetime-local"] { color-scheme: dark; cursor: pointer; border: 1px solid var(--accent); }
         
-        /* File Input Styling */
         input[type="file"] { background: rgba(255,255,255,0.05); padding: 10px; border: 1px dashed #555; cursor: pointer; font-size: 0.9rem; }
         input[type="file"]::file-selector-button { background: var(--accent); color: #000; font-weight: 800; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-right: 10px; transition: 0.3s; }
         input[type="file"]::file-selector-button:hover { background: #fff; }
 
-        /* Responsive Layout Utility */
         .flex-row { display: flex; gap: 15px; width: 100%; }
         .flex-row > div { flex: 1; }
 
         button.primary-btn { width: 100%; padding: 1rem; background: linear-gradient(135deg, var(--accent), var(--purple)); color: white; font-weight: 900; border: none; border-radius: 8px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; font-size: 1.1rem; transition: 0.3s; box-shadow: 0 5px 20px rgba(157, 78, 221, 0.4); }
         button.primary-btn:hover { filter: brightness(1.2); transform: translateY(-2px); }
 
-        /* Inventory Sections */
-        .section-title { font-size: 1.2rem; color: var(--accent); border-bottom: 1px solid rgba(0,238,255,0.3); padding-bottom: 8px; margin-top: 2rem; margin-bottom: 1rem; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+        /* INVENTORY MENU & SEARCH */
+        .inventory-controls { display: flex; flex-direction: column; gap: 15px; margin-bottom: 1.5rem; }
+        .search-box { position: relative; width: 100%; }
+        .search-box i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--accent); font-size: 1.2rem; }
+        .search-box input { padding-left: 45px; margin-bottom: 0; background: rgba(0,0,0,0.6); border: 1px solid rgba(0, 238, 255, 0.3); border-radius: 12px; transition: 0.3s; }
+        .search-box input:focus { border-color: var(--accent); box-shadow: 0 0 15px rgba(0, 238, 255, 0.2); }
+        
+        .tab-container { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
+        .tab-container::-webkit-scrollbar { display: none; }
+        .inv-tab { flex: 1; min-width: max-content; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #aaa; padding: 10px 15px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: none; text-transform: uppercase; font-size: 0.85rem; }
+        .inv-tab:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .inv-tab.active { background: linear-gradient(135deg, rgba(0, 238, 255, 0.15), rgba(157, 78, 221, 0.15)); border-color: var(--accent); color: #fff; box-shadow: 0 0 15px rgba(0, 238, 255, 0.2); }
+
         ul { padding: 0; margin: 0; }
         li { background: rgba(255,255,255,0.05); padding: 1.2rem; margin-bottom: 1rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); list-style: none; display: flex; flex-direction: column; gap: 1rem; transition: 0.3s; }
         li:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); }
@@ -71,9 +80,8 @@
         .btn-del { background: #ff0055; } .btn-del:hover { background: #cc0044; }
         
         #login-section { display: block; } #admin-section { display: none; }
-        .empty-state { color: #666; font-style: italic; font-size: 0.9rem; padding: 1rem 0; text-align: center; }
+        .empty-state { color: #888; font-style: italic; font-size: 1rem; padding: 2rem 0; text-align: center; background: rgba(0,0,0,0.3); border-radius: 12px; border: 1px dashed #444; }
 
-        /* MOBILE FIXES */
         @media(max-width: 600px) { 
             .flex-row { flex-direction: column; gap: 0; }
             .flex-row > div { width: 100%; }
@@ -188,16 +196,22 @@
                 <button id="submit-btn" class="primary-btn" style="margin-top: 1rem;" onclick="submitItem()">Save to Database</button>
             </div>
 
-            <h2 style="text-align:center; font-size: 1.8rem; margin-top: 3rem; margin-bottom: 1rem;">Inventory Management</h2>
+            <h2 style="text-align:center; font-size: 1.8rem; margin-top: 3rem; margin-bottom: 1.5rem;">Inventory Management</h2>
             
-            <h3 class="section-title"><i class="ph-fill ph-monitor-play"></i> Live Breaks</h3>
-            <ul id="list-breaks"><div class="empty-state">No breaks found.</div></ul>
+            <div class="inventory-controls">
+                <div class="search-box">
+                    <i class="ph-bold ph-magnifying-glass"></i>
+                    <input type="text" id="inventory-search" placeholder="Search by name, grader, or type..." onkeyup="renderInventory()">
+                </div>
+                <div class="tab-container">
+                    <button class="inv-tab active" onclick="switchTab('all', this)"><i class="ph-fill ph-circles-four"></i> All</button>
+                    <button class="inv-tab" onclick="switchTab('breaks', this)"><i class="ph-fill ph-monitor-play"></i> Breaks</button>
+                    <button class="inv-tab" onclick="switchTab('slabs', this)"><i class="ph-fill ph-certificate"></i> Slabs</button>
+                    <button class="inv-tab" onclick="switchTab('raw', this)"><i class="ph-fill ph-cards"></i> Raw</button>
+                </div>
+            </div>
 
-            <h3 class="section-title"><i class="ph-fill ph-certificate"></i> Graded Slabs</h3>
-            <ul id="list-slabs"><div class="empty-state">No slabs found in The Vault.</div></ul>
-
-            <h3 class="section-title"><i class="ph-fill ph-cards"></i> Raw Cards</h3>
-            <ul id="list-raw"><div class="empty-state">No raw cards found in The Vault.</div></ul>
+            <ul id="inventory-list"></ul>
 
             <div style="display:flex; flex-direction:column; gap:15px; margin-top:3rem;">
                 <button onclick="logout()" style="background:#222; border:1px solid #444; color:#fff; padding:12px; border-radius:8px; cursor:pointer; font-weight:700; text-transform:uppercase;">Log Out</button>
@@ -215,6 +229,9 @@
         let currentImages = []; 
         let currentCreatedAt = null;
         let currentClicks = 0; 
+        
+        // State for Menu filtering
+        let currentTab = 'all';
 
         if(localStorage.getItem('adminToken')) {
             document.getElementById('login-section').style.display='none';
@@ -232,6 +249,13 @@
             if (this.value === 'raw') condContainer.style.display = 'block';
             if (this.value === 'slab') graderContainer.style.display = 'block';
         });
+
+        function switchTab(tabName, btnElement) {
+            currentTab = tabName;
+            document.querySelectorAll('.inv-tab').forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
+            renderInventory(); 
+        }
 
         async function login() {
             const u = document.getElementById('login-username').value;
@@ -336,85 +360,94 @@
             try {
                 const res = await fetch(`${API_URL}/items`);
                 const items = await res.json();
-                
                 if(items.error) { alert("DATABASE ERROR: " + items.error); return; }
 
                 items.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
                 allItems = items;
-
-                // Grab list containers
-                const listBreaks = document.getElementById('list-breaks');
-                const listSlabs = document.getElementById('list-slabs');
-                const listRaw = document.getElementById('list-raw');
-                
-                let htmlBreaks = '', htmlSlabs = '', htmlRaw = '';
-
-                items.forEach(item => {
-                    let badgeClass = 'b-msrp';
-                    let badgeText = 'MSRP';
-
-                    if (item.type === 'baller') { badgeClass = 'b-baller'; badgeText = '<i class="ph-fill ph-crown"></i> BALLER'; } 
-                    else if (item.type === 'bundle') { badgeClass = 'b-bundle'; badgeText = '<i class="ph-fill ph-sketch-logo"></i> BUNDLE'; }
-                    else if (item.type === 'slab') { 
-                        if(item.grader === 'PSA') badgeClass = 'b-psa';
-                        else if(item.grader === 'BGS') badgeClass = 'b-bgs';
-                        else if(item.grader === 'CGC') badgeClass = 'b-cgc';
-                        else if(item.grader === 'SGC') badgeClass = 'b-sgc';
-                        else if(item.grader === 'ACE') badgeClass = 'b-ace';
-                        else badgeClass = 'b-slab';
-                        badgeText = `🔍 ${item.grader || 'SLAB'}`; 
-                    }
-                    else if (item.type === 'raw') { badgeClass = 'b-raw'; badgeText = '🃏 RAW'; }
-                    
-                    const hiddenBadge = item.hidden ? '<span class="badge b-hidden"><i class="ph-fill ph-eye-slash"></i> HIDDEN</span>' : '';
-                    const condBadge = item.type === 'raw' && item.condition ? `<span class="badge b-cond">${item.condition}</span>` : '';
-                    const imgCount = item.images && item.images.length > 1 ? `<span class="badge" style="background:#444; border:1px solid #777;"><i class="ph-fill ph-images"></i> ${item.images.length}</span>` : '';
-                    const opacity = item.hidden ? 'opacity: 0.6;' : '';
-                    
-                    let timeBadge = '';
-                    if (item.scheduleDate) {
-                        const start = formatLiteralDate(item.scheduleDate);
-                        const end = item.scheduleEnd ? formatLiteralDate(item.scheduleEnd) : '...';
-                        timeBadge = `<span class="badge b-time"><i class="ph-fill ph-clock"></i> ${start} ➔ ${end}</span>`;
-                    }
-
-                    const itemHTML = `
-                        <li style="${opacity}">
-                            <div class="item-content">
-                                <div class="item-header">
-                                    <span class="item-title">${item.name}</span>
-                                    ${hiddenBadge}
-                                    <span class="badge ${badgeClass}">${badgeText}</span> 
-                                    ${condBadge}
-                                    ${imgCount}
-                                </div>
-                                <div class="item-meta">
-                                    ${timeBadge}
-                                </div>
-                                <div class="item-meta">
-                                    <span><strong>$${item.price}</strong></span>
-                                    <span>• Stock: ${item.stock}</span>
-                                    <span class="click-badge">🖱️ ${item.clickCount||0}</span>
-                                </div>
-                            </div>
-                            <div class="btn-group">
-                                <button class="btn-edit" onclick="startEditing('${item.id}')">Edit</button>
-                                <button class="btn-del" onclick="deleteItem('${item.id}')">Del</button>
-                            </div>
-                        </li>`;
-
-                    // Categorize HTML into correct section
-                    if (item.type === 'slab') htmlSlabs += itemHTML;
-                    else if (item.type === 'raw') htmlRaw += itemHTML;
-                    else htmlBreaks += itemHTML; // msrp, bundle, baller
-                });
-
-                // Apply to DOM or show empty state
-                listBreaks.innerHTML = htmlBreaks || '<div class="empty-state">No live breaks found.</div>';
-                listSlabs.innerHTML = htmlSlabs || '<div class="empty-state">No slabs found.</div>';
-                listRaw.innerHTML = htmlRaw || '<div class="empty-state">No raw cards found.</div>';
-
+                renderInventory();
             } catch(e) { console.error("Load Error", e); }
+        }
+
+        function renderInventory() {
+            const listContainer = document.getElementById('inventory-list');
+            const searchQuery = document.getElementById('inventory-search').value.toLowerCase();
+            
+            // Filter logic (Search + Tabs)
+            let filteredItems = allItems.filter(item => {
+                // Tab Logic
+                if (currentTab === 'breaks' && (item.type === 'slab' || item.type === 'raw')) return false;
+                if (currentTab === 'slabs' && item.type !== 'slab') return false;
+                if (currentTab === 'raw' && item.type !== 'raw') return false;
+                
+                // Search Logic
+                const searchStr = `${item.name} ${item.grader || ''} ${item.condition || ''} ${item.type}`.toLowerCase();
+                if (searchQuery && !searchStr.includes(searchQuery)) return false;
+
+                return true;
+            });
+
+            if (filteredItems.length === 0) {
+                listContainer.innerHTML = '<div class="empty-state">No items found matching your search.</div>';
+                return;
+            }
+
+            let html = '';
+            filteredItems.forEach(item => {
+                let badgeClass = 'b-msrp';
+                let badgeText = 'MSRP';
+
+                if (item.type === 'baller') { badgeClass = 'b-baller'; badgeText = '<i class="ph-fill ph-crown"></i> BALLER'; } 
+                else if (item.type === 'bundle') { badgeClass = 'b-bundle'; badgeText = '<i class="ph-fill ph-sketch-logo"></i> BUNDLE'; }
+                else if (item.type === 'slab') { 
+                    if(item.grader === 'PSA') badgeClass = 'b-psa';
+                    else if(item.grader === 'BGS') badgeClass = 'b-bgs';
+                    else if(item.grader === 'CGC') badgeClass = 'b-cgc';
+                    else if(item.grader === 'SGC') badgeClass = 'b-sgc';
+                    else if(item.grader === 'ACE') badgeClass = 'b-ace';
+                    else badgeClass = 'b-slab';
+                    badgeText = `🔍 ${item.grader || 'SLAB'}`; 
+                }
+                else if (item.type === 'raw') { badgeClass = 'b-raw'; badgeText = '🃏 RAW'; }
+                
+                const hiddenBadge = item.hidden ? '<span class="badge b-hidden"><i class="ph-fill ph-eye-slash"></i> HIDDEN</span>' : '';
+                const condBadge = item.type === 'raw' && item.condition ? `<span class="badge b-cond">${item.condition}</span>` : '';
+                const imgCount = item.images && item.images.length > 1 ? `<span class="badge" style="background:#444; border:1px solid #777;"><i class="ph-fill ph-images"></i> ${item.images.length}</span>` : '';
+                const opacity = item.hidden ? 'opacity: 0.6;' : '';
+                
+                let timeBadge = '';
+                if (item.scheduleDate) {
+                    const start = formatLiteralDate(item.scheduleDate);
+                    const end = item.scheduleEnd ? formatLiteralDate(item.scheduleEnd) : '...';
+                    timeBadge = `<span class="badge b-time"><i class="ph-fill ph-clock"></i> ${start} ➔ ${end}</span>`;
+                }
+
+                html += `
+                    <li style="${opacity}">
+                        <div class="item-content">
+                            <div class="item-header">
+                                <span class="item-title">${item.name}</span>
+                                ${hiddenBadge}
+                                <span class="badge ${badgeClass}">${badgeText}</span> 
+                                ${condBadge}
+                                ${imgCount}
+                            </div>
+                            <div class="item-meta">
+                                ${timeBadge}
+                            </div>
+                            <div class="item-meta">
+                                <span><strong>$${item.price}</strong></span>
+                                <span>• Stock: ${item.stock}</span>
+                                <span class="click-badge">🖱️ ${item.clickCount||0}</span>
+                            </div>
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn-edit" onclick="startEditing('${item.id}')">Edit</button>
+                            <button class="btn-del" onclick="deleteItem('${item.id}')">Del</button>
+                        </div>
+                    </li>`;
+            });
+            
+            listContainer.innerHTML = html;
         }
 
         function startEditing(id) {
