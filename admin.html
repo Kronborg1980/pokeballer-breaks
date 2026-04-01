@@ -11,31 +11,54 @@
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
         :root { --bg: #0a0a15; --card: rgba(26,26,46,0.95); --accent: #00eeff; --purple: #9d4edd; --text: #ffffff; --gold: #ffd700; }
-        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; padding: 1.5rem; min-height: 100vh; }
+        * { box-sizing: border-box; }
+        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; padding: 1.5rem; min-height: 100vh; margin: 0; }
         .suicune-bg { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 800px; opacity: 0.1; z-index: -1; pointer-events: none; filter: drop-shadow(0 0 80px var(--accent)); }
-        .container { max-width: 600px; margin: 0 auto; position: relative; z-index: 1; }
-        h1 { text-align: center; color: var(--accent); margin-bottom: 2rem; font-weight: 900; font-size: 2rem; }
-        .card { background: var(--card); padding: 1.5rem; border-radius: 16px; border: 1px solid rgba(0,238,255,0.2); margin-bottom: 1.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        label { display: block; margin-bottom: 0.5rem; color: #aaa; font-weight: 600; font-size: 0.85rem; }
-        input, select { width: 100%; padding: 12px; margin-bottom: 1rem; background: rgba(0,0,0,0.5); border: 1px solid #444; color: white; border-radius: 8px; font-size: 1rem; }
-        input:focus, select:focus { outline: none; border-color: var(--accent); }
         
+        .container { max-width: 650px; margin: 0 auto; position: relative; z-index: 1; }
+        h1 { text-align: center; color: var(--accent); margin-bottom: 2rem; font-weight: 900; font-size: 2rem; letter-spacing: 1px; }
+        .card { background: var(--card); padding: 1.5rem; border-radius: 16px; border: 1px solid rgba(0,238,255,0.2); margin-bottom: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        
+        label { display: block; margin-bottom: 0.4rem; color: #aaa; font-weight: 600; font-size: 0.85rem; }
+        input, select { width: 100%; padding: 12px; margin-bottom: 1rem; background: rgba(0,0,0,0.5); border: 1px solid #444; color: white; border-radius: 8px; font-size: 1rem; }
+        input:focus, select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 10px rgba(0,238,255,0.2); }
         input[type="datetime-local"] { color-scheme: dark; cursor: pointer; border: 1px solid var(--accent); }
         
-        button { width: 100%; padding: 1rem; background: linear-gradient(135deg, var(--accent), var(--purple)); color: white; font-weight: 900; border: none; border-radius: 8px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; font-size: 1rem; transition: 0.3s; }
-        button:hover { filter: brightness(1.2); }
+        /* File Input Styling */
+        input[type="file"] { background: rgba(255,255,255,0.05); padding: 10px; border: 1px dashed #555; cursor: pointer; font-size: 0.9rem; }
+        input[type="file"]::file-selector-button { background: var(--accent); color: #000; font-weight: 800; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-right: 10px; transition: 0.3s; }
+        input[type="file"]::file-selector-button:hover { background: #fff; }
+
+        /* Responsive Layout Utility */
+        .flex-row { display: flex; gap: 15px; width: 100%; }
+        .flex-row > div { flex: 1; }
+
+        button.primary-btn { width: 100%; padding: 1rem; background: linear-gradient(135deg, var(--accent), var(--purple)); color: white; font-weight: 900; border: none; border-radius: 8px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; font-size: 1.1rem; transition: 0.3s; box-shadow: 0 5px 20px rgba(157, 78, 221, 0.4); }
+        button.primary-btn:hover { filter: brightness(1.2); transform: translateY(-2px); }
+
+        /* Inventory Sections */
+        .section-title { font-size: 1.2rem; color: var(--accent); border-bottom: 1px solid rgba(0,238,255,0.3); padding-bottom: 8px; margin-top: 2rem; margin-bottom: 1rem; font-weight: 800; display: flex; align-items: center; gap: 8px; }
         ul { padding: 0; margin: 0; }
-        li { background: rgba(255,255,255,0.05); padding: 1rem; margin-bottom: 1rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); list-style: none; display: flex; flex-direction: column; gap: 1rem; }
-        .item-content { flex: 1; }
-        .item-header { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; flex-wrap: wrap; }
-        .item-title { font-weight: 700; font-size: 1.1rem; line-height: 1.3; }
-        .item-meta { font-size: 0.85rem; color: #888; margin-top: 5px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;}
+        li { background: rgba(255,255,255,0.05); padding: 1.2rem; margin-bottom: 1rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); list-style: none; display: flex; flex-direction: column; gap: 1rem; transition: 0.3s; }
+        li:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); }
         
-        .badge { padding: 4px 10px; font-size: 0.7rem; border-radius: 6px; font-weight: 800; text-transform: uppercase; white-space: nowrap; flex-shrink: 0; display: flex; align-items: center; gap: 4px; }
+        .item-content { flex: 1; }
+        .item-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+        .item-title { font-weight: 800; font-size: 1.15rem; line-height: 1.3; color: #fff; }
+        .item-meta { font-size: 0.85rem; color: #aaa; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 5px; }
+        
+        .badge { padding: 4px 10px; font-size: 0.7rem; border-radius: 6px; font-weight: 800; text-transform: uppercase; white-space: nowrap; display: flex; align-items: center; gap: 4px; }
         .b-msrp { color: #00ff9d; border: 1px solid #00ff9d; background: linear-gradient(135deg, rgba(0, 255, 157, 0.15), transparent); }
         .b-bundle { color: #f0dfff; border: 1px solid var(--purple); background: linear-gradient(135deg, rgba(213, 0, 255, 0.25), rgba(100, 0, 255, 0.15)); }
         .b-baller { background: var(--gold); color: #000; border: 1px solid var(--gold); box-shadow: 0 0 10px rgba(255, 215, 0, 0.4); }
+        
         .b-slab { background: #1a1a3a; color: #d500ff; border: 1px solid #d500ff; }
+        .b-psa { background: rgba(50, 0, 0, 0.85); border: 1px solid #ff3333; color: #ff5555; }
+        .b-bgs { background: rgba(40, 30, 0, 0.85); border: 1px solid #e6c27a; color: #e6c27a; }
+        .b-cgc { background: rgba(0, 20, 40, 0.85); border: 1px solid #00d2ff; color: #00d2ff; }
+        .b-sgc { background: #000; border: 1px solid #ffffff; color: #ffffff; }
+        .b-ace { background: rgba(0, 30, 10, 0.85); border: 1px solid #00ff88; color: #00ff88; }
+        
         .b-raw { background: #1a3a3a; color: #00ff9d; border: 1px solid #00ff9d; }
         .b-hidden { background: rgba(255, 68, 68, 0.2); color: #ff6666; border: 1px solid #ff4444; }
         .b-time { background: rgba(157, 78, 221, 0.2); color: #e0aaff; border: 1px solid var(--purple); }
@@ -43,27 +66,44 @@
         .click-badge { background: rgba(0, 184, 255, 0.15); color: #00b8ff; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
         
         .btn-group { display: flex; gap: 10px; width: 100%; }
-        .btn-group button { padding: 10px; font-size: 0.9rem; flex: 1; }
-        .btn-edit { background: #00b8ff; box-shadow: none; }
-        .btn-del { background: #ff0055; box-shadow: none; }
-        @media(min-width: 600px) { li { flex-direction: row; align-items: center; } .btn-group { width: auto; flex-shrink: 0; } .btn-group button { width: auto; padding: 8px 16px; } }
+        .btn-group button { padding: 10px; font-size: 0.9rem; font-weight: 800; border-radius: 6px; cursor: pointer; border: none; color: white; flex: 1; transition: 0.2s; }
+        .btn-edit { background: #00b8ff; } .btn-edit:hover { background: #0088cc; }
+        .btn-del { background: #ff0055; } .btn-del:hover { background: #cc0044; }
+        
         #login-section { display: block; } #admin-section { display: none; }
+        .empty-state { color: #666; font-style: italic; font-size: 0.9rem; padding: 1rem 0; text-align: center; }
+
+        /* MOBILE FIXES */
+        @media(max-width: 600px) { 
+            .flex-row { flex-direction: column; gap: 0; }
+            .flex-row > div { width: 100%; }
+            .card { padding: 1.2rem; }
+            h1 { font-size: 1.6rem; }
+        }
+        @media(min-width: 600px) { 
+            li { flex-direction: row; align-items: center; justify-content: space-between; } 
+            .btn-group { width: auto; flex-shrink: 0; flex-direction: column; gap: 8px; } 
+            .btn-group button { padding: 8px 20px; width: 100%; } 
+        }
     </style>
 </head>
 <body>
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="suicune-bg">
     <div class="container">
-        <h1>PBM ADMIN</h1>
+        <h1><i class="ph-fill ph-shield-check"></i> PBM ADMIN</h1>
+        
         <div id="login-section" class="card">
             <label>Username</label><input type="text" id="login-username">
             <label>Password</label><input type="password" id="login-password">
-            <button onclick="login()">ENTER SYSTEM</button>
+            <button class="primary-btn" onclick="login()">ENTER SYSTEM</button>
         </div>
+        
         <div id="admin-section">
             <div class="card">
-                <h3 style="margin-top:0; margin-bottom:1rem;">Add / Edit Item</h3>
-                <div style="display:flex; gap:10px;">
-                    <div style="flex:1">
+                <h2 style="margin-top:0; margin-bottom:1.5rem; font-size:1.4rem; border-bottom: 1px solid #333; padding-bottom: 10px;">Add / Edit Item</h2>
+                
+                <div class="flex-row">
+                    <div>
                         <label>Item Type</label>
                         <select id="item-type">
                             <optgroup label="Live Breaks">
@@ -77,13 +117,16 @@
                             </optgroup>
                         </select>
                     </div>
-                    <div style="flex:1">
+                    <div>
                         <label>Visibility</label>
-                        <select id="item-hidden" style="border: 1px solid #555;"><option value="false">👁️ Public</option><option value="true" style="color:#ff6666">🚫 Hidden</option></select>
+                        <select id="item-hidden">
+                            <option value="false">👁️ Public (Visible)</option>
+                            <option value="true" style="color:#ff6666">🚫 Hidden (Draft)</option>
+                        </select>
                     </div>
                 </div>
 
-                <div id="condition-container" style="display: none; margin-bottom: 0.5rem;">
+                <div id="condition-container" style="display: none;">
                     <label style="color: #00ff9d;">⭐ Card Condition (Raw Cards Only)</label>
                     <select id="item-condition" style="border: 1px solid #00ff9d;">
                         <option value="Mint (M)">Mint (M)</option>
@@ -95,7 +138,7 @@
                     </select>
                 </div>
 
-                <div id="grader-container" style="display: none; margin-bottom: 0.5rem;">
+                <div id="grader-container" style="display: none;">
                     <label style="color: #d500ff;">🔍 Grading Company (Slabs Only)</label>
                     <select id="item-grader" style="border: 1px solid #d500ff;">
                         <option value="PSA">PSA</option>
@@ -108,37 +151,61 @@
                     </select>
                 </div>
                 
-                <div style="display:flex; gap:10px; margin-bottom: 0.5rem;">
-                    <div style="flex:1">
+                <div class="flex-row">
+                    <div>
                         <label>🟢 Start Time (Optional)</label>
                         <input type="datetime-local" id="item-schedule-date">
                     </div>
-                    <div style="flex:1">
+                    <div>
                         <label>🔴 Close Time (Optional)</label>
                         <input type="datetime-local" id="item-schedule-end">
                     </div>
                 </div>
                 
-                <label>Name (e.g. PSA 10 Base Set Charizard)</label><input type="text" id="item-name">
-                <label>Description</label><input type="text" id="item-description">
-                <div style="display:flex; gap:10px;">
-                    <div style="flex:1"><label>Price ($)</label><input type="number" id="item-price"></div>
-                    <div style="flex:1"><label>Stock (Set to 1 for Singles)</label><input type="number" id="item-stock" value="1"></div>
+                <label>Name (e.g. PSA 10 Base Set Charizard)</label>
+                <input type="text" id="item-name" placeholder="Item Name">
+                
+                <label>Description</label>
+                <input type="text" id="item-description" placeholder="Short description...">
+                
+                <div class="flex-row">
+                    <div>
+                        <label>Price ($)</label>
+                        <input type="number" id="item-price" placeholder="0.00" step="0.01">
+                    </div>
+                    <div>
+                        <label>Stock (Set to 1 for Singles)</label>
+                        <input type="number" id="item-stock" value="1">
+                    </div>
                 </div>
-                <label>Payment Link (PayPal.me / Stripe Checkout / Form)</label>
-                <input type="url" id="item-google-form-link" placeholder="https://paypal.me/...">
+                
+                <label>Payment Link (PayPal.me / Stripe / Streamlabs)</label>
+                <input type="url" id="item-google-form-link" placeholder="https://...">
                 
                 <label>Images (Select multiple files to create a carousel)</label>
                 <input type="file" id="item-image" multiple accept="image/*">
                 
-                <button id="submit-btn" onclick="submitItem()">Save Item</button>
+                <button id="submit-btn" class="primary-btn" style="margin-top: 1rem;" onclick="submitItem()">Save to Database</button>
             </div>
-            <h3 style="color:#888; font-size:0.9rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:1rem;">Inventory</h3>
-            <ul id="item-list"></ul>
-            <button onclick="logout()" style="background:#333; margin-top:2rem;">Log Out</button>
-            <a href="index.html" style="display:block; text-align:center; margin-top:1rem; color:#666; text-decoration:none;">Back to Store</a>
+
+            <h2 style="text-align:center; font-size: 1.8rem; margin-top: 3rem; margin-bottom: 1rem;">Inventory Management</h2>
+            
+            <h3 class="section-title"><i class="ph-fill ph-monitor-play"></i> Live Breaks</h3>
+            <ul id="list-breaks"><div class="empty-state">No breaks found.</div></ul>
+
+            <h3 class="section-title"><i class="ph-fill ph-certificate"></i> Graded Slabs</h3>
+            <ul id="list-slabs"><div class="empty-state">No slabs found in The Vault.</div></ul>
+
+            <h3 class="section-title"><i class="ph-fill ph-cards"></i> Raw Cards</h3>
+            <ul id="list-raw"><div class="empty-state">No raw cards found in The Vault.</div></ul>
+
+            <div style="display:flex; flex-direction:column; gap:15px; margin-top:3rem;">
+                <button onclick="logout()" style="background:#222; border:1px solid #444; color:#fff; padding:12px; border-radius:8px; cursor:pointer; font-weight:700; text-transform:uppercase;">Log Out</button>
+                <a href="index.html" style="text-align:center; color:#888; text-decoration:none; font-weight:600; padding:10px;">Return to Live Site</a>
+            </div>
         </div>
     </div>
+
     <script>
         const API_URL = 'https://pokeballer-worker.kronborgnielsen.workers.dev/api';
         
@@ -226,7 +293,7 @@
 
             try {
                 const response = await fetch(url, { method, headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
-                if(response.status === 500) { alert("SERVER ERROR - Images might be too large."); btn.innerText = "Save Failed"; return; }
+                if(response.status === 500) { alert("SERVER ERROR - Images might be too large."); btn.innerText = "Save to Database"; return; }
 
                 editingId = null; currentImage = ''; currentImages = []; currentCreatedAt = null; currentClicks = 0;
                 
@@ -243,10 +310,10 @@
                 document.getElementById('item-condition').value = 'Mint (M)';
                 document.getElementById('item-grader').value = 'PSA';
                 document.getElementById('item-type').dispatchEvent(new Event('change')); 
-                btn.innerText = "Save Item";
+                btn.innerText = "Save to Database";
                 
                 loadItems();
-            } catch(e) { alert("Save Failed."); btn.innerText = "Save Failed"; }
+            } catch(e) { alert("Save Failed."); btn.innerText = "Save to Database"; }
         }
 
         function formatLiteralDate(val) {
@@ -261,7 +328,7 @@
                 let ampm = 'AM';
                 if (h >= 12) { ampm = 'PM'; if (h > 12) h -= 12; }
                 if (h === 0) h = 12;
-                return `${month}/${day}, ${h}:${minute} ${ampm}`;
+                return `${month}/${day} @ ${h}:${minute}${ampm}`;
             } catch(e) { return val; }
         }
 
@@ -275,21 +342,33 @@
                 items.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
                 allItems = items;
 
-                const list = document.getElementById('item-list');
-                list.innerHTML = '';
+                // Grab list containers
+                const listBreaks = document.getElementById('list-breaks');
+                const listSlabs = document.getElementById('list-slabs');
+                const listRaw = document.getElementById('list-raw');
+                
+                let htmlBreaks = '', htmlSlabs = '', htmlRaw = '';
+
                 items.forEach(item => {
                     let badgeClass = 'b-msrp';
                     let badgeText = 'MSRP';
 
                     if (item.type === 'baller') { badgeClass = 'b-baller'; badgeText = '<i class="ph-fill ph-crown"></i> BALLER'; } 
                     else if (item.type === 'bundle') { badgeClass = 'b-bundle'; badgeText = '<i class="ph-fill ph-sketch-logo"></i> BUNDLE'; }
-                    else if (item.type === 'slab') { badgeClass = 'b-slab'; badgeText = `🔍 ${item.grader || 'SLAB'}`; }
+                    else if (item.type === 'slab') { 
+                        if(item.grader === 'PSA') badgeClass = 'b-psa';
+                        else if(item.grader === 'BGS') badgeClass = 'b-bgs';
+                        else if(item.grader === 'CGC') badgeClass = 'b-cgc';
+                        else if(item.grader === 'SGC') badgeClass = 'b-sgc';
+                        else if(item.grader === 'ACE') badgeClass = 'b-ace';
+                        else badgeClass = 'b-slab';
+                        badgeText = `🔍 ${item.grader || 'SLAB'}`; 
+                    }
                     else if (item.type === 'raw') { badgeClass = 'b-raw'; badgeText = '🃏 RAW'; }
                     
                     const hiddenBadge = item.hidden ? '<span class="badge b-hidden"><i class="ph-fill ph-eye-slash"></i> HIDDEN</span>' : '';
                     const condBadge = item.type === 'raw' && item.condition ? `<span class="badge b-cond">${item.condition}</span>` : '';
-                    
-                    const imgCount = item.images && item.images.length > 1 ? `<span class="badge" style="background:#444; border:1px solid #777;"><i class="ph-fill ph-images"></i> ${item.images.length} Pics</span>` : '';
+                    const imgCount = item.images && item.images.length > 1 ? `<span class="badge" style="background:#444; border:1px solid #777;"><i class="ph-fill ph-images"></i> ${item.images.length}</span>` : '';
                     const opacity = item.hidden ? 'opacity: 0.6;' : '';
                     
                     let timeBadge = '';
@@ -299,7 +378,7 @@
                         timeBadge = `<span class="badge b-time"><i class="ph-fill ph-clock"></i> ${start} ➔ ${end}</span>`;
                     }
 
-                    list.innerHTML += `
+                    const itemHTML = `
                         <li style="${opacity}">
                             <div class="item-content">
                                 <div class="item-header">
@@ -313,7 +392,7 @@
                                     ${timeBadge}
                                 </div>
                                 <div class="item-meta">
-                                    <span>$${item.price}</span>
+                                    <span><strong>$${item.price}</strong></span>
                                     <span>• Stock: ${item.stock}</span>
                                     <span class="click-badge">🖱️ ${item.clickCount||0}</span>
                                 </div>
@@ -323,7 +402,18 @@
                                 <button class="btn-del" onclick="deleteItem('${item.id}')">Del</button>
                             </div>
                         </li>`;
+
+                    // Categorize HTML into correct section
+                    if (item.type === 'slab') htmlSlabs += itemHTML;
+                    else if (item.type === 'raw') htmlRaw += itemHTML;
+                    else htmlBreaks += itemHTML; // msrp, bundle, baller
                 });
+
+                // Apply to DOM or show empty state
+                listBreaks.innerHTML = htmlBreaks || '<div class="empty-state">No live breaks found.</div>';
+                listSlabs.innerHTML = htmlSlabs || '<div class="empty-state">No slabs found.</div>';
+                listRaw.innerHTML = htmlRaw || '<div class="empty-state">No raw cards found.</div>';
+
             } catch(e) { console.error("Load Error", e); }
         }
 
@@ -358,12 +448,12 @@
                 document.getElementById('item-grader').value = item.grader || 'PSA';
                 document.getElementById('item-type').dispatchEvent(new Event('change'));
 
-                document.getElementById('submit-btn').innerText = "Update Item";
-                window.scrollTo(0,0);
+                document.getElementById('submit-btn').innerText = "Update Database Item";
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         }
 
-        async function deleteItem(id) { if(confirm('Delete?')) { await fetch(`${API_URL}/items/${id}`, {method:'DELETE'}); loadItems(); } }
+        async function deleteItem(id) { if(confirm('Are you sure you want to permanently delete this?')) { await fetch(`${API_URL}/items/${id}`, {method:'DELETE'}); loadItems(); } }
         function logout() { localStorage.removeItem('adminToken'); location.reload(); }
     </script>
 </body>
