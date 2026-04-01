@@ -69,7 +69,7 @@
         .tag-slab { background: rgba(40, 0, 60, 0.85); border: 1px solid #bd00ff; color: #ffffff; text-shadow: 0 1px 3px black; box-shadow: 0 0 20px rgba(213, 0, 255, 0.4); }
         .tag-raw { background: rgba(0, 40, 40, 0.85); border: 1px solid #00ff9d; color: #ffffff; text-shadow: 0 1px 3px black; box-shadow: 0 0 15px rgba(0, 255, 157, 0.3); }
 
-        /* THE NEW CONDITION BADGE STYLING */
+        /* THE CONDITION BADGE STYLING */
         .cond-badge { position: absolute; top: 20px; left: 20px; padding: 8px 14px; border-radius: 10px; font-weight: 800; font-size: 0.75rem; z-index: 2; letter-spacing: 1px; text-transform: uppercase; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); display: flex; align-items: center; gap: 6px; box-shadow: 0 0 15px rgba(0,0,0,0.5); }
 
         .item-content { padding: 1.8rem; flex: 1; display: flex; flex-direction: column; position: relative; }
@@ -163,12 +163,16 @@
                     let conditionHTML = '';
                     if (item.type === 'raw' && item.condition) {
                         let color = '#00ff9d'; // Default NM Green
+                        if(item.condition === 'Mint (M)') color = '#00fff2'; // Shiny Cyan/Diamond for Mint
                         if(item.condition.includes('LP')) color = '#b2ff59'; // Light Green
                         if(item.condition.includes('MP')) color = '#ffeb3b'; // Yellow
                         if(item.condition.includes('HP')) color = '#ff9800'; // Orange
                         if(item.condition.includes('DMG')) color = '#ff4444'; // Red
                         
-                        conditionHTML = `<div class="cond-badge" style="color: ${color}; border: 1px solid ${color};">⭐ ${item.condition}</div>`;
+                        // Add an extra glow effect specifically if it is Mint
+                        let extraStyle = item.condition === 'Mint (M)' ? 'box-shadow: 0 0 20px rgba(0, 255, 242, 0.6); font-weight: 900;' : '';
+                        
+                        conditionHTML = `<div class="cond-badge" style="color: ${color}; border: 1px solid ${color}; ${extraStyle}">⭐ ${item.condition}</div>`;
                     }
 
                     const isEnded = item.stock <= 0;
