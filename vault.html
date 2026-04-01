@@ -3,386 +3,317 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PBM Admin</title>
+    <title>The Vault - PBM Breaks</title>
+    
     <link rel="icon" type="image/svg+xml" href="https://upload.wikimedia.org/wikipedia/commons/5/53/Pok%C3%A9_Ball_icon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
-        :root { --bg: #0a0a15; --card: rgba(26,26,46,0.95); --accent: #00eeff; --purple: #9d4edd; --text: #ffffff; --gold: #ffd700; }
-        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; padding: 1.5rem; min-height: 100vh; }
-        .suicune-bg { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 800px; opacity: 0.1; z-index: -1; pointer-events: none; filter: drop-shadow(0 0 80px var(--accent)); }
-        .container { max-width: 600px; margin: 0 auto; position: relative; z-index: 1; }
-        h1 { text-align: center; color: var(--accent); margin-bottom: 2rem; font-weight: 900; font-size: 2rem; }
-        .card { background: var(--card); padding: 1.5rem; border-radius: 16px; border: 1px solid rgba(0,238,255,0.2); margin-bottom: 1.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        label { display: block; margin-bottom: 0.5rem; color: #aaa; font-weight: 600; font-size: 0.85rem; }
-        input, select { width: 100%; padding: 12px; margin-bottom: 1rem; background: rgba(0,0,0,0.5); border: 1px solid #444; color: white; border-radius: 8px; font-size: 1rem; }
-        input:focus, select:focus { outline: none; border-color: var(--accent); }
+        :root {
+            --bg-dark: #02020a;
+            --accent-cyan: #00fff2;
+            --accent-purple: #d500ff;
+            --accent-gold: #ffd700;
+            --accent-live: #ff0040;
+            --text-bright: #ffffff;
+            --text-dim: #b0b0d0;
+            --guardian-size: clamp(120px, 14vw, 200px);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
         
-        input[type="datetime-local"] { color-scheme: dark; cursor: pointer; border: 1px solid var(--accent); }
+        body { font-family: 'Inter', sans-serif; background: var(--bg-dark); color: var(--text-bright); min-height: 100vh; overflow-x: hidden; position: relative; }
+
+        body::before {
+            content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% 0%, rgba(0, 255, 242, 0.1) 0%, transparent 50%), radial-gradient(circle at 50% 100%, rgba(213, 0, 255, 0.1) 0%, transparent 50%), linear-gradient(to bottom, #02020a, #0a0514);
+            z-index: -10; pointer-events: none;
+        }
+
+        .particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; background-image: radial-gradient(circle at 20% 30%, var(--accent-cyan) 1px, transparent 3px), radial-gradient(circle at 80% 70%, var(--accent-purple) 1px, transparent 3px); background-size: 120px 120px; opacity: 0.4; }
         
-        button { width: 100%; padding: 1rem; background: linear-gradient(135deg, var(--accent), var(--purple)); color: white; font-weight: 900; border: none; border-radius: 8px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; font-size: 1rem; transition: 0.3s; }
-        button:hover { filter: brightness(1.2); }
-        ul { padding: 0; margin: 0; }
-        li { background: rgba(255,255,255,0.05); padding: 1rem; margin-bottom: 1rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); list-style: none; display: flex; flex-direction: column; gap: 1rem; }
-        .item-content { flex: 1; }
-        .item-header { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; flex-wrap: wrap; }
-        .item-title { font-weight: 700; font-size: 1.1rem; line-height: 1.3; }
-        .item-meta { font-size: 0.85rem; color: #888; margin-top: 5px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;}
+        .poke-bg { position: fixed; pointer-events: none; z-index: -5; opacity: 0.3; will-change: transform; transform: translateZ(0); backface-visibility: hidden; }
+        .p-suicune { top: 50%; left: 50%; transform: translate(-50%, -50%); width: clamp(500px, 70vw, 1000px); opacity: 0.05; animation: breathe 8s ease-in-out infinite; z-index: -6; }
+        .p-rayquaza { top: -5%; left: -5%; width: var(--guardian-size); animation: float 14s infinite ease-in-out; }
+        .p-charizard { top: -5%; right: -5%; width: var(--guardian-size); animation: floatFlipped 13s infinite ease-in-out; }
+        @keyframes breathe { 0%,100% { opacity:0.05; } 50% { opacity:0.08; } }
+        @keyframes float { 0%, 100% { transform: translate3d(0, 0, 0); } 50% { transform: translate3d(20px, -30px, 0); } }
+        @keyframes floatFlipped { 0%, 100% { transform: scaleX(-1) translate3d(0, 0, 0); } 50% { transform: scaleX(-1) translate3d(-20px, -30px, 0); } }
+
+        .top-nav { display: flex; justify-content: center; gap: 20px; padding: 20px; position: relative; z-index: 10; }
+        .nav-link { padding: 10px 24px; border-radius: 30px; color: white; text-decoration: none; font-weight: 800; letter-spacing: 1px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); transition: 0.3s; display: flex; align-items: center; gap: 8px; }
+        .nav-link:hover { background: rgba(255,255,255,0.1); border-color: var(--accent-cyan); box-shadow: 0 0 20px rgba(0, 255, 242, 0.4); transform: translateY(-2px); }
+        .nav-active { border-color: var(--accent-purple); box-shadow: 0 0 20px rgba(213, 0, 255, 0.4); background: linear-gradient(90deg, rgba(213,0,255,0.2), transparent); pointer-events: none; }
+
+        header { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1rem 1rem 2rem; position: relative; z-index: 2; }
+        h1 { font-size: clamp(3rem, 8vw, 5.5rem); font-weight: 900; letter-spacing: -2px; text-transform: uppercase; margin: 0; line-height: 1; background: linear-gradient(180deg, #ffffff 20%, #e0c3fc 50%, #d500ff 55%, #00fff2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-align: center; position: relative; display: inline-block; z-index: 1; filter: drop-shadow(0 0 25px rgba(213, 0, 255, 0.6)); }
+        .subtitle { color: var(--accent-gold); font-weight: 700; letter-spacing: 4px; text-transform: uppercase; margin-top: 10px; text-shadow: 0 0 10px rgba(255,215,0,0.5); }
+
+        main { position: relative; z-index: 2; max-width: 1250px; margin: 0 auto; padding: 2.5rem; border-radius: 35px; background: rgba(5, 5, 14, 0.75); backdrop-filter: blur(10px); margin-bottom: 4rem; border: 2px solid rgba(213, 0, 255, 0.3); box-shadow: 0 0 100px rgba(0,0,0,0.8), inset 0 0 30px rgba(213, 0, 255, 0.05), 0 0 20px rgba(213, 0, 255, 0.1), 0 0 40px rgba(0, 255, 242, 0.1); }
+
+        .store-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 35px; }
+        .item-card { display: flex; flex-direction: column; height: 100%; }
         
-        .badge { padding: 4px 10px; font-size: 0.7rem; border-radius: 6px; font-weight: 800; text-transform: uppercase; white-space: nowrap; flex-shrink: 0; display: flex; align-items: center; gap: 4px; }
-        .b-msrp { color: #00ff9d; border: 1px solid #00ff9d; background: linear-gradient(135deg, rgba(0, 255, 157, 0.15), transparent); }
-        .b-bundle { color: #f0dfff; border: 1px solid var(--purple); background: linear-gradient(135deg, rgba(213, 0, 255, 0.25), rgba(100, 0, 255, 0.15)); }
-        .b-baller { background: var(--gold); color: #000; border: 1px solid var(--gold); box-shadow: 0 0 10px rgba(255, 215, 0, 0.4); }
+        .glass-panel { position: relative; background: linear-gradient(160deg, rgba(20, 20, 35, 0.6) 0%, rgba(10, 10, 20, 0.8) 100%); backdrop-filter: blur(16px); border-radius: 24px; height: 100%; width: 100%; z-index: 1; overflow: hidden; border: 1px solid rgba(213, 0, 255, 0.1); border-top: 2px solid rgba(255, 255, 255, 0.4); box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.7), inset 0 5px 10px rgba(255, 255, 255, 0.1), 0 10px 30px rgba(0,0,0,0.5); }
+        .neon-card-wrapper { position: relative; border-radius: 26px; padding: 3px; box-shadow: 0 0 25px rgba(213, 0, 255, 0.2), 0 0 50px rgba(0, 255, 242, 0.15); background: rgba(0,0,0,0.2); overflow: hidden; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        .neon-card-wrapper:hover { transform: translateY(-10px) scale(1.02); box-shadow: 0 0 50px rgba(213, 0, 255, 0.6), 0 0 80px rgba(0, 255, 242, 0.5); }
+        .neon-card-wrapper::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: conic-gradient(transparent 0deg, transparent 90deg, var(--accent-cyan) 130deg, #ffffff 155deg, var(--accent-purple) 180deg, transparent 220deg); animation: spinBorder 5s linear infinite; z-index: 0; opacity: 1; filter: blur(5px); }
+        @keyframes spinBorder { 100% { transform: rotate(360deg); } }
         
-        /* Grader Admin Badges */
-        .b-slab { background: #1a1a3a; color: #d500ff; border: 1px solid #d500ff; }
-        .b-psa { background: rgba(50, 0, 0, 0.85); border: 1px solid #ff3333; color: #ff5555; }
-        .b-bgs { background: rgba(40, 30, 0, 0.85); border: 1px solid #e6c27a; color: #e6c27a; }
-        .b-cgc { background: rgba(0, 20, 40, 0.85); border: 1px solid #00d2ff; color: #00d2ff; }
-        .b-sgc { background: #000; border: 1px solid #ffffff; color: #ffffff; }
-        .b-ace { background: rgba(0, 30, 10, 0.85); border: 1px solid #00ff88; color: #00ff88; }
+        /* GRADER SPECIFIC COLORS */
+        .card-psa { border: 2px solid #ff3333 !important; box-shadow: 0 0 40px rgba(255, 51, 51, 0.3) !important; }
+        .card-psa::before { background: conic-gradient(transparent 0deg, transparent 90deg, #ff3333 130deg, #ffffff 155deg, #cc0000 180deg, transparent 220deg) !important; }
+        .tag-psa { background: rgba(50, 0, 0, 0.85) !important; border: 1px solid #ff3333 !important; color: white !important; box-shadow: 0 0 15px rgba(255, 51, 51, 0.4) !important; }
+
+        .card-bgs { border: 2px solid #e6c27a !important; box-shadow: 0 0 40px rgba(230, 194, 122, 0.3) !important; }
+        .card-bgs::before { background: conic-gradient(transparent 0deg, transparent 90deg, #e6c27a 130deg, #ffffff 155deg, #b38f40 180deg, transparent 220deg) !important; }
+        .tag-bgs { background: rgba(40, 30, 0, 0.85) !important; border: 1px solid #e6c27a !important; color: #e6c27a !important; box-shadow: 0 0 15px rgba(230, 194, 122, 0.3) !important; }
+
+        .card-cgc { border: 2px solid #00d2ff !important; box-shadow: 0 0 40px rgba(0, 210, 255, 0.3) !important; }
+        .card-cgc::before { background: conic-gradient(transparent 0deg, transparent 90deg, #00d2ff 130deg, #ffffff 155deg, #0088cc 180deg, transparent 220deg) !important; }
+        .tag-cgc { background: rgba(0, 20, 40, 0.85) !important; border: 1px solid #00d2ff !important; color: #00d2ff !important; box-shadow: 0 0 15px rgba(0, 210, 255, 0.4) !important; }
+
+        .card-sgc { border: 2px solid #ffffff !important; box-shadow: 0 0 40px rgba(255, 255, 255, 0.2) !important; }
+        .card-sgc::before { background: conic-gradient(transparent 0deg, transparent 90deg, #ffffff 130deg, #888888 155deg, #cccccc 180deg, transparent 220deg) !important; }
+        .tag-sgc { background: #000000 !important; border: 1px solid #ffffff !important; color: #ffffff !important; box-shadow: 0 0 15px rgba(255, 255, 255, 0.3) !important; }
+
+        .card-ace { border: 2px solid #00ff88 !important; box-shadow: 0 0 40px rgba(0, 255, 136, 0.3) !important; }
+        .card-ace::before { background: conic-gradient(transparent 0deg, transparent 90deg, #00ff88 130deg, #ffffff 155deg, #00cc66 180deg, transparent 220deg) !important; }
+        .tag-ace { background: rgba(0, 30, 10, 0.85) !important; border: 1px solid #00ff88 !important; color: #00ff88 !important; box-shadow: 0 0 15px rgba(0, 255, 136, 0.4) !important; }
+
+        /* IMAGE BOX & CAROUSEL UI */
+        .item-img-box { height: 350px; overflow:hidden; position: relative; cursor: pointer; border-bottom: 1px solid rgba(213, 0, 255, 0.2); display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); }
+        .item-img-box::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent); transform: skewX(-20deg); z-index: 10; transition: 0.7s; pointer-events: none; }
+        .neon-card-wrapper:hover .item-img-box::before { left: 150%; transition: 0.7s ease-in-out; }
+        .item-img { max-width: 90%; max-height: 90%; object-fit: contain; transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); filter: drop-shadow(0 10px 15px rgba(0,0,0,0.8)); }
+        .neon-card-wrapper:hover .item-img { transform: scale(1.08) rotate(2deg); }
+
+        .carousel-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.7); color: white; border: 1px solid rgba(255,255,255,0.3); width: 40px; height: 40px; border-radius: 50%; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 20; transition: 0.3s; backdrop-filter: blur(5px); }
+        .carousel-btn:hover { background: var(--accent-purple); border-color: var(--accent-cyan); box-shadow: 0 0 15px var(--accent-purple); }
+        .carousel-btn.prev { left: 10px; }
+        .carousel-btn.next { right: 10px; }
         
-        .b-raw { background: #1a3a3a; color: #00ff9d; border: 1px solid #00ff9d; }
-        .b-hidden { background: rgba(255, 68, 68, 0.2); color: #ff6666; border: 1px solid #ff4444; }
-        .b-time { background: rgba(157, 78, 221, 0.2); color: #e0aaff; border: 1px solid var(--purple); }
-        .b-cond { background: rgba(255,255,255,0.1); color: #ccc; border: 1px solid #777; }
-        .click-badge { background: rgba(0, 184, 255, 0.15); color: #00b8ff; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
+        .img-dots { position: absolute; bottom: 12px; left: 0; width: 100%; display: flex; justify-content: center; gap: 8px; z-index: 20; pointer-events: none; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.3); transition: 0.3s; }
+        .dot.active { background: var(--accent-cyan); box-shadow: 0 0 10px var(--accent-cyan); transform: scale(1.3); }
+
+        .type-tag { position: absolute; top: 20px; right: 20px; padding: 8px 14px; border-radius: 10px; font-weight: 800; font-size: 0.75rem; z-index: 15; letter-spacing: 1px; text-transform: uppercase; backdrop-filter: blur(10px); display: flex; align-items: center; gap: 6px; }
+        .tag-slab { background: rgba(40, 0, 60, 0.85); border: 1px solid #bd00ff; color: #ffffff; text-shadow: 0 1px 3px black; box-shadow: 0 0 20px rgba(213, 0, 255, 0.4); }
+        .tag-raw { background: rgba(0, 40, 40, 0.85); border: 1px solid #00ff9d; color: #ffffff; text-shadow: 0 1px 3px black; box-shadow: 0 0 15px rgba(0, 255, 157, 0.3); }
+
+        .cond-badge { position: absolute; top: 20px; left: 20px; padding: 8px 14px; border-radius: 10px; font-weight: 800; font-size: 0.75rem; z-index: 15; letter-spacing: 1px; text-transform: uppercase; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); display: flex; align-items: center; gap: 6px; box-shadow: 0 0 15px rgba(0,0,0,0.5); }
+
+        .item-content { padding: 1.8rem; flex: 1; display: flex; flex-direction: column; position: relative; }
+        .item-content h3 { font-size: 1.5rem; margin-bottom: 0.8rem; font-weight: 800; line-height: 1.2; color: #ffffff; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
+        .item-content p { color: var(--text-dim); font-size: 1rem; line-height: 1.6; margin-bottom: 1.5rem; flex: 1; }
+        .price-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(213, 0, 255, 0.2); }
+        .price { font-size: 2rem; font-weight: 900; color: var(--accent-gold); text-shadow: 0 0 25px rgba(255, 215, 0, 0.4); }
+        .stock { font-size: 0.9rem; color: var(--text-bright); background: rgba(213, 0, 255, 0.2); padding: 6px 14px; border-radius: 30px; font-weight: 700; border: 1px solid rgba(213, 0, 255, 0.4); }
+
+        .buy-btn {
+            display: block; text-align: center; padding: 1.2rem; border-radius: 16px;
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan));
+            color: white; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 1.1rem; letter-spacing: 1.5px;
+            transition: 0.4s; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.3); cursor: pointer;
+            box-shadow: 0 10px 30px rgba(213, 0, 255, 0.3), inset 0 2px 0 rgba(255,255,255,0.4);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1;
+        }
+        .buy-btn:hover { transform: translateY(-5px); box-shadow: 0 0 50px rgba(0, 255, 242, 0.8); border-color: white; }
+        .btn-subtext { font-size: 0.75rem; opacity: 0.9; margin-top: 4px; font-weight: 700; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
+        .sold-out { background: #0f0f1a !important; color: #666 !important; pointer-events: none; border: 2px solid #2a2a3a !important; box-shadow: inset 0 0 20px rgba(0,0,0,0.5) !important; }
+
+        .skeleton { background: rgba(255, 255, 255, 0.03); border-radius: 24px; min-height: 450px; border: 1px solid rgba(213, 0, 255, 0.15); animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+
+        .image-modal { display: none; position: fixed; z-index: 9999; padding-top: 50px; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.9); align-items: center; justify-content: center; backdrop-filter: blur(20px); }
+        .modal-content { margin: auto; display: block; max-width: 90%; max-height: 85vh; border: 3px solid var(--accent-purple); box-shadow: 0 0 100px rgba(213, 0, 255, 0.8); border-radius: 20px; }
+        .close-modal { position: absolute; top: 30px; right: 40px; color: var(--accent-purple); font-size: 50px; font-weight: 900; cursor: pointer; z-index: 10000; text-shadow: 0 0 20px var(--accent-purple); }
         
-        .btn-group { display: flex; gap: 10px; width: 100%; }
-        .btn-group button { padding: 10px; font-size: 0.9rem; flex: 1; }
-        .btn-edit { background: #00b8ff; box-shadow: none; }
-        .btn-del { background: #ff0055; box-shadow: none; }
-        @media(min-width: 600px) { li { flex-direction: row; align-items: center; } .btn-group { width: auto; flex-shrink: 0; } .btn-group button { width: auto; padding: 8px 16px; } }
-        #login-section { display: block; } #admin-section { display: none; }
+        footer { text-align: center; padding: 3rem 0 4rem; color: var(--text-dim); font-size: 0.9rem; position: relative; z-index: 2; letter-spacing: 1px; }
     </style>
 </head>
 <body>
-    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="suicune-bg">
-    <div class="container">
-        <h1>PBM ADMIN</h1>
-        <div id="login-section" class="card">
-            <label>Username</label><input type="text" id="login-username">
-            <label>Password</label><input type="password" id="login-password">
-            <button onclick="login()">ENTER SYSTEM</button>
-        </div>
-        <div id="admin-section">
-            <div class="card">
-                <h3 style="margin-top:0; margin-bottom:1rem;">Add / Edit Item</h3>
-                <div style="display:flex; gap:10px;">
-                    <div style="flex:1">
-                        <label>Item Type</label>
-                        <select id="item-type">
-                            <optgroup label="Live Breaks">
-                                <option value="msrp">✅ MSRP Break</option>
-                                <option value="bundle">💎 Bundle Break</option>
-                                <option value="baller">👑 BALLER BUNDLE</option>
-                            </optgroup>
-                            <optgroup label="The Vault (Store)">
-                                <option value="slab">🔍 Graded Slab</option>
-                                <option value="raw">🃏 Raw Card</option>
-                            </optgroup>
-                        </select>
-                    </div>
-                    <div style="flex:1">
-                        <label>Visibility</label>
-                        <select id="item-hidden" style="border: 1px solid #555;"><option value="false">👁️ Public</option><option value="true" style="color:#ff6666">🚫 Hidden</option></select>
-                    </div>
-                </div>
+    <div class="particles"></div>
+    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="poke-bg p-suicune">
+    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/384.png" class="poke-bg p-rayquaza">
+    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/006.png" class="poke-bg p-charizard">
 
-                <div id="condition-container" style="display: none; margin-bottom: 0.5rem;">
-                    <label style="color: #00ff9d;">⭐ Card Condition (Raw Cards Only)</label>
-                    <select id="item-condition" style="border: 1px solid #00ff9d;">
-                        <option value="Mint (M)">Mint (M)</option>
-                        <option value="Near Mint (NM)">Near Mint (NM)</option>
-                        <option value="Lightly Played (LP)">Lightly Played (LP)</option>
-                        <option value="Moderately Played (MP)">Moderately Played (MP)</option>
-                        <option value="Heavily Played (HP)">Heavily Played (HP)</option>
-                        <option value="Damaged (DMG)">Damaged (DMG)</option>
-                    </select>
-                </div>
-
-                <div id="grader-container" style="display: none; margin-bottom: 0.5rem;">
-                    <label style="color: #d500ff;">🔍 Grading Company (Slabs Only)</label>
-                    <select id="item-grader" style="border: 1px solid #d500ff;">
-                        <option value="PSA">PSA</option>
-                        <option value="BGS">BGS</option>
-                        <option value="CGC">CGC</option>
-                        <option value="SGC">SGC</option>
-                        <option value="ACE">ACE</option>
-                        <option value="MANA">Mana</option>
-                        <option value="Other">Other Grader</option>
-                    </select>
-                </div>
-                
-                <div style="display:flex; gap:10px; margin-bottom: 0.5rem;">
-                    <div style="flex:1">
-                        <label>🟢 Start Time (Optional)</label>
-                        <input type="datetime-local" id="item-schedule-date">
-                    </div>
-                    <div style="flex:1">
-                        <label>🔴 Close Time (Optional)</label>
-                        <input type="datetime-local" id="item-schedule-end">
-                    </div>
-                </div>
-                
-                <label>Name (e.g. PSA 10 Base Set Charizard)</label><input type="text" id="item-name">
-                <label>Description</label><input type="text" id="item-description">
-                <div style="display:flex; gap:10px;">
-                    <div style="flex:1"><label>Price ($)</label><input type="number" id="item-price"></div>
-                    <div style="flex:1"><label>Stock (Set to 1 for Singles)</label><input type="number" id="item-stock" value="1"></div>
-                </div>
-                <label>Payment Link (PayPal.me / Stripe Checkout / Form)</label>
-                <input type="url" id="item-google-form-link" placeholder="https://paypal.me/...">
-                
-                <label>Images (Select multiple files to create a carousel)</label>
-                <input type="file" id="item-image" multiple accept="image/*">
-                
-                <button id="submit-btn" onclick="submitItem()">Save Item</button>
-            </div>
-            <h3 style="color:#888; font-size:0.9rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:1rem;">Inventory</h3>
-            <ul id="item-list"></ul>
-            <button onclick="logout()" style="background:#333; margin-top:2rem;">Log Out</button>
-            <a href="index.html" style="display:block; text-align:center; margin-top:1rem; color:#666; text-decoration:none;">Back to Store</a>
-        </div>
+    <div class="top-nav">
+        <a href="index.html" class="nav-link"><i class="ph-fill ph-monitor-play"></i> LIVE BREAKS</a>
+        <a href="vault.html" class="nav-link nav-active"><i class="ph-fill ph-storefront"></i> THE VAULT</a>
     </div>
+
+    <header>
+        <h1>THE VAULT</h1>
+        <div class="subtitle">Singles & Graded Slabs</div>
+    </header>
+
+    <main>
+        <div class="store-grid" id="store-container"></div>
+    </main>
+
+    <footer><p>© 2025 PBM Breaks • Not affiliated with Nintendo • Crafted in the Crystal Realm</p></footer>
+
+    <div id="myModal" class="image-modal" onclick="closeModal()">
+        <span class="close-modal">&times;</span>
+        <img class="modal-content" id="img01">
+    </div>
+
     <script>
         const API_URL = 'https://pokeballer-worker.kronborgnielsen.workers.dev/api';
         
-        let allItems = [];
-        let editingId = null;
-        let currentImage = '';
-        let currentImages = []; 
-        let currentCreatedAt = null;
-        let currentClicks = 0; 
+        window.vaultImages = {};
+        window.currentImgIndex = {};
 
-        if(localStorage.getItem('adminToken')) {
-            document.getElementById('login-section').style.display='none';
-            document.getElementById('admin-section').style.display='block';
-            loadItems();
+        function renderSkeletons(containerId, count) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            for(let i=0; i<count; i++) container.innerHTML += `<div class="skeleton"></div>`;
+        }
+        
+        function switchImg(event, id, dir) {
+            event.stopPropagation(); 
+            let images = window.vaultImages[id];
+            let curr = window.currentImgIndex[id];
+            
+            curr += dir;
+            if(curr < 0) curr = images.length - 1;
+            if(curr >= images.length) curr = 0;
+            
+            window.currentImgIndex[id] = curr;
+            document.getElementById(`main-img-${id}`).src = images[curr];
+
+            const dots = document.querySelectorAll(`#dots-${id} .dot`);
+            dots.forEach((dot, index) => {
+                dot.className = index === curr ? 'dot active' : 'dot';
+            });
         }
 
-        document.getElementById('item-type').addEventListener('change', function() {
-            const condContainer = document.getElementById('condition-container');
-            const graderContainer = document.getElementById('grader-container');
-            
-            condContainer.style.display = 'none';
-            graderContainer.style.display = 'none';
-
-            if (this.value === 'raw') condContainer.style.display = 'block';
-            if (this.value === 'slab') graderContainer.style.display = 'block';
-        });
-
-        async function login() {
-            const u = document.getElementById('login-username').value;
-            const p = document.getElementById('login-password').value;
-            try {
-                const res = await fetch(`${API_URL}/login`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({username:u, password:p}) });
-                const data = await res.json();
-                if(data.success) { localStorage.setItem('adminToken','1'); location.reload(); } 
-                else alert('Invalid Credentials.');
-            } catch(e) { alert('Server Error. Check console.'); }
+        function openItemModal(id) {
+            let curr = window.currentImgIndex[id] || 0;
+            let images = window.vaultImages[id];
+            if(images && images.length > 0) openModal(images[curr]);
+            else openModal(document.getElementById(`main-img-${id}`).src);
         }
 
-        async function submitItem() {
-            const btn = document.getElementById('submit-btn');
-            btn.innerText = "Saving...";
+        async function loadVault() {
+            renderSkeletons('store-container', 3);
+            const container = document.getElementById('store-container');
             
-            const type = document.getElementById('item-type').value;
-            const hidden = document.getElementById('item-hidden').value === 'true';
-            const condition = type === 'raw' ? document.getElementById('item-condition').value : null; 
-            const grader = type === 'slab' ? document.getElementById('item-grader').value : null; 
-            const scheduleDate = document.getElementById('item-schedule-date').value; 
-            const scheduleEnd = document.getElementById('item-schedule-end').value; 
-            const name = document.getElementById('item-name').value;
-            const desc = document.getElementById('item-description').value;
-            const price = parseFloat(document.getElementById('item-price').value);
-            const stock = parseInt(document.getElementById('item-stock').value);
-            const form = document.getElementById('item-google-form-link').value;
-            
-            const fileInput = document.getElementById('item-image');
-            
-            let imagesArray = editingId ? currentImages : [];
-            
-            if(fileInput.files.length > 0) {
-                imagesArray = [];
-                for(let i = 0; i < fileInput.files.length; i++) {
-                    const reader = new FileReader();
-                    reader.readAsDataURL(fileInput.files[i]);
-                    await new Promise(r => reader.onload = () => { imagesArray.push(reader.result); r(); });
-                }
-            }
-            
-            let img = imagesArray.length > 0 ? imagesArray[0] : (editingId ? currentImage : '');
-
-            const body = { 
-                type, name, description:desc, price, stock, googleFormLink:form, 
-                image: img, 
-                images: imagesArray, 
-                clickCount: editingId ? currentClicks : 0,
-                createdAt: editingId ? currentCreatedAt : Date.now(),
-                hidden: hidden,
-                scheduleDate: scheduleDate,
-                scheduleEnd: scheduleEnd,
-                condition: condition,
-                grader: grader
-            };
-            
-            const url = editingId ? `${API_URL}/items/${editingId}` : `${API_URL}/items`;
-            const method = editingId ? 'PUT' : 'POST';
-
-            try {
-                const response = await fetch(url, { method, headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
-                if(response.status === 500) { alert("SERVER ERROR - Images might be too large."); btn.innerText = "Save Failed"; return; }
-
-                editingId = null; currentImage = ''; currentImages = []; currentCreatedAt = null; currentClicks = 0;
-                
-                document.getElementById('item-name').value = '';
-                document.getElementById('item-description').value = '';
-                document.getElementById('item-price').value = '';
-                document.getElementById('item-stock').value = '1';
-                document.getElementById('item-google-form-link').value = '';
-                document.getElementById('item-image').value = '';
-                document.getElementById('item-type').value = 'msrp';
-                document.getElementById('item-hidden').value = 'false';
-                document.getElementById('item-schedule-date').value = ''; 
-                document.getElementById('item-schedule-end').value = ''; 
-                document.getElementById('item-condition').value = 'Mint (M)';
-                document.getElementById('item-grader').value = 'PSA';
-                document.getElementById('item-type').dispatchEvent(new Event('change')); 
-                btn.innerText = "Save Item";
-                
-                loadItems();
-            } catch(e) { alert("Save Failed."); btn.innerText = "Save Failed"; }
-        }
-
-        function formatLiteralDate(val) {
-            if (!val) return "";
-            if (val.indexOf('T') === -1) return val;
-            try {
-                const [datePart, timePart] = val.split('T');
-                if(!timePart) return val;
-                const [year, month, day] = datePart.split('-');
-                let [hour, minute] = timePart.split(':');
-                let h = parseInt(hour);
-                let ampm = 'AM';
-                if (h >= 12) { ampm = 'PM'; if (h > 12) h -= 12; }
-                if (h === 0) h = 12;
-                return `${month}/${day}, ${h}:${minute} ${ampm}`;
-            } catch(e) { return val; }
-        }
-
-        async function loadItems() {
             try {
                 const res = await fetch(`${API_URL}/items`);
                 const items = await res.json();
-                
-                if(items.error) { alert("DATABASE ERROR: " + items.error); return; }
+                if(items.error) return;
 
                 items.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
-                allItems = items;
+                let storeHTML = '';
+                let visibleCount = 0;
 
-                const list = document.getElementById('item-list');
-                list.innerHTML = '';
                 items.forEach(item => {
-                    let badgeClass = 'b-msrp';
-                    let badgeText = 'MSRP';
+                    if (item.hidden || (item.type !== 'slab' && item.type !== 'raw')) return; 
+                    visibleCount++;
 
-                    if (item.type === 'baller') { badgeClass = 'b-baller'; badgeText = '<i class="ph-fill ph-crown"></i> BALLER'; } 
-                    else if (item.type === 'bundle') { badgeClass = 'b-bundle'; badgeText = '<i class="ph-fill ph-sketch-logo"></i> BUNDLE'; }
-                    else if (item.type === 'slab') { 
-                        // Assign the colored badge for admin view
-                        if(item.grader === 'PSA') badgeClass = 'b-psa';
-                        else if(item.grader === 'BGS') badgeClass = 'b-bgs';
-                        else if(item.grader === 'CGC') badgeClass = 'b-cgc';
-                        else if(item.grader === 'SGC') badgeClass = 'b-sgc';
-                        else if(item.grader === 'ACE') badgeClass = 'b-ace';
-                        else badgeClass = 'b-slab';
+                    const isSlab = item.type === 'slab';
+                    let tagClass = 'tag-raw';
+                    let wrapperClass = '';
+                    let tagText = `<i class="ph-fill ph-cards"></i> RAW CARD`;
 
-                        badgeText = `🔍 ${item.grader || 'SLAB'}`; 
+                    // DYNAMIC GRADER STYLES
+                    if(isSlab) {
+                        const graderName = item.grader && item.grader !== 'Other' ? item.grader : 'GRADED';
+                        tagText = `<i class="ph-fill ph-certificate"></i> ${graderName} SLAB`;
+                        
+                        if(graderName === 'PSA') { wrapperClass = 'card-psa'; tagClass = 'tag-psa'; }
+                        else if(graderName === 'BGS') { wrapperClass = 'card-bgs'; tagClass = 'tag-bgs'; }
+                        else if(graderName === 'CGC') { wrapperClass = 'card-cgc'; tagClass = 'tag-cgc'; }
+                        else if(graderName === 'SGC') { wrapperClass = 'card-sgc'; tagClass = 'tag-sgc'; }
+                        else if(graderName === 'ACE') { wrapperClass = 'card-ace'; tagClass = 'tag-ace'; }
+                        else { tagClass = 'tag-slab'; } 
                     }
-                    else if (item.type === 'raw') { badgeClass = 'b-raw'; badgeText = '🃏 RAW'; }
                     
-                    const hiddenBadge = item.hidden ? '<span class="badge b-hidden"><i class="ph-fill ph-eye-slash"></i> HIDDEN</span>' : '';
-                    const condBadge = item.type === 'raw' && item.condition ? `<span class="badge b-cond">${item.condition}</span>` : '';
-                    
-                    const imgCount = item.images && item.images.length > 1 ? `<span class="badge" style="background:#444; border:1px solid #777;"><i class="ph-fill ph-images"></i> ${item.images.length} Pics</span>` : '';
-                    const opacity = item.hidden ? 'opacity: 0.6;' : '';
-                    
-                    let timeBadge = '';
-                    if (item.scheduleDate) {
-                        const start = formatLiteralDate(item.scheduleDate);
-                        const end = item.scheduleEnd ? formatLiteralDate(item.scheduleEnd) : '...';
-                        timeBadge = `<span class="badge b-time"><i class="ph-fill ph-clock"></i> ${start} ➔ ${end}</span>`;
+                    let conditionHTML = '';
+                    if (item.type === 'raw' && item.condition) {
+                        let color = '#00ff9d'; 
+                        if(item.condition === 'Mint (M)') color = '#00fff2'; 
+                        if(item.condition.includes('LP')) color = '#b2ff59'; 
+                        if(item.condition.includes('MP')) color = '#ffeb3b'; 
+                        if(item.condition.includes('HP')) color = '#ff9800'; 
+                        if(item.condition.includes('DMG')) color = '#ff4444'; 
+                        
+                        let extraStyle = item.condition === 'Mint (M)' ? 'box-shadow: 0 0 20px rgba(0, 255, 242, 0.6); font-weight: 900;' : '';
+                        conditionHTML = `<div class="cond-badge" style="color: ${color}; border: 1px solid ${color}; ${extraStyle}">⭐ ${item.condition}</div>`;
                     }
 
-                    list.innerHTML += `
-                        <li style="${opacity}">
-                            <div class="item-content">
-                                <div class="item-header">
-                                    <span class="item-title">${item.name}</span>
-                                    ${hiddenBadge}
-                                    <span class="badge ${badgeClass}">${badgeText}</span> 
-                                    ${condBadge}
-                                    ${imgCount}
+                    const isEnded = item.stock <= 0;
+                    let btnHTML = '';
+                    if (isEnded) {
+                        btnHTML = `<div class="buy-btn sold-out">SOLD OUT</div>`;
+                    } else if (item.googleFormLink) {
+                        btnHTML = `<a href="${item.googleFormLink}" target="_blank" class="buy-btn" onclick="trackClick('${item.id}')">
+                                    <span>PURCHASE NOW</span><span class="btn-subtext">SECURE THIS CARD</span></a>`;
+                    } else {
+                        btnHTML = `<div class="buy-btn sold-out" style="background:#555; border-color:#777;">COMING SOON</div>`;
+                    }
+                    
+                    let imgHTML = '';
+                    let imgArray = item.images && item.images.length > 0 ? item.images : (item.image ? [item.image] : ['https://assets.pokemon.com/assets/cms2/img/misc/trading-card-games/cards/tcg_default_card.png']);
+                    
+                    window.vaultImages[item.id] = imgArray;
+                    window.currentImgIndex[item.id] = 0;
+
+                    if(imgArray.length > 1) {
+                        let dotsHTML = '';
+                        imgArray.forEach((_, idx) => { dotsHTML += `<div class="dot ${idx === 0 ? 'active' : ''}"></div>`; });
+                        
+                        imgHTML = `
+                            <img src="${imgArray[0]}" class="item-img" id="main-img-${item.id}">
+                            <button class="carousel-btn prev" onclick="switchImg(event, '${item.id}', -1)"><i class="ph-bold ph-caret-left"></i></button>
+                            <button class="carousel-btn next" onclick="switchImg(event, '${item.id}', 1)"><i class="ph-bold ph-caret-right"></i></button>
+                            <div class="img-dots" id="dots-${item.id}">${dotsHTML}</div>
+                        `;
+                    } else {
+                        imgHTML = `<img src="${imgArray[0]}" class="item-img" id="main-img-${item.id}">`;
+                    }
+                    
+                    storeHTML += `
+                        <div class="neon-card-wrapper ${wrapperClass}" id="card-${item.id}">
+                            <div class="item-card glass-panel">
+                                ${conditionHTML}
+                                <div class="type-tag ${tagClass}">${tagText}</div>
+                                <div class="item-img-box" onclick="openItemModal('${item.id}')">
+                                    ${imgHTML}
                                 </div>
-                                <div class="item-meta">
-                                    ${timeBadge}
-                                </div>
-                                <div class="item-meta">
-                                    <span>$${item.price}</span>
-                                    <span>• Stock: ${item.stock}</span>
-                                    <span class="click-badge">🖱️ ${item.clickCount||0}</span>
+                                <div class="item-content">
+                                    <h3>${item.name}</h3>
+                                    <p>${item.description}</p>
+                                    <div class="price-row">
+                                        <span class="price">$${item.price.toFixed(2)}</span>
+                                        <span class="stock">${item.stock > 1 ? item.stock + ' Available' : '1 of 1'}</span>
+                                    </div>
+                                    <div id="btn-container-${item.id}">${btnHTML}</div>
                                 </div>
                             </div>
-                            <div class="btn-group">
-                                <button class="btn-edit" onclick="startEditing('${item.id}')">Edit</button>
-                                <button class="btn-del" onclick="deleteItem('${item.id}')">Del</button>
-                            </div>
-                        </li>`;
+                        </div>`;
                 });
-            } catch(e) { console.error("Load Error", e); }
+                
+                if (visibleCount === 0) {
+                    storeHTML = `<div style="grid-column: 1/-1; text-align:center; padding: 4rem; background: rgba(0,0,0,0.5); border-radius: 20px; border: 1px solid rgba(213, 0, 255, 0.3);">
+                        <h2 style="color: #fff; margin-bottom: 1rem;">The Vault is Locked</h2>
+                        <p style="color: var(--text-dim);">No singles or slabs are currently available. Check back soon!</p>
+                    </div>`;
+                }
+                container.innerHTML = storeHTML;
+            } catch(e) { console.error(e); }
         }
 
-        function startEditing(id) {
-            const item = allItems.find(i => i.id === id);
-            if(item) {
-                editingId = item.id; 
-                currentImage = item.image || ''; 
-                currentImages = item.images || (item.image ? [item.image] : []);
-                currentCreatedAt = item.createdAt;
-                currentClicks = item.clickCount || 0; 
-                
-                document.getElementById('item-type').value = item.type || 'msrp';
-                document.getElementById('item-hidden').value = item.hidden ? 'true' : 'false';
-                
-                const dateVal = item.scheduleDate || '';
-                if(dateVal.indexOf('T') > -1) document.getElementById('item-schedule-date').value = dateVal;
-                else document.getElementById('item-schedule-date').value = ''; 
-                
-                const endVal = item.scheduleEnd || '';
-                if(endVal.indexOf('T') > -1) document.getElementById('item-schedule-end').value = endVal;
-                else document.getElementById('item-schedule-end').value = '';
+        function trackClick(id) { fetch(`${API_URL}/click`, { method: 'POST', body: JSON.stringify({ id: id }) }).catch(()=>{}); return true; }
+        
+        function openModal(src) { document.getElementById("myModal").style.display = "flex"; document.getElementById("img01").src = src; }
+        function closeModal() { document.getElementById("myModal").style.display = "none"; }
+        document.addEventListener('keydown', e => { if (e.key === "Escape") closeModal(); });
 
-                document.getElementById('item-name').value = item.name;
-                document.getElementById('item-description').value = item.description;
-                document.getElementById('item-price').value = item.price;
-                document.getElementById('item-stock').value = item.stock;
-                document.getElementById('item-google-form-link').value = item.googleFormLink;
-                document.getElementById('item-image').value = ''; 
-                
-                document.getElementById('item-condition').value = item.condition || 'Mint (M)';
-                document.getElementById('item-grader').value = item.grader || 'PSA';
-                document.getElementById('item-type').dispatchEvent(new Event('change'));
-
-                document.getElementById('submit-btn').innerText = "Update Item";
-                window.scrollTo(0,0);
-            }
-        }
-
-        async function deleteItem(id) { if(confirm('Delete?')) { await fetch(`${API_URL}/items/${id}`, {method:'DELETE'}); loadItems(); } }
-        function logout() { localStorage.removeItem('adminToken'); location.reload(); }
+        loadVault();
     </script>
 </body>
 </html>
