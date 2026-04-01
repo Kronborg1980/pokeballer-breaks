@@ -145,7 +145,7 @@
         let allItems = [];
         let editingId = null;
         let currentImage = '';
-        let currentImages = []; // Stores array of images
+        let currentImages = []; 
         let currentCreatedAt = null;
         let currentClicks = 0; 
 
@@ -197,7 +197,6 @@
             
             let imagesArray = editingId ? currentImages : [];
             
-            // If user selected new files, read all of them
             if(fileInput.files.length > 0) {
                 imagesArray = [];
                 for(let i = 0; i < fileInput.files.length; i++) {
@@ -207,13 +206,12 @@
                 }
             }
             
-            // Fallback for single image reference
             let img = imagesArray.length > 0 ? imagesArray[0] : (editingId ? currentImage : '');
 
             const body = { 
                 type, name, description:desc, price, stock, googleFormLink:form, 
                 image: img, 
-                images: imagesArray, // Send full array to DB
+                images: imagesArray, 
                 clickCount: editingId ? currentClicks : 0,
                 createdAt: editingId ? currentCreatedAt : Date.now(),
                 hidden: hidden,
@@ -291,9 +289,7 @@
                     const hiddenBadge = item.hidden ? '<span class="badge b-hidden"><i class="ph-fill ph-eye-slash"></i> HIDDEN</span>' : '';
                     const condBadge = item.type === 'raw' && item.condition ? `<span class="badge b-cond">${item.condition}</span>` : '';
                     
-                    // Show how many images it has
                     const imgCount = item.images && item.images.length > 1 ? `<span class="badge" style="background:#444; border:1px solid #777;"><i class="ph-fill ph-images"></i> ${item.images.length} Pics</span>` : '';
-                    
                     const opacity = item.hidden ? 'opacity: 0.6;' : '';
                     
                     let timeBadge = '';
@@ -356,7 +352,7 @@
                 document.getElementById('item-price').value = item.price;
                 document.getElementById('item-stock').value = item.stock;
                 document.getElementById('item-google-form-link').value = item.googleFormLink;
-                document.getElementById('item-image').value = ''; // Reset file input
+                document.getElementById('item-image').value = ''; 
                 
                 document.getElementById('item-condition').value = item.condition || 'Mint (M)';
                 document.getElementById('item-grader').value = item.grader || 'PSA';
