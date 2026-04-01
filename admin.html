@@ -72,7 +72,7 @@
                                 <option value="baller">👑 BALLER BUNDLE</option>
                             </optgroup>
                             <optgroup label="The Vault (Store)">
-                                <option value="slab">🔍 Graded Slab (PSA/CGC)</option>
+                                <option value="slab">🔍 Graded Slab</option>
                                 <option value="raw">🃏 Raw Card</option>
                             </optgroup>
                         </select>
@@ -94,6 +94,19 @@
                         <option value="Damaged (DMG)">Damaged (DMG)</option>
                     </select>
                 </div>
+
+                <div id="grader-container" style="display: none; margin-bottom: 0.5rem;">
+                    <label style="color: #d500ff;">🔍 Grading Company (Slabs Only)</label>
+                    <select id="item-grader" style="border: 1px solid #d500ff;">
+                        <option value="PSA">PSA (Professional Sports Authenticator)</option>
+                        <option value="BGS">BGS (Beckett Grading Services)</option>
+                        <option value="CGC">CGC (Certified Guaranty Company)</option>
+                        <option value="SGC">SGC (Sportscard Guaranty Corporation)</option>
+                        <option value="ACE">ACE Grading</option>
+                        <option value="MANA">Mana Grading</option>
+                        <option value="Other">Other Grader</option>
+                    </select>
+                </div>
                 
                 <div style="display:flex; gap:10px; margin-bottom: 0.5rem;">
                     <div style="flex:1">
@@ -106,7 +119,7 @@
                     </div>
                 </div>
                 
-                <label>Name (e.g. Base Set Charizard)</label><input type="text" id="item-name">
+                <label>Name (e.g. PSA 10 Base Set Charizard)</label><input type="text" id="item-name">
                 <label>Description</label><input type="text" id="item-description">
                 <div style="display:flex; gap:10px;">
                     <div style="flex:1"><label>Price ($)</label><input type="number" id="item-price"></div>
@@ -138,14 +151,16 @@
             loadItems();
         }
 
-        // TOGGLE CONDITION DROPDOWN VISIBILITY
+        // TOGGLE DYNAMIC DROPDOWNS BASED ON ITEM TYPE
         document.getElementById('item-type').addEventListener('change', function() {
             const condContainer = document.getElementById('condition-container');
-            if (this.value === 'raw') {
-                condContainer.style.display = 'block';
-            } else {
-                condContainer.style.display = 'none';
-            }
+            const graderContainer = document.getElementById('grader-container');
+            
+            condContainer.style.display = 'none';
+            graderContainer.style.display = 'none';
+
+            if (this.value === 'raw') condContainer.style.display = 'block';
+            if (this.value === 'slab') graderContainer.style.display = 'block';
         });
 
         async function login() {
@@ -166,6 +181,7 @@
             const type = document.getElementById('item-type').value;
             const hidden = document.getElementById('item-hidden').value === 'true';
             const condition = type === 'raw' ? document.getElementById('item-condition').value : null; 
+            const grader = type === 'slab' ? document.getElementById('item-grader').value : null; 
             const scheduleDate = document.getElementById('item-schedule-date').value; 
             const scheduleEnd = document.getElementById('item-schedule-end').value; 
             const name = document.getElementById('item-name').value;
@@ -189,7 +205,8 @@
                 hidden: hidden,
                 scheduleDate: scheduleDate,
                 scheduleEnd: scheduleEnd,
-                condition: condition 
+                condition: condition,
+                grader: grader
             };
             
             const url = editingId ? `${API_URL}/items/${editingId}` : `${API_URL}/items`;
@@ -211,8 +228,9 @@
                 document.getElementById('item-hidden').value = 'false';
                 document.getElementById('item-schedule-date').value = ''; 
                 document.getElementById('item-schedule-end').value = ''; 
-                document.getElementById('item-condition').value = 'Near Mint (NM)';
-                document.getElementById('item-type').dispatchEvent(new Event('change')); // Reset dropdown visibility
+                document.getElementById('item-condition').value = 'Mint (M)';
+                document.getElementById('item-grader').value = 'PSA';
+                document.getElementById('item-type').dispatchEvent(new Event('change')); 
                 btn.innerText = "Save Item";
                 
                 loadItems();
@@ -253,7 +271,7 @@
 
                     if (item.type === 'baller') { badgeClass = 'b-baller'; badgeText = '<i class="ph-fill ph-crown"></i> BALLER'; } 
                     else if (item.type === 'bundle') { badgeClass = 'b-bundle'; badgeText = '<i class="ph-fill ph-sketch-logo"></i> BUNDLE'; }
-                    else if (item.type === 'slab') { badgeClass = 'b-slab'; badgeText = '🔍 SLAB'; }
+                    else if (item.type === 'slab') { badgeClass = 'b-slab'; badgeText = `🔍 ${item.grader || 'SLAB'}`; }
                     else if (item.type === 'raw') { badgeClass = 'b-raw'; badgeText = '🃏 RAW'; }
                     
                     const hiddenBadge = item.hidden ? '<span class="badge b-hidden"><i class="ph-fill ph-eye-slash"></i> HIDDEN</span>' : '';
@@ -318,8 +336,8 @@
                 document.getElementById('item-stock').value = item.stock;
                 document.getElementById('item-google-form-link').value = item.googleFormLink;
                 
-                // SET CONDITION IF IT EXISTS, TRIGGER DROPDOWN VISIBILITY
-                document.getElementById('item-condition').value = item.condition || 'Near Mint (NM)';
+                document.getElementById('item-condition').value = item.condition || 'Mint (M)';
+                document.getElementById('item-grader').value = item.grader || 'PSA';
                 document.getElementById('item-type').dispatchEvent(new Event('change'));
 
                 document.getElementById('submit-btn').innerText = "Update Item";
