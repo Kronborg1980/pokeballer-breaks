@@ -86,6 +86,7 @@
                 <div id="condition-container" style="display: none; margin-bottom: 0.5rem;">
                     <label style="color: #00ff9d;">⭐ Card Condition (Raw Cards Only)</label>
                     <select id="item-condition" style="border: 1px solid #00ff9d;">
+                        <option value="Mint (M)">Mint (M)</option>
                         <option value="Near Mint (NM)">Near Mint (NM)</option>
                         <option value="Lightly Played (LP)">Lightly Played (LP)</option>
                         <option value="Moderately Played (MP)">Moderately Played (MP)</option>
@@ -164,7 +165,7 @@
             
             const type = document.getElementById('item-type').value;
             const hidden = document.getElementById('item-hidden').value === 'true';
-            const condition = type === 'raw' ? document.getElementById('item-condition').value : null; // ONLY SAVE CONDITION IF RAW
+            const condition = type === 'raw' ? document.getElementById('item-condition').value : null; 
             const scheduleDate = document.getElementById('item-schedule-date').value; 
             const scheduleEnd = document.getElementById('item-schedule-end').value; 
             const name = document.getElementById('item-name').value;
@@ -188,7 +189,7 @@
                 hidden: hidden,
                 scheduleDate: scheduleDate,
                 scheduleEnd: scheduleEnd,
-                condition: condition // NEW FIELD ADDED TO PAYLOAD
+                condition: condition 
             };
             
             const url = editingId ? `${API_URL}/items/${editingId}` : `${API_URL}/items`;
