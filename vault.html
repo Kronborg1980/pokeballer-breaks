@@ -59,17 +59,27 @@
         .neon-card-wrapper { position: relative; border-radius: 26px; padding: 3px; box-shadow: 0 0 25px rgba(213, 0, 255, 0.2), 0 0 50px rgba(0, 255, 242, 0.15); background: rgba(0,0,0,0.2); overflow: hidden; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
         .neon-card-wrapper:hover { transform: translateY(-10px) scale(1.02); box-shadow: 0 0 50px rgba(213, 0, 255, 0.6), 0 0 80px rgba(0, 255, 242, 0.5); }
         
+        /* IMAGE BOX & CAROUSEL UI */
         .item-img-box { height: 350px; overflow:hidden; position: relative; cursor: pointer; border-bottom: 1px solid rgba(213, 0, 255, 0.2); display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); }
         .item-img-box::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent); transform: skewX(-20deg); z-index: 10; transition: 0.7s; pointer-events: none; }
         .neon-card-wrapper:hover .item-img-box::before { left: 150%; transition: 0.7s ease-in-out; }
         .item-img { max-width: 90%; max-height: 90%; object-fit: contain; transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); filter: drop-shadow(0 10px 15px rgba(0,0,0,0.8)); }
         .neon-card-wrapper:hover .item-img { transform: scale(1.08) rotate(2deg); }
 
-        .type-tag { position: absolute; top: 20px; right: 20px; padding: 8px 14px; border-radius: 10px; font-weight: 800; font-size: 0.75rem; z-index: 2; letter-spacing: 1px; text-transform: uppercase; backdrop-filter: blur(10px); display: flex; align-items: center; gap: 6px; }
+        .carousel-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.7); color: white; border: 1px solid rgba(255,255,255,0.3); width: 40px; height: 40px; border-radius: 50%; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 20; transition: 0.3s; backdrop-filter: blur(5px); }
+        .carousel-btn:hover { background: var(--accent-purple); border-color: var(--accent-cyan); box-shadow: 0 0 15px var(--accent-purple); }
+        .carousel-btn.prev { left: 10px; }
+        .carousel-btn.next { right: 10px; }
+        
+        .img-dots { position: absolute; bottom: 12px; left: 0; width: 100%; display: flex; justify-content: center; gap: 8px; z-index: 20; pointer-events: none; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.3); transition: 0.3s; }
+        .dot.active { background: var(--accent-cyan); box-shadow: 0 0 10px var(--accent-cyan); transform: scale(1.3); }
+
+        .type-tag { position: absolute; top: 20px; right: 20px; padding: 8px 14px; border-radius: 10px; font-weight: 800; font-size: 0.75rem; z-index: 15; letter-spacing: 1px; text-transform: uppercase; backdrop-filter: blur(10px); display: flex; align-items: center; gap: 6px; }
         .tag-slab { background: rgba(40, 0, 60, 0.85); border: 1px solid #bd00ff; color: #ffffff; text-shadow: 0 1px 3px black; box-shadow: 0 0 20px rgba(213, 0, 255, 0.4); }
         .tag-raw { background: rgba(0, 40, 40, 0.85); border: 1px solid #00ff9d; color: #ffffff; text-shadow: 0 1px 3px black; box-shadow: 0 0 15px rgba(0, 255, 157, 0.3); }
 
-        .cond-badge { position: absolute; top: 20px; left: 20px; padding: 8px 14px; border-radius: 10px; font-weight: 800; font-size: 0.75rem; z-index: 2; letter-spacing: 1px; text-transform: uppercase; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); display: flex; align-items: center; gap: 6px; box-shadow: 0 0 15px rgba(0,0,0,0.5); }
+        .cond-badge { position: absolute; top: 20px; left: 20px; padding: 8px 14px; border-radius: 10px; font-weight: 800; font-size: 0.75rem; z-index: 15; letter-spacing: 1px; text-transform: uppercase; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); display: flex; align-items: center; gap: 6px; box-shadow: 0 0 15px rgba(0,0,0,0.5); }
 
         .item-content { padding: 1.8rem; flex: 1; display: flex; flex-direction: column; position: relative; }
         .item-content h3 { font-size: 1.5rem; margin-bottom: 0.8rem; font-weight: 800; line-height: 1.2; color: #ffffff; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
@@ -129,11 +139,46 @@
 
     <script>
         const API_URL = 'https://pokeballer-worker.kronborgnielsen.workers.dev/api';
+        
+        // GLOBAL VARIABLES TO STORE CAROUSEL DATA
+        window.vaultImages = {};
+        window.currentImgIndex = {};
 
         function renderSkeletons(containerId, count) {
             const container = document.getElementById(containerId);
             container.innerHTML = '';
             for(let i=0; i<count; i++) container.innerHTML += `<div class="skeleton"></div>`;
+        }
+        
+        // CAROUSEL LOGIC
+        function switchImg(event, id, dir) {
+            event.stopPropagation(); // Stop modal from opening when clicking arrows
+            
+            let images = window.vaultImages[id];
+            let curr = window.currentImgIndex[id];
+            
+            curr += dir;
+            if(curr < 0) curr = images.length - 1;
+            if(curr >= images.length) curr = 0;
+            
+            window.currentImgIndex[id] = curr;
+            document.getElementById(`main-img-${id}`).src = images[curr];
+
+            const dots = document.querySelectorAll(`#dots-${id} .dot`);
+            dots.forEach((dot, index) => {
+                dot.className = index === curr ? 'dot active' : 'dot';
+            });
+        }
+
+        // OPEN MODAL WITH CURRENT IMAGE
+        function openItemModal(id) {
+            let curr = window.currentImgIndex[id] || 0;
+            let images = window.vaultImages[id];
+            if(images && images.length > 0) {
+                openModal(images[curr]);
+            } else {
+                openModal(document.getElementById(`main-img-${id}`).src);
+            }
         }
 
         async function loadVault() {
@@ -150,14 +195,12 @@
                 let visibleCount = 0;
 
                 items.forEach(item => {
-                    // ONLY SHOW SLABS AND RAW CARDS
                     if (item.hidden || (item.type !== 'slab' && item.type !== 'raw')) return; 
                     visibleCount++;
 
                     const isSlab = item.type === 'slab';
                     const tagClass = isSlab ? 'tag-slab' : 'tag-raw';
                     
-                    // DYNAMIC TEXT FOR THE TOP-RIGHT TAG
                     let tagText = '';
                     if(isSlab) {
                         const graderName = item.grader && item.grader !== 'Other' ? item.grader : 'GRADED';
@@ -166,15 +209,14 @@
                         tagText = `<i class="ph-fill ph-cards"></i> RAW CARD`;
                     }
                     
-                    // GENERATE CONDITION BADGE IF IT'S RAW
                     let conditionHTML = '';
                     if (item.type === 'raw' && item.condition) {
-                        let color = '#00ff9d'; // Default NM Green
-                        if(item.condition === 'Mint (M)') color = '#00fff2'; // Shiny Cyan/Diamond for Mint
-                        if(item.condition.includes('LP')) color = '#b2ff59'; // Light Green
-                        if(item.condition.includes('MP')) color = '#ffeb3b'; // Yellow
-                        if(item.condition.includes('HP')) color = '#ff9800'; // Orange
-                        if(item.condition.includes('DMG')) color = '#ff4444'; // Red
+                        let color = '#00ff9d'; 
+                        if(item.condition === 'Mint (M)') color = '#00fff2'; 
+                        if(item.condition.includes('LP')) color = '#b2ff59'; 
+                        if(item.condition.includes('MP')) color = '#ffeb3b'; 
+                        if(item.condition.includes('HP')) color = '#ff9800'; 
+                        if(item.condition.includes('DMG')) color = '#ff4444'; 
                         
                         let extraStyle = item.condition === 'Mint (M)' ? 'box-shadow: 0 0 20px rgba(0, 255, 242, 0.6); font-weight: 900;' : '';
                         conditionHTML = `<div class="cond-badge" style="color: ${color}; border: 1px solid ${color}; ${extraStyle}">⭐ ${item.condition}</div>`;
@@ -182,7 +224,6 @@
 
                     const isEnded = item.stock <= 0;
                     let btnHTML = '';
-                    
                     if (isEnded) {
                         btnHTML = `<div class="buy-btn sold-out">SOLD OUT</div>`;
                     } else if (item.googleFormLink) {
@@ -192,15 +233,35 @@
                         btnHTML = `<div class="buy-btn sold-out" style="background:#555; border-color:#777;">COMING SOON</div>`;
                     }
                     
-                    const img = item.image || 'https://assets.pokemon.com/assets/cms2/img/misc/trading-card-games/cards/tcg_default_card.png';
+                    // CAROUSEL HTML BUILDER
+                    let imgHTML = '';
+                    let imgArray = item.images && item.images.length > 0 ? item.images : (item.image ? [item.image] : ['https://assets.pokemon.com/assets/cms2/img/misc/trading-card-games/cards/tcg_default_card.png']);
+                    
+                    // Save array to global window object
+                    window.vaultImages[item.id] = imgArray;
+                    window.currentImgIndex[item.id] = 0;
+
+                    if(imgArray.length > 1) {
+                        let dotsHTML = '';
+                        imgArray.forEach((_, idx) => { dotsHTML += `<div class="dot ${idx === 0 ? 'active' : ''}"></div>`; });
+                        
+                        imgHTML = `
+                            <img src="${imgArray[0]}" class="item-img" id="main-img-${item.id}">
+                            <button class="carousel-btn prev" onclick="switchImg(event, '${item.id}', -1)"><i class="ph-bold ph-caret-left"></i></button>
+                            <button class="carousel-btn next" onclick="switchImg(event, '${item.id}', 1)"><i class="ph-bold ph-caret-right"></i></button>
+                            <div class="img-dots" id="dots-${item.id}">${dotsHTML}</div>
+                        `;
+                    } else {
+                        imgHTML = `<img src="${imgArray[0]}" class="item-img" id="main-img-${item.id}">`;
+                    }
                     
                     storeHTML += `
                         <div class="neon-card-wrapper" id="card-${item.id}">
                             <div class="item-card glass-panel">
                                 ${conditionHTML}
                                 <div class="type-tag ${tagClass}">${tagText}</div>
-                                <div class="item-img-box" onclick="openModal('${img}')">
-                                    <img src="${img}" class="item-img" alt="${item.name}">
+                                <div class="item-img-box" onclick="openItemModal('${item.id}')">
+                                    ${imgHTML}
                                 </div>
                                 <div class="item-content">
                                     <h3>${item.name}</h3>
