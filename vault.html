@@ -69,7 +69,6 @@
         .tag-slab { background: rgba(40, 0, 60, 0.85); border: 1px solid #bd00ff; color: #ffffff; text-shadow: 0 1px 3px black; box-shadow: 0 0 20px rgba(213, 0, 255, 0.4); }
         .tag-raw { background: rgba(0, 40, 40, 0.85); border: 1px solid #00ff9d; color: #ffffff; text-shadow: 0 1px 3px black; box-shadow: 0 0 15px rgba(0, 255, 157, 0.3); }
 
-        /* THE CONDITION BADGE STYLING */
         .cond-badge { position: absolute; top: 20px; left: 20px; padding: 8px 14px; border-radius: 10px; font-weight: 800; font-size: 0.75rem; z-index: 2; letter-spacing: 1px; text-transform: uppercase; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); display: flex; align-items: center; gap: 6px; box-shadow: 0 0 15px rgba(0,0,0,0.5); }
 
         .item-content { padding: 1.8rem; flex: 1; display: flex; flex-direction: column; position: relative; }
@@ -157,7 +156,15 @@
 
                     const isSlab = item.type === 'slab';
                     const tagClass = isSlab ? 'tag-slab' : 'tag-raw';
-                    const tagText = isSlab ? '<i class="ph-fill ph-certificate"></i> GRADED SLAB' : '<i class="ph-fill ph-cards"></i> RAW CARD';
+                    
+                    // DYNAMIC TEXT FOR THE TOP-RIGHT TAG
+                    let tagText = '';
+                    if(isSlab) {
+                        const graderName = item.grader && item.grader !== 'Other' ? item.grader : 'GRADED';
+                        tagText = `<i class="ph-fill ph-certificate"></i> ${graderName} SLAB`;
+                    } else {
+                        tagText = `<i class="ph-fill ph-cards"></i> RAW CARD`;
+                    }
                     
                     // GENERATE CONDITION BADGE IF IT'S RAW
                     let conditionHTML = '';
@@ -169,9 +176,7 @@
                         if(item.condition.includes('HP')) color = '#ff9800'; // Orange
                         if(item.condition.includes('DMG')) color = '#ff4444'; // Red
                         
-                        // Add an extra glow effect specifically if it is Mint
                         let extraStyle = item.condition === 'Mint (M)' ? 'box-shadow: 0 0 20px rgba(0, 255, 242, 0.6); font-weight: 900;' : '';
-                        
                         conditionHTML = `<div class="cond-badge" style="color: ${color}; border: 1px solid ${color}; ${extraStyle}">⭐ ${item.condition}</div>`;
                     }
 
