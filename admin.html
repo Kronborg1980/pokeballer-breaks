@@ -20,10 +20,10 @@
         input, select { width: 100%; padding: 12px; margin-bottom: 1rem; background: rgba(0,0,0,0.5); border: 1px solid #444; color: white; border-radius: 8px; font-size: 1rem; }
         input:focus, select:focus { outline: none; border-color: var(--accent); }
         
-        /* DATE PICKER STYLE */
         input[type="datetime-local"] { color-scheme: dark; cursor: pointer; border: 1px solid var(--accent); }
         
-        button { width: 100%; padding: 1rem; background: linear-gradient(135deg, var(--accent), var(--purple)); color: white; font-weight: 900; border: none; border-radius: 8px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; font-size: 1rem; }
+        button { width: 100%; padding: 1rem; background: linear-gradient(135deg, var(--accent), var(--purple)); color: white; font-weight: 900; border: none; border-radius: 8px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; font-size: 1rem; transition: 0.3s; }
+        button:hover { filter: brightness(1.2); }
         ul { padding: 0; margin: 0; }
         li { background: rgba(255,255,255,0.05); padding: 1rem; margin-bottom: 1rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); list-style: none; display: flex; flex-direction: column; gap: 1rem; }
         .item-content { flex: 1; }
@@ -31,13 +31,15 @@
         .item-title { font-weight: 700; font-size: 1.1rem; line-height: 1.3; }
         .item-meta { font-size: 0.85rem; color: #888; margin-top: 5px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;}
         
-        /* --- ADMIN BADGES --- */
         .badge { padding: 4px 10px; font-size: 0.7rem; border-radius: 6px; font-weight: 800; text-transform: uppercase; white-space: nowrap; flex-shrink: 0; display: flex; align-items: center; gap: 4px; }
         .b-msrp { color: #00ff9d; border: 1px solid #00ff9d; background: linear-gradient(135deg, rgba(0, 255, 157, 0.15), transparent); }
         .b-bundle { color: #f0dfff; border: 1px solid var(--purple); background: linear-gradient(135deg, rgba(213, 0, 255, 0.25), rgba(100, 0, 255, 0.15)); }
         .b-baller { background: var(--gold); color: #000; border: 1px solid var(--gold); box-shadow: 0 0 10px rgba(255, 215, 0, 0.4); }
+        .b-slab { background: #1a1a3a; color: #d500ff; border: 1px solid #d500ff; }
+        .b-raw { background: #1a3a3a; color: #00ff9d; border: 1px solid #00ff9d; }
         .b-hidden { background: rgba(255, 68, 68, 0.2); color: #ff6666; border: 1px solid #ff4444; }
         .b-time { background: rgba(157, 78, 221, 0.2); color: #e0aaff; border: 1px solid var(--purple); }
+        .b-cond { background: rgba(255,255,255,0.1); color: #ccc; border: 1px solid #777; }
         .click-badge { background: rgba(0, 184, 255, 0.15); color: #00b8ff; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
         
         .btn-group { display: flex; gap: 10px; width: 100%; }
@@ -62,11 +64,17 @@
                 <h3 style="margin-top:0; margin-bottom:1rem;">Add / Edit Item</h3>
                 <div style="display:flex; gap:10px;">
                     <div style="flex:1">
-                        <label>Break Type</label>
+                        <label>Item Type</label>
                         <select id="item-type">
-                            <option value="msrp">✅ MSRP Break (Standard)</option>
-                            <option value="bundle">💎 Bundle Break (Premium)</option>
-                            <option value="baller">👑 BALLER BUNDLE (Super Premium)</option>
+                            <optgroup label="Live Breaks">
+                                <option value="msrp">✅ MSRP Break</option>
+                                <option value="bundle">💎 Bundle Break</option>
+                                <option value="baller">👑 BALLER BUNDLE</option>
+                            </optgroup>
+                            <optgroup label="The Vault (Store)">
+                                <option value="slab">🔍 Graded Slab (PSA/CGC)</option>
+                                <option value="raw">🃏 Raw Card</option>
+                            </optgroup>
                         </select>
                     </div>
                     <div style="flex:1">
@@ -74,25 +82,37 @@
                         <select id="item-hidden" style="border: 1px solid #555;"><option value="false">👁️ Public</option><option value="true" style="color:#ff6666">🚫 Hidden</option></select>
                     </div>
                 </div>
+
+                <div id="condition-container" style="display: none; margin-bottom: 0.5rem;">
+                    <label style="color: #00ff9d;">⭐ Card Condition (Raw Cards Only)</label>
+                    <select id="item-condition" style="border: 1px solid #00ff9d;">
+                        <option value="Near Mint (NM)">Near Mint (NM)</option>
+                        <option value="Lightly Played (LP)">Lightly Played (LP)</option>
+                        <option value="Moderately Played (MP)">Moderately Played (MP)</option>
+                        <option value="Heavily Played (HP)">Heavily Played (HP)</option>
+                        <option value="Damaged (DMG)">Damaged (DMG)</option>
+                    </select>
+                </div>
                 
                 <div style="display:flex; gap:10px; margin-bottom: 0.5rem;">
                     <div style="flex:1">
-                        <label>🟢 Start Time (Go Live)</label>
+                        <label>🟢 Start Time (Optional)</label>
                         <input type="datetime-local" id="item-schedule-date">
                     </div>
                     <div style="flex:1">
-                        <label>🔴 Close Time (Auto Sell Out)</label>
+                        <label>🔴 Close Time (Optional)</label>
                         <input type="datetime-local" id="item-schedule-end">
                     </div>
                 </div>
                 
-                <label>Name</label><input type="text" id="item-name">
+                <label>Name (e.g. Base Set Charizard)</label><input type="text" id="item-name">
                 <label>Description</label><input type="text" id="item-description">
                 <div style="display:flex; gap:10px;">
-                    <div style="flex:1"><label>Price</label><input type="number" id="item-price"></div>
-                    <div style="flex:1"><label>Stock (Visual)</label><input type="number" id="item-stock"></div>
+                    <div style="flex:1"><label>Price ($)</label><input type="number" id="item-price"></div>
+                    <div style="flex:1"><label>Stock (Set to 1 for Singles)</label><input type="number" id="item-stock" value="1"></div>
                 </div>
-                <label>Form Link</label><input type="url" id="item-google-form-link">
+                <label>Payment Link (PayPal.me / Stripe Checkout / Form)</label>
+                <input type="url" id="item-google-form-link" placeholder="https://paypal.me/...">
                 <label>Image</label><input type="file" id="item-image">
                 <button id="submit-btn" onclick="submitItem()">Save Item</button>
             </div>
@@ -117,6 +137,16 @@
             loadItems();
         }
 
+        // TOGGLE CONDITION DROPDOWN VISIBILITY
+        document.getElementById('item-type').addEventListener('change', function() {
+            const condContainer = document.getElementById('condition-container');
+            if (this.value === 'raw') {
+                condContainer.style.display = 'block';
+            } else {
+                condContainer.style.display = 'none';
+            }
+        });
+
         async function login() {
             const u = document.getElementById('login-username').value;
             const p = document.getElementById('login-password').value;
@@ -134,11 +164,9 @@
             
             const type = document.getElementById('item-type').value;
             const hidden = document.getElementById('item-hidden').value === 'true';
-            
-            // GRAB BOTH DATES
+            const condition = type === 'raw' ? document.getElementById('item-condition').value : null; // ONLY SAVE CONDITION IF RAW
             const scheduleDate = document.getElementById('item-schedule-date').value; 
             const scheduleEnd = document.getElementById('item-schedule-end').value; 
-            
             const name = document.getElementById('item-name').value;
             const desc = document.getElementById('item-description').value;
             const price = parseFloat(document.getElementById('item-price').value);
@@ -159,7 +187,8 @@
                 createdAt: editingId ? currentCreatedAt : Date.now(),
                 hidden: hidden,
                 scheduleDate: scheduleDate,
-                scheduleEnd: scheduleEnd // SENDING END DATE
+                scheduleEnd: scheduleEnd,
+                condition: condition // NEW FIELD ADDED TO PAYLOAD
             };
             
             const url = editingId ? `${API_URL}/items/${editingId}` : `${API_URL}/items`;
@@ -174,20 +203,21 @@
                 document.getElementById('item-name').value = '';
                 document.getElementById('item-description').value = '';
                 document.getElementById('item-price').value = '';
-                document.getElementById('item-stock').value = '';
+                document.getElementById('item-stock').value = '1';
                 document.getElementById('item-google-form-link').value = '';
                 document.getElementById('item-image').value = '';
                 document.getElementById('item-type').value = 'msrp';
                 document.getElementById('item-hidden').value = 'false';
                 document.getElementById('item-schedule-date').value = ''; 
                 document.getElementById('item-schedule-end').value = ''; 
+                document.getElementById('item-condition').value = 'Near Mint (NM)';
+                document.getElementById('item-type').dispatchEvent(new Event('change')); // Reset dropdown visibility
                 btn.innerText = "Save Item";
                 
                 loadItems();
             } catch(e) { alert("Save Failed."); btn.innerText = "Save Failed"; }
         }
 
-        // --- SAFE FORMATTER ---
         function formatLiteralDate(val) {
             if (!val) return "";
             if (val.indexOf('T') === -1) return val;
@@ -220,22 +250,19 @@
                     let badgeClass = 'b-msrp';
                     let badgeText = 'MSRP';
 
-                    if (item.type === 'baller') {
-                        badgeClass = 'b-baller';
-                        badgeText = '<i class="ph-fill ph-crown"></i> BALLER';
-                    } else if (item.type === 'bundle') {
-                        badgeClass = 'b-bundle';
-                        badgeText = '<i class="ph-fill ph-sketch-logo"></i> BUNDLE';
-                    }
+                    if (item.type === 'baller') { badgeClass = 'b-baller'; badgeText = '<i class="ph-fill ph-crown"></i> BALLER'; } 
+                    else if (item.type === 'bundle') { badgeClass = 'b-bundle'; badgeText = '<i class="ph-fill ph-sketch-logo"></i> BUNDLE'; }
+                    else if (item.type === 'slab') { badgeClass = 'b-slab'; badgeText = '🔍 SLAB'; }
+                    else if (item.type === 'raw') { badgeClass = 'b-raw'; badgeText = '🃏 RAW'; }
                     
                     const hiddenBadge = item.hidden ? '<span class="badge b-hidden"><i class="ph-fill ph-eye-slash"></i> HIDDEN</span>' : '';
+                    const condBadge = item.type === 'raw' && item.condition ? `<span class="badge b-cond">${item.condition}</span>` : '';
                     const opacity = item.hidden ? 'opacity: 0.6;' : '';
                     
                     let timeBadge = '';
                     if (item.scheduleDate) {
                         const start = formatLiteralDate(item.scheduleDate);
                         const end = item.scheduleEnd ? formatLiteralDate(item.scheduleEnd) : '...';
-                        // Shows simplified range: 10/24 8:00 PM -> 10:00 PM
                         timeBadge = `<span class="badge b-time"><i class="ph-fill ph-clock"></i> ${start} ➔ ${end}</span>`;
                     }
 
@@ -246,6 +273,7 @@
                                     <span class="item-title">${item.name}</span>
                                     ${hiddenBadge}
                                     <span class="badge ${badgeClass}">${badgeText}</span> 
+                                    ${condBadge}
                                 </div>
                                 <div class="item-meta">
                                     ${timeBadge}
@@ -275,7 +303,6 @@
                 document.getElementById('item-type').value = item.type || 'msrp';
                 document.getElementById('item-hidden').value = item.hidden ? 'true' : 'false';
                 
-                // POPULATE BOTH DATES
                 const dateVal = item.scheduleDate || '';
                 if(dateVal.indexOf('T') > -1) document.getElementById('item-schedule-date').value = dateVal;
                 else document.getElementById('item-schedule-date').value = ''; 
@@ -289,6 +316,11 @@
                 document.getElementById('item-price').value = item.price;
                 document.getElementById('item-stock').value = item.stock;
                 document.getElementById('item-google-form-link').value = item.googleFormLink;
+                
+                // SET CONDITION IF IT EXISTS, TRIGGER DROPDOWN VISIBILITY
+                document.getElementById('item-condition').value = item.condition || 'Near Mint (NM)';
+                document.getElementById('item-type').dispatchEvent(new Event('change'));
+
                 document.getElementById('submit-btn').innerText = "Update Item";
                 window.scrollTo(0,0);
             }
