@@ -51,6 +51,7 @@
                 radial-gradient(circle at 80% 70%, var(--accent-purple) 1px, transparent 3px);
             background-size: 120px 120px;
             opacity: 0.4;
+            transform: translateZ(0); /* Hardware Acceleration */
         }
         
         /* --- POKEMON BG ASSETS --- */
@@ -82,7 +83,7 @@
         .nav-link:hover { background: rgba(255,255,255,0.1); border-color: var(--accent-purple); box-shadow: 0 0 20px rgba(213, 0, 255, 0.4); transform: translateY(-2px); }
         .nav-active { border-color: var(--accent-cyan); box-shadow: 0 0 20px rgba(0, 255, 242, 0.4); background: linear-gradient(90deg, rgba(0,255,242,0.2), transparent); pointer-events: none; }
 
-        /* MAIN LAYOUT - WITH OUTER GLOW */
+        /* MAIN LAYOUT - OPTIMIZED FOR GPU */
         main {
             position: relative; z-index: 2; max-width: 1250px; margin: 0 auto; padding: 2.5rem;
             border-radius: 35px;
@@ -90,38 +91,19 @@
             backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
             margin-top: 1rem; margin-bottom: 4rem;
             border: 2px solid rgba(0, 255, 242, 0.3);
+            /* Static premium shadow stops lag repaints */
             box-shadow: 
-                0 0 100px rgba(0,0,0,0.8), 
+                0 0 80px rgba(0,0,0,0.8), 
                 inset 0 0 30px rgba(0, 255, 242, 0.05),
-                0 0 20px rgba(0, 255, 242, 0.1),
-                0 0 40px rgba(213, 0, 255, 0.1);
-            animation: outerGlowPulse 6s ease-in-out infinite;
-        }
-
-        @keyframes outerGlowPulse {
-            0%, 100% {
-                box-shadow:
-                    0 0 100px rgba(0,0,0,0.8),
-                    inset 0 0 30px rgba(0, 255, 242, 0.05),
-                    0 0 20px rgba(0, 255, 242, 0.1),
-                    0 0 40px rgba(213, 0, 255, 0.1);
-                border-color: rgba(0, 255, 242, 0.3);
-            }
-            50% {
-                box-shadow:
-                    0 0 100px rgba(0,0,0,0.8),
-                    inset 0 0 50px rgba(0, 255, 242, 0.1),
-                    0 0 35px rgba(0, 255, 242, 0.25),
-                    0 0 60px rgba(213, 0, 255, 0.2);
-                 border-color: rgba(0, 255, 242, 0.5);
-            }
+                0 0 30px rgba(213, 0, 255, 0.15);
+            transform: translateZ(0); /* Hardware Acceleration */
         }
 
         header { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1rem 1rem 1rem; position: relative; z-index: 2; }
         .header-wrapper { display: flex; align-items: center; gap: 2rem; }
         .header-logo { width: 160px; display: block; filter: drop-shadow(0 0 35px var(--accent-cyan)); }
         .logo-left .header-logo { transform: scaleX(-1); }
-        .logo-animator { animation: float 6s infinite ease-in-out; } 
+        .logo-animator { animation: float 6s infinite ease-in-out; will-change: transform; } 
 
         h1 {
             font-size: clamp(3.5rem, 9vw, 6.5rem); font-weight: 900; letter-spacing: -2px;
@@ -151,7 +133,8 @@
             background: linear-gradient(135deg, #ff0000, #dd0000); color: white; padding: 14px 32px; border-radius: 50px;
             text-decoration: none; font-weight: 900; display: flex; align-items: center; gap: 10px;
             box-shadow: 0 0 25px rgba(255, 0, 0, 0.5), inset 0 2px 0 rgba(255,255,255,0.4);
-            border: 1px solid rgba(255, 50, 50, 0.8); letter-spacing: 1px; font-size: 1.2rem; white-space: nowrap; transition: 0.3s;
+            border: 1px solid rgba(255, 50, 50, 0.8); letter-spacing: 1px; font-size: 1.2rem; white-space: nowrap; transition: transform 0.3s, box-shadow 0.3s;
+            will-change: transform;
         }
         .sub-btn:hover { transform: translateY(-3px); box-shadow: 0 0 40px rgba(255, 0, 0, 0.8); }
 
@@ -159,7 +142,8 @@
             background: rgba(20, 20, 20, 0.6); color: var(--accent-gold); width: 55px; height: 55px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1.6rem;
             border: 2px solid var(--accent-gold); box-shadow: 0 0 20px rgba(255, 215, 0, 0.3), inset 0 2px 5px rgba(255,255,255,0.2); flex-shrink: 0;
-            backdrop-filter: blur(5px); transition: 0.3s;
+            backdrop-filter: blur(5px); transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+            will-change: transform;
         }
         .bell-btn:hover { transform: translateY(-3px); box-shadow: 0 0 30px rgba(255, 215, 0, 0.6); background: rgba(255, 215, 0, 0.1); }
 
@@ -181,18 +165,21 @@
             position: relative; border-radius: 26px; padding: 3px;
             box-shadow: 0 0 25px rgba(0, 255, 242, 0.2), 0 0 50px rgba(213, 0, 255, 0.15);
             background: rgba(0,0,0,0.2); 
-            overflow: hidden; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-            transform: translateZ(0);
+            overflow: hidden; transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s;
+            transform: translateZ(0); will-change: transform;
         }
         .neon-card-wrapper:hover { 
             transform: translateY(-10px) scale(1.02); 
             box-shadow: 0 0 50px rgba(0, 255, 242, 0.6), 0 0 80px rgba(213, 0, 255, 0.5);
         }
+        
+        /* OPTIMIZED GLOW BORDER */
         .neon-card-wrapper::before {
             content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
             background: conic-gradient(transparent 0deg, transparent 90deg, var(--accent-cyan) 130deg, #ffffff 155deg, var(--accent-purple) 180deg, transparent 220deg);
             animation: spinBorder 5s linear infinite; z-index: 0;
-            opacity: 1; filter: blur(5px);
+            opacity: 0.8; 
+            will-change: transform; /* No heavy blur filter, rely on natural gradient fade */
         }
         @keyframes spinBorder { 100% { transform: rotate(360deg); } }
         
@@ -207,13 +194,11 @@
         .card-live-now {
             border: 2px solid var(--accent-live) !important;
             box-shadow: 0 0 60px rgba(255, 0, 64, 0.5) !important;
-            animation: livePulse 2s infinite !important;
         }
         .card-live-now::before {
             background: conic-gradient(transparent 0deg, transparent 90deg, #ff0040 130deg, #ffffff 155deg, #ff0040 180deg, transparent 220deg) !important;
             animation: spinBorder 2s linear infinite !important;
         }
-        @keyframes livePulse { 0% { box-shadow: 0 0 40px rgba(255,0,64,0.4); } 50% { box-shadow: 0 0 80px rgba(255,0,64,0.8); } 100% { box-shadow: 0 0 40px rgba(255,0,64,0.4); } }
 
         .glass-panel {
             position: relative; 
@@ -303,7 +288,7 @@
 
         .item-img-box { height: 260px; overflow:hidden; position: relative; cursor: pointer; border-bottom: 1px solid rgba(0, 255, 242, 0.2); }
         .item-img-box::after { content:''; position:absolute; bottom:0; left:0; width:100%; height:100%; background: linear-gradient(to top, rgba(10, 10, 25, 0.9), transparent 60%); pointer-events: none; }
-        .item-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        .item-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); will-change: transform; }
         .neon-card-wrapper:hover .item-img { transform: scale(1.12) rotate(1deg); }
         
         .item-content { padding: 1.8rem; flex: 1; display: flex; flex-direction: column; position: relative; }
@@ -334,10 +319,11 @@
             display: block; text-align: center; padding: 1.2rem; border-radius: 16px;
             background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
             color: white; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 1.1rem; letter-spacing: 1.5px;
-            transition: 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; overflow: hidden;
+            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s; position: relative; overflow: hidden;
             border: 1px solid rgba(255,255,255,0.3); cursor: pointer;
             box-shadow: 0 10px 30px rgba(0, 255, 242, 0.3), inset 0 2px 0 rgba(255,255,255,0.4);
             display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1;
+            will-change: transform;
         }
         .buy-btn:hover { transform: translateY(-5px); box-shadow: 0 0 50px rgba(189, 0, 255, 0.8); border-color: white; }
         
@@ -424,7 +410,7 @@
             100% { transform: scale(1.5); opacity: 1; box-shadow: 0 0 30px var(--accent-cyan); } 
         }
         
-        .icon-float-wrapper { animation: float 4s infinite ease-in-out; z-index: 2; display: flex; align-items: center; justify-content: center; }
+        .icon-float-wrapper { animation: float 4s infinite ease-in-out; z-index: 2; display: flex; align-items: center; justify-content: center; will-change: transform; }
         .empty-icon { width: 120px; height: auto; filter: drop-shadow(0 0 20px var(--accent-cyan)) drop-shadow(0 0 40px var(--accent-purple)); }
         
         .letter-content { text-align: center; max-width: 650px; margin: 0 auto; color: #c0c0d0; font-size: 1.1rem; line-height: 1.7; font-weight: 500; }
@@ -562,7 +548,7 @@
                                     ${badgeHTML}
                                 </div>
                                 <div style="aspect-ratio: 16/9; width: 100%; position: relative;">
-                                    <iframe src="https://www.youtube.com/embed/${v.id}?autoplay=${isStream?'1':'0'}&mute=1&playsinline=1&controls=1&modestbranding=1&rel=0" 
+                                    <iframe loading="lazy" src="https://www.youtube.com/embed/${v.id}?autoplay=${isStream?'1':'0'}&mute=1&playsinline=1&controls=1&modestbranding=1&rel=0" 
                                         style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;" 
                                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
                                     </iframe>
