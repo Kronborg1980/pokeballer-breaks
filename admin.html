@@ -34,7 +34,6 @@
         button.primary-btn { width: 100%; padding: 1rem; background: linear-gradient(135deg, var(--accent), var(--purple)); color: white; font-weight: 900; border: none; border-radius: 8px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; font-size: 1.1rem; transition: 0.3s; box-shadow: 0 5px 20px rgba(157, 78, 221, 0.4); }
         button.primary-btn:hover { filter: brightness(1.2); transform: translateY(-2px); }
 
-        /* INVENTORY MENU & SEARCH */
         .inventory-controls { display: flex; flex-direction: column; gap: 15px; margin-bottom: 1.5rem; }
         .search-box { position: relative; width: 100%; }
         .search-box i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--accent); font-size: 1.2rem; }
@@ -190,7 +189,7 @@
                 <label>Payment Link (PayPal.me / Stripe / Streamlabs)</label>
                 <input type="url" id="item-google-form-link" placeholder="https://...">
                 
-                <label>Images (Select multiple files to create a carousel)</label>
+                <label>Images (Select multiple files. Will auto-compress before upload.)</label>
                 <input type="file" id="item-image" multiple accept="image/*">
                 
                 <button id="submit-btn" class="primary-btn" style="margin-top: 1rem;" onclick="submitItem()">Save to Database</button>
@@ -230,7 +229,6 @@
         let currentCreatedAt = null;
         let currentClicks = 0; 
         
-        // State for Menu filtering
         let currentTab = 'all';
 
         if(localStorage.getItem('adminToken')) {
@@ -268,9 +266,35 @@
             } catch(e) { alert('Server Error. Check console.'); }
         }
 
+        // --- NEW COMPRESSION FUNCTION --- //
+        // This converts huge 5MB phone photos into small 100KB web-friendly JPEGs before upload
+        function compressImage(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = event => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const MAX_WIDTH = 800; // Resize width limit
+                        let scaleSize = MAX_WIDTH / img.width;
+                        if(scaleSize > 1) scaleSize = 1; // Don't enlarge small images
+
+                        canvas.width = img.width * scaleSize;
+                        canvas.height = img.height * scaleSize;
+                        
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        resolve(canvas.toDataURL('image/jpeg', 0.8)); // 80% Quality JPEG
+                    }
+                }
+            });
+        }
+
         async function submitItem() {
             const btn = document.getElementById('submit-btn');
-            btn.innerText = "Saving...";
+            btn.innerText = "Processing & Saving...";
             
             const type = document.getElementById('item-type').value;
             const hidden = document.getElementById('item-hidden').value === 'true';
@@ -285,15 +309,13 @@
             const form = document.getElementById('item-google-form-link').value;
             
             const fileInput = document.getElementById('item-image');
-            
             let imagesArray = editingId ? currentImages : [];
             
             if(fileInput.files.length > 0) {
                 imagesArray = [];
                 for(let i = 0; i < fileInput.files.length; i++) {
-                    const reader = new FileReader();
-                    reader.readAsDataURL(fileInput.files[i]);
-                    await new Promise(r => reader.onload = () => { imagesArray.push(reader.result); r(); });
+                    const compressedBase64 = await compressImage(fileInput.files[i]);
+                    imagesArray.push(compressedBase64);
                 }
             }
             
@@ -317,7 +339,7 @@
 
             try {
                 const response = await fetch(url, { method, headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
-                if(response.status === 500) { alert("SERVER ERROR - Images might be too large."); btn.innerText = "Save to Database"; return; }
+                if(!response.ok) { alert("SERVER ERROR - Save failed."); btn.innerText = "Save to Database"; return; }
 
                 editingId = null; currentImage = ''; currentImages = []; currentCreatedAt = null; currentClicks = 0;
                 
@@ -372,14 +394,11 @@
             const listContainer = document.getElementById('inventory-list');
             const searchQuery = document.getElementById('inventory-search').value.toLowerCase();
             
-            // Filter logic (Search + Tabs)
             let filteredItems = allItems.filter(item => {
-                // Tab Logic
                 if (currentTab === 'breaks' && (item.type === 'slab' || item.type === 'raw')) return false;
                 if (currentTab === 'slabs' && item.type !== 'slab') return false;
                 if (currentTab === 'raw' && item.type !== 'raw') return false;
                 
-                // Search Logic
                 const searchStr = `${item.name} ${item.grader || ''} ${item.condition || ''} ${item.type}`.toLowerCase();
                 if (searchQuery && !searchStr.includes(searchQuery)) return false;
 
