@@ -204,7 +204,7 @@
             try {
                 const res = await fetch(`${API_URL}/items`);
                 const items = await res.json();
-                if(items.error) return;
+                if(items.error) throw new Error(items.error);
 
                 items.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
                 let storeHTML = '';
@@ -219,7 +219,6 @@
                     let wrapperClass = '';
                     let tagText = `<i class="ph-fill ph-cards"></i> RAW CARD`;
 
-                    // DYNAMIC GRADER STYLES
                     if(isSlab) {
                         const graderName = item.grader && item.grader !== 'Other' ? item.grader : 'GRADED';
                         tagText = `<i class="ph-fill ph-certificate"></i> ${graderName} SLAB`;
@@ -304,7 +303,14 @@
                     </div>`;
                 }
                 container.innerHTML = storeHTML;
-            } catch(e) { console.error(e); }
+            } catch(e) { 
+                console.error(e);
+                container.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align:center; padding: 4rem; background: rgba(0,0,0,0.5); border-radius: 20px; border: 1px solid rgba(255, 0, 64, 0.3);">
+                        <h2 style="color: #ff4444; margin-bottom: 1rem;">Server Overload</h2>
+                        <p style="color: var(--text-dim);">The database is taking a breather due to heavy traffic. Please refresh the page to try again!</p>
+                    </div>`;
+            }
         }
 
         function trackClick(id) { fetch(`${API_URL}/click`, { method: 'POST', body: JSON.stringify({ id: id }) }).catch(()=>{}); return true; }
