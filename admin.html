@@ -3,120 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PBM Admin</title>
+    <title>PBM Admin · Crystal League</title>
     <link rel="icon" type="image/svg+xml" href="https://upload.wikimedia.org/wikipedia/commons/5/53/Pok%C3%A9_Ball_icon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
-        :root { --bg: #0a0a15; --card: rgba(26,26,46,0.95); --accent: #00eeff; --purple: #9d4edd; --text: #ffffff; --gold: #ffd700; }
+        :root {
+            --bg: #02030c; --card: rgba(20,20,38,0.92); --accent: #00fff2; --purple: #d500ff;
+            --text: #ffffff; --gold: #ffd700; --dim: #aab0d8;
+            --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
         * { box-sizing: border-box; }
-        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; padding: 1.5rem; min-height: 100vh; margin: 0; }
-        .suicune-bg { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 800px; opacity: 0.1; z-index: -1; pointer-events: none; filter: drop-shadow(0 0 80px var(--accent)); }
-        
+        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; padding: 1.5rem; min-height: 100vh; margin: 0; -webkit-font-smoothing: antialiased; }
+
+        body::before {
+            content: ''; position: fixed; inset: 0; z-index: -10; pointer-events: none;
+            background:
+                radial-gradient(60% 50% at 18% 0%, rgba(0,255,242,0.12), transparent 70%),
+                radial-gradient(55% 50% at 85% 12%, rgba(213,0,255,0.14), transparent 70%),
+                linear-gradient(to bottom, #02030c, #06031a 60%, #02030c);
+            background-size: 200% 200%, 200% 200%, 100% 100%;
+            animation: aurora 28s ease-in-out infinite;
+        }
+        @keyframes aurora { 0%,100% { background-position: 0% 0%, 100% 0%, 0 0; } 50% { background-position: 30% 20%, 70% 30%, 0 0; } }
+        .grain { position: fixed; inset: 0; z-index: -2; pointer-events: none; background-image: var(--grain); background-size: 140px; opacity: 0.04; mix-blend-mode: overlay; }
+        .suicune-bg { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 800px; opacity: 0.07; z-index: -1; pointer-events: none; filter: drop-shadow(0 0 80px var(--accent)); }
+
         .container { max-width: 650px; margin: 0 auto; position: relative; z-index: 1; }
-        h1 { text-align: center; color: var(--accent); margin-bottom: 2rem; font-weight: 900; font-size: 2rem; letter-spacing: 1px; }
-        .card { background: var(--card); padding: 1.5rem; border-radius: 16px; border: 1px solid rgba(0,238,255,0.2); margin-bottom: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        
-        label { display: block; margin-bottom: 0.4rem; color: #aaa; font-weight: 600; font-size: 0.85rem; }
-        input, select { width: 100%; padding: 12px; margin-bottom: 1rem; background: rgba(0,0,0,0.5); border: 1px solid #444; color: white; border-radius: 8px; font-size: 1rem; }
-        input:focus, select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 10px rgba(0,238,255,0.2); }
+        h1 { text-align: center; color: var(--accent); margin-bottom: 2rem; font-weight: 900; font-size: 2rem; letter-spacing: 1px; text-shadow: 0 0 30px rgba(0,255,242,0.4); display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .card { background: var(--card); padding: 1.5rem; border-radius: 16px; border: 1px solid rgba(0,255,242,0.22); margin-bottom: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 30px rgba(0,255,242,0.03); backdrop-filter: blur(10px); }
+
+        label { display: block; margin-bottom: 0.4rem; color: var(--dim); font-weight: 600; font-size: 0.85rem; }
+        input, select { width: 100%; padding: 12px; margin-bottom: 1rem; background: rgba(0,0,0,0.5); border: 1px solid #3a3a55; color: #fff; border-radius: 8px; font-size: 1rem; transition: border-color .2s, box-shadow .2s; }
+        input:focus, select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 12px rgba(0,255,242,0.25); }
         input[type="datetime-local"] { color-scheme: dark; cursor: pointer; border: 1px solid var(--accent); }
-        
         input[type="file"] { background: rgba(255,255,255,0.05); padding: 10px; border: 1px dashed #555; cursor: pointer; font-size: 0.9rem; }
-        input[type="file"]::file-selector-button { background: var(--accent); color: #000; font-weight: 800; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-right: 10px; transition: 0.3s; }
+        input[type="file"]::file-selector-button { background: var(--accent); color: #000; font-weight: 800; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-right: 10px; transition: .3s; }
         input[type="file"]::file-selector-button:hover { background: #fff; }
 
         .flex-row { display: flex; gap: 15px; width: 100%; }
         .flex-row > div { flex: 1; }
 
-        button.primary-btn { width: 100%; padding: 1rem; background: linear-gradient(135deg, var(--accent), var(--purple)); color: white; font-weight: 900; border: none; border-radius: 8px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; font-size: 1.1rem; transition: 0.3s; box-shadow: 0 5px 20px rgba(157, 78, 221, 0.4); }
-        button.primary-btn:hover { filter: brightness(1.2); transform: translateY(-2px); }
+        button.primary-btn { width: 100%; padding: 1rem; background: linear-gradient(135deg, var(--accent), var(--purple)); color: #fff; font-weight: 900; border: none; border-radius: 8px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; font-size: 1.1rem; transition: .3s; box-shadow: 0 5px 20px rgba(157,78,221,0.4); }
+        button.primary-btn:hover { filter: brightness(1.15); transform: translateY(-2px); }
+        button.primary-btn:disabled { opacity: 0.6; cursor: progress; transform: none; }
+
+        .img-preview-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1rem; }
+        .img-preview-row img { width: 56px; height: 56px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(0,255,242,0.4); }
+        .img-preview-note { color: var(--dim); font-size: 0.8rem; margin: -0.5rem 0 1rem; }
 
         .inventory-controls { display: flex; flex-direction: column; gap: 15px; margin-bottom: 1.5rem; }
         .search-box { position: relative; width: 100%; }
         .search-box i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--accent); font-size: 1.2rem; }
-        .search-box input { padding-left: 45px; margin-bottom: 0; background: rgba(0,0,0,0.6); border: 1px solid rgba(0, 238, 255, 0.3); border-radius: 12px; transition: 0.3s; }
-        .search-box input:focus { border-color: var(--accent); box-shadow: 0 0 15px rgba(0, 238, 255, 0.2); }
-        
+        .search-box input { padding-left: 45px; margin-bottom: 0; background: rgba(0,0,0,0.6); border: 1px solid rgba(0,255,242,0.3); border-radius: 12px; }
+
         .tab-container { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
         .tab-container::-webkit-scrollbar { display: none; }
-        .inv-tab { flex: 1; min-width: max-content; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #aaa; padding: 10px 15px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: none; text-transform: uppercase; font-size: 0.85rem; }
+        .inv-tab { flex: 1; min-width: max-content; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--dim); padding: 10px 15px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: .3s; display: flex; align-items: center; justify-content: center; gap: 6px; text-transform: uppercase; font-size: 0.85rem; }
         .inv-tab:hover { background: rgba(255,255,255,0.1); color: #fff; }
-        .inv-tab.active { background: linear-gradient(135deg, rgba(0, 238, 255, 0.15), rgba(157, 78, 221, 0.15)); border-color: var(--accent); color: #fff; box-shadow: 0 0 15px rgba(0, 238, 255, 0.2); }
+        .inv-tab.active { background: linear-gradient(135deg, rgba(0,255,242,0.15), rgba(157,78,221,0.15)); border-color: var(--accent); color: #fff; box-shadow: 0 0 15px rgba(0,255,242,0.2); }
 
         ul { padding: 0; margin: 0; }
-        li { background: rgba(255,255,255,0.05); padding: 1.2rem; margin-bottom: 1rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); list-style: none; display: flex; flex-direction: column; gap: 1rem; transition: 0.3s; }
-        li:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); }
-        
+        li { background: rgba(255,255,255,0.05); padding: 1.2rem; margin-bottom: 1rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); list-style: none; display: flex; flex-direction: column; gap: 1rem; transition: .3s; }
+        li:hover { background: rgba(255,255,255,0.08); border-color: rgba(0,255,242,0.3); }
+
         .item-content { flex: 1; }
         .item-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
         .item-title { font-weight: 800; font-size: 1.15rem; line-height: 1.3; color: #fff; }
-        .item-meta { font-size: 0.85rem; color: #aaa; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 5px; }
-        
+        .item-meta { font-size: 0.85rem; color: var(--dim); display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 5px; }
+
         .badge { padding: 4px 10px; font-size: 0.7rem; border-radius: 6px; font-weight: 800; text-transform: uppercase; white-space: nowrap; display: flex; align-items: center; gap: 4px; }
-        .b-msrp { color: #00ff9d; border: 1px solid #00ff9d; background: linear-gradient(135deg, rgba(0, 255, 157, 0.15), transparent); }
-        .b-bundle { color: #f0dfff; border: 1px solid var(--purple); background: linear-gradient(135deg, rgba(213, 0, 255, 0.25), rgba(100, 0, 255, 0.15)); }
-        .b-baller { background: var(--gold); color: #000; border: 1px solid var(--gold); box-shadow: 0 0 10px rgba(255, 215, 0, 0.4); }
-        
+        .b-msrp { color: #00ff9d; border: 1px solid #00ff9d; background: linear-gradient(135deg, rgba(0,255,157,0.15), transparent); }
+        .b-bundle { color: #f0dfff; border: 1px solid var(--purple); background: linear-gradient(135deg, rgba(213,0,255,0.25), rgba(100,0,255,0.15)); }
+        .b-baller { background: var(--gold); color: #000; border: 1px solid var(--gold); box-shadow: 0 0 10px rgba(255,215,0,0.4); }
         .b-slab { background: #1a1a3a; color: #d500ff; border: 1px solid #d500ff; }
-        .b-psa { background: rgba(50, 0, 0, 0.85); border: 1px solid #ff3333; color: #ff5555; }
-        .b-bgs { background: rgba(40, 30, 0, 0.85); border: 1px solid #e6c27a; color: #e6c27a; }
-        .b-cgc { background: rgba(0, 20, 40, 0.85); border: 1px solid #00d2ff; color: #00d2ff; }
-        .b-sgc { background: #000; border: 1px solid #ffffff; color: #ffffff; }
-        .b-ace { background: rgba(0, 30, 10, 0.85); border: 1px solid #00ff88; color: #00ff88; }
-        
+        .b-psa { background: rgba(50,0,0,0.85); border: 1px solid #ff3333; color: #ff5555; }
+        .b-bgs { background: rgba(40,30,0,0.85); border: 1px solid #e6c27a; color: #e6c27a; }
+        .b-cgc { background: rgba(0,20,40,0.85); border: 1px solid #00d2ff; color: #00d2ff; }
+        .b-sgc { background: #000; border: 1px solid #fff; color: #fff; }
+        .b-ace { background: rgba(0,30,10,0.85); border: 1px solid #00ff88; color: #00ff88; }
         .b-raw { background: #1a3a3a; color: #00ff9d; border: 1px solid #00ff9d; }
-        .b-hidden { background: rgba(255, 68, 68, 0.2); color: #ff6666; border: 1px solid #ff4444; }
-        .b-time { background: rgba(157, 78, 221, 0.2); color: #e0aaff; border: 1px solid var(--purple); }
+        .b-hidden { background: rgba(255,68,68,0.2); color: #ff6666; border: 1px solid #ff4444; }
+        .b-time { background: rgba(157,78,221,0.2); color: #e0aaff; border: 1px solid var(--purple); }
         .b-cond { background: rgba(255,255,255,0.1); color: #ccc; border: 1px solid #777; }
-        .click-badge { background: rgba(0, 184, 255, 0.15); color: #00b8ff; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
-        
+        .click-badge { background: rgba(0,184,255,0.15); color: #00b8ff; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
+
         .btn-group { display: flex; gap: 10px; width: 100%; }
-        .btn-group button { padding: 10px; font-size: 0.9rem; font-weight: 800; border-radius: 6px; cursor: pointer; border: none; color: white; flex: 1; transition: 0.2s; }
+        .btn-group button { padding: 10px; font-size: 0.9rem; font-weight: 800; border-radius: 6px; cursor: pointer; border: none; color: #fff; flex: 1; transition: .2s; }
         .btn-edit { background: #00b8ff; } .btn-edit:hover { background: #0088cc; }
         .btn-del { background: #ff0055; } .btn-del:hover { background: #cc0044; }
-        
+
         #login-section { display: block; } #admin-section { display: none; }
         .empty-state { color: #888; font-style: italic; font-size: 1rem; padding: 2rem 0; text-align: center; background: rgba(0,0,0,0.3); border-radius: 12px; border: 1px dashed #444; }
+        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(120%); background: rgba(10,10,20,0.95); border: 1px solid var(--accent); color: #fff; padding: 12px 22px; border-radius: 10px; font-weight: 700; box-shadow: 0 0 30px rgba(0,255,242,0.4); z-index: 9999; transition: transform .4s cubic-bezier(0.22,1,0.36,1); max-width: 90%; }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+        .toast.err { border-color: #ff4444; box-shadow: 0 0 30px rgba(255,68,68,0.4); }
 
-        @media(max-width: 600px) { 
-            .flex-row { flex-direction: column; gap: 0; }
-            .flex-row > div { width: 100%; }
-            .card { padding: 1.2rem; }
-            h1 { font-size: 1.6rem; }
-        }
-        @media(min-width: 600px) { 
-            li { flex-direction: row; align-items: center; justify-content: space-between; } 
-            .btn-group { width: auto; flex-shrink: 0; flex-direction: column; gap: 8px; } 
-            .btn-group button { padding: 8px 20px; width: 100%; } 
-        }
+        a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+        @media(max-width: 600px) { .flex-row { flex-direction: column; gap: 0; } .flex-row > div { width: 100%; } .card { padding: 1.2rem; } h1 { font-size: 1.6rem; } }
+        @media(min-width: 600px) { li { flex-direction: row; align-items: center; justify-content: space-between; } .btn-group { width: auto; flex-shrink: 0; flex-direction: column; gap: 8px; } .btn-group button { padding: 8px 20px; width: 100%; } }
+        @media (prefers-reduced-motion: reduce) { body::before { animation: none; } * { transition-duration: 0.001ms !important; } }
     </style>
 </head>
 <body>
-    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="suicune-bg">
+    <div class="grain"></div>
+    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="suicune-bg" alt="">
     <div class="container">
         <h1><i class="ph-fill ph-shield-check"></i> PBM ADMIN</h1>
-        
+
         <div id="login-section" class="card">
-            <label>Username</label><input type="text" id="login-username">
-            <label>Password</label><input type="password" id="login-password">
-            <button class="primary-btn" onclick="login()">ENTER SYSTEM</button>
+            <label for="login-username">Username</label><input type="text" id="login-username" autocomplete="username">
+            <label for="login-password">Password</label><input type="password" id="login-password" autocomplete="current-password">
+            <button class="primary-btn" onclick="login()">Enter system</button>
         </div>
-        
+
         <div id="admin-section">
             <div class="card">
-                <h2 style="margin-top:0; margin-bottom:1.5rem; font-size:1.4rem; border-bottom: 1px solid #333; padding-bottom: 10px;">Add / Edit Item</h2>
-                
+                <h2 style="margin-top:0;margin-bottom:1.5rem;font-size:1.4rem;border-bottom:1px solid #333;padding-bottom:10px;">Add / edit item</h2>
+
                 <div class="flex-row">
                     <div>
-                        <label>Item Type</label>
+                        <label for="item-type">Item type</label>
                         <select id="item-type">
                             <optgroup label="Live Breaks">
                                 <option value="msrp">✅ MSRP Break</option>
                                 <option value="bundle">💎 Bundle Break</option>
-                                <option value="baller">👑 BALLER BUNDLE</option>
+                                <option value="baller">👑 Baller Bundle</option>
                             </optgroup>
                             <optgroup label="The Vault (Store)">
                                 <option value="slab">🔍 Graded Slab</option>
@@ -125,17 +140,17 @@
                         </select>
                     </div>
                     <div>
-                        <label>Visibility</label>
+                        <label for="item-hidden">Visibility</label>
                         <select id="item-hidden">
-                            <option value="false">👁️ Public (Visible)</option>
-                            <option value="true" style="color:#ff6666">🚫 Hidden (Draft)</option>
+                            <option value="false">👁️ Public (visible)</option>
+                            <option value="true" style="color:#ff6666">🚫 Hidden (draft)</option>
                         </select>
                     </div>
                 </div>
 
-                <div id="condition-container" style="display: none;">
-                    <label style="color: #00ff9d;">⭐ Card Condition (Raw Cards Only)</label>
-                    <select id="item-condition" style="border: 1px solid #00ff9d;">
+                <div id="condition-container" style="display:none;">
+                    <label for="item-condition" style="color:#00ff9d;">⭐ Card condition (raw cards only)</label>
+                    <select id="item-condition" style="border:1px solid #00ff9d;">
                         <option value="Mint (M)">Mint (M)</option>
                         <option value="Near Mint (NM)">Near Mint (NM)</option>
                         <option value="Lightly Played (LP)">Lightly Played (LP)</option>
@@ -145,62 +160,63 @@
                     </select>
                 </div>
 
-                <div id="grader-container" style="display: none;">
-                    <label style="color: #d500ff;">🔍 Grading Company (Slabs Only)</label>
-                    <select id="item-grader" style="border: 1px solid #d500ff;">
+                <div id="grader-container" style="display:none;">
+                    <label for="item-grader" style="color:#d500ff;">🔍 Grading company (slabs only)</label>
+                    <select id="item-grader" style="border:1px solid #d500ff;">
                         <option value="PSA">PSA</option>
                         <option value="BGS">BGS</option>
                         <option value="CGC">CGC</option>
                         <option value="SGC">SGC</option>
                         <option value="ACE">ACE</option>
                         <option value="MANA">Mana</option>
-                        <option value="Other">Other Grader</option>
+                        <option value="Other">Other grader</option>
                     </select>
                 </div>
-                
+
                 <div class="flex-row">
                     <div>
-                        <label>🟢 Start Time (Optional)</label>
+                        <label for="item-schedule-date">🟢 Start time (optional)</label>
                         <input type="datetime-local" id="item-schedule-date">
                     </div>
                     <div>
-                        <label>🔴 Close Time (Optional)</label>
+                        <label for="item-schedule-end">🔴 Close time (optional)</label>
                         <input type="datetime-local" id="item-schedule-end">
                     </div>
                 </div>
-                
-                <label>Name (e.g. PSA 10 Base Set Charizard)</label>
-                <input type="text" id="item-name" placeholder="Item Name">
-                
-                <label>Description</label>
-                <input type="text" id="item-description" placeholder="Short description...">
-                
+
+                <label for="item-name">Name (e.g. PSA 10 Base Set Charizard)</label>
+                <input type="text" id="item-name" placeholder="Item name">
+
+                <label for="item-description">Description</label>
+                <input type="text" id="item-description" placeholder="Short description…">
+
                 <div class="flex-row">
                     <div>
-                        <label>Price ($)</label>
-                        <input type="number" id="item-price" placeholder="0.00" step="0.01">
+                        <label for="item-price">Price ($)</label>
+                        <input type="number" id="item-price" placeholder="0.00" step="0.01" min="0">
                     </div>
                     <div>
-                        <label>Stock (Set to 1 for Singles)</label>
-                        <input type="number" id="item-stock" value="1">
+                        <label for="item-stock">Stock (set to 1 for singles)</label>
+                        <input type="number" id="item-stock" value="1" min="0">
                     </div>
                 </div>
-                
-                <label>Payment Link (PayPal.me / Stripe / Streamlabs)</label>
-                <input type="url" id="item-google-form-link" placeholder="https://...">
-                
-                <label>Images (Select multiple files. Will auto-compress before upload.)</label>
+
+                <label for="item-google-form-link">Payment link (PayPal.me / Stripe / Streamlabs)</label>
+                <input type="url" id="item-google-form-link" placeholder="https://…">
+
+                <label for="item-image">Images (select multiple — auto-compressed before upload)</label>
                 <input type="file" id="item-image" multiple accept="image/*">
-                
-                <button id="submit-btn" class="primary-btn" style="margin-top: 1rem;" onclick="submitItem()">Save to Database</button>
+                <div id="img-preview" class="img-preview-row"></div>
+
+                <button id="submit-btn" class="primary-btn" style="margin-top:1rem;" onclick="submitItem()">Save to database</button>
             </div>
 
-            <h2 style="text-align:center; font-size: 1.8rem; margin-top: 3rem; margin-bottom: 1.5rem;">Inventory Management</h2>
-            
+            <h2 style="text-align:center;font-size:1.8rem;margin-top:3rem;margin-bottom:1.5rem;">Inventory management</h2>
+
             <div class="inventory-controls">
                 <div class="search-box">
                     <i class="ph-bold ph-magnifying-glass"></i>
-                    <input type="text" id="inventory-search" placeholder="Search by name, grader, or type..." onkeyup="renderInventory()">
+                    <input type="text" id="inventory-search" placeholder="Search by name, grader, or type…" onkeyup="renderInventory()">
                 </div>
                 <div class="tab-container">
                     <button class="inv-tab active" onclick="switchTab('all', this)"><i class="ph-fill ph-circles-four"></i> All</button>
@@ -212,300 +228,352 @@
 
             <ul id="inventory-list"></ul>
 
-            <div style="display:flex; flex-direction:column; gap:15px; margin-top:3rem;">
-                <button onclick="logout()" style="background:#222; border:1px solid #444; color:#fff; padding:12px; border-radius:8px; cursor:pointer; font-weight:700; text-transform:uppercase;">Log Out</button>
-                <a href="index.html" style="text-align:center; color:#888; text-decoration:none; font-weight:600; padding:10px;">Return to Live Site</a>
+            <div style="display:flex;flex-direction:column;gap:15px;margin-top:3rem;">
+                <button onclick="logout()" style="background:#222;border:1px solid #444;color:#fff;padding:12px;border-radius:8px;cursor:pointer;font-weight:700;text-transform:uppercase;">Log out</button>
+                <a href="index.html" style="text-align:center;color:#888;text-decoration:none;font-weight:600;padding:10px;">Return to live site</a>
             </div>
         </div>
     </div>
 
+    <div id="toast" class="toast"></div>
+
     <script>
         const API_URL = 'https://pokeballer-worker.kronborgnielsen.workers.dev/api';
-        
+
         let allItems = [];
         let editingId = null;
         let currentImage = '';
-        let currentImages = []; 
+        let currentImages = [];
         let currentCreatedAt = null;
-        let currentClicks = 0; 
-        
+        let currentClicks = 0;
         let currentTab = 'all';
 
-        if(localStorage.getItem('adminToken')) {
-            document.getElementById('login-section').style.display='none';
-            document.getElementById('admin-section').style.display='block';
+        /* ---------- HELPERS ---------- */
+        const wait = ms => new Promise(r => setTimeout(r, ms));
+        function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
+        function money(n) { const v = Number(n); return isFinite(v) ? v.toFixed(2) : '0.00'; }
+        function toInt(n, fallback) { const v = parseInt(n, 10); return isFinite(v) ? v : (fallback != null ? fallback : 0); }
+
+        function toast(msg, isErr) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.className = 'toast show' + (isErr ? ' err' : '');
+            setTimeout(() => { t.className = 'toast' + (isErr ? ' err' : ''); }, 3200);
+        }
+
+        async function fetchWithRetry(url, opts = {}, retries = 2) {
+            let lastErr;
+            for (let attempt = 0; attempt <= retries; attempt++) {
+                const ctrl = new AbortController();
+                const timer = setTimeout(() => ctrl.abort(), 15000);
+                try {
+                    const res = await fetch(url, { ...opts, signal: ctrl.signal });
+                    clearTimeout(timer);
+                    if (!res.ok) {
+                        if (res.status >= 500 && attempt < retries) { await wait(700 * (attempt + 1)); continue; }
+                        throw new Error('HTTP ' + res.status);
+                    }
+                    return res;
+                } catch (e) { clearTimeout(timer); lastErr = e; if (attempt < retries) { await wait(700 * (attempt + 1)); continue; } }
+            }
+            throw lastErr || new Error('Request failed');
+        }
+
+        /* ---------- BOOT ---------- */
+        if (localStorage.getItem('adminToken')) {
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('admin-section').style.display = 'block';
             loadItems();
         }
 
-        document.getElementById('item-type').addEventListener('change', function() {
-            const condContainer = document.getElementById('condition-container');
-            const graderContainer = document.getElementById('grader-container');
-            
-            condContainer.style.display = 'none';
-            graderContainer.style.display = 'none';
+        document.getElementById('login-password').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
 
-            if (this.value === 'raw') condContainer.style.display = 'block';
-            if (this.value === 'slab') graderContainer.style.display = 'block';
+        document.getElementById('item-type').addEventListener('change', function () {
+            document.getElementById('condition-container').style.display = this.value === 'raw' ? 'block' : 'none';
+            document.getElementById('grader-container').style.display = this.value === 'slab' ? 'block' : 'none';
+        });
+
+        document.getElementById('item-image').addEventListener('change', function () {
+            const preview = document.getElementById('img-preview');
+            preview.innerHTML = '';
+            const files = Array.from(this.files || []).slice(0, 8);
+            files.forEach(f => {
+                const url = URL.createObjectURL(f);
+                const img = document.createElement('img');
+                img.src = url;
+                img.onload = () => URL.revokeObjectURL(url);
+                preview.appendChild(img);
+            });
         });
 
         function switchTab(tabName, btnElement) {
             currentTab = tabName;
             document.querySelectorAll('.inv-tab').forEach(btn => btn.classList.remove('active'));
             btnElement.classList.add('active');
-            renderInventory(); 
+            renderInventory();
         }
 
+        /* ---------- LOGIN ---------- */
         async function login() {
             const u = document.getElementById('login-username').value;
             const p = document.getElementById('login-password').value;
+            if (!u || !p) { toast('Enter a username and password.', true); return; }
             try {
-                const res = await fetch(`${API_URL}/login`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({username:u, password:p}) });
+                const res = await fetchWithRetry(`${API_URL}/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: u, password: p }) });
                 const data = await res.json();
-                if(data.success) { localStorage.setItem('adminToken','1'); location.reload(); } 
-                else alert('Invalid Credentials.');
-            } catch(e) { alert('Server Error. Check console.'); }
+                if (data.success) { localStorage.setItem('adminToken', '1'); location.reload(); }
+                else toast('Invalid credentials.', true);
+            } catch (e) { toast('Could not reach the server. Try again.', true); }
         }
 
-        // --- NEW COMPRESSION FUNCTION --- //
-        // This converts huge 5MB phone photos into small 100KB web-friendly JPEGs before upload
+        /* ---------- IMAGE COMPRESSION (robust, never hangs) ---------- */
         function compressImage(file) {
-            return new Promise((resolve) => {
+            return new Promise(resolve => {
+                let settled = false;
+                const done = v => { if (!settled) { settled = true; resolve(v); } };
+                const guard = setTimeout(() => done(null), 15000); // never block save forever
+
                 const reader = new FileReader();
-                reader.readAsDataURL(file);
+                reader.onerror = () => { clearTimeout(guard); done(null); };
                 reader.onload = event => {
                     const img = new Image();
-                    img.src = event.target.result;
+                    img.onerror = () => { clearTimeout(guard); done(null); };
                     img.onload = () => {
-                        const canvas = document.createElement('canvas');
-                        const MAX_WIDTH = 800; // Resize width limit
-                        let scaleSize = MAX_WIDTH / img.width;
-                        if(scaleSize > 1) scaleSize = 1; // Don't enlarge small images
-
-                        canvas.width = img.width * scaleSize;
-                        canvas.height = img.height * scaleSize;
-                        
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                        resolve(canvas.toDataURL('image/jpeg', 0.8)); // 80% Quality JPEG
-                    }
-                }
+                        try {
+                            const canvas = document.createElement('canvas');
+                            const MAX_WIDTH = 800;
+                            let scaleSize = MAX_WIDTH / img.width;
+                            if (!isFinite(scaleSize) || scaleSize > 1) scaleSize = 1;
+                            canvas.width = Math.max(1, Math.round(img.width * scaleSize));
+                            canvas.height = Math.max(1, Math.round(img.height * scaleSize));
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                            clearTimeout(guard);
+                            done(canvas.toDataURL('image/jpeg', 0.8));
+                        } catch (e) { clearTimeout(guard); done(null); }
+                    };
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
             });
         }
 
+        /* ---------- SAVE ---------- */
         async function submitItem() {
             const btn = document.getElementById('submit-btn');
-            btn.innerText = "Processing & Saving...";
-            
-            const type = document.getElementById('item-type').value;
-            const hidden = document.getElementById('item-hidden').value === 'true';
-            const condition = type === 'raw' ? document.getElementById('item-condition').value : null; 
-            const grader = type === 'slab' ? document.getElementById('item-grader').value : null; 
-            const scheduleDate = document.getElementById('item-schedule-date').value; 
-            const scheduleEnd = document.getElementById('item-schedule-end').value; 
-            const name = document.getElementById('item-name').value;
-            const desc = document.getElementById('item-description').value;
-            const price = parseFloat(document.getElementById('item-price').value);
-            const stock = parseInt(document.getElementById('item-stock').value);
-            const form = document.getElementById('item-google-form-link').value;
-            
-            const fileInput = document.getElementById('item-image');
-            let imagesArray = editingId ? currentImages : [];
-            
-            if(fileInput.files.length > 0) {
-                imagesArray = [];
-                for(let i = 0; i < fileInput.files.length; i++) {
-                    const compressedBase64 = await compressImage(fileInput.files[i]);
-                    imagesArray.push(compressedBase64);
-                }
-            }
-            
-            let img = imagesArray.length > 0 ? imagesArray[0] : (editingId ? currentImage : '');
+            const originalLabel = editingId ? 'Update database item' : 'Save to database';
 
-            const body = { 
-                type, name, description:desc, price, stock, googleFormLink:form, 
-                image: img, 
-                images: imagesArray, 
-                clickCount: editingId ? currentClicks : 0,
-                createdAt: editingId ? currentCreatedAt : Date.now(),
-                hidden: hidden,
-                scheduleDate: scheduleDate,
-                scheduleEnd: scheduleEnd,
-                condition: condition,
-                grader: grader
-            };
-            
-            const url = editingId ? `${API_URL}/items/${editingId}` : `${API_URL}/items`;
-            const method = editingId ? 'PUT' : 'POST';
+            const name = document.getElementById('item-name').value.trim();
+            if (!name) { toast('Give the item a name first.', true); return; }
+
+            btn.disabled = true;
+            btn.innerText = 'Processing & saving…';
 
             try {
-                const response = await fetch(url, { method, headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
-                if(!response.ok) { alert("SERVER ERROR - Save failed."); btn.innerText = "Save to Database"; return; }
+                const type = document.getElementById('item-type').value;
+                const hidden = document.getElementById('item-hidden').value === 'true';
+                const condition = type === 'raw' ? document.getElementById('item-condition').value : null;
+                const grader = type === 'slab' ? document.getElementById('item-grader').value : null;
+                const scheduleDate = document.getElementById('item-schedule-date').value;
+                const scheduleEnd = document.getElementById('item-schedule-end').value;
+                const desc = document.getElementById('item-description').value;
+                const price = Number(document.getElementById('item-price').value);
+                const stock = toInt(document.getElementById('item-stock').value, 1);
+                const form = document.getElementById('item-google-form-link').value;
 
-                editingId = null; currentImage = ''; currentImages = []; currentCreatedAt = null; currentClicks = 0;
-                
-                document.getElementById('item-name').value = '';
-                document.getElementById('item-description').value = '';
-                document.getElementById('item-price').value = '';
-                document.getElementById('item-stock').value = '1';
-                document.getElementById('item-google-form-link').value = '';
-                document.getElementById('item-image').value = '';
-                document.getElementById('item-type').value = 'msrp';
-                document.getElementById('item-hidden').value = 'false';
-                document.getElementById('item-schedule-date').value = ''; 
-                document.getElementById('item-schedule-end').value = ''; 
-                document.getElementById('item-condition').value = 'Mint (M)';
-                document.getElementById('item-grader').value = 'PSA';
-                document.getElementById('item-type').dispatchEvent(new Event('change')); 
-                btn.innerText = "Save to Database";
-                
+                const fileInput = document.getElementById('item-image');
+                let imagesArray = editingId ? [...currentImages] : [];
+
+                if (fileInput.files.length > 0) {
+                    const compressed = [];
+                    for (let i = 0; i < fileInput.files.length; i++) {
+                        const result = await compressImage(fileInput.files[i]);
+                        if (result) compressed.push(result);
+                    }
+                    if (compressed.length > 0) imagesArray = compressed;
+                    else toast('Those images couldn\'t be processed — saving without new images.', true);
+                }
+
+                const img = imagesArray.length > 0 ? imagesArray[0] : (editingId ? currentImage : '');
+
+                const body = {
+                    type, name, description: desc,
+                    price: isFinite(price) ? price : 0,
+                    stock, googleFormLink: form, image: img, images: imagesArray,
+                    clickCount: editingId ? currentClicks : 0,
+                    createdAt: editingId ? currentCreatedAt : Date.now(),
+                    hidden, scheduleDate, scheduleEnd, condition, grader
+                };
+
+                const url = editingId ? `${API_URL}/items/${editingId}` : `${API_URL}/items`;
+                const method = editingId ? 'PUT' : 'POST';
+                await fetchWithRetry(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+
+                resetForm();
+                toast(editingId ? 'Item updated.' : 'Item saved.');
+                editingId = null;
                 loadItems();
-            } catch(e) { alert("Save Failed."); btn.innerText = "Save to Database"; }
+            } catch (e) {
+                console.error('Save error:', e);
+                toast('Save failed — the server didn\'t confirm. Nothing was lost; try again.', true);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = editingId ? 'Update database item' : 'Save to database';
+            }
+        }
+
+        function resetForm() {
+            editingId = null; currentImage = ''; currentImages = []; currentCreatedAt = null; currentClicks = 0;
+            ['item-name', 'item-description', 'item-price', 'item-google-form-link', 'item-schedule-date', 'item-schedule-end'].forEach(id => document.getElementById(id).value = '');
+            document.getElementById('item-stock').value = '1';
+            document.getElementById('item-image').value = '';
+            document.getElementById('img-preview').innerHTML = '';
+            document.getElementById('item-type').value = 'msrp';
+            document.getElementById('item-hidden').value = 'false';
+            document.getElementById('item-condition').value = 'Mint (M)';
+            document.getElementById('item-grader').value = 'PSA';
+            document.getElementById('item-type').dispatchEvent(new Event('change'));
+            document.getElementById('submit-btn').innerText = 'Save to database';
         }
 
         function formatLiteralDate(val) {
-            if (!val) return "";
-            if (val.indexOf('T') === -1) return val;
+            if (!val || val.indexOf('T') === -1) return val || '';
             try {
                 const [datePart, timePart] = val.split('T');
-                if(!timePart) return val;
-                const [year, month, day] = datePart.split('-');
+                if (!timePart) return val;
+                const [, month, day] = datePart.split('-');
                 let [hour, minute] = timePart.split(':');
-                let h = parseInt(hour);
-                let ampm = 'AM';
+                let h = parseInt(hour, 10), ampm = 'AM';
                 if (h >= 12) { ampm = 'PM'; if (h > 12) h -= 12; }
                 if (h === 0) h = 12;
                 return `${month}/${day} @ ${h}:${minute}${ampm}`;
-            } catch(e) { return val; }
+            } catch (e) { return val; }
         }
 
+        /* ---------- LOAD + RENDER ---------- */
         async function loadItems() {
+            const listContainer = document.getElementById('inventory-list');
+            listContainer.innerHTML = '<div class="empty-state">Loading inventory…</div>';
             try {
-                const res = await fetch(`${API_URL}/items`);
+                const res = await fetchWithRetry(`${API_URL}/items`);
                 const items = await res.json();
-                if(items.error) { alert("DATABASE ERROR: " + items.error); return; }
-
-                items.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
+                if (!Array.isArray(items)) throw new Error(items && items.error ? items.error : 'Bad data');
+                items.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
                 allItems = items;
                 renderInventory();
-            } catch(e) { console.error("Load Error", e); }
+            } catch (e) {
+                console.error('Load error:', e);
+                listContainer.innerHTML = '<div class="empty-state">Couldn\'t load inventory. <button class="btn-edit" style="border:none;padding:6px 14px;border-radius:6px;cursor:pointer;color:#fff;font-weight:800;margin-left:8px;" onclick="loadItems()">Retry</button></div>';
+            }
         }
 
         function renderInventory() {
             const listContainer = document.getElementById('inventory-list');
             const searchQuery = document.getElementById('inventory-search').value.toLowerCase();
-            
-            let filteredItems = allItems.filter(item => {
+
+            const filteredItems = allItems.filter(item => {
                 if (currentTab === 'breaks' && (item.type === 'slab' || item.type === 'raw')) return false;
                 if (currentTab === 'slabs' && item.type !== 'slab') return false;
                 if (currentTab === 'raw' && item.type !== 'raw') return false;
-                
-                const searchStr = `${item.name} ${item.grader || ''} ${item.condition || ''} ${item.type}`.toLowerCase();
+                const searchStr = `${item.name || ''} ${item.grader || ''} ${item.condition || ''} ${item.type || ''}`.toLowerCase();
                 if (searchQuery && !searchStr.includes(searchQuery)) return false;
-
                 return true;
             });
 
             if (filteredItems.length === 0) {
-                listContainer.innerHTML = '<div class="empty-state">No items found matching your search.</div>';
+                listContainer.innerHTML = '<div class="empty-state">No items match your search.</div>';
                 return;
             }
 
-            let html = '';
-            filteredItems.forEach(item => {
-                let badgeClass = 'b-msrp';
-                let badgeText = 'MSRP';
-
-                if (item.type === 'baller') { badgeClass = 'b-baller'; badgeText = '<i class="ph-fill ph-crown"></i> BALLER'; } 
+            listContainer.innerHTML = filteredItems.map(item => {
+                const id = esc(item.id);
+                let badgeClass = 'b-msrp', badgeText = 'MSRP';
+                if (item.type === 'baller') { badgeClass = 'b-baller'; badgeText = '<i class="ph-fill ph-crown"></i> BALLER'; }
                 else if (item.type === 'bundle') { badgeClass = 'b-bundle'; badgeText = '<i class="ph-fill ph-sketch-logo"></i> BUNDLE'; }
-                else if (item.type === 'slab') { 
-                    if(item.grader === 'PSA') badgeClass = 'b-psa';
-                    else if(item.grader === 'BGS') badgeClass = 'b-bgs';
-                    else if(item.grader === 'CGC') badgeClass = 'b-cgc';
-                    else if(item.grader === 'SGC') badgeClass = 'b-sgc';
-                    else if(item.grader === 'ACE') badgeClass = 'b-ace';
-                    else badgeClass = 'b-slab';
-                    badgeText = `🔍 ${item.grader || 'SLAB'}`; 
-                }
-                else if (item.type === 'raw') { badgeClass = 'b-raw'; badgeText = '🃏 RAW'; }
-                
+                else if (item.type === 'slab') {
+                    const g = item.grader;
+                    if (g === 'PSA') badgeClass = 'b-psa'; else if (g === 'BGS') badgeClass = 'b-bgs';
+                    else if (g === 'CGC') badgeClass = 'b-cgc'; else if (g === 'SGC') badgeClass = 'b-sgc';
+                    else if (g === 'ACE') badgeClass = 'b-ace'; else badgeClass = 'b-slab';
+                    badgeText = `🔍 ${esc(g || 'SLAB')}`;
+                } else if (item.type === 'raw') { badgeClass = 'b-raw'; badgeText = '🃏 RAW'; }
+
                 const hiddenBadge = item.hidden ? '<span class="badge b-hidden"><i class="ph-fill ph-eye-slash"></i> HIDDEN</span>' : '';
-                const condBadge = item.type === 'raw' && item.condition ? `<span class="badge b-cond">${item.condition}</span>` : '';
-                const imgCount = item.images && item.images.length > 1 ? `<span class="badge" style="background:#444; border:1px solid #777;"><i class="ph-fill ph-images"></i> ${item.images.length}</span>` : '';
-                const opacity = item.hidden ? 'opacity: 0.6;' : '';
-                
+                const condBadge = item.type === 'raw' && item.condition ? `<span class="badge b-cond">${esc(item.condition)}</span>` : '';
+                const imgCount = item.images && item.images.length > 1 ? `<span class="badge" style="background:#444;border:1px solid #777;"><i class="ph-fill ph-images"></i> ${item.images.length}</span>` : '';
+                const opacity = item.hidden ? 'opacity:0.6;' : '';
+
                 let timeBadge = '';
                 if (item.scheduleDate) {
                     const start = formatLiteralDate(item.scheduleDate);
-                    const end = item.scheduleEnd ? formatLiteralDate(item.scheduleEnd) : '...';
-                    timeBadge = `<span class="badge b-time"><i class="ph-fill ph-clock"></i> ${start} ➔ ${end}</span>`;
+                    const end = item.scheduleEnd ? formatLiteralDate(item.scheduleEnd) : '…';
+                    timeBadge = `<span class="badge b-time"><i class="ph-fill ph-clock"></i> ${esc(start)} ➔ ${esc(end)}</span>`;
                 }
 
-                html += `
+                return `
                     <li style="${opacity}">
                         <div class="item-content">
                             <div class="item-header">
-                                <span class="item-title">${item.name}</span>
+                                <span class="item-title">${esc(item.name)}</span>
                                 ${hiddenBadge}
-                                <span class="badge ${badgeClass}">${badgeText}</span> 
-                                ${condBadge}
-                                ${imgCount}
+                                <span class="badge ${badgeClass}">${badgeText}</span>
+                                ${condBadge}${imgCount}
                             </div>
+                            <div class="item-meta">${timeBadge}</div>
                             <div class="item-meta">
-                                ${timeBadge}
-                            </div>
-                            <div class="item-meta">
-                                <span><strong>$${item.price}</strong></span>
-                                <span>• Stock: ${item.stock}</span>
-                                <span class="click-badge">🖱️ ${item.clickCount||0}</span>
+                                <span><strong>$${money(item.price)}</strong></span>
+                                <span>• Stock: ${toInt(item.stock)}</span>
+                                <span class="click-badge">🖱️ ${toInt(item.clickCount)}</span>
                             </div>
                         </div>
                         <div class="btn-group">
-                            <button class="btn-edit" onclick="startEditing('${item.id}')">Edit</button>
-                            <button class="btn-del" onclick="deleteItem('${item.id}')">Del</button>
+                            <button class="btn-edit" onclick="startEditing('${id}')">Edit</button>
+                            <button class="btn-del" onclick="deleteItem('${id}')">Del</button>
                         </div>
                     </li>`;
-            });
-            
-            listContainer.innerHTML = html;
+            }).join('');
         }
 
         function startEditing(id) {
-            const item = allItems.find(i => i.id === id);
-            if(item) {
-                editingId = item.id; 
-                currentImage = item.image || ''; 
-                currentImages = item.images || (item.image ? [item.image] : []);
-                currentCreatedAt = item.createdAt;
-                currentClicks = item.clickCount || 0; 
-                
-                document.getElementById('item-type').value = item.type || 'msrp';
-                document.getElementById('item-hidden').value = item.hidden ? 'true' : 'false';
-                
-                const dateVal = item.scheduleDate || '';
-                if(dateVal.indexOf('T') > -1) document.getElementById('item-schedule-date').value = dateVal;
-                else document.getElementById('item-schedule-date').value = ''; 
-                
-                const endVal = item.scheduleEnd || '';
-                if(endVal.indexOf('T') > -1) document.getElementById('item-schedule-end').value = endVal;
-                else document.getElementById('item-schedule-end').value = '';
+            const item = allItems.find(i => String(i.id) === String(id));
+            if (!item) return;
+            editingId = item.id;
+            currentImage = item.image || '';
+            currentImages = item.images || (item.image ? [item.image] : []);
+            currentCreatedAt = item.createdAt;
+            currentClicks = toInt(item.clickCount);
 
-                document.getElementById('item-name').value = item.name;
-                document.getElementById('item-description').value = item.description;
-                document.getElementById('item-price').value = item.price;
-                document.getElementById('item-stock').value = item.stock;
-                document.getElementById('item-google-form-link').value = item.googleFormLink;
-                document.getElementById('item-image').value = ''; 
-                
-                document.getElementById('item-condition').value = item.condition || 'Mint (M)';
-                document.getElementById('item-grader').value = item.grader || 'PSA';
-                document.getElementById('item-type').dispatchEvent(new Event('change'));
+            document.getElementById('item-type').value = item.type || 'msrp';
+            document.getElementById('item-hidden').value = item.hidden ? 'true' : 'false';
+            document.getElementById('item-schedule-date').value = (item.scheduleDate && item.scheduleDate.indexOf('T') > -1) ? item.scheduleDate : '';
+            document.getElementById('item-schedule-end').value = (item.scheduleEnd && item.scheduleEnd.indexOf('T') > -1) ? item.scheduleEnd : '';
+            document.getElementById('item-name').value = item.name || '';
+            document.getElementById('item-description').value = item.description || '';
+            document.getElementById('item-price').value = item.price != null ? item.price : '';
+            document.getElementById('item-stock').value = toInt(item.stock, 1);
+            document.getElementById('item-google-form-link').value = item.googleFormLink || '';
+            document.getElementById('item-image').value = '';
+            document.getElementById('item-condition').value = item.condition || 'Mint (M)';
+            document.getElementById('item-grader').value = item.grader || 'PSA';
+            document.getElementById('item-type').dispatchEvent(new Event('change'));
 
-                document.getElementById('submit-btn').innerText = "Update Database Item";
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
+            // show existing images as a reference (replaced only if you pick new files)
+            const preview = document.getElementById('img-preview');
+            preview.innerHTML = (currentImages || []).slice(0, 8).map(src => `<img src="${esc(src)}" alt="">`).join('');
+
+            document.getElementById('submit-btn').innerText = 'Update database item';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        async function deleteItem(id) { if(confirm('Are you sure you want to permanently delete this?')) { await fetch(`${API_URL}/items/${id}`, {method:'DELETE'}); loadItems(); } }
+        async function deleteItem(id) {
+            if (!confirm('Permanently delete this item?')) return;
+            try {
+                await fetchWithRetry(`${API_URL}/items/${id}`, { method: 'DELETE' });
+                toast('Item deleted.');
+                loadItems();
+            } catch (e) { toast('Delete failed — try again.', true); }
+        }
+
         function logout() { localStorage.removeItem('adminToken'); location.reload(); }
     </script>
 </body>
