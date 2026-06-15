@@ -3,372 +3,578 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Vault · PBM Breaks</title>
-
+    <title>PBM Admin · Crystal League</title>
     <link rel="icon" type="image/svg+xml" href="https://upload.wikimedia.org/wikipedia/commons/5/53/Pok%C3%A9_Ball_icon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
         :root {
-            --bg-dark: #02030c;
-            --accent-cyan: #00fff2;
-            --accent-purple: #d500ff;
-            --accent-gold: #ffd700;
-            --accent-live: #ff0040;
-            --text-bright: #ffffff;
-            --text-dim: #aab0d8;
-            --guardian-size: clamp(120px, 14vw, 200px);
+            --bg: #02030c; --card: rgba(20,20,38,0.92); --accent: #00fff2; --purple: #d500ff;
+            --text: #ffffff; --gold: #ffd700; --dim: #aab0d8;
             --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg-dark); color: var(--text-bright); min-height: 100vh; overflow-x: hidden; position: relative; -webkit-font-smoothing: antialiased; }
+        * { box-sizing: border-box; }
+        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; padding: 1.5rem; min-height: 100vh; margin: 0; -webkit-font-smoothing: antialiased; }
 
         body::before {
             content: ''; position: fixed; inset: 0; z-index: -10; pointer-events: none;
             background:
-                radial-gradient(60% 50% at 20% 0%, rgba(213,0,255,0.18), transparent 70%),
-                radial-gradient(55% 50% at 85% 12%, rgba(0,255,242,0.16), transparent 70%),
-                radial-gradient(60% 60% at 50% 110%, rgba(157,78,221,0.18), transparent 70%),
+                radial-gradient(60% 50% at 18% 0%, rgba(0,255,242,0.12), transparent 70%),
+                radial-gradient(55% 50% at 85% 12%, rgba(213,0,255,0.14), transparent 70%),
                 linear-gradient(to bottom, #02030c, #06031a 60%, #02030c);
-            background-size: 200% 200%, 200% 200%, 200% 200%, 100% 100%;
-            animation: aurora 26s ease-in-out infinite;
+            background-size: 200% 200%, 200% 200%, 100% 100%;
+            animation: aurora 28s ease-in-out infinite;
         }
-        @keyframes aurora { 0%,100% { background-position: 0% 0%, 100% 0%, 50% 100%, 0 0; } 50% { background-position: 30% 20%, 70% 30%, 40% 80%, 0 0; } }
+        @keyframes aurora { 0%,100% { background-position: 0% 0%, 100% 0%, 0 0; } 50% { background-position: 30% 20%, 70% 30%, 0 0; } }
+        .grain { position: fixed; inset: 0; z-index: -2; pointer-events: none; background-image: var(--grain); background-size: 140px; opacity: 0.04; mix-blend-mode: overlay; }
+        .suicune-bg { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 800px; opacity: 0.07; z-index: -1; pointer-events: none; filter: drop-shadow(0 0 80px var(--accent)); }
 
-        .grain { position: fixed; inset: 0; z-index: -9; pointer-events: none; background-image: var(--grain); background-size: 140px; opacity: 0.04; mix-blend-mode: overlay; }
-        .particles { position: fixed; inset: 0; pointer-events: none; z-index: -7; background-image: radial-gradient(circle at 20% 30%, var(--accent-cyan) 1px, transparent 3px), radial-gradient(circle at 80% 70%, var(--accent-purple) 1px, transparent 3px); background-size: 120px 120px; opacity: 0.4; }
+        .container { max-width: 650px; margin: 0 auto; position: relative; z-index: 1; }
+        h1 { text-align: center; color: var(--accent); margin-bottom: 2rem; font-weight: 900; font-size: 2rem; letter-spacing: 1px; text-shadow: 0 0 30px rgba(0,255,242,0.4); display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .card { background: var(--card); padding: 1.5rem; border-radius: 16px; border: 1px solid rgba(0,255,242,0.22); margin-bottom: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 30px rgba(0,255,242,0.03); backdrop-filter: blur(10px); }
 
-        .parallax-layer { position: fixed; inset: 0; z-index: -8; pointer-events: none; will-change: transform; }
-        .poke-bg { position: fixed; pointer-events: none; opacity: 0.3; will-change: transform; backface-visibility: hidden; }
-        .p-suicune  { top: 50%; left: 50%; transform: translate(-50%, -50%); width: clamp(500px, 70vw, 1000px); opacity: 0.05; animation: breathe 8s ease-in-out infinite; }
-        .p-rayquaza { top: -5%; left: -5%;  width: var(--guardian-size); animation: float 14s infinite ease-in-out; }
-        .p-charizard{ top: -5%; right: -5%; width: var(--guardian-size); animation: floatFlipped 13s infinite ease-in-out; }
-        .p-pichu    { bottom: 1%; left: 6%; width: calc(var(--guardian-size)*0.72); opacity: 0.34; transform-origin: bottom center; animation: hop 3s infinite ease-in-out; filter: drop-shadow(0 0 18px rgba(255,221,0,0.35)); }
-        .p-magikarp { bottom: 0%; right: 7%; width: calc(var(--guardian-size)*0.9); opacity: 0.36; transform-origin: bottom center; animation: flop 2.6s infinite ease-in-out; filter: drop-shadow(0 0 18px rgba(255,120,40,0.3)); }
+        label { display: block; margin-bottom: 0.4rem; color: var(--dim); font-weight: 600; font-size: 0.85rem; }
+        input, select { width: 100%; padding: 12px; margin-bottom: 1rem; background: rgba(0,0,0,0.5); border: 1px solid #3a3a55; color: #fff; border-radius: 8px; font-size: 1rem; transition: border-color .2s, box-shadow .2s; }
+        input:focus, select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 12px rgba(0,255,242,0.25); }
+        input[type="datetime-local"] { color-scheme: dark; cursor: pointer; border: 1px solid var(--accent); }
+        input[type="file"] { background: rgba(255,255,255,0.05); padding: 10px; border: 1px dashed #555; cursor: pointer; font-size: 0.9rem; }
+        input[type="file"]::file-selector-button { background: var(--accent); color: #000; font-weight: 800; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-right: 10px; transition: .3s; }
+        input[type="file"]::file-selector-button:hover { background: #fff; }
 
-        @keyframes breathe { 0%,100% { opacity: 0.05; } 50% { opacity: 0.09; } }
-        @keyframes float { 0%,100% { transform: translate3d(0,0,0); } 50% { transform: translate3d(20px,-30px,0); } }
-        @keyframes floatFlipped { 0%,100% { transform: scaleX(-1) translate3d(0,0,0); } 50% { transform: scaleX(-1) translate3d(-20px,-30px,0); } }
-        @keyframes hop { 0%,100% { transform: translateY(0) scale(1,1); } 20% { transform: translateY(-26px) scale(0.97,1.03); } 45% { transform: translateY(0) scale(1.04,0.96); } 60% { transform: translateY(0) scale(1,1); } }
-        @keyframes flop { 0%,100% { transform: rotate(-11deg) translateY(0); } 50% { transform: rotate(11deg) translateY(-12px); } }
+        .flex-row { display: flex; gap: 15px; width: 100%; }
+        .flex-row > div { flex: 1; }
 
-        .top-nav { display: flex; justify-content: center; gap: 20px; padding: 22px 16px; position: relative; z-index: 10; flex-wrap: wrap; }
-        .nav-link { padding: 11px 26px; border-radius: 30px; color: #fff; text-decoration: none; font-weight: 800; letter-spacing: 1px; border: 1px solid rgba(255,255,255,0.18); background: rgba(0,0,0,0.45); backdrop-filter: blur(10px); transition: transform .3s, box-shadow .3s, border-color .3s, background .3s; display: flex; align-items: center; gap: 8px; }
-        .nav-link:hover { background: rgba(255,255,255,0.08); border-color: var(--accent-cyan); box-shadow: 0 0 22px rgba(0,255,242,0.4); transform: translateY(-2px); }
-        .nav-active { border-color: var(--accent-purple); box-shadow: 0 0 22px rgba(213,0,255,0.4); background: linear-gradient(90deg, rgba(213,0,255,0.2), transparent); pointer-events: none; }
+        button.primary-btn { width: 100%; padding: 1rem; background: linear-gradient(135deg, var(--accent), var(--purple)); color: #fff; font-weight: 900; border: none; border-radius: 8px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; font-size: 1.1rem; transition: .3s; box-shadow: 0 5px 20px rgba(157,78,221,0.4); }
+        button.primary-btn:hover { filter: brightness(1.15); transform: translateY(-2px); }
+        button.primary-btn:disabled { opacity: 0.6; cursor: progress; transform: none; }
 
-        header { display: flex; flex-direction: column; align-items: center; padding: 1rem 1rem 2rem; position: relative; z-index: 2; }
-        h1 { font-size: clamp(3rem, 8vw, 5.5rem); font-weight: 900; letter-spacing: -2px; text-transform: uppercase; margin: 0; line-height: 1; position: relative; z-index: 1; background: linear-gradient(110deg, #ffffff, #d500ff, #ff6ad5, #00fff2, #6ad7ff, #ffd700, #d500ff, #ffffff); background-size: 300% 100%; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 28px rgba(213,0,255,0.55)) drop-shadow(0 0 50px rgba(0,255,242,0.3)); animation: holo 9s linear infinite; }
-        @keyframes holo { 0% { background-position: 0% 50%; } 100% { background-position: 300% 50%; } }
-        .brand-strip { display: flex; align-items: center; gap: 12px; margin-top: 14px; flex-wrap: wrap; justify-content: center; }
-        .subtitle { color: var(--accent-gold); font-weight: 700; letter-spacing: 4px; text-transform: uppercase; text-shadow: 0 0 10px rgba(255,215,0,0.5); }
-        .ver-pill { display: inline-flex; align-items: center; gap: 6px; font-size: 0.72rem; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; padding: 5px 14px; border-radius: 30px; color: #fff; background: linear-gradient(90deg, rgba(213,0,255,0.18), rgba(0,255,242,0.18)); border: 1px solid rgba(213,0,255,0.5); box-shadow: 0 0 18px rgba(213,0,255,0.25); }
-        .ver-pill i { color: var(--accent-purple); }
+        .img-preview-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1rem; }
+        .img-preview-row img { width: 56px; height: 56px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(0,255,242,0.4); }
+        .img-preview-note { color: var(--dim); font-size: 0.8rem; margin: -0.5rem 0 1rem; }
 
-        main { position: relative; z-index: 2; max-width: 1250px; margin: 0 auto 4rem; padding: 2.5rem; border-radius: 35px; background: rgba(5,5,14,0.72); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 2px solid rgba(213,0,255,0.3); box-shadow: 0 0 100px rgba(0,0,0,0.8), inset 0 0 30px rgba(213,0,255,0.05), 0 0 20px rgba(213,0,255,0.1), 0 0 40px rgba(0,255,242,0.1); animation: shellIn 0.9s cubic-bezier(0.22,1,0.36,1) both; }
-        @keyframes shellIn { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: translateY(0); } }
+        .inventory-controls { display: flex; flex-direction: column; gap: 15px; margin-bottom: 1.5rem; }
+        .search-box { position: relative; width: 100%; }
+        .search-box i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--accent); font-size: 1.2rem; }
+        .search-box input { padding-left: 45px; margin-bottom: 0; background: rgba(0,0,0,0.6); border: 1px solid rgba(0,255,242,0.3); border-radius: 12px; }
 
-        .store-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 35px; }
-        .item-card { display: flex; flex-direction: column; height: 100%; }
+        .tab-container { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
+        .tab-container::-webkit-scrollbar { display: none; }
+        .inv-tab { flex: 1; min-width: max-content; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--dim); padding: 10px 15px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: .3s; display: flex; align-items: center; justify-content: center; gap: 6px; text-transform: uppercase; font-size: 0.85rem; }
+        .inv-tab:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .inv-tab.active { background: linear-gradient(135deg, rgba(0,255,242,0.15), rgba(157,78,221,0.15)); border-color: var(--accent); color: #fff; box-shadow: 0 0 15px rgba(0,255,242,0.2); }
 
-        .glass-panel { position: relative; height: 100%; width: 100%; z-index: 1; overflow: hidden; border-radius: 24px; background: linear-gradient(160deg, rgba(20,20,35,0.6), rgba(10,10,20,0.8)); backdrop-filter: blur(16px); border: 1px solid rgba(213,0,255,0.1); border-top: 2px solid rgba(255,255,255,0.4); box-shadow: inset 0 0 30px rgba(0,0,0,0.7), inset 0 5px 10px rgba(255,255,255,0.1), 0 10px 30px rgba(0,0,0,0.5); transition: transform .18s ease-out; }
-        .glass-panel::after { content: ''; position: absolute; inset: 0; z-index: 14; pointer-events: none; opacity: 0; transition: opacity .5s; background: linear-gradient(115deg, transparent 30%, rgba(0,255,242,0.10) 42%, rgba(213,0,255,0.12) 50%, rgba(255,215,0,0.10) 58%, transparent 70%); mix-blend-mode: screen; }
-        .neon-card-wrapper:hover .glass-panel::after { opacity: 1; }
-        .neon-card-wrapper { position: relative; border-radius: 26px; padding: 3px; background: rgba(0,0,0,0.2); box-shadow: 0 0 25px rgba(213,0,255,0.2), 0 0 50px rgba(0,255,242,0.15); overflow: hidden; transition: transform .4s cubic-bezier(0.25,0.8,0.25,1), box-shadow .4s; perspective: 1000px; will-change: transform; }
-        .neon-card-wrapper:hover { transform: translateY(-10px) scale(1.02); box-shadow: 0 0 50px rgba(213,0,255,0.6), 0 0 80px rgba(0,255,242,0.5); }
-        .neon-card-wrapper::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: conic-gradient(transparent 0deg, transparent 90deg, var(--accent-cyan) 130deg, #fff 155deg, var(--accent-purple) 180deg, transparent 220deg); animation: spinBorder 5s linear infinite; z-index: 0; opacity: 1; filter: blur(5px); }
-        @keyframes spinBorder { 100% { transform: rotate(360deg); } }
+        ul { padding: 0; margin: 0; }
+        li { background: rgba(255,255,255,0.05); padding: 1.2rem; margin-bottom: 1rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); list-style: none; display: flex; flex-direction: column; gap: 1rem; transition: .3s; }
+        li:hover { background: rgba(255,255,255,0.08); border-color: rgba(0,255,242,0.3); }
 
-        .card-psa { border: 2px solid #ff3333 !important; box-shadow: 0 0 40px rgba(255,51,51,0.3) !important; }
-        .card-psa::before { background: conic-gradient(transparent 0deg, transparent 90deg, #ff3333 130deg, #fff 155deg, #cc0000 180deg, transparent 220deg) !important; }
-        .tag-psa { background: rgba(50,0,0,0.85) !important; border: 1px solid #ff3333 !important; color: #fff !important; box-shadow: 0 0 15px rgba(255,51,51,0.4) !important; }
-        .card-bgs { border: 2px solid #e6c27a !important; box-shadow: 0 0 40px rgba(230,194,122,0.3) !important; }
-        .card-bgs::before { background: conic-gradient(transparent 0deg, transparent 90deg, #e6c27a 130deg, #fff 155deg, #b38f40 180deg, transparent 220deg) !important; }
-        .tag-bgs { background: rgba(40,30,0,0.85) !important; border: 1px solid #e6c27a !important; color: #e6c27a !important; box-shadow: 0 0 15px rgba(230,194,122,0.3) !important; }
-        .card-cgc { border: 2px solid #00d2ff !important; box-shadow: 0 0 40px rgba(0,210,255,0.3) !important; }
-        .card-cgc::before { background: conic-gradient(transparent 0deg, transparent 90deg, #00d2ff 130deg, #fff 155deg, #0088cc 180deg, transparent 220deg) !important; }
-        .tag-cgc { background: rgba(0,20,40,0.85) !important; border: 1px solid #00d2ff !important; color: #00d2ff !important; box-shadow: 0 0 15px rgba(0,210,255,0.4) !important; }
-        .card-sgc { border: 2px solid #ffffff !important; box-shadow: 0 0 40px rgba(255,255,255,0.2) !important; }
-        .card-sgc::before { background: conic-gradient(transparent 0deg, transparent 90deg, #fff 130deg, #888 155deg, #ccc 180deg, transparent 220deg) !important; }
-        .tag-sgc { background: #000 !important; border: 1px solid #fff !important; color: #fff !important; box-shadow: 0 0 15px rgba(255,255,255,0.3) !important; }
-        .card-ace { border: 2px solid #00ff88 !important; box-shadow: 0 0 40px rgba(0,255,136,0.3) !important; }
-        .card-ace::before { background: conic-gradient(transparent 0deg, transparent 90deg, #00ff88 130deg, #fff 155deg, #00cc66 180deg, transparent 220deg) !important; }
-        .tag-ace { background: rgba(0,30,10,0.85) !important; border: 1px solid #00ff88 !important; color: #00ff88 !important; box-shadow: 0 0 15px rgba(0,255,136,0.4) !important; }
+        .item-content { flex: 1; }
+        .item-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+        .item-title { font-weight: 800; font-size: 1.15rem; line-height: 1.3; color: #fff; }
+        .item-meta { font-size: 0.85rem; color: var(--dim); display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 5px; }
 
-        .item-img-box { height: 350px; overflow: hidden; position: relative; cursor: zoom-in; border-bottom: 1px solid rgba(213,0,255,0.2); display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); }
-        .item-img-box::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent); transform: skewX(-20deg); z-index: 10; transition: .7s; pointer-events: none; }
-        .neon-card-wrapper:hover .item-img-box::before { left: 150%; transition: .7s ease-in-out; }
-        .item-img { max-width: 90%; max-height: 90%; object-fit: contain; transition: transform .6s cubic-bezier(0.25,0.8,0.25,1); filter: drop-shadow(0 10px 15px rgba(0,0,0,0.8)); }
-        .neon-card-wrapper:hover .item-img { transform: scale(1.08) rotate(2deg); }
+        .badge { padding: 4px 10px; font-size: 0.7rem; border-radius: 6px; font-weight: 800; text-transform: uppercase; white-space: nowrap; display: flex; align-items: center; gap: 4px; }
+        .b-msrp { color: #00ff9d; border: 1px solid #00ff9d; background: linear-gradient(135deg, rgba(0,255,157,0.15), transparent); }
+        .b-bundle { color: #f0dfff; border: 1px solid var(--purple); background: linear-gradient(135deg, rgba(213,0,255,0.25), rgba(100,0,255,0.15)); }
+        .b-baller { background: var(--gold); color: #000; border: 1px solid var(--gold); box-shadow: 0 0 10px rgba(255,215,0,0.4); }
+        .b-slab { background: #1a1a3a; color: #d500ff; border: 1px solid #d500ff; }
+        .b-psa { background: rgba(50,0,0,0.85); border: 1px solid #ff3333; color: #ff5555; }
+        .b-bgs { background: rgba(40,30,0,0.85); border: 1px solid #e6c27a; color: #e6c27a; }
+        .b-cgc { background: rgba(0,20,40,0.85); border: 1px solid #00d2ff; color: #00d2ff; }
+        .b-sgc { background: #000; border: 1px solid #fff; color: #fff; }
+        .b-ace { background: rgba(0,30,10,0.85); border: 1px solid #00ff88; color: #00ff88; }
+        .b-raw { background: #1a3a3a; color: #00ff9d; border: 1px solid #00ff9d; }
+        .b-hidden { background: rgba(255,68,68,0.2); color: #ff6666; border: 1px solid #ff4444; }
+        .b-time { background: rgba(157,78,221,0.2); color: #e0aaff; border: 1px solid var(--purple); }
+        .b-cond { background: rgba(255,255,255,0.1); color: #ccc; border: 1px solid #777; }
+        .click-badge { background: rgba(0,184,255,0.15); color: #00b8ff; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
 
-        .carousel-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.7); color: #fff; border: 1px solid rgba(255,255,255,0.3); width: 40px; height: 40px; border-radius: 50%; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 20; transition: .3s; backdrop-filter: blur(5px); }
-        .carousel-btn:hover { background: var(--accent-purple); border-color: var(--accent-cyan); box-shadow: 0 0 15px var(--accent-purple); }
-        .carousel-btn.prev { left: 10px; } .carousel-btn.next { right: 10px; }
-        .img-dots { position: absolute; bottom: 12px; left: 0; width: 100%; display: flex; justify-content: center; gap: 8px; z-index: 20; pointer-events: none; }
-        .dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.3); transition: .3s; }
-        .dot.active { background: var(--accent-cyan); box-shadow: 0 0 10px var(--accent-cyan); transform: scale(1.3); }
+        .btn-group { display: flex; gap: 10px; width: 100%; }
+        .btn-group button { padding: 10px; font-size: 0.9rem; font-weight: 800; border-radius: 6px; cursor: pointer; border: none; color: #fff; flex: 1; transition: .2s; }
+        .btn-edit { background: #00b8ff; } .btn-edit:hover { background: #0088cc; }
+        .btn-del { background: #ff0055; } .btn-del:hover { background: #cc0044; }
 
-        .type-tag { position: absolute; top: 20px; right: 20px; padding: 8px 14px; border-radius: 10px; font-weight: 800; font-size: 0.75rem; z-index: 15; letter-spacing: 1px; text-transform: uppercase; backdrop-filter: blur(10px); display: flex; align-items: center; gap: 6px; }
-        .tag-slab { background: rgba(40,0,60,0.85); border: 1px solid #bd00ff; color: #fff; text-shadow: 0 1px 3px #000; box-shadow: 0 0 20px rgba(213,0,255,0.4); }
-        .tag-raw { background: rgba(0,40,40,0.85); border: 1px solid #00ff9d; color: #fff; text-shadow: 0 1px 3px #000; box-shadow: 0 0 15px rgba(0,255,157,0.3); }
-        .cond-badge { position: absolute; top: 20px; left: 20px; padding: 8px 14px; border-radius: 10px; font-weight: 800; font-size: 0.75rem; z-index: 15; letter-spacing: 1px; text-transform: uppercase; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); display: flex; align-items: center; gap: 6px; box-shadow: 0 0 15px rgba(0,0,0,0.5); }
+        #login-section { display: block; } #admin-section { display: none; }
+        .empty-state { color: #888; font-style: italic; font-size: 1rem; padding: 2rem 0; text-align: center; background: rgba(0,0,0,0.3); border-radius: 12px; border: 1px dashed #444; }
+        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(120%); background: rgba(10,10,20,0.95); border: 1px solid var(--accent); color: #fff; padding: 12px 22px; border-radius: 10px; font-weight: 700; box-shadow: 0 0 30px rgba(0,255,242,0.4); z-index: 9999; transition: transform .4s cubic-bezier(0.22,1,0.36,1); max-width: 90%; }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+        .toast.err { border-color: #ff4444; box-shadow: 0 0 30px rgba(255,68,68,0.4); }
 
-        .item-content { padding: 1.8rem; flex: 1; display: flex; flex-direction: column; position: relative; z-index: 2; }
-        .item-content h3 { font-size: 1.5rem; margin-bottom: 0.8rem; font-weight: 800; line-height: 1.2; color: #fff; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
-        .item-content p { color: var(--text-dim); font-size: 1rem; line-height: 1.6; margin-bottom: 1.5rem; flex: 1; }
-        .price-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(213,0,255,0.2); }
-        .price { font-size: 2rem; font-weight: 900; color: var(--accent-gold); text-shadow: 0 0 25px rgba(255,215,0,0.4); }
-        .stock { font-size: 0.9rem; color: var(--text-bright); background: rgba(213,0,255,0.2); padding: 6px 14px; border-radius: 30px; font-weight: 700; border: 1px solid rgba(213,0,255,0.4); }
+        a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 
-        .buy-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 1.2rem; border-radius: 16px; background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan)); color: #fff; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 1.1rem; letter-spacing: 1.5px; line-height: 1.1; transition: .4s; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.3); cursor: pointer; box-shadow: 0 10px 30px rgba(213,0,255,0.3), inset 0 2px 0 rgba(255,255,255,0.4); }
-        .buy-btn:hover { transform: translateY(-5px); box-shadow: 0 0 50px rgba(0,255,242,0.8); border-color: #fff; }
-        .btn-subtext { font-size: 0.75rem; opacity: 0.9; margin-top: 4px; font-weight: 700; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.8); text-transform: none; }
-        .sold-out { background: #0f0f1a !important; color: #666 !important; pointer-events: none; border: 2px solid #2a2a3a !important; box-shadow: inset 0 0 20px rgba(0,0,0,0.5) !important; }
-        .sold-out .btn-subtext { display: none; }
-
-        .skeleton { position: relative; overflow: hidden; background: rgba(255,255,255,0.03); border-radius: 24px; min-height: 450px; border: 1px solid rgba(213,0,255,0.15); }
-        .skeleton::after { content: ''; position: absolute; inset: 0; transform: translateX(-100%); background: linear-gradient(90deg, transparent, rgba(213,0,255,0.08), transparent); animation: shimmer 1.6s infinite; }
-        @keyframes shimmer { 100% { transform: translateX(100%); } }
-
-        .image-modal { display: none; position: fixed; inset: 0; z-index: 9999; padding-top: 50px; width: 100%; height: 100%; overflow: auto; background: rgba(0,0,0,0.9); align-items: center; justify-content: center; backdrop-filter: blur(20px); }
-        .modal-content { margin: auto; display: block; max-width: 90%; max-height: 85vh; border: 3px solid var(--accent-purple); box-shadow: 0 0 100px rgba(213,0,255,0.8); border-radius: 20px; }
-        .close-modal { position: absolute; top: 30px; right: 40px; color: var(--accent-purple); font-size: 50px; font-weight: 900; cursor: pointer; z-index: 10000; text-shadow: 0 0 20px var(--accent-purple); background: none; border: none; line-height: 1; }
-
-        .error-card { grid-column: 1/-1; text-align: center; padding: 4rem; background: rgba(0,0,0,0.5); border-radius: 20px; border: 1px solid rgba(255,0,64,0.3); }
-        .error-card h2 { color: #ff4444; margin-bottom: 1rem; } .error-card p { color: var(--text-dim); margin-bottom: 1.5rem; }
-        .retry-btn { background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan)); border: none; color: #fff; padding: 12px 28px; border-radius: 12px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; box-shadow: 0 0 20px rgba(213,0,255,0.3); transition: transform .3s, box-shadow .3s; }
-        .retry-btn:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(0,255,242,0.6); }
-        .locked-card { grid-column: 1/-1; text-align: center; padding: 4rem; background: rgba(0,0,0,0.5); border-radius: 20px; border: 1px solid rgba(213,0,255,0.3); }
-        .locked-card h2 { color: #fff; margin-bottom: 1rem; } .locked-card p { color: var(--text-dim); }
-
-        footer { text-align: center; padding: 3rem 0 4rem; color: var(--text-dim); font-size: 0.9rem; position: relative; z-index: 2; letter-spacing: 1px; }
-        a:focus-visible, button:focus-visible { outline: 3px solid var(--accent-cyan); outline-offset: 3px; border-radius: 8px; }
-
-        @media (max-width: 768px) {
-            .p-rayquaza, .p-charizard { display: none; }
-            .p-suicune { width: 120vw; opacity: 0.08; top: 40%; }
-            .p-pichu { width: 90px; opacity: 0.3; left: 3%; }
-            .p-magikarp { width: 120px; opacity: 0.32; right: 3%; }
-            main { padding: 1.5rem 1rem; width: 95%; border-radius: 25px; }
-            .store-grid { grid-template-columns: 1fr; gap: 30px; }
-        }
-        @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
-            body::before { animation: none; }
-        }
+        @media(max-width: 600px) { .flex-row { flex-direction: column; gap: 0; } .flex-row > div { width: 100%; } .card { padding: 1.2rem; } h1 { font-size: 1.6rem; } }
+        @media(min-width: 600px) { li { flex-direction: row; align-items: center; justify-content: space-between; } .btn-group { width: auto; flex-shrink: 0; flex-direction: column; gap: 8px; } .btn-group button { padding: 8px 20px; width: 100%; } }
+        @media (prefers-reduced-motion: reduce) { body::before { animation: none; } * { transition-duration: 0.001ms !important; } }
     </style>
 </head>
 <body>
     <div class="grain"></div>
-    <div class="particles"></div>
-    <div class="parallax-layer">
-        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="poke-bg p-suicune" alt="" loading="lazy">
-        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/384.png" class="poke-bg p-rayquaza" alt="" loading="lazy">
-        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/006.png" class="poke-bg p-charizard" alt="" loading="lazy">
-        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/172.png" class="poke-bg p-pichu" alt="" loading="lazy">
-        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/129.png" class="poke-bg p-magikarp" alt="" loading="lazy">
-    </div>
+    <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="suicune-bg" alt="">
+    <div class="container">
+        <h1><i class="ph-fill ph-shield-check"></i> PBM ADMIN</h1>
 
-    <nav class="top-nav">
-        <a href="index.html" class="nav-link"><i class="ph-fill ph-monitor-play"></i> LIVE BREAKS</a>
-        <a href="vault.html" class="nav-link nav-active"><i class="ph-fill ph-storefront"></i> THE VAULT</a>
-    </nav>
-
-    <header>
-        <h1>THE VAULT</h1>
-        <div class="brand-strip">
-            <span class="subtitle">Singles &amp; Graded Slabs</span>
-            <span class="ver-pill"><i class="ph-fill ph-sparkle"></i> v2.0 · Upgraded</span>
+        <div id="login-section" class="card">
+            <label for="login-username">Username</label><input type="text" id="login-username" autocomplete="username">
+            <label for="login-password">Password</label><input type="password" id="login-password" autocomplete="current-password">
+            <button class="primary-btn" onclick="login()">Enter system</button>
         </div>
-    </header>
 
-    <main>
-        <div class="store-grid" id="store-container"></div>
-    </main>
+        <div id="admin-section">
+            <div class="card">
+                <h2 style="margin-top:0;margin-bottom:1.5rem;font-size:1.4rem;border-bottom:1px solid #333;padding-bottom:10px;">Add / edit item</h2>
 
-    <footer><p>© 2025 PBM Breaks · The Crystal League v2.0 · Not affiliated with Nintendo</p></footer>
+                <div class="flex-row">
+                    <div>
+                        <label for="item-type">Item type</label>
+                        <select id="item-type">
+                            <optgroup label="Live Breaks">
+                                <option value="msrp">✅ MSRP Break</option>
+                                <option value="bundle">💎 Bundle Break</option>
+                                <option value="baller">👑 Baller Bundle</option>
+                            </optgroup>
+                            <optgroup label="The Vault (Store)">
+                                <option value="slab">🔍 Graded Slab</option>
+                                <option value="raw">🃏 Raw Card</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="item-hidden">Visibility</label>
+                        <select id="item-hidden">
+                            <option value="false">👁️ Public (visible)</option>
+                            <option value="true" style="color:#ff6666">🚫 Hidden (draft)</option>
+                        </select>
+                    </div>
+                </div>
 
-    <div id="myModal" class="image-modal" onclick="closeModal()">
-        <button class="close-modal" aria-label="Close image">&times;</button>
-        <img class="modal-content" id="img01" alt="Expanded card image">
+                <div id="condition-container" style="display:none;">
+                    <label for="item-condition" style="color:#00ff9d;">⭐ Card condition (raw cards only)</label>
+                    <select id="item-condition" style="border:1px solid #00ff9d;">
+                        <option value="Mint (M)">Mint (M)</option>
+                        <option value="Near Mint (NM)">Near Mint (NM)</option>
+                        <option value="Lightly Played (LP)">Lightly Played (LP)</option>
+                        <option value="Moderately Played (MP)">Moderately Played (MP)</option>
+                        <option value="Heavily Played (HP)">Heavily Played (HP)</option>
+                        <option value="Damaged (DMG)">Damaged (DMG)</option>
+                    </select>
+                </div>
+
+                <div id="grader-container" style="display:none;">
+                    <label for="item-grader" style="color:#d500ff;">🔍 Grading company (slabs only)</label>
+                    <select id="item-grader" style="border:1px solid #d500ff;">
+                        <option value="PSA">PSA</option>
+                        <option value="BGS">BGS</option>
+                        <option value="CGC">CGC</option>
+                        <option value="SGC">SGC</option>
+                        <option value="ACE">ACE</option>
+                        <option value="MANA">Mana</option>
+                        <option value="Other">Other grader</option>
+                    </select>
+                </div>
+
+                <div class="flex-row">
+                    <div>
+                        <label for="item-schedule-date">🟢 Start time (optional)</label>
+                        <input type="datetime-local" id="item-schedule-date">
+                    </div>
+                    <div>
+                        <label for="item-schedule-end">🔴 Close time (optional)</label>
+                        <input type="datetime-local" id="item-schedule-end">
+                    </div>
+                </div>
+
+                <label for="item-name">Name (e.g. PSA 10 Base Set Charizard)</label>
+                <input type="text" id="item-name" placeholder="Item name">
+
+                <label for="item-description">Description</label>
+                <input type="text" id="item-description" placeholder="Short description…">
+
+                <div class="flex-row">
+                    <div>
+                        <label for="item-price">Price ($)</label>
+                        <input type="number" id="item-price" placeholder="0.00" step="0.01" min="0">
+                    </div>
+                    <div>
+                        <label for="item-stock">Stock (set to 1 for singles)</label>
+                        <input type="number" id="item-stock" value="1" min="0">
+                    </div>
+                </div>
+
+                <label for="item-google-form-link">Payment link (PayPal.me / Stripe / Streamlabs)</label>
+                <input type="url" id="item-google-form-link" placeholder="https://…">
+
+                <label for="item-image">Images (select multiple — auto-compressed before upload)</label>
+                <input type="file" id="item-image" multiple accept="image/*">
+                <div id="img-preview" class="img-preview-row"></div>
+
+                <button id="submit-btn" class="primary-btn" style="margin-top:1rem;" onclick="submitItem()">Save to database</button>
+            </div>
+
+            <h2 style="text-align:center;font-size:1.8rem;margin-top:3rem;margin-bottom:1.5rem;">Inventory management</h2>
+
+            <div class="inventory-controls">
+                <div class="search-box">
+                    <i class="ph-bold ph-magnifying-glass"></i>
+                    <input type="text" id="inventory-search" placeholder="Search by name, grader, or type…" onkeyup="renderInventory()">
+                </div>
+                <div class="tab-container">
+                    <button class="inv-tab active" onclick="switchTab('all', this)"><i class="ph-fill ph-circles-four"></i> All</button>
+                    <button class="inv-tab" onclick="switchTab('breaks', this)"><i class="ph-fill ph-monitor-play"></i> Breaks</button>
+                    <button class="inv-tab" onclick="switchTab('slabs', this)"><i class="ph-fill ph-certificate"></i> Slabs</button>
+                    <button class="inv-tab" onclick="switchTab('raw', this)"><i class="ph-fill ph-cards"></i> Raw</button>
+                </div>
+            </div>
+
+            <ul id="inventory-list"></ul>
+
+            <div style="display:flex;flex-direction:column;gap:15px;margin-top:3rem;">
+                <button onclick="logout()" style="background:#222;border:1px solid #444;color:#fff;padding:12px;border-radius:8px;cursor:pointer;font-weight:700;text-transform:uppercase;">Log out</button>
+                <a href="index.html" style="text-align:center;color:#888;text-decoration:none;font-weight:600;padding:10px;">Return to live site</a>
+            </div>
+        </div>
     </div>
+
+    <div id="toast" class="toast"></div>
 
     <script>
         const API_URL = 'https://pokeballer-worker.kronborgnielsen.workers.dev/api';
-        window.vaultImages = {};
-        window.currentImgIndex = {};
 
+        let allItems = [];
+        let editingId = null;
+        let currentImage = '';
+        let currentImages = [];
+        let currentCreatedAt = null;
+        let currentClicks = 0;
+        let currentTab = 'all';
+
+        /* ---------- HELPERS ---------- */
         const wait = ms => new Promise(r => setTimeout(r, ms));
         function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
         function money(n) { const v = Number(n); return isFinite(v) ? v.toFixed(2) : '0.00'; }
-        function toInt(n) { const v = parseInt(n, 10); return isFinite(v) ? v : 0; }
+        function toInt(n, fallback) { const v = parseInt(n, 10); return isFinite(v) ? v : (fallback != null ? fallback : 0); }
+
+        function toast(msg, isErr) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.className = 'toast show' + (isErr ? ' err' : '');
+            setTimeout(() => { t.className = 'toast' + (isErr ? ' err' : ''); }, 3200);
+        }
 
         async function fetchWithRetry(url, opts = {}, retries = 2) {
             let lastErr;
             for (let attempt = 0; attempt <= retries; attempt++) {
                 const ctrl = new AbortController();
-                const timer = setTimeout(() => ctrl.abort(), 12000);
+                const timer = setTimeout(() => ctrl.abort(), 15000);
                 try {
                     const res = await fetch(url, { ...opts, signal: ctrl.signal });
                     clearTimeout(timer);
-                    if (!res.ok) { if (res.status >= 500 && attempt < retries) { await wait(700 * (attempt + 1)); continue; } throw new Error('HTTP ' + res.status); }
+                    if (!res.ok) {
+                        if (res.status >= 500 && attempt < retries) { await wait(700 * (attempt + 1)); continue; }
+                        throw new Error('HTTP ' + res.status);
+                    }
                     return res;
                 } catch (e) { clearTimeout(timer); lastErr = e; if (attempt < retries) { await wait(700 * (attempt + 1)); continue; } }
             }
             throw lastErr || new Error('Request failed');
         }
 
-        function renderSkeletons(containerId, count) {
-            const container = document.getElementById(containerId);
-            let html = '';
-            for (let i = 0; i < count; i++) html += '<div class="skeleton"></div>';
-            container.innerHTML = html;
+        /* ---------- BOOT ---------- */
+        if (localStorage.getItem('adminToken')) {
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('admin-section').style.display = 'block';
+            loadItems();
         }
 
-        function switchImg(event, id, dir) {
-            event.stopPropagation();
-            const images = window.vaultImages[id];
-            if (!images || images.length < 2) return;
-            let curr = window.currentImgIndex[id] || 0;
-            curr += dir;
-            if (curr < 0) curr = images.length - 1;
-            if (curr >= images.length) curr = 0;
-            window.currentImgIndex[id] = curr;
-            const mainImg = document.getElementById(`main-img-${id}`);
-            if (mainImg) mainImg.src = images[curr];
-            document.querySelectorAll(`#dots-${CSS.escape(id)} .dot`).forEach((dot, index) => { dot.className = index === curr ? 'dot active' : 'dot'; });
+        document.getElementById('login-password').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+
+        document.getElementById('item-type').addEventListener('change', function () {
+            document.getElementById('condition-container').style.display = this.value === 'raw' ? 'block' : 'none';
+            document.getElementById('grader-container').style.display = this.value === 'slab' ? 'block' : 'none';
+        });
+
+        document.getElementById('item-image').addEventListener('change', function () {
+            const preview = document.getElementById('img-preview');
+            preview.innerHTML = '';
+            const files = Array.from(this.files || []).slice(0, 8);
+            files.forEach(f => {
+                const url = URL.createObjectURL(f);
+                const img = document.createElement('img');
+                img.src = url;
+                img.onload = () => URL.revokeObjectURL(url);
+                preview.appendChild(img);
+            });
+        });
+
+        function switchTab(tabName, btnElement) {
+            currentTab = tabName;
+            document.querySelectorAll('.inv-tab').forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
+            renderInventory();
         }
 
-        function openItemModal(id) {
-            const images = window.vaultImages[id];
-            const curr = window.currentImgIndex[id] || 0;
-            if (images && images.length > 0) openModal(images[curr]);
-            else { const m = document.getElementById(`main-img-${id}`); if (m) openModal(m.src); }
+        /* ---------- LOGIN ---------- */
+        async function login() {
+            const u = document.getElementById('login-username').value;
+            const p = document.getElementById('login-password').value;
+            if (!u || !p) { toast('Enter a username and password.', true); return; }
+            try {
+                const res = await fetchWithRetry(`${API_URL}/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: u, password: p }) });
+                const data = await res.json();
+                if (data.success) { localStorage.setItem('adminToken', '1'); location.reload(); }
+                else toast('Invalid credentials.', true);
+            } catch (e) { toast('Could not reach the server. Try again.', true); }
         }
 
-        async function loadVault() {
-            renderSkeletons('store-container', 3);
-            const container = document.getElementById('store-container');
+        /* ---------- IMAGE COMPRESSION (robust, never hangs) ---------- */
+        function compressImage(file) {
+            return new Promise(resolve => {
+                let settled = false;
+                const done = v => { if (!settled) { settled = true; resolve(v); } };
+                const guard = setTimeout(() => done(null), 15000); // never block save forever
+
+                const reader = new FileReader();
+                reader.onerror = () => { clearTimeout(guard); done(null); };
+                reader.onload = event => {
+                    const img = new Image();
+                    img.onerror = () => { clearTimeout(guard); done(null); };
+                    img.onload = () => {
+                        try {
+                            const canvas = document.createElement('canvas');
+                            const MAX_WIDTH = 800;
+                            let scaleSize = MAX_WIDTH / img.width;
+                            if (!isFinite(scaleSize) || scaleSize > 1) scaleSize = 1;
+                            canvas.width = Math.max(1, Math.round(img.width * scaleSize));
+                            canvas.height = Math.max(1, Math.round(img.height * scaleSize));
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                            clearTimeout(guard);
+                            done(canvas.toDataURL('image/jpeg', 0.8));
+                        } catch (e) { clearTimeout(guard); done(null); }
+                    };
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        /* ---------- SAVE ---------- */
+        async function submitItem() {
+            const btn = document.getElementById('submit-btn');
+            const originalLabel = editingId ? 'Update database item' : 'Save to database';
+
+            const name = document.getElementById('item-name').value.trim();
+            if (!name) { toast('Give the item a name first.', true); return; }
+
+            btn.disabled = true;
+            btn.innerText = 'Processing & saving…';
+
+            try {
+                const type = document.getElementById('item-type').value;
+                const hidden = document.getElementById('item-hidden').value === 'true';
+                const condition = type === 'raw' ? document.getElementById('item-condition').value : null;
+                const grader = type === 'slab' ? document.getElementById('item-grader').value : null;
+                const scheduleDate = document.getElementById('item-schedule-date').value;
+                const scheduleEnd = document.getElementById('item-schedule-end').value;
+                const desc = document.getElementById('item-description').value;
+                const price = Number(document.getElementById('item-price').value);
+                const stock = toInt(document.getElementById('item-stock').value, 1);
+                const form = document.getElementById('item-google-form-link').value;
+
+                const fileInput = document.getElementById('item-image');
+                let imagesArray = editingId ? [...currentImages] : [];
+
+                if (fileInput.files.length > 0) {
+                    const compressed = [];
+                    for (let i = 0; i < fileInput.files.length; i++) {
+                        const result = await compressImage(fileInput.files[i]);
+                        if (result) compressed.push(result);
+                    }
+                    if (compressed.length > 0) imagesArray = compressed;
+                    else toast('Those images couldn\'t be processed — saving without new images.', true);
+                }
+
+                const img = imagesArray.length > 0 ? imagesArray[0] : (editingId ? currentImage : '');
+
+                const body = {
+                    type, name, description: desc,
+                    price: isFinite(price) ? price : 0,
+                    stock, googleFormLink: form, image: img, images: imagesArray,
+                    clickCount: editingId ? currentClicks : 0,
+                    createdAt: editingId ? currentCreatedAt : Date.now(),
+                    hidden, scheduleDate, scheduleEnd, condition, grader
+                };
+
+                const url = editingId ? `${API_URL}/items/${editingId}` : `${API_URL}/items`;
+                const method = editingId ? 'PUT' : 'POST';
+                await fetchWithRetry(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+
+                resetForm();
+                toast(editingId ? 'Item updated.' : 'Item saved.');
+                editingId = null;
+                loadItems();
+            } catch (e) {
+                console.error('Save error:', e);
+                toast('Save failed — the server didn\'t confirm. Nothing was lost; try again.', true);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = editingId ? 'Update database item' : 'Save to database';
+            }
+        }
+
+        function resetForm() {
+            editingId = null; currentImage = ''; currentImages = []; currentCreatedAt = null; currentClicks = 0;
+            ['item-name', 'item-description', 'item-price', 'item-google-form-link', 'item-schedule-date', 'item-schedule-end'].forEach(id => document.getElementById(id).value = '');
+            document.getElementById('item-stock').value = '1';
+            document.getElementById('item-image').value = '';
+            document.getElementById('img-preview').innerHTML = '';
+            document.getElementById('item-type').value = 'msrp';
+            document.getElementById('item-hidden').value = 'false';
+            document.getElementById('item-condition').value = 'Mint (M)';
+            document.getElementById('item-grader').value = 'PSA';
+            document.getElementById('item-type').dispatchEvent(new Event('change'));
+            document.getElementById('submit-btn').innerText = 'Save to database';
+        }
+
+        function formatLiteralDate(val) {
+            if (!val || val.indexOf('T') === -1) return val || '';
+            try {
+                const [datePart, timePart] = val.split('T');
+                if (!timePart) return val;
+                const [, month, day] = datePart.split('-');
+                let [hour, minute] = timePart.split(':');
+                let h = parseInt(hour, 10), ampm = 'AM';
+                if (h >= 12) { ampm = 'PM'; if (h > 12) h -= 12; }
+                if (h === 0) h = 12;
+                return `${month}/${day} @ ${h}:${minute}${ampm}`;
+            } catch (e) { return val; }
+        }
+
+        /* ---------- LOAD + RENDER ---------- */
+        async function loadItems() {
+            const listContainer = document.getElementById('inventory-list');
+            listContainer.innerHTML = '<div class="empty-state">Loading inventory…</div>';
             try {
                 const res = await fetchWithRetry(`${API_URL}/items`);
                 const items = await res.json();
                 if (!Array.isArray(items)) throw new Error(items && items.error ? items.error : 'Bad data');
-
                 items.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-                let storeHTML = '', visibleCount = 0;
-
-                items.forEach(item => {
-                    if (!item || item.hidden || (item.type !== 'slab' && item.type !== 'raw')) return;
-                    visibleCount++;
-                    const id = esc(item.id);
-                    const isSlab = item.type === 'slab';
-                    let tagClass = 'tag-raw', wrapperClass = '', tagText = '<i class="ph-fill ph-cards"></i> RAW CARD';
-
-                    if (isSlab) {
-                        const graderName = item.grader && item.grader !== 'Other' ? item.grader : 'GRADED';
-                        tagText = `<i class="ph-fill ph-certificate"></i> ${esc(graderName)} SLAB`;
-                        if (graderName === 'PSA') { wrapperClass = 'card-psa'; tagClass = 'tag-psa'; }
-                        else if (graderName === 'BGS') { wrapperClass = 'card-bgs'; tagClass = 'tag-bgs'; }
-                        else if (graderName === 'CGC') { wrapperClass = 'card-cgc'; tagClass = 'tag-cgc'; }
-                        else if (graderName === 'SGC') { wrapperClass = 'card-sgc'; tagClass = 'tag-sgc'; }
-                        else if (graderName === 'ACE') { wrapperClass = 'card-ace'; tagClass = 'tag-ace'; }
-                        else { tagClass = 'tag-slab'; }
-                    }
-
-                    let conditionHTML = '';
-                    if (item.type === 'raw' && item.condition) {
-                        let color = '#00ff9d';
-                        if (item.condition === 'Mint (M)') color = '#00fff2';
-                        if (item.condition.includes('LP')) color = '#b2ff59';
-                        if (item.condition.includes('MP')) color = '#ffeb3b';
-                        if (item.condition.includes('HP')) color = '#ff9800';
-                        if (item.condition.includes('DMG')) color = '#ff4444';
-                        const extraStyle = item.condition === 'Mint (M)' ? 'box-shadow:0 0 20px rgba(0,255,242,0.6);font-weight:900;' : '';
-                        conditionHTML = `<div class="cond-badge" style="color:${color};border:1px solid ${color};${extraStyle}">⭐ ${esc(item.condition)}</div>`;
-                    }
-
-                    const isEnded = toInt(item.stock) <= 0;
-                    let btnHTML;
-                    if (isEnded) btnHTML = '<div class="buy-btn sold-out">SOLD OUT</div>';
-                    else if (item.googleFormLink) btnHTML = `<a href="${esc(item.googleFormLink)}" target="_blank" rel="noopener" class="buy-btn" onclick="trackClick('${id}')"><span>ENTER FOR A CHANCE</span><span class="btn-subtext">Only pay if picked on the wheel</span></a>`;
-                    else btnHTML = '<div class="buy-btn sold-out" style="background:#555;border-color:#777;">COMING SOON</div>';
-
-                    const imgArray = (item.images && item.images.length > 0) ? item.images : (item.image ? [item.image] : ['https://assets.pokemon.com/assets/cms2/img/misc/trading-card-games/cards/tcg_default_card.png']);
-                    window.vaultImages[item.id] = imgArray;
-                    window.currentImgIndex[item.id] = 0;
-
-                    let imgHTML;
-                    if (imgArray.length > 1) {
-                        const dotsHTML = imgArray.map((_, idx) => `<div class="dot ${idx === 0 ? 'active' : ''}"></div>`).join('');
-                        imgHTML = `
-                            <img src="${esc(imgArray[0])}" class="item-img" id="main-img-${id}" alt="${esc(item.name)}" loading="lazy">
-                            <button class="carousel-btn prev" aria-label="Previous image" onclick="switchImg(event, '${id}', -1)"><i class="ph-bold ph-caret-left"></i></button>
-                            <button class="carousel-btn next" aria-label="Next image" onclick="switchImg(event, '${id}', 1)"><i class="ph-bold ph-caret-right"></i></button>
-                            <div class="img-dots" id="dots-${id}">${dotsHTML}</div>`;
-                    } else imgHTML = `<img src="${esc(imgArray[0])}" class="item-img" id="main-img-${id}" alt="${esc(item.name)}" loading="lazy">`;
-
-                    storeHTML += `
-                        <div class="neon-card-wrapper ${wrapperClass}" id="card-${id}">
-                            <div class="item-card glass-panel">
-                                ${conditionHTML}
-                                <div class="type-tag ${tagClass}">${tagText}</div>
-                                <div class="item-img-box" onclick="openItemModal('${id}')">${imgHTML}</div>
-                                <div class="item-content">
-                                    <h3>${esc(item.name)}</h3>
-                                    <p>${esc(item.description)}</p>
-                                    <div class="price-row"><span class="price">$${money(item.price)}</span><span class="stock">${toInt(item.stock) > 1 ? toInt(item.stock) + ' Available' : '1 of 1'}</span></div>
-                                    <div id="btn-container-${id}">${btnHTML}</div>
-                                </div>
-                            </div>
-                        </div>`;
-                });
-
-                if (visibleCount === 0) storeHTML = `<div class="locked-card"><h2>The Vault is locked</h2><p>No singles or slabs are listed right now. Check back soon — fresh pulls land here after every break.</p></div>`;
-                container.innerHTML = storeHTML;
-                bindTilt();
+                allItems = items;
+                renderInventory();
             } catch (e) {
-                console.error('Vault error:', e);
-                container.innerHTML = `<div class="error-card"><h2>Couldn't open the Vault</h2><p>The server didn't answer in time. This usually clears in a few seconds.</p><button class="retry-btn" onclick="loadVault()">Try again</button></div>`;
+                console.error('Load error:', e);
+                listContainer.innerHTML = '<div class="empty-state">Couldn\'t load inventory. <button class="btn-edit" style="border:none;padding:6px 14px;border-radius:6px;cursor:pointer;color:#fff;font-weight:800;margin-left:8px;" onclick="loadItems()">Retry</button></div>';
             }
         }
 
-        function trackClick(id) { fetch(`${API_URL}/click`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }), keepalive: true }).catch(() => {}); return true; }
-        function openModal(src) { document.getElementById('myModal').style.display = 'flex'; document.getElementById('img01').src = src; }
-        function closeModal() { document.getElementById('myModal').style.display = 'none'; }
-        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+        function renderInventory() {
+            const listContainer = document.getElementById('inventory-list');
+            const searchQuery = document.getElementById('inventory-search').value.toLowerCase();
 
-        const canMotion = window.matchMedia && window.matchMedia('(pointer:fine)').matches && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        function bindTilt() {
-            if (!canMotion) return;
-            document.querySelectorAll('.neon-card-wrapper').forEach(card => {
-                if (card.dataset.tilt) return;
-                card.dataset.tilt = '1';
-                const panel = card.querySelector('.glass-panel');
-                if (!panel) return;
-                card.addEventListener('mousemove', ev => {
-                    const r = card.getBoundingClientRect();
-                    const px = (ev.clientX - r.left) / r.width - 0.5;
-                    const py = (ev.clientY - r.top) / r.height - 0.5;
-                    panel.style.transform = `rotateY(${(px * 5).toFixed(2)}deg) rotateX(${(-py * 5).toFixed(2)}deg)`;
-                });
-                card.addEventListener('mouseleave', () => { panel.style.transform = ''; });
+            const filteredItems = allItems.filter(item => {
+                if (currentTab === 'breaks' && (item.type === 'slab' || item.type === 'raw')) return false;
+                if (currentTab === 'slabs' && item.type !== 'slab') return false;
+                if (currentTab === 'raw' && item.type !== 'raw') return false;
+                const searchStr = `${item.name || ''} ${item.grader || ''} ${item.condition || ''} ${item.type || ''}`.toLowerCase();
+                if (searchQuery && !searchStr.includes(searchQuery)) return false;
+                return true;
             });
-        }
-        function initParallax() {
-            const layer = document.querySelector('.parallax-layer');
-            if (!canMotion || !layer) return;
-            let raf = null, tx = 0, ty = 0;
-            window.addEventListener('mousemove', e => {
-                tx = (e.clientX / window.innerWidth - 0.5) * 26;
-                ty = (e.clientY / window.innerHeight - 0.5) * 26;
-                if (!raf) raf = requestAnimationFrame(() => { layer.style.transform = `translate3d(${tx.toFixed(1)}px, ${ty.toFixed(1)}px, 0)`; raf = null; });
-            }, { passive: true });
+
+            if (filteredItems.length === 0) {
+                listContainer.innerHTML = '<div class="empty-state">No items match your search.</div>';
+                return;
+            }
+
+            listContainer.innerHTML = filteredItems.map(item => {
+                const id = esc(item.id);
+                let badgeClass = 'b-msrp', badgeText = 'MSRP';
+                if (item.type === 'baller') { badgeClass = 'b-baller'; badgeText = '<i class="ph-fill ph-crown"></i> BALLER'; }
+                else if (item.type === 'bundle') { badgeClass = 'b-bundle'; badgeText = '<i class="ph-fill ph-sketch-logo"></i> BUNDLE'; }
+                else if (item.type === 'slab') {
+                    const g = item.grader;
+                    if (g === 'PSA') badgeClass = 'b-psa'; else if (g === 'BGS') badgeClass = 'b-bgs';
+                    else if (g === 'CGC') badgeClass = 'b-cgc'; else if (g === 'SGC') badgeClass = 'b-sgc';
+                    else if (g === 'ACE') badgeClass = 'b-ace'; else badgeClass = 'b-slab';
+                    badgeText = `🔍 ${esc(g || 'SLAB')}`;
+                } else if (item.type === 'raw') { badgeClass = 'b-raw'; badgeText = '🃏 RAW'; }
+
+                const hiddenBadge = item.hidden ? '<span class="badge b-hidden"><i class="ph-fill ph-eye-slash"></i> HIDDEN</span>' : '';
+                const condBadge = item.type === 'raw' && item.condition ? `<span class="badge b-cond">${esc(item.condition)}</span>` : '';
+                const imgCount = item.images && item.images.length > 1 ? `<span class="badge" style="background:#444;border:1px solid #777;"><i class="ph-fill ph-images"></i> ${item.images.length}</span>` : '';
+                const opacity = item.hidden ? 'opacity:0.6;' : '';
+
+                let timeBadge = '';
+                if (item.scheduleDate) {
+                    const start = formatLiteralDate(item.scheduleDate);
+                    const end = item.scheduleEnd ? formatLiteralDate(item.scheduleEnd) : '…';
+                    timeBadge = `<span class="badge b-time"><i class="ph-fill ph-clock"></i> ${esc(start)} ➔ ${esc(end)}</span>`;
+                }
+
+                return `
+                    <li style="${opacity}">
+                        <div class="item-content">
+                            <div class="item-header">
+                                <span class="item-title">${esc(item.name)}</span>
+                                ${hiddenBadge}
+                                <span class="badge ${badgeClass}">${badgeText}</span>
+                                ${condBadge}${imgCount}
+                            </div>
+                            <div class="item-meta">${timeBadge}</div>
+                            <div class="item-meta">
+                                <span><strong>$${money(item.price)}</strong></span>
+                                <span>• Stock: ${toInt(item.stock)}</span>
+                                <span class="click-badge">🖱️ ${toInt(item.clickCount)}</span>
+                            </div>
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn-edit" onclick="startEditing('${id}')">Edit</button>
+                            <button class="btn-del" onclick="deleteItem('${id}')">Del</button>
+                        </div>
+                    </li>`;
+            }).join('');
         }
 
-        initParallax();
-        loadVault();
+        function startEditing(id) {
+            const item = allItems.find(i => String(i.id) === String(id));
+            if (!item) return;
+            editingId = item.id;
+            currentImage = item.image || '';
+            currentImages = item.images || (item.image ? [item.image] : []);
+            currentCreatedAt = item.createdAt;
+            currentClicks = toInt(item.clickCount);
+
+            document.getElementById('item-type').value = item.type || 'msrp';
+            document.getElementById('item-hidden').value = item.hidden ? 'true' : 'false';
+            document.getElementById('item-schedule-date').value = (item.scheduleDate && item.scheduleDate.indexOf('T') > -1) ? item.scheduleDate : '';
+            document.getElementById('item-schedule-end').value = (item.scheduleEnd && item.scheduleEnd.indexOf('T') > -1) ? item.scheduleEnd : '';
+            document.getElementById('item-name').value = item.name || '';
+            document.getElementById('item-description').value = item.description || '';
+            document.getElementById('item-price').value = item.price != null ? item.price : '';
+            document.getElementById('item-stock').value = toInt(item.stock, 1);
+            document.getElementById('item-google-form-link').value = item.googleFormLink || '';
+            document.getElementById('item-image').value = '';
+            document.getElementById('item-condition').value = item.condition || 'Mint (M)';
+            document.getElementById('item-grader').value = item.grader || 'PSA';
+            document.getElementById('item-type').dispatchEvent(new Event('change'));
+
+            // show existing images as a reference (replaced only if you pick new files)
+            const preview = document.getElementById('img-preview');
+            preview.innerHTML = (currentImages || []).slice(0, 8).map(src => `<img src="${esc(src)}" alt="">`).join('');
+
+            document.getElementById('submit-btn').innerText = 'Update database item';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        async function deleteItem(id) {
+            if (!confirm('Permanently delete this item?')) return;
+            try {
+                await fetchWithRetry(`${API_URL}/items/${id}`, { method: 'DELETE' });
+                toast('Item deleted.');
+                loadItems();
+            } catch (e) { toast('Delete failed — try again.', true); }
+        }
+
+        function logout() { localStorage.removeItem('adminToken'); location.reload(); }
     </script>
 </body>
 </html>
