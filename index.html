@@ -437,7 +437,7 @@
                     else if (startTime) { if (endTime && now >= endTime) isEnded = true; else if (now >= startTime) isLive = true; }
 
                     if (!isEnded) {
-                        if (isLive) { timeBadgeHTML = '<div class="time-tag-bottom tag-is-live"><i class="ph-fill ph-fire"></i> DROP ACTIVE</div>'; wrapperClass += ' card-live-now'; }
+                        if (isLive) { timeBadgeHTML = '<div class="time-tag-bottom tag-is-live"><i class="ph-fill ph-check-circle"></i> FORM OPEN</div>'; wrapperClass += ' card-live-now'; }
                         else if (startTime) { const endAttr = item.scheduleEnd ? `data-end="${esc(item.scheduleEnd)}"` : ''; timeBadgeHTML = `<div class="time-tag-bottom countdown-timer" data-date="${esc(item.scheduleDate)}" ${endAttr} data-id="${id}"><i class="ph-fill ph-clock-countdown"></i> CALC…</div>`; }
                     }
 
@@ -517,7 +517,7 @@
                 const distance = startTarget - now;
                 if (distance < 0) {
                     const badgeContainer = document.getElementById(`badge-container-${itemId}`);
-                    if (badgeContainer && !badgeContainer.innerHTML.includes('DROP ACTIVE')) badgeContainer.innerHTML = '<div class="time-tag-bottom tag-is-live"><i class="ph-fill ph-fire"></i> DROP ACTIVE</div>';
+                    if (badgeContainer && !badgeContainer.innerHTML.includes('FORM OPEN')) badgeContainer.innerHTML = '<div class="time-tag-bottom tag-is-live"><i class="ph-fill ph-check-circle"></i> FORM OPEN</div>';
                     const card = document.getElementById(`card-${itemId}`);
                     if (card) card.classList.add('card-live-now');
                     const btnContainer = document.getElementById(`btn-container-${itemId}`);
