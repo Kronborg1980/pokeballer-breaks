@@ -437,15 +437,15 @@
                     else if (startTime) { if (endTime && now >= endTime) isEnded = true; else if (now >= startTime) isLive = true; }
 
                     if (!isEnded) {
-                        if (isLive) { timeBadgeHTML = '<div class="time-tag-bottom tag-is-live"><i class="ph-fill ph-broadcast"></i> LIVE NOW</div>'; wrapperClass += ' card-live-now'; }
+                        if (isLive) { timeBadgeHTML = '<div class="time-tag-bottom tag-is-live"><i class="ph-fill ph-fire"></i> DROP ACTIVE</div>'; wrapperClass += ' card-live-now'; }
                         else if (startTime) { const endAttr = item.scheduleEnd ? `data-end="${esc(item.scheduleEnd)}"` : ''; timeBadgeHTML = `<div class="time-tag-bottom countdown-timer" data-date="${esc(item.scheduleDate)}" ${endAttr} data-id="${id}"><i class="ph-fill ph-clock-countdown"></i> CALC…</div>`; }
                     }
 
                     let btnHTML;
                     if (isEnded) btnHTML = '<div class="buy-btn sold-out">SOLD OUT</div>';
                     else if (item.googleFormLink) {
-                        const btnText = isLive ? 'JOIN LIVE DRAW' : 'JOIN BREAK';
-                        const btnSub = isLive ? 'HAPPENING NOW!' : 'RESERVE YOUR SPOT';
+                        const btnText = isLive ? 'LOCK IN SPOT' : 'JOIN BREAK';
+                        const btnSub = isLive ? 'ENTRIES ARE OPEN!' : 'RESERVE YOUR SPOT';
                         const finalBtnClass = isLive ? 'buy-btn live-btn' : btnBaseClass;
                         btnHTML = `<a href="${esc(item.googleFormLink)}" target="_blank" rel="noopener" id="btn-${id}" class="${finalBtnClass}" onclick="trackClick('${id}')"><span>${btnText}</span><span class="btn-subtext" id="subtext-${id}">${btnSub}</span></a>`;
                     } else btnHTML = '<div class="buy-btn sold-out" style="background:#555;border-color:#777;">COMING SOON</div>';
@@ -517,15 +517,15 @@
                 const distance = startTarget - now;
                 if (distance < 0) {
                     const badgeContainer = document.getElementById(`badge-container-${itemId}`);
-                    if (badgeContainer && !badgeContainer.innerHTML.includes('LIVE NOW')) badgeContainer.innerHTML = '<div class="time-tag-bottom tag-is-live"><i class="ph-fill ph-broadcast"></i> LIVE NOW</div>';
+                    if (badgeContainer && !badgeContainer.innerHTML.includes('DROP ACTIVE')) badgeContainer.innerHTML = '<div class="time-tag-bottom tag-is-live"><i class="ph-fill ph-fire"></i> DROP ACTIVE</div>';
                     const card = document.getElementById(`card-${itemId}`);
                     if (card) card.classList.add('card-live-now');
                     const btnContainer = document.getElementById(`btn-container-${itemId}`);
                     const anchor = btnContainer ? btnContainer.querySelector('a') : null;
                     if (anchor && !anchor.classList.contains('live-btn')) {
                         anchor.className = 'buy-btn live-btn';
-                        const main = anchor.querySelector('span'); if (main) main.innerText = 'JOIN LIVE DRAW';
-                        const sub = anchor.querySelector('.btn-subtext'); if (sub) sub.innerText = 'HAPPENING NOW!';
+                        const main = anchor.querySelector('span'); if (main) main.innerText = 'LOCK IN SPOT';
+                        const sub = anchor.querySelector('.btn-subtext'); if (sub) sub.innerText = 'ENTRIES ARE OPEN!';
                     }
                 } else {
                     const d = Math.floor(distance / 86400000), h = Math.floor((distance % 86400000) / 3600000), m = Math.floor((distance % 3600000) / 60000), s = Math.floor((distance % 60000) / 1000);
