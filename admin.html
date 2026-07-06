@@ -174,7 +174,7 @@
                 </div>
 
                 <div class="flex-row">
-                    <div>
+                    <div id="schedule-date-container">
                         <label for="item-schedule-date">🟢 Start time (optional)</label>
                         <input type="datetime-local" id="item-schedule-date">
                     </div>
@@ -289,8 +289,15 @@
         document.getElementById('login-password').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
 
         document.getElementById('item-type').addEventListener('change', function () {
-            document.getElementById('condition-container').style.display = this.value === 'raw' ? 'block' : 'none';
-            document.getElementById('grader-container').style.display = this.value === 'slab' ? 'block' : 'none';
+            const val = this.value;
+            document.getElementById('condition-container').style.display = val === 'raw' ? 'block' : 'none';
+            document.getElementById('grader-container').style.display = val === 'slab' ? 'block' : 'none';
+            if (val === 'bundle' || val === 'baller') {
+                document.getElementById('schedule-date-container').style.display = 'none';
+                document.getElementById('item-schedule-date').value = '';
+            } else {
+                document.getElementById('schedule-date-container').style.display = 'block';
+            }
         });
 
         document.getElementById('item-image').addEventListener('change', function () {
