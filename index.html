@@ -433,8 +433,18 @@
                     const endTime = centralToMs(item.scheduleEnd);
                     if (item.scheduleDate) dateDisplayHTML = `<div class="date-row"><i class="ph-fill ph-calendar-blank"></i> ${formatLiteralDate(item.scheduleDate)}</div>`;
 
-                    if (toInt(item.stock) <= 0) isEnded = true;
-                    else if (startTime) { if (endTime && now >= endTime) isEnded = true; else if (now >= startTime) isLive = true; }
+                    if (toInt(item.stock) <= 0) {
+                        isEnded = true;
+                    } else {
+                        // Bundles and items without a start time are instantly live
+                        if (isBundle || isBaller || !startTime) {
+                            if (endTime && now >= endTime) isEnded = true;
+                            else isLive = true;
+                        } else {
+                            if (endTime && now >= endTime) isEnded = true;
+                            else if (now >= startTime) isLive = true;
+                        }
+                    }
 
                     if (!isEnded) {
                         if (isLive) { timeBadgeHTML = '<div class="time-tag-bottom tag-is-live"><i class="ph-fill ph-check-circle"></i> FORM OPEN</div>'; wrapperClass += ' card-live-now'; }
