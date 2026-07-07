@@ -12,7 +12,7 @@
     <style>
         :root {
             --bg: #02030c; --card: rgba(20,20,38,0.92); --accent: #00fff2; --purple: #d500ff;
-            --text: #ffffff; --gold: #ffd700; --dim: #aab0d8;
+            --text: #ffffff; --gold: #ffd700; --dim: #aab0d8; --green: #00ff9d; --live: #ff0040;
             --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
         }
         * { box-sizing: border-box; }
@@ -28,17 +28,19 @@
             animation: aurora 28s ease-in-out infinite;
         }
         @keyframes aurora { 0%,100% { background-position: 0% 0%, 100% 0%, 0 0; } 50% { background-position: 30% 20%, 70% 30%, 0 0; } }
+        .led-topbar { position: fixed; top: 0; left: 0; right: 0; height: 4px; z-index: 100; background: linear-gradient(90deg, var(--accent), var(--purple), var(--gold), var(--live), var(--accent)); background-size: 300% 100%; animation: ledFlow 6s linear infinite; box-shadow: 0 0 18px rgba(0,255,242,0.7); }
+        @keyframes ledFlow { 0% { background-position: 0% 0; } 100% { background-position: 300% 0; } }
         .grain { position: fixed; inset: 0; z-index: -2; pointer-events: none; background-image: var(--grain); background-size: 140px; opacity: 0.04; mix-blend-mode: overlay; }
         .suicune-bg { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 800px; opacity: 0.07; z-index: -1; pointer-events: none; filter: drop-shadow(0 0 80px var(--accent)); }
 
-        .container { max-width: 650px; margin: 0 auto; position: relative; z-index: 1; }
+        .container { max-width: 680px; margin: 0 auto; position: relative; z-index: 1; }
         h1 { text-align: center; color: var(--accent); margin-bottom: 2rem; font-weight: 900; font-size: 2rem; letter-spacing: 1px; text-shadow: 0 0 30px rgba(0,255,242,0.4); display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .card { background: var(--card); padding: 1.5rem; border-radius: 16px; border: 1px solid rgba(0,255,242,0.22); margin-bottom: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 30px rgba(0,255,242,0.03); backdrop-filter: blur(10px); }
+        .card { background: var(--card); padding: 1.5rem; border-radius: 16px; border: 1px solid rgba(0,255,242,0.22); margin-bottom: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 30px rgba(0,255,242,0.03); backdrop-filter: blur(14px); }
 
         label { display: block; margin-bottom: 0.4rem; color: var(--dim); font-weight: 600; font-size: 0.85rem; }
         input, select { width: 100%; padding: 12px; margin-bottom: 1rem; background: rgba(0,0,0,0.5); border: 1px solid #3a3a55; color: #fff; border-radius: 8px; font-size: 1rem; transition: border-color .2s, box-shadow .2s; }
         input:focus, select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 12px rgba(0,255,242,0.25); }
-        input[type="datetime-local"] { color-scheme: dark; cursor: pointer; border: 1px solid var(--accent); }
+        input[type="datetime-local"] { color-scheme: dark; cursor: pointer; border: 1px solid var(--live); margin-bottom: 0.6rem; }
         input[type="file"] { background: rgba(255,255,255,0.05); padding: 10px; border: 1px dashed #555; cursor: pointer; font-size: 0.9rem; }
         input[type="file"]::file-selector-button { background: var(--accent); color: #000; font-weight: 800; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-right: 10px; transition: .3s; }
         input[type="file"]::file-selector-button:hover { background: #fff; }
@@ -46,13 +48,46 @@
         .flex-row { display: flex; gap: 15px; width: 100%; }
         .flex-row > div { flex: 1; }
 
+        /* ---------- TIER TILE PICKER ---------- */
+        .tier-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 1.4rem; }
+        .tier-grid-store { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 1.4rem; }
+        .tier-tile { position: relative; border: 2px solid #3a3a55; border-radius: 14px; padding: 14px 8px 12px; background: rgba(0,0,0,0.45); cursor: pointer; text-align: center; transition: .2s; user-select: none; }
+        .tier-tile i { font-size: 1.6rem; display: block; margin-bottom: 6px; }
+        .tier-tile .t-name { font-weight: 900; font-size: 0.82rem; letter-spacing: 1px; text-transform: uppercase; display: block; }
+        .tier-tile .t-sub { font-size: 0.62rem; color: var(--dim); display: block; margin-top: 3px; letter-spacing: 0.3px; }
+        .tier-tile:hover { transform: translateY(-2px); border-color: #666; }
+        .tt-msrp i, .tt-msrp .t-name { color: var(--green); }
+        .tt-bundle i, .tt-bundle .t-name { color: #e883ff; }
+        .tt-baller i, .tt-baller .t-name { color: var(--gold); }
+        .tt-slab i, .tt-slab .t-name { color: var(--purple); }
+        .tt-raw i, .tt-raw .t-name { color: var(--green); }
+        .tier-tile.selected.tt-msrp { border-color: var(--green); box-shadow: 0 0 22px rgba(0,255,157,0.4); background: rgba(0,255,157,0.08); }
+        .tier-tile.selected.tt-bundle { border-color: var(--purple); box-shadow: 0 0 22px rgba(213,0,255,0.45); background: rgba(213,0,255,0.08); }
+        .tier-tile.selected.tt-baller { border-color: var(--gold); box-shadow: 0 0 22px rgba(255,215,0,0.45); background: rgba(255,215,0,0.08); }
+        .tier-tile.selected.tt-slab { border-color: var(--purple); box-shadow: 0 0 22px rgba(213,0,255,0.45); background: rgba(213,0,255,0.08); }
+        .tier-tile.selected.tt-raw { border-color: var(--green); box-shadow: 0 0 22px rgba(0,255,157,0.4); background: rgba(0,255,157,0.08); }
+        .group-label { font-size: 0.7rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--dim); margin: 0 0 8px 2px; }
+
+        /* ---------- QUICK CLOSE CHIPS ---------- */
+        .chip-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1rem; }
+        .chip { padding: 8px 14px; border-radius: 30px; background: rgba(255,0,64,0.08); border: 1px solid rgba(255,0,64,0.4); color: #ff8ba7; font-weight: 800; font-size: 0.78rem; letter-spacing: 0.5px; cursor: pointer; transition: .2s; }
+        .chip:hover { background: rgba(255,0,64,0.25); color: #fff; box-shadow: 0 0 14px rgba(255,0,64,0.4); }
+        .chip.clear { background: rgba(255,255,255,0.05); border-color: #555; color: var(--dim); }
+        .chip.clear:hover { background: rgba(255,255,255,0.12); box-shadow: none; }
+        .open-note { display: flex; align-items: center; gap: 8px; background: rgba(0,255,157,0.07); border: 1px solid rgba(0,255,157,0.35); color: var(--green); padding: 10px 14px; border-radius: 10px; font-size: 0.82rem; font-weight: 700; margin-bottom: 1.2rem; }
+
+        /* ---------- VISIBILITY PILLS ---------- */
+        .vis-row { display: flex; gap: 10px; margin-bottom: 1.4rem; }
+        .vis-pill { flex: 1; padding: 11px; border-radius: 10px; text-align: center; font-weight: 800; font-size: 0.85rem; letter-spacing: 0.5px; cursor: pointer; border: 2px solid #3a3a55; background: rgba(0,0,0,0.45); color: var(--dim); transition: .2s; user-select: none; }
+        .vis-pill.selected.v-public { border-color: var(--green); color: var(--green); box-shadow: 0 0 18px rgba(0,255,157,0.35); background: rgba(0,255,157,0.07); }
+        .vis-pill.selected.v-hidden { border-color: #ff4444; color: #ff6666; box-shadow: 0 0 18px rgba(255,68,68,0.35); background: rgba(255,68,68,0.07); }
+
         button.primary-btn { width: 100%; padding: 1rem; background: linear-gradient(135deg, var(--accent), var(--purple)); color: #fff; font-weight: 900; border: none; border-radius: 8px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; font-size: 1.1rem; transition: .3s; box-shadow: 0 5px 20px rgba(157,78,221,0.4); }
         button.primary-btn:hover { filter: brightness(1.15); transform: translateY(-2px); }
         button.primary-btn:disabled { opacity: 0.6; cursor: progress; transform: none; }
 
         .img-preview-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1rem; }
         .img-preview-row img { width: 56px; height: 56px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(0,255,242,0.4); }
-        .img-preview-note { color: var(--dim); font-size: 0.8rem; margin: -0.5rem 0 1rem; }
 
         .inventory-controls { display: flex; flex-direction: column; gap: 15px; margin-bottom: 1.5rem; }
         .search-box { position: relative; width: 100%; }
@@ -75,7 +110,7 @@
         .item-meta { font-size: 0.85rem; color: var(--dim); display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 5px; }
 
         .badge { padding: 4px 10px; font-size: 0.7rem; border-radius: 6px; font-weight: 800; text-transform: uppercase; white-space: nowrap; display: flex; align-items: center; gap: 4px; }
-        .b-msrp { color: #00ff9d; border: 1px solid #00ff9d; background: linear-gradient(135deg, rgba(0,255,157,0.15), transparent); }
+        .b-msrp { color: var(--green); border: 1px solid var(--green); background: linear-gradient(135deg, rgba(0,255,157,0.15), transparent); }
         .b-bundle { color: #f0dfff; border: 1px solid var(--purple); background: linear-gradient(135deg, rgba(213,0,255,0.25), rgba(100,0,255,0.15)); }
         .b-baller { background: var(--gold); color: #000; border: 1px solid var(--gold); box-shadow: 0 0 10px rgba(255,215,0,0.4); }
         .b-slab { background: #1a1a3a; color: #d500ff; border: 1px solid #d500ff; }
@@ -84,9 +119,12 @@
         .b-cgc { background: rgba(0,20,40,0.85); border: 1px solid #00d2ff; color: #00d2ff; }
         .b-sgc { background: #000; border: 1px solid #fff; color: #fff; }
         .b-ace { background: rgba(0,30,10,0.85); border: 1px solid #00ff88; color: #00ff88; }
-        .b-raw { background: #1a3a3a; color: #00ff9d; border: 1px solid #00ff9d; }
+        .b-raw { background: #1a3a3a; color: var(--green); border: 1px solid var(--green); }
         .b-hidden { background: rgba(255,68,68,0.2); color: #ff6666; border: 1px solid #ff4444; }
-        .b-time { background: rgba(157,78,221,0.2); color: #e0aaff; border: 1px solid var(--purple); }
+        .b-open { background: rgba(0,255,157,0.12); color: var(--green); border: 1px solid var(--green); box-shadow: 0 0 10px rgba(0,255,157,0.3); animation: openPulse 1.6s ease-in-out infinite alternate; }
+        @keyframes openPulse { from { box-shadow: 0 0 6px rgba(0,255,157,0.2); } to { box-shadow: 0 0 16px rgba(0,255,157,0.5); } }
+        .b-closed { background: rgba(255,255,255,0.06); color: #888; border: 1px solid #555; }
+        .b-time { background: rgba(255,0,64,0.12); color: #ff8ba7; border: 1px solid rgba(255,0,64,0.5); }
         .b-cond { background: rgba(255,255,255,0.1); color: #ccc; border: 1px solid #777; }
         .click-badge { background: rgba(0,184,255,0.15); color: #00b8ff; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
 
@@ -101,14 +139,15 @@
         .toast.show { transform: translateX(-50%) translateY(0); }
         .toast.err { border-color: #ff4444; box-shadow: 0 0 30px rgba(255,68,68,0.4); }
 
-        a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+        a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, .tier-tile:focus-visible, .vis-pill:focus-visible, .chip:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 
-        @media(max-width: 600px) { .flex-row { flex-direction: column; gap: 0; } .flex-row > div { width: 100%; } .card { padding: 1.2rem; } h1 { font-size: 1.6rem; } }
+        @media(max-width: 600px) { .flex-row { flex-direction: column; gap: 0; } .flex-row > div { width: 100%; } .card { padding: 1.2rem; } h1 { font-size: 1.6rem; } .tier-grid { grid-template-columns: repeat(3, 1fr); } }
         @media(min-width: 600px) { li { flex-direction: row; align-items: center; justify-content: space-between; } .btn-group { width: auto; flex-shrink: 0; flex-direction: column; gap: 8px; } .btn-group button { padding: 8px 20px; width: 100%; } }
-        @media (prefers-reduced-motion: reduce) { body::before { animation: none; } * { transition-duration: 0.001ms !important; } }
+        @media (prefers-reduced-motion: reduce) { body::before { animation: none; } * { transition-duration: 0.001ms !important; animation-duration: 0.001ms !important; } }
     </style>
 </head>
 <body>
+    <div class="led-topbar"></div>
     <div class="grain"></div>
     <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="suicune-bg" alt="">
     <div class="container">
@@ -122,29 +161,28 @@
 
         <div id="admin-section">
             <div class="card">
-                <h2 style="margin-top:0;margin-bottom:1.5rem;font-size:1.4rem;border-bottom:1px solid #333;padding-bottom:10px;">Add / edit item</h2>
+                <h2 style="margin-top:0;margin-bottom:1.2rem;font-size:1.4rem;border-bottom:1px solid #333;padding-bottom:10px;">⚡ Quick add</h2>
 
-                <div class="flex-row">
-                    <div>
-                        <label for="item-type">Item type</label>
-                        <select id="item-type">
-                            <optgroup label="Live Breaks">
-                                <option value="msrp">✅ MSRP Break</option>
-                                <option value="bundle">💎 Bundle Break</option>
-                                <option value="baller">👑 Baller Bundle</option>
-                            </optgroup>
-                            <optgroup label="The Vault (Store)">
-                                <option value="slab">🔍 Graded Slab</option>
-                                <option value="raw">🃏 Raw Card</option>
-                            </optgroup>
-                        </select>
+                <p class="group-label">Live breaks</p>
+                <div class="tier-grid" id="tier-breaks">
+                    <div class="tier-tile tt-msrp" data-type="msrp" tabindex="0" role="button">
+                        <i class="ph-fill ph-seal-check"></i><span class="t-name">MSRP</span><span class="t-sub">At retail price</span>
                     </div>
-                    <div>
-                        <label for="item-hidden">Visibility</label>
-                        <select id="item-hidden">
-                            <option value="false">👁️ Public (visible)</option>
-                            <option value="true" style="color:#ff6666">🚫 Hidden (draft)</option>
-                        </select>
+                    <div class="tier-tile tt-bundle" data-type="bundle" tabindex="0" role="button">
+                        <i class="ph-fill ph-sketch-logo"></i><span class="t-name">Bundle</span><span class="t-sub">Crazy value + ship</span>
+                    </div>
+                    <div class="tier-tile tt-baller" data-type="baller" tabindex="0" role="button">
+                        <i class="ph-fill ph-crown"></i><span class="t-name">Baller</span><span class="t-sub">Super premium</span>
+                    </div>
+                </div>
+
+                <p class="group-label">The Vault (store)</p>
+                <div class="tier-grid-store" id="tier-vault">
+                    <div class="tier-tile tt-slab" data-type="slab" tabindex="0" role="button">
+                        <i class="ph-fill ph-certificate"></i><span class="t-name">Graded slab</span><span class="t-sub">PSA / BGS / CGC…</span>
+                    </div>
+                    <div class="tier-tile tt-raw" data-type="raw" tabindex="0" role="button">
+                        <i class="ph-fill ph-cards"></i><span class="t-name">Raw card</span><span class="t-sub">Single, ungraded</span>
                     </div>
                 </div>
 
@@ -173,18 +211,21 @@
                     </select>
                 </div>
 
-                <div class="flex-row">
-                    <div id="schedule-date-container">
-                        <label for="item-schedule-date">🟢 Start time (optional)</label>
-                        <input type="datetime-local" id="item-schedule-date">
-                    </div>
-                    <div>
-                        <label for="item-schedule-end">🔴 Close time (optional)</label>
-                        <input type="datetime-local" id="item-schedule-end">
+                <div class="open-note"><i class="ph-fill ph-broadcast"></i> Breaks are OPEN the moment you save them. They close when the timer below runs out (or stock hits 0).</div>
+
+                <div id="close-time-container">
+                    <label for="item-schedule-end" style="color:#ff8ba7;">🔴 Close time (US Central)</label>
+                    <input type="datetime-local" id="item-schedule-end">
+                    <div class="chip-row">
+                        <button class="chip" onclick="setClose(24)">+24 hours</button>
+                        <button class="chip" onclick="setClose(48)">+48 hours</button>
+                        <button class="chip" onclick="setClose(72)">+72 hours</button>
+                        <button class="chip" onclick="setClose(168)">+1 week</button>
+                        <button class="chip clear" onclick="setClose(0)">No close time</button>
                     </div>
                 </div>
 
-                <label for="item-name">Name (e.g. PSA 10 Base Set Charizard)</label>
+                <label for="item-name">Name (e.g. Prismatic Evolutions Booster Bundle)</label>
                 <input type="text" id="item-name" placeholder="Item name">
 
                 <label for="item-description">Description</label>
@@ -196,7 +237,7 @@
                         <input type="number" id="item-price" placeholder="0.00" step="0.01" min="0">
                     </div>
                     <div>
-                        <label for="item-stock">Stock (set to 1 for singles)</label>
+                        <label for="item-stock">Spots / stock</label>
                         <input type="number" id="item-stock" value="1" min="0">
                     </div>
                 </div>
@@ -208,7 +249,13 @@
                 <input type="file" id="item-image" multiple accept="image/*">
                 <div id="img-preview" class="img-preview-row"></div>
 
-                <button id="submit-btn" class="primary-btn" style="margin-top:1rem;" onclick="submitItem()">Save to database</button>
+                <label>Visibility</label>
+                <div class="vis-row">
+                    <div class="vis-pill v-public selected" data-vis="false" tabindex="0" role="button">👁️ Public — live on the site</div>
+                    <div class="vis-pill v-hidden" data-vis="true" tabindex="0" role="button">🚫 Hidden — draft only</div>
+                </div>
+
+                <button id="submit-btn" class="primary-btn" onclick="submitItem()">🚀 Publish break</button>
             </div>
 
             <h2 style="text-align:center;font-size:1.8rem;margin-top:3rem;margin-bottom:1.5rem;">Inventory management</h2>
@@ -247,6 +294,8 @@
         let currentCreatedAt = null;
         let currentClicks = 0;
         let currentTab = 'all';
+        let selectedType = 'msrp';
+        let selectedHidden = false;
 
         /* ---------- HELPERS ---------- */
         const wait = ms => new Promise(r => setTimeout(r, ms));
@@ -279,6 +328,22 @@
             throw lastErr || new Error('Request failed');
         }
 
+        /* Same Central-time interpretation as the storefront */
+        function centralToMs(localStr) {
+            if (!localStr || localStr.indexOf('T') === -1) return null;
+            try {
+                const [d, tm] = localStr.split('T');
+                const [y, mo, da] = d.split('-').map(Number);
+                const [h, mi] = (tm || '00:00').split(':').map(Number);
+                const guess = Date.UTC(y, mo - 1, da, h, mi);
+                const parts = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Chicago', hour12: false, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }).formatToParts(new Date(guess));
+                const m = {}; parts.forEach(p => m[p.type] = p.value);
+                const hh = m.hour === '24' ? 0 : Number(m.hour);
+                const seen = Date.UTC(Number(m.year), Number(m.month) - 1, Number(m.day), hh, Number(m.minute), Number(m.second));
+                return guess - (seen - guess);
+            } catch (e) { return new Date(localStr + '-06:00').getTime(); }
+        }
+
         /* ---------- BOOT ---------- */
         if (localStorage.getItem('adminToken')) {
             document.getElementById('login-section').style.display = 'none';
@@ -288,17 +353,42 @@
 
         document.getElementById('login-password').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
 
-        document.getElementById('item-type').addEventListener('change', function () {
-            const val = this.value;
-            document.getElementById('condition-container').style.display = val === 'raw' ? 'block' : 'none';
-            document.getElementById('grader-container').style.display = val === 'slab' ? 'block' : 'none';
-            if (val === 'bundle' || val === 'baller') {
-                document.getElementById('schedule-date-container').style.display = 'none';
-                document.getElementById('item-schedule-date').value = '';
-            } else {
-                document.getElementById('schedule-date-container').style.display = 'block';
-            }
+        /* ---------- TIER TILES ---------- */
+        function applyTypeUI() {
+            document.querySelectorAll('.tier-tile').forEach(t => t.classList.toggle('selected', t.dataset.type === selectedType));
+            document.getElementById('condition-container').style.display = selectedType === 'raw' ? 'block' : 'none';
+            document.getElementById('grader-container').style.display = selectedType === 'slab' ? 'block' : 'none';
+            const isBreak = selectedType === 'msrp' || selectedType === 'bundle' || selectedType === 'baller';
+            document.getElementById('close-time-container').style.display = isBreak ? 'block' : 'none';
+            document.querySelector('.open-note').style.display = isBreak ? 'flex' : 'none';
+            if (!editingId) document.getElementById('submit-btn').innerText = isBreak ? '🚀 Publish break' : '💾 Save to Vault';
+        }
+        document.querySelectorAll('.tier-tile').forEach(tile => {
+            const pick = () => { selectedType = tile.dataset.type; applyTypeUI(); };
+            tile.addEventListener('click', pick);
+            tile.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } });
         });
+        applyTypeUI();
+
+        /* ---------- VISIBILITY PILLS ---------- */
+        document.querySelectorAll('.vis-pill').forEach(pill => {
+            const pick = () => {
+                selectedHidden = pill.dataset.vis === 'true';
+                document.querySelectorAll('.vis-pill').forEach(p => p.classList.toggle('selected', p === pill));
+            };
+            pill.addEventListener('click', pick);
+            pill.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } });
+        });
+
+        /* ---------- QUICK CLOSE CHIPS ---------- */
+        function setClose(hours) {
+            const input = document.getElementById('item-schedule-end');
+            if (!hours) { input.value = ''; toast('Close time cleared — break stays open until stock runs out.'); return; }
+            const target = new Date(Date.now() + hours * 3600000);
+            const pad = n => String(n).padStart(2, '0');
+            input.value = `${target.getFullYear()}-${pad(target.getMonth() + 1)}-${pad(target.getDate())}T${pad(target.getHours())}:${pad(target.getMinutes())}`;
+            toast(`Close time set: +${hours >= 168 ? '1 week' : hours + ' hours'}.`);
+        }
 
         document.getElementById('item-image').addEventListener('change', function () {
             const preview = document.getElementById('img-preview');
@@ -338,7 +428,7 @@
             return new Promise(resolve => {
                 let settled = false;
                 const done = v => { if (!settled) { settled = true; resolve(v); } };
-                const guard = setTimeout(() => done(null), 15000); // never block save forever
+                const guard = setTimeout(() => done(null), 15000);
 
                 const reader = new FileReader();
                 reader.onerror = () => { clearTimeout(guard); done(null); };
@@ -368,7 +458,6 @@
         /* ---------- SAVE ---------- */
         async function submitItem() {
             const btn = document.getElementById('submit-btn');
-            const originalLabel = editingId ? 'Update database item' : 'Save to database';
 
             const name = document.getElementById('item-name').value.trim();
             if (!name) { toast('Give the item a name first.', true); return; }
@@ -377,11 +466,10 @@
             btn.innerText = 'Processing & saving…';
 
             try {
-                const type = document.getElementById('item-type').value;
-                const hidden = document.getElementById('item-hidden').value === 'true';
+                const type = selectedType;
+                const hidden = selectedHidden;
                 const condition = type === 'raw' ? document.getElementById('item-condition').value : null;
                 const grader = type === 'slab' ? document.getElementById('item-grader').value : null;
-                const scheduleDate = document.getElementById('item-schedule-date').value;
                 const scheduleEnd = document.getElementById('item-schedule-end').value;
                 const desc = document.getElementById('item-description').value;
                 const price = Number(document.getElementById('item-price').value);
@@ -409,38 +497,38 @@
                     stock, googleFormLink: form, image: img, images: imagesArray,
                     clickCount: editingId ? currentClicks : 0,
                     createdAt: editingId ? currentCreatedAt : Date.now(),
-                    hidden, scheduleDate, scheduleEnd, condition, grader
+                    hidden, scheduleDate: '', scheduleEnd, condition, grader
                 };
 
                 const url = editingId ? `${API_URL}/items/${editingId}` : `${API_URL}/items`;
                 const method = editingId ? 'PUT' : 'POST';
                 await fetchWithRetry(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
 
+                const wasEditing = !!editingId;
                 resetForm();
-                toast(editingId ? 'Item updated.' : 'Item saved.');
-                editingId = null;
+                toast(wasEditing ? 'Item updated.' : (hidden ? 'Saved as hidden draft.' : '🔴 Break is LIVE on the site!'));
                 loadItems();
             } catch (e) {
                 console.error('Save error:', e);
                 toast('Save failed — the server didn\'t confirm. Nothing was lost; try again.', true);
             } finally {
                 btn.disabled = false;
-                btn.innerText = editingId ? 'Update database item' : 'Save to database';
+                if (btn.innerText === 'Processing & saving…') applyTypeUI();
             }
         }
 
         function resetForm() {
             editingId = null; currentImage = ''; currentImages = []; currentCreatedAt = null; currentClicks = 0;
-            ['item-name', 'item-description', 'item-price', 'item-google-form-link', 'item-schedule-date', 'item-schedule-end'].forEach(id => document.getElementById(id).value = '');
+            ['item-name', 'item-description', 'item-price', 'item-google-form-link', 'item-schedule-end'].forEach(id => document.getElementById(id).value = '');
             document.getElementById('item-stock').value = '1';
             document.getElementById('item-image').value = '';
             document.getElementById('img-preview').innerHTML = '';
-            document.getElementById('item-type').value = 'msrp';
-            document.getElementById('item-hidden').value = 'false';
             document.getElementById('item-condition').value = 'Mint (M)';
             document.getElementById('item-grader').value = 'PSA';
-            document.getElementById('item-type').dispatchEvent(new Event('change'));
-            document.getElementById('submit-btn').innerText = 'Save to database';
+            selectedType = 'msrp';
+            selectedHidden = false;
+            document.querySelectorAll('.vis-pill').forEach(p => p.classList.toggle('selected', p.dataset.vis === 'false'));
+            applyTypeUI();
         }
 
         function formatLiteralDate(val) {
@@ -477,6 +565,7 @@
         function renderInventory() {
             const listContainer = document.getElementById('inventory-list');
             const searchQuery = document.getElementById('inventory-search').value.toLowerCase();
+            const now = Date.now();
 
             const filteredItems = allItems.filter(item => {
                 if (currentTab === 'breaks' && (item.type === 'slab' || item.type === 'raw')) return false;
@@ -510,19 +599,26 @@
                 const imgCount = item.images && item.images.length > 1 ? `<span class="badge" style="background:#444;border:1px solid #777;"><i class="ph-fill ph-images"></i> ${item.images.length}</span>` : '';
                 const opacity = item.hidden ? 'opacity:0.6;' : '';
 
-                let timeBadge = '';
-                if (item.scheduleDate) {
-                    const start = formatLiteralDate(item.scheduleDate);
-                    const end = item.scheduleEnd ? formatLiteralDate(item.scheduleEnd) : '…';
-                    timeBadge = `<span class="badge b-time"><i class="ph-fill ph-clock"></i> ${esc(start)} ➔ ${esc(end)}</span>`;
+                /* Open / closed status — mirrors the storefront rules exactly */
+                let statusBadge = '';
+                const isBreak = item.type === 'msrp' || item.type === 'bundle' || item.type === 'baller';
+                if (isBreak && !item.hidden) {
+                    const endMs = centralToMs(item.scheduleEnd);
+                    const closed = toInt(item.stock) <= 0 || (endMs && now >= endMs);
+                    statusBadge = closed
+                        ? '<span class="badge b-closed"><i class="ph-fill ph-lock"></i> CLOSED</span>'
+                        : '<span class="badge b-open"><i class="ph-fill ph-broadcast"></i> OPEN</span>';
                 }
+
+                let timeBadge = '';
+                if (item.scheduleEnd) timeBadge = `<span class="badge b-time"><i class="ph-fill ph-clock"></i> Closes ${esc(formatLiteralDate(item.scheduleEnd))}</span>`;
 
                 return `
                     <li style="${opacity}">
                         <div class="item-content">
                             <div class="item-header">
                                 <span class="item-title">${esc(item.name)}</span>
-                                ${hiddenBadge}
+                                ${statusBadge}${hiddenBadge}
                                 <span class="badge ${badgeClass}">${badgeText}</span>
                                 ${condBadge}${imgCount}
                             </div>
@@ -550,9 +646,9 @@
             currentCreatedAt = item.createdAt;
             currentClicks = toInt(item.clickCount);
 
-            document.getElementById('item-type').value = item.type || 'msrp';
-            document.getElementById('item-hidden').value = item.hidden ? 'true' : 'false';
-            document.getElementById('item-schedule-date').value = (item.scheduleDate && item.scheduleDate.indexOf('T') > -1) ? item.scheduleDate : '';
+            selectedType = item.type || 'msrp';
+            selectedHidden = !!item.hidden;
+            document.querySelectorAll('.vis-pill').forEach(p => p.classList.toggle('selected', (p.dataset.vis === 'true') === selectedHidden));
             document.getElementById('item-schedule-end').value = (item.scheduleEnd && item.scheduleEnd.indexOf('T') > -1) ? item.scheduleEnd : '';
             document.getElementById('item-name').value = item.name || '';
             document.getElementById('item-description').value = item.description || '';
@@ -562,13 +658,12 @@
             document.getElementById('item-image').value = '';
             document.getElementById('item-condition').value = item.condition || 'Mint (M)';
             document.getElementById('item-grader').value = item.grader || 'PSA';
-            document.getElementById('item-type').dispatchEvent(new Event('change'));
+            applyTypeUI();
 
-            // show existing images as a reference (replaced only if you pick new files)
             const preview = document.getElementById('img-preview');
             preview.innerHTML = (currentImages || []).slice(0, 8).map(src => `<img src="${esc(src)}" alt="">`).join('');
 
-            document.getElementById('submit-btn').innerText = 'Update database item';
+            document.getElementById('submit-btn').innerText = '💾 Update item';
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
