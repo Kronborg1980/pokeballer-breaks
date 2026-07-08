@@ -435,10 +435,23 @@
             if (!isoString || isoString.indexOf('T') === -1) return '';
             try {
                 const [datePart] = isoString.split('T');
-                const [, monthNum, day] = datePart.split('-');
-                const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-                const monthStr = months[parseInt(monthNum, 10) - 1] || '';
-                return `${monthStr} ${parseInt(day, 10)}`;
+                const [y, m, d] = datePart.split('-').map(Number);
+                const dt = new Date(y, m - 1, d);
+                const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+                const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+                const suf = (d % 10 === 1 && d !== 11) ? 'st' : (d % 10 === 2 && d !== 12) ? 'nd' : (d % 10 === 3 && d !== 13) ? 'rd' : 'th';
+                return `${days[dt.getDay()]}, ${months[m - 1]} ${d}${suf}`;
+            } catch (e) { return ''; }
+        }
+        function formatCloseShort(isoString) {
+            if (!isoString || isoString.indexOf('T') === -1) return '';
+            try {
+                const [datePart] = isoString.split('T');
+                const [y, m, d] = datePart.split('-').map(Number);
+                const dt = new Date(y, m - 1, d);
+                const days = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+                const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+                return `${days[dt.getDay()]}, ${months[m - 1]} ${d}`;
             } catch (e) { return ''; }
         }
 
@@ -529,7 +542,7 @@
             if (isOpen) {
                 wrapperClass += ' card-live-now';
                 ribbonHTML = `<div class="live-ribbon ${t.ribbon}"><span class="live-dot"></span> OPEN NOW — JOIN THE BREAK <span class="live-dot"></span></div>`;
-                if (endTime) timeBadgeHTML = `<div class="time-tag-bottom countdown-timer" data-end="${esc(item.scheduleEnd)}" data-id="${id}"><i class="ph-fill ph-clock-countdown"></i> CALC…</div>`;
+                if (endTime) timeBadgeHTML = `<div class="time-tag-bottom close-watch" data-end="${esc(item.scheduleEnd)}" data-id="${id}"><i class="ph-fill ph-calendar-x"></i> CLOSES ${formatCloseShort(item.scheduleEnd)}</div>`;
             } else {
                 wrapperClass += ' card-closed';
             }
@@ -628,14 +641,16 @@
             }
         }
 
-        /* Counts down to the CLOSE time. When it hits zero the card locks itself. */
+        /* Silent close-watcher: no visible countdown. The badge shows only the date;
+           in the last hour it flips to CLOSING SOON, and at the internal close time
+           the card locks itself live on screen. */
         function updateTimers() {
-            const timers = document.querySelectorAll('.countdown-timer');
-            if (timers.length === 0 && timerInterval) { clearInterval(timerInterval); timerInterval = null; return; }
+            const watchers = document.querySelectorAll('.close-watch');
+            if (watchers.length === 0 && timerInterval) { clearInterval(timerInterval); timerInterval = null; return; }
             const now = Date.now();
-            timers.forEach(timer => {
-                const itemId = timer.dataset.id;
-                const endTarget = centralToMs(timer.dataset.end);
+            watchers.forEach(w => {
+                const itemId = w.dataset.id;
+                const endTarget = centralToMs(w.dataset.end);
                 if (!endTarget) return;
                 const distance = endTarget - now;
 
@@ -654,17 +669,18 @@
                         const tag = card.querySelector('.type-tag');
                         if (tag) tag.classList.add('no-ribbon');
                     }
-                    timer.classList.remove('countdown-timer');
+                    w.classList.remove('close-watch');
                     return;
                 }
 
-                const d = Math.floor(distance / 86400000), h = Math.floor((distance % 86400000) / 3600000), m = Math.floor((distance % 3600000) / 60000), s = Math.floor((distance % 60000) / 1000);
-                timer.innerHTML = `<i class="ph-fill ph-clock-countdown"></i> CLOSES IN ${d > 0 ? d + 'd ' : ''}${h}h ${m}m ${s}s`;
-                if (distance < 3600000) timer.classList.add('closing-soon');
+                if (distance < 3600000 && !w.classList.contains('closing-soon')) {
+                    w.classList.add('closing-soon');
+                    w.innerHTML = '<i class="ph-fill ph-lightning"></i> CLOSING SOON';
+                }
             });
         }
 
-        function startCountdownTimer() { if (timerInterval) clearInterval(timerInterval); updateTimers(); timerInterval = setInterval(updateTimers, 1000); }
+        function startCountdownTimer() { if (timerInterval) clearInterval(timerInterval); updateTimers(); timerInterval = setInterval(updateTimers, 5000); }
         function trackClick(id) { fetch(`${API_URL}/click`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }), keepalive: true }).catch(() => {}); return true; }
         function openModal(src) { document.getElementById('myModal').style.display = 'flex'; document.getElementById('img01').src = src; }
         function closeModal() { document.getElementById('myModal').style.display = 'none'; }
