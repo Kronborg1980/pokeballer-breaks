@@ -95,13 +95,32 @@
         .neon-card-wrapper::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: conic-gradient(transparent 0deg, transparent 90deg, var(--accent-cyan) 130deg, #fff 155deg, var(--accent-purple) 180deg, transparent 220deg); animation: spinBorder 5s linear infinite; z-index: 0; opacity: 1; filter: blur(5px); }
         @keyframes spinBorder { 100% { transform: rotate(360deg); } }
 
-        /* Availability ribbon + glow (the Vault twin of OPEN NOW) */
-        .avail-ribbon { position: absolute; top: 0; left: 0; right: 0; z-index: 18; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 9px 0; font-weight: 900; font-size: 0.82rem; letter-spacing: 3px; text-transform: uppercase; color: #fff; background: linear-gradient(90deg, rgba(123,43,255,0.92), rgba(213,0,255,0.92), rgba(123,43,255,0.92)); background-size: 200% 100%; animation: ribbonFlow 2.5s linear infinite; text-shadow: 0 1px 3px rgba(0,0,0,0.6); box-shadow: 0 4px 25px rgba(213,0,255,0.8), inset 0 1px 0 rgba(255,255,255,0.4); border-bottom: 1px solid rgba(255,255,255,0.35); }
-        @keyframes ribbonFlow { 0% { background-position: 0% 0; } 100% { background-position: 200% 0; } }
+        /* Availability ribbon + glow — each grader/tier lights up in its own color */
+        .avail-ribbon { position: absolute; top: 0; left: 0; right: 0; z-index: 18; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 9px 0; font-weight: 900; font-size: 0.82rem; letter-spacing: 3px; text-transform: uppercase; color: #fff; background-image: linear-gradient(90deg, #7b2bff, #d500ff, #ff6ad5, #7b2bff); background-size: 220% 100%; animation: ribbonFlow 2.5s linear infinite; text-shadow: 0 1px 3px rgba(0,0,0,0.6); box-shadow: 0 4px 25px rgba(var(--lg,213,0,255),0.8), inset 0 1px 0 rgba(255,255,255,0.4); border-bottom: 1px solid rgba(255,255,255,0.35); }
+        @keyframes ribbonFlow { 0% { background-position: 0% 0; } 100% { background-position: 220% 0; } }
+        @keyframes sheenFlow { 0% { background-position: 200% 0; } 100% { background-position: -100% 0; } }
+        @keyframes ledOpacity { 0%, 100% { opacity: 0.45; } 50% { opacity: 1; } }
+        .rb-psa { background-image: linear-gradient(90deg, #cc0000, #ff3333, #ff7777, #cc0000); }
+        .rb-bgs { background-image: linear-gradient(90deg, #b38f40, #e6c27a, #fff2cc, #b38f40); color: #231800; text-shadow: none; }
+        .rb-bgs .avail-dot { background: #3a2a00; box-shadow: 0 0 10px rgba(60,42,0,0.9); }
+        .rb-cgc { background-image: linear-gradient(90deg, #0077aa, #00d2ff, #8ae8ff, #0077aa); color: #00222e; text-shadow: none; }
+        .rb-cgc .avail-dot { background: #003344; box-shadow: 0 0 10px rgba(0,50,70,0.9); }
+        .rb-sgc { background-image: linear-gradient(90deg, #777, #eee, #fff, #777); color: #111; text-shadow: none; }
+        .rb-sgc .avail-dot { background: #111; box-shadow: 0 0 10px rgba(0,0,0,0.9); }
+        .rb-ace { background-image: linear-gradient(90deg, #00cc66, #00ff88, #b3ffd9, #00cc66); color: #00220f; text-shadow: none; }
+        .rb-ace .avail-dot { background: #003318; box-shadow: 0 0 10px rgba(0,50,25,0.9); }
+        .rb-raw { background-image: linear-gradient(90deg, #00c98a, #00fff2, #7dfff0, #00c98a); color: #002a1c; text-shadow: none; }
+        .rb-raw .avail-dot { background: #003a28; box-shadow: 0 0 10px rgba(0,60,40,0.9); }
         .avail-dot { width: 10px; height: 10px; border-radius: 50%; background: #fff; box-shadow: 0 0 12px #fff, 0 0 25px #fff; animation: dotBlink 1s ease-in-out infinite; }
         @keyframes dotBlink { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.35; transform: scale(0.7); } }
-        .card-avail { animation: availGlow 1.8s ease-in-out infinite alternate; }
-        @keyframes availGlow { from { box-shadow: 0 0 28px rgba(213,0,255,0.3), 0 0 55px rgba(0,255,242,0.15); } to { box-shadow: 0 0 55px rgba(213,0,255,0.65), 0 0 100px rgba(0,255,242,0.3); } }
+        .card-avail { --lg: 213,0,255; animation: availGlow 1.8s ease-in-out infinite alternate; }
+        @keyframes availGlow { from { box-shadow: 0 0 26px rgba(var(--lg),0.32), 0 0 55px rgba(var(--lg),0.14); } to { box-shadow: 0 0 55px rgba(var(--lg),0.68), 0 0 100px rgba(var(--lg),0.3); } }
+        .card-psa.card-avail { --lg: 255,51,51; }
+        .card-bgs.card-avail { --lg: 230,194,122; }
+        .card-cgc.card-avail { --lg: 0,210,255; }
+        .card-sgc.card-avail { --lg: 255,255,255; }
+        .card-ace.card-avail { --lg: 0,255,136; }
+        .card-raw-tier.card-avail { --lg: 0,255,157; }
         .card-closed { filter: saturate(0.35) brightness(0.75); }
         .card-closed::before { animation-play-state: paused !important; opacity: 0.25 !important; }
         .card-closed:hover { transform: none; }
@@ -209,13 +228,14 @@
             }
             main { background: rgba(6,6,16,0.94); }
             .glass-panel { background: linear-gradient(160deg, rgba(24,24,42,0.97), rgba(10,10,20,0.98)); }
-            .neon-card-wrapper::before { animation: none !important; opacity: 0.35 !important; filter: none !important; }
+            /* Keep the LED motion — solid glass makes these animations flicker-safe */
+            .neon-card-wrapper::before { animation-duration: 7s; opacity: 0.55 !important; filter: none !important; }
             .neon-card-wrapper, .glass-panel, .item-img { will-change: auto !important; }
             .neon-card-wrapper:hover { transform: none; }
-            .glass-panel::after { display: none; }
+            .glass-panel::after { opacity: 1; mix-blend-mode: normal; background: linear-gradient(115deg, transparent 42%, rgba(255,255,255,0.05) 50%, transparent 58%); background-size: 250% 100%; animation: sheenFlow 7s linear infinite; }
             .item-img-box::before { display: none; }
-            .card-avail { animation: none; box-shadow: 0 0 35px rgba(213,0,255,0.5); }
-            .tier-header::after { animation: none; opacity: 0.85; box-shadow: 0 0 18px currentColor; }
+            .card-avail { animation: none; box-shadow: 0 0 32px rgba(var(--lg),0.55), 0 0 60px rgba(var(--lg),0.22); }
+            .tier-header::after { animation: ledOpacity 2.4s ease-in-out infinite; box-shadow: 0 0 18px currentColor; }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -314,17 +334,18 @@
         function buildVaultCard(item) {
             const id = esc(item.id);
             const isSlab = item.type === 'slab';
-            let tagClass = 'tag-raw', wrapperClass = 'card-raw-tier', tagText = '<i class="ph-fill ph-cards"></i> RAW CARD';
+            let tagClass = 'tag-raw', wrapperClass = 'card-raw-tier', tagText = '<i class="ph-fill ph-cards"></i> RAW CARD', ribbonClass = 'rb-raw';
 
             if (isSlab) {
                 wrapperClass = '';
+                ribbonClass = '';
                 const graderName = item.grader && item.grader !== 'Other' ? item.grader : 'GRADED';
                 tagText = `<i class="ph-fill ph-certificate"></i> ${esc(graderName)} SLAB`;
-                if (graderName === 'PSA') { wrapperClass = 'card-psa'; tagClass = 'tag-psa'; }
-                else if (graderName === 'BGS') { wrapperClass = 'card-bgs'; tagClass = 'tag-bgs'; }
-                else if (graderName === 'CGC') { wrapperClass = 'card-cgc'; tagClass = 'tag-cgc'; }
-                else if (graderName === 'SGC') { wrapperClass = 'card-sgc'; tagClass = 'tag-sgc'; }
-                else if (graderName === 'ACE') { wrapperClass = 'card-ace'; tagClass = 'tag-ace'; }
+                if (graderName === 'PSA') { wrapperClass = 'card-psa'; tagClass = 'tag-psa'; ribbonClass = 'rb-psa'; }
+                else if (graderName === 'BGS') { wrapperClass = 'card-bgs'; tagClass = 'tag-bgs'; ribbonClass = 'rb-bgs'; }
+                else if (graderName === 'CGC') { wrapperClass = 'card-cgc'; tagClass = 'tag-cgc'; ribbonClass = 'rb-cgc'; }
+                else if (graderName === 'SGC') { wrapperClass = 'card-sgc'; tagClass = 'tag-sgc'; ribbonClass = 'rb-sgc'; }
+                else if (graderName === 'ACE') { wrapperClass = 'card-ace'; tagClass = 'tag-ace'; ribbonClass = 'rb-ace'; }
                 else { tagClass = 'tag-slab'; }
             }
 
@@ -334,7 +355,7 @@
             let ribbonHTML = '';
             if (isAvail) {
                 wrapperClass += ' card-avail';
-                ribbonHTML = '<div class="avail-ribbon"><span class="avail-dot"></span> IN THE VAULT — ENTER NOW <span class="avail-dot"></span></div>';
+                ribbonHTML = `<div class="avail-ribbon ${ribbonClass}"><span class="avail-dot"></span> IN THE VAULT — ENTER NOW <span class="avail-dot"></span></div>`;
             } else {
                 wrapperClass += ' card-closed';
             }
