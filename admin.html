@@ -307,7 +307,7 @@
             <h2>📧 Email the winners</h2>
             <p class="wm-item-name" id="wm-break-name"></p>
 
-            <label for="wm-link">Payment link (goes in the email's big button)</label>
+            <label for="wm-link">Payment link — where winners pay (prefilled with your Streamlabs tip page)</label>
             <input type="url" id="wm-link" placeholder="https://…">
 
             <label for="wm-emails">Winner emails — one per line or comma-separated</label>
@@ -722,6 +722,8 @@
         }
 
         /* ---------- WINNER EMAILS ---------- */
+        // Winners pay here — NOT the signup form stored on the item.
+        const PAYMENT_LINK = 'https://streamlabs.com/pokballer/tip';
         let winnerItem = null;
         const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
@@ -740,7 +742,7 @@
             if (!item) return;
             winnerItem = item;
             document.getElementById('wm-break-name').textContent = item.name || '';
-            document.getElementById('wm-link').value = item.googleFormLink || '';
+            document.getElementById('wm-link').value = PAYMENT_LINK;
             document.getElementById('wm-emails').value = '';
             document.getElementById('wm-message').value = '';
             document.getElementById('wm-result').innerHTML = '';
