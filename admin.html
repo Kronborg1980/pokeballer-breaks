@@ -317,9 +317,6 @@
             <label for="wm-message">Personal message (optional, shown in the email)</label>
             <input type="text" id="wm-message" placeholder="e.g. Congrats! Replay is up on the channel 🔥">
 
-            <label for="wm-pass">Admin password (authorizes sending)</label>
-            <input type="password" id="wm-pass" autocomplete="current-password">
-
             <div id="wm-result"></div>
             <button class="primary-btn" id="wm-send" onclick="sendWinnerEmails()">Send winner emails</button>
             <button class="wm-cancel" onclick="closeWinnerModal()">Cancel</button>
@@ -462,7 +459,7 @@
             try {
                 const res = await fetchWithRetry(`${API_URL}/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: u, password: p }) });
                 const data = await res.json();
-                if (data.success) { localStorage.setItem('adminToken', '1'); location.reload(); }
+                if (data.success) { localStorage.setItem('adminToken', data.token || '1'); location.reload(); }
                 else toast('Invalid credentials.', true);
             } catch (e) { toast('Could not reach the server. Try again.', true); }
         }
@@ -755,13 +752,11 @@
         async function sendWinnerEmails() {
             if (!winnerItem) return;
             const link = document.getElementById('wm-link').value.trim();
-            const pass = document.getElementById('wm-pass').value;
             const emails = parseWinnerEmails();
 
             if (emails.length === 0) { toast('Add at least one valid email.', true); return; }
             if (emails.length > 100) { toast('Max 100 emails per send (free-tier daily limit).', true); return; }
             if (!/^https:\/\//.test(link)) { toast('Payment link must start with https://', true); return; }
-            if (!pass) { toast('Enter the admin password to authorize sending.', true); return; }
             if (!confirm(`Send "you've been picked" emails to ${emails.length} winner${emails.length === 1 ? '' : 's'}?`)) return;
 
             const btn = document.getElementById('wm-send');
@@ -774,7 +769,7 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        password: pass,
+                        token: localStorage.getItem('adminToken') || '',
                         breakName: winnerItem.name,
                         paymentLink: link,
                         price: winnerItem.price,
@@ -793,7 +788,7 @@
             } catch (e) {
                 console.error('Winner email error:', e);
                 const is401 = String(e && e.message).includes('401');
-                toast(is401 ? 'Wrong admin password.' : 'Sending failed — is the /notify-winners route deployed on the worker?', true);
+                toast(is401 ? 'Session expired — log out and log back in, then send again.' : 'Sending failed — is the latest worker deployed?', true);
             } finally {
                 btn.disabled = false;
                 btn.innerText = 'Send winner emails';
