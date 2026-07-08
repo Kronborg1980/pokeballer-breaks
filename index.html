@@ -147,14 +147,22 @@
         .card-baller-bundle:hover { box-shadow: 0 0 60px rgba(255,215,0,0.7), 0 0 120px rgba(255,180,0,0.4) !important; }
         .card-baller-bundle .glass-panel { background: linear-gradient(160deg, rgba(48,38,8,0.55), rgba(15,10,0,0.78)); border-top: 2px solid rgba(255,240,180,0.6); }
 
-        /* LIVE (open) state — the LED showstopper */
-        .card-live-now { animation: liveGlow 1.6s ease-in-out infinite alternate; }
-        @keyframes liveGlow { from { box-shadow: 0 0 30px rgba(255,0,64,0.35), 0 0 60px rgba(255,0,64,0.15); } to { box-shadow: 0 0 60px rgba(255,0,64,0.75), 0 0 110px rgba(255,0,64,0.35); } }
-        .card-live-now.card-baller-bundle { animation: liveGlowGold 1.6s ease-in-out infinite alternate; }
-        @keyframes liveGlowGold { from { box-shadow: 0 0 35px rgba(255,215,0,0.4), 0 0 70px rgba(255,0,64,0.2); } to { box-shadow: 0 0 70px rgba(255,215,0,0.85), 0 0 130px rgba(255,0,64,0.4); } }
+        /* LIVE (open) state — each tier glows in its own color */
+        .card-live-now { --lg: 213,0,255; animation: liveGlow 1.8s ease-in-out infinite alternate; }
+        @keyframes liveGlow { from { box-shadow: 0 0 28px rgba(var(--lg),0.35), 0 0 55px rgba(var(--lg),0.15); } to { box-shadow: 0 0 60px rgba(var(--lg),0.75), 0 0 110px rgba(var(--lg),0.35); } }
+        .card-msrp.card-live-now { --lg: 0,255,157; }
+        .card-bundle-tier.card-live-now { --lg: 213,0,255; }
+        .card-baller-bundle.card-live-now { --lg: 255,215,0; }
 
-        .live-ribbon { position: absolute; top: 0; left: 0; right: 0; z-index: 8; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 9px 0; font-weight: 900; font-size: 0.85rem; letter-spacing: 3px; text-transform: uppercase; color: #fff; background: linear-gradient(90deg, rgba(255,0,64,0.92), rgba(255,60,90,0.92), rgba(255,0,64,0.92)); background-size: 200% 100%; animation: ribbonFlow 2.5s linear infinite; text-shadow: 0 1px 3px rgba(0,0,0,0.6); box-shadow: 0 4px 25px rgba(255,0,64,0.8), inset 0 1px 0 rgba(255,255,255,0.4); border-bottom: 1px solid rgba(255,255,255,0.35); }
-        @keyframes ribbonFlow { 0% { background-position: 0% 0; } 100% { background-position: 200% 0; } }
+        .live-ribbon { position: absolute; top: 0; left: 0; right: 0; z-index: 8; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 9px 0; font-weight: 900; font-size: 0.85rem; letter-spacing: 3px; text-transform: uppercase; color: #fff; background-size: 220% 100%; animation: ribbonFlow 2.5s linear infinite; text-shadow: 0 1px 3px rgba(0,0,0,0.6); box-shadow: 0 4px 25px rgba(var(--lg,213,0,255),0.8), inset 0 1px 0 rgba(255,255,255,0.4); border-bottom: 1px solid rgba(255,255,255,0.35); }
+        .rb-green { background-image: linear-gradient(90deg, #00c98a, #00fff2, #7dfff0, #00c98a); color: #002a1c; text-shadow: none; }
+        .rb-green .live-dot { background: #003a28; box-shadow: 0 0 10px rgba(0,60,40,0.9); }
+        .rb-purple { background-image: linear-gradient(90deg, #7b2bff, #d500ff, #ff6ad5, #7b2bff); }
+        .rb-gold { background-image: linear-gradient(90deg, #bf953f, #fcf6ba, #ffd700, #b38728, #bf953f); color: #231800; text-shadow: none; }
+        .rb-gold .live-dot { background: #3a2a00; box-shadow: 0 0 10px rgba(60,42,0,0.9); }
+        @keyframes ribbonFlow { 0% { background-position: 0% 0; } 100% { background-position: 220% 0; } }
+        @keyframes sheenFlow { 0% { background-position: 200% 0; } 100% { background-position: -100% 0; } }
+        @keyframes ledOpacity { 0%, 100% { opacity: 0.45; } 50% { opacity: 1; } }
         .live-dot { width: 10px; height: 10px; border-radius: 50%; background: #fff; box-shadow: 0 0 12px #fff, 0 0 25px #fff; animation: dotBlink 1s ease-in-out infinite; }
         @keyframes dotBlink { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.35; transform: scale(0.7); } }
 
@@ -305,14 +313,16 @@
             main { background: rgba(6,6,16,0.94); }
             .glass-panel { background: linear-gradient(160deg, rgba(24,24,42,0.97), rgba(10,10,20,0.98)); }
             .card-baller-bundle .glass-panel { background: linear-gradient(160deg, rgba(48,38,8,0.97), rgba(16,11,0,0.98)); }
-            .neon-card-wrapper::before, .epic-empty-wrapper::before { animation: none !important; opacity: 0.35 !important; }
+            /* Keep the LED motion — only the flicker-prone layers are gone:
+               solid glass means the transform-spun borders and gradient flows are GPU-safe */
+            .neon-card-wrapper::before { animation-duration: 7s; opacity: 0.55 !important; filter: none !important; }
+            .epic-empty-wrapper::before { filter: none !important; }
+            .glass-panel::after { opacity: 1; mix-blend-mode: normal; background: linear-gradient(115deg, transparent 42%, rgba(255,255,255,0.05) 50%, transparent 58%); background-size: 250% 100%; animation: sheenFlow 7s linear infinite; }
             .neon-card-wrapper, .glass-panel, .item-img, .logo-animator, .icon-float-wrapper, .sub-btn, .bell-btn { will-change: auto !important; }
             .neon-card-wrapper:hover { transform: none; }
-            .glass-panel::after { display: none; }
             h1::after { display: none; }
-            .card-live-now { animation: none; box-shadow: 0 0 35px rgba(255,0,64,0.55); }
-            .card-live-now.card-baller-bundle { animation: none; box-shadow: 0 0 40px rgba(255,215,0,0.6), 0 0 70px rgba(255,0,64,0.25); }
-            .tier-header::after { animation: none; opacity: 0.85; box-shadow: 0 0 18px currentColor; }
+            .card-live-now { animation: none; box-shadow: 0 0 32px rgba(var(--lg),0.6), 0 0 60px rgba(var(--lg),0.25); }
+            .tier-header::after { animation: ledOpacity 2.4s ease-in-out infinite; box-shadow: 0 0 18px currentColor; }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -488,19 +498,19 @@
         const TIERS = {
             baller: {
                 headerClass: 'th-baller', icon: 'ph-crown', title: 'BALLER BUNDLES', tagline: 'The premium experience · top-shelf product only',
-                wrapper: 'card-baller-bundle', tag: 'tag-baller', tagHTML: '<i class="ph-fill ph-crown"></i> BALLER BUNDLE',
+                wrapper: 'card-baller-bundle', tag: 'tag-baller', tagHTML: '<i class="ph-fill ph-crown"></i> BALLER BUNDLE', ribbon: 'rb-gold',
                 btn: 'buy-btn baller-btn', btnText: 'CLAIM YOUR SPOT', btnSub: 'Premium spots go fast',
                 perks: '<span class="perk perk-gold"><i class="ph-fill ph-crown"></i> Super premium</span><span class="perk perk-ship"><i class="ph-fill ph-truck"></i> Free shipping</span>'
             },
             bundle: {
                 headerClass: 'th-bundle', icon: 'ph-sketch-logo', title: 'BUNDLE BREAKS', tagline: 'Crazy value · shipping always included',
-                wrapper: 'card-bundle-tier', tag: 'tag-bundle', tagHTML: '<i class="ph-fill ph-sketch-logo"></i> BUNDLE BREAK',
+                wrapper: 'card-bundle-tier', tag: 'tag-bundle', tagHTML: '<i class="ph-fill ph-sketch-logo"></i> BUNDLE BREAK', ribbon: 'rb-purple',
                 btn: 'buy-btn bundle-btn', btnText: 'LOCK IN SPOT', btnSub: 'Great value per dollar',
                 perks: '<span class="perk perk-value"><i class="ph-fill ph-lightning"></i> Crazy value</span><span class="perk perk-ship"><i class="ph-fill ph-truck"></i> Shipping included</span>'
             },
             msrp: {
                 headerClass: 'th-msrp', icon: 'ph-seal-check', title: 'MSRP BREAKS', tagline: 'Retail prices · no markup, ever',
-                wrapper: 'card-msrp', tag: 'tag-msrp', tagHTML: '<i class="ph-fill ph-seal-check"></i> MSRP BREAK',
+                wrapper: 'card-msrp', tag: 'tag-msrp', tagHTML: '<i class="ph-fill ph-seal-check"></i> MSRP BREAK', ribbon: 'rb-green',
                 btn: 'buy-btn msrp-btn', btnText: 'JOIN AT MSRP', btnSub: 'Retail price, live hits',
                 perks: '<span class="perk perk-msrp"><i class="ph-fill ph-tag"></i> At MSRP</span><span class="perk perk-msrp"><i class="ph-fill ph-hand-coins"></i> No markup</span>'
             }
@@ -518,7 +528,7 @@
 
             if (isOpen) {
                 wrapperClass += ' card-live-now';
-                ribbonHTML = '<div class="live-ribbon"><span class="live-dot"></span> OPEN NOW — JOIN THE BREAK <span class="live-dot"></span></div>';
+                ribbonHTML = `<div class="live-ribbon ${t.ribbon}"><span class="live-dot"></span> OPEN NOW — JOIN THE BREAK <span class="live-dot"></span></div>`;
                 if (endTime) timeBadgeHTML = `<div class="time-tag-bottom countdown-timer" data-end="${esc(item.scheduleEnd)}" data-id="${id}"><i class="ph-fill ph-clock-countdown"></i> CALC…</div>`;
             } else {
                 wrapperClass += ' card-closed';
