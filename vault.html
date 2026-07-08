@@ -17,6 +17,7 @@
             --accent-purple: #d500ff;
             --accent-gold: #ffd700;
             --accent-live: #ff0040;
+            --raw-green: #00ff9d;
             --text-bright: #ffffff;
             --text-dim: #aab0d8;
             --guardian-size: clamp(120px, 14vw, 200px);
@@ -28,14 +29,17 @@
         body::before {
             content: ''; position: fixed; inset: 0; z-index: -10; pointer-events: none;
             background:
-                radial-gradient(60% 50% at 20% 0%, rgba(213,0,255,0.18), transparent 70%),
-                radial-gradient(55% 50% at 85% 12%, rgba(0,255,242,0.16), transparent 70%),
-                radial-gradient(60% 60% at 50% 110%, rgba(157,78,221,0.18), transparent 70%),
+                radial-gradient(60% 50% at 20% 0%, rgba(213,0,255,0.20), transparent 70%),
+                radial-gradient(55% 50% at 85% 12%, rgba(0,255,242,0.18), transparent 70%),
+                radial-gradient(60% 60% at 50% 110%, rgba(157,78,221,0.20), transparent 70%),
                 linear-gradient(to bottom, #02030c, #06031a 60%, #02030c);
             background-size: 200% 200%, 200% 200%, 200% 200%, 100% 100%;
             animation: aurora 26s ease-in-out infinite;
         }
         @keyframes aurora { 0%,100% { background-position: 0% 0%, 100% 0%, 50% 100%, 0 0; } 50% { background-position: 30% 20%, 70% 30%, 40% 80%, 0 0; } }
+
+        .led-topbar { position: fixed; top: 0; left: 0; right: 0; height: 4px; z-index: 100; background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan), var(--accent-gold), var(--accent-live), var(--accent-purple)); background-size: 300% 100%; animation: ledFlow 6s linear infinite; box-shadow: 0 0 18px rgba(213,0,255,0.7), 0 0 40px rgba(0,255,242,0.5); }
+        @keyframes ledFlow { 0% { background-position: 0% 0; } 100% { background-position: 300% 0; } }
 
         .grain { position: fixed; inset: 0; z-index: -9; pointer-events: none; background-image: var(--grain); background-size: 140px; opacity: 0.04; mix-blend-mode: overlay; }
         .particles { position: fixed; inset: 0; pointer-events: none; z-index: -7; background-image: radial-gradient(circle at 20% 30%, var(--accent-cyan) 1px, transparent 3px), radial-gradient(circle at 80% 70%, var(--accent-purple) 1px, transparent 3px); background-size: 120px 120px; opacity: 0.4; }
@@ -54,8 +58,8 @@
         @keyframes hop { 0%,100% { transform: translateY(0) scale(1,1); } 20% { transform: translateY(-26px) scale(0.97,1.03); } 45% { transform: translateY(0) scale(1.04,0.96); } 60% { transform: translateY(0) scale(1,1); } }
         @keyframes flop { 0%,100% { transform: rotate(-11deg) translateY(0); } 50% { transform: rotate(11deg) translateY(-12px); } }
 
-        .top-nav { display: flex; justify-content: center; gap: 20px; padding: 22px 16px; position: relative; z-index: 10; flex-wrap: wrap; }
-        .nav-link { padding: 11px 26px; border-radius: 30px; color: #fff; text-decoration: none; font-weight: 800; letter-spacing: 1px; border: 1px solid rgba(255,255,255,0.18); background: rgba(0,0,0,0.45); backdrop-filter: blur(10px); transition: transform .3s, box-shadow .3s, border-color .3s, background .3s; display: flex; align-items: center; gap: 8px; }
+        .top-nav { display: flex; justify-content: center; gap: 20px; padding: 26px 16px 22px; position: relative; z-index: 10; flex-wrap: wrap; }
+        .nav-link { padding: 11px 26px; border-radius: 30px; color: #fff; text-decoration: none; font-weight: 800; letter-spacing: 1px; border: 1px solid rgba(255,255,255,0.18); background: rgba(0,0,0,0.45); backdrop-filter: blur(14px); transition: transform .3s, box-shadow .3s, border-color .3s, background .3s; display: flex; align-items: center; gap: 8px; }
         .nav-link:hover { background: rgba(255,255,255,0.08); border-color: var(--accent-cyan); box-shadow: 0 0 22px rgba(0,255,242,0.4); transform: translateY(-2px); }
         .nav-active { border-color: var(--accent-purple); box-shadow: 0 0 22px rgba(213,0,255,0.4); background: linear-gradient(90deg, rgba(213,0,255,0.2), transparent); pointer-events: none; }
 
@@ -64,22 +68,43 @@
         @keyframes holo { 0% { background-position: 0% 50%; } 100% { background-position: 300% 50%; } }
         .brand-strip { display: flex; align-items: center; gap: 12px; margin-top: 14px; flex-wrap: wrap; justify-content: center; }
         .subtitle { color: var(--accent-gold); font-weight: 700; letter-spacing: 4px; text-transform: uppercase; text-shadow: 0 0 10px rgba(255,215,0,0.5); }
-        .ver-pill { display: inline-flex; align-items: center; gap: 6px; font-size: 0.72rem; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; padding: 5px 14px; border-radius: 30px; color: #fff; background: linear-gradient(90deg, rgba(213,0,255,0.18), rgba(0,255,242,0.18)); border: 1px solid rgba(213,0,255,0.5); box-shadow: 0 0 18px rgba(213,0,255,0.25); }
-        .ver-pill i { color: var(--accent-purple); }
 
-        main { position: relative; z-index: 2; max-width: 1250px; margin: 0 auto 4rem; padding: 2.5rem; border-radius: 35px; background: rgba(5,5,14,0.72); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 2px solid rgba(213,0,255,0.3); box-shadow: 0 0 100px rgba(0,0,0,0.8), inset 0 0 30px rgba(213,0,255,0.05), 0 0 20px rgba(213,0,255,0.1), 0 0 40px rgba(0,255,242,0.1); animation: shellIn 0.9s cubic-bezier(0.22,1,0.36,1) both; }
+        main { position: relative; z-index: 2; max-width: 1250px; margin: 0 auto 4rem; padding: 2.5rem; border-radius: 35px; background: rgba(5,5,14,0.66); backdrop-filter: blur(18px) saturate(140%); -webkit-backdrop-filter: blur(18px) saturate(140%); border: 2px solid rgba(213,0,255,0.3); box-shadow: 0 0 100px rgba(0,0,0,0.8), inset 0 0 30px rgba(213,0,255,0.05), inset 0 2px 0 rgba(255,255,255,0.14), 0 0 40px rgba(0,255,242,0.1); animation: shellIn 0.9s cubic-bezier(0.22,1,0.36,1) both; }
         @keyframes shellIn { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ---------- LED SECTION HEADERS ---------- */
+        .tier-header { position: relative; display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 3.5rem auto 2.2rem; max-width: 760px; padding: 22px 40px 20px; border-radius: 24px; backdrop-filter: blur(14px); overflow: hidden; border: 1px solid; }
+        .tier-header:first-child { margin-top: 0.5rem; }
+        .tier-header::after { content: ''; position: absolute; left: 8%; right: 8%; bottom: 0; height: 3px; border-radius: 3px; background: currentColor; animation: ledBreathe 2.4s ease-in-out infinite; }
+        @keyframes ledBreathe { 0%,100% { opacity: 0.5; box-shadow: 0 0 8px currentColor; } 50% { opacity: 1; box-shadow: 0 0 26px currentColor, 0 0 60px currentColor; } }
+        .tier-title { font-size: clamp(1.5rem, 4vw, 2.2rem); font-weight: 900; letter-spacing: 5px; text-transform: uppercase; display: flex; align-items: center; gap: 14px; }
+        .tier-tagline { font-size: 0.85rem; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; opacity: 0.85; }
+        .th-slab { color: #e883ff; border-color: rgba(213,0,255,0.55); background: linear-gradient(160deg, rgba(45,0,60,0.55), rgba(15,0,25,0.75)); box-shadow: 0 0 45px rgba(213,0,255,0.22), inset 0 2px 0 rgba(255,255,255,0.2), inset 0 0 40px rgba(213,0,255,0.06); }
+        .th-slab .tier-title { text-shadow: 0 0 24px rgba(213,0,255,0.9), 0 0 60px rgba(213,0,255,0.5); }
+        .th-raw { color: var(--raw-green); border-color: rgba(0,255,157,0.55); background: linear-gradient(160deg, rgba(0,45,30,0.55), rgba(0,15,10,0.75)); box-shadow: 0 0 45px rgba(0,255,157,0.2), inset 0 2px 0 rgba(255,255,255,0.2), inset 0 0 40px rgba(0,255,157,0.06); }
+        .th-raw .tier-title { text-shadow: 0 0 24px rgba(0,255,157,0.9), 0 0 60px rgba(0,255,157,0.5); }
 
         .store-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 35px; }
         .item-card { display: flex; flex-direction: column; height: 100%; }
 
-        .glass-panel { position: relative; height: 100%; width: 100%; z-index: 1; overflow: hidden; border-radius: 24px; background: linear-gradient(160deg, rgba(20,20,35,0.6), rgba(10,10,20,0.8)); backdrop-filter: blur(16px); border: 1px solid rgba(213,0,255,0.1); border-top: 2px solid rgba(255,255,255,0.4); box-shadow: inset 0 0 30px rgba(0,0,0,0.7), inset 0 5px 10px rgba(255,255,255,0.1), 0 10px 30px rgba(0,0,0,0.5); transition: transform .18s ease-out; }
-        .glass-panel::after { content: ''; position: absolute; inset: 0; z-index: 14; pointer-events: none; opacity: 0; transition: opacity .5s; background: linear-gradient(115deg, transparent 30%, rgba(0,255,242,0.10) 42%, rgba(213,0,255,0.12) 50%, rgba(255,215,0,0.10) 58%, transparent 70%); mix-blend-mode: screen; }
+        .glass-panel { position: relative; height: 100%; width: 100%; z-index: 1; overflow: hidden; border-radius: 24px; background: linear-gradient(160deg, rgba(22,22,40,0.52), rgba(8,8,18,0.72)); backdrop-filter: blur(22px) saturate(150%); -webkit-backdrop-filter: blur(22px) saturate(150%); border: 1px solid rgba(213,0,255,0.1); border-top: 2px solid rgba(255,255,255,0.45); box-shadow: inset 0 0 30px rgba(0,0,0,0.7), inset 0 6px 14px rgba(255,255,255,0.12), 0 10px 30px rgba(0,0,0,0.5); transition: transform .18s ease-out; }
+        .glass-panel::after { content: ''; position: absolute; inset: 0; z-index: 14; pointer-events: none; opacity: 0; transition: opacity .5s; background: linear-gradient(115deg, transparent 30%, rgba(0,255,242,0.12) 42%, rgba(213,0,255,0.14) 50%, rgba(255,215,0,0.12) 58%, transparent 70%); mix-blend-mode: screen; }
         .neon-card-wrapper:hover .glass-panel::after { opacity: 1; }
         .neon-card-wrapper { position: relative; border-radius: 26px; padding: 3px; background: rgba(0,0,0,0.2); box-shadow: 0 0 25px rgba(213,0,255,0.2), 0 0 50px rgba(0,255,242,0.15); overflow: hidden; transition: transform .4s cubic-bezier(0.25,0.8,0.25,1), box-shadow .4s; perspective: 1000px; will-change: transform; }
         .neon-card-wrapper:hover { transform: translateY(-10px) scale(1.02); box-shadow: 0 0 50px rgba(213,0,255,0.6), 0 0 80px rgba(0,255,242,0.5); }
         .neon-card-wrapper::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: conic-gradient(transparent 0deg, transparent 90deg, var(--accent-cyan) 130deg, #fff 155deg, var(--accent-purple) 180deg, transparent 220deg); animation: spinBorder 5s linear infinite; z-index: 0; opacity: 1; filter: blur(5px); }
         @keyframes spinBorder { 100% { transform: rotate(360deg); } }
+
+        /* Availability ribbon + glow (the Vault twin of OPEN NOW) */
+        .avail-ribbon { position: absolute; top: 0; left: 0; right: 0; z-index: 18; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 9px 0; font-weight: 900; font-size: 0.82rem; letter-spacing: 3px; text-transform: uppercase; color: #fff; background: linear-gradient(90deg, rgba(123,43,255,0.92), rgba(213,0,255,0.92), rgba(123,43,255,0.92)); background-size: 200% 100%; animation: ribbonFlow 2.5s linear infinite; text-shadow: 0 1px 3px rgba(0,0,0,0.6); box-shadow: 0 4px 25px rgba(213,0,255,0.8), inset 0 1px 0 rgba(255,255,255,0.4); border-bottom: 1px solid rgba(255,255,255,0.35); }
+        @keyframes ribbonFlow { 0% { background-position: 0% 0; } 100% { background-position: 200% 0; } }
+        .avail-dot { width: 10px; height: 10px; border-radius: 50%; background: #fff; box-shadow: 0 0 12px #fff, 0 0 25px #fff; animation: dotBlink 1s ease-in-out infinite; }
+        @keyframes dotBlink { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.35; transform: scale(0.7); } }
+        .card-avail { animation: availGlow 1.8s ease-in-out infinite alternate; }
+        @keyframes availGlow { from { box-shadow: 0 0 28px rgba(213,0,255,0.3), 0 0 55px rgba(0,255,242,0.15); } to { box-shadow: 0 0 55px rgba(213,0,255,0.65), 0 0 100px rgba(0,255,242,0.3); } }
+        .card-closed { filter: saturate(0.35) brightness(0.75); }
+        .card-closed::before { animation-play-state: paused !important; opacity: 0.25 !important; }
+        .card-closed:hover { transform: none; }
 
         .card-psa { border: 2px solid #ff3333 !important; box-shadow: 0 0 40px rgba(255,51,51,0.3) !important; }
         .card-psa::before { background: conic-gradient(transparent 0deg, transparent 90deg, #ff3333 130deg, #fff 155deg, #cc0000 180deg, transparent 220deg) !important; }
@@ -96,6 +121,9 @@
         .card-ace { border: 2px solid #00ff88 !important; box-shadow: 0 0 40px rgba(0,255,136,0.3) !important; }
         .card-ace::before { background: conic-gradient(transparent 0deg, transparent 90deg, #00ff88 130deg, #fff 155deg, #00cc66 180deg, transparent 220deg) !important; }
         .tag-ace { background: rgba(0,30,10,0.85) !important; border: 1px solid #00ff88 !important; color: #00ff88 !important; box-shadow: 0 0 15px rgba(0,255,136,0.4) !important; }
+        .card-raw-tier { box-shadow: 0 0 25px rgba(0,255,157,0.22), 0 0 50px rgba(0,255,157,0.1); }
+        .card-raw-tier::before { background: conic-gradient(transparent 0deg, transparent 90deg, var(--raw-green) 130deg, #fff 155deg, #00c9ff 180deg, transparent 220deg); }
+        .card-raw-tier:hover { box-shadow: 0 0 50px rgba(0,255,157,0.55), 0 0 90px rgba(0,255,157,0.3); }
 
         .item-img-box { height: 350px; overflow: hidden; position: relative; cursor: zoom-in; border-bottom: 1px solid rgba(213,0,255,0.2); display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); }
         .item-img-box::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent); transform: skewX(-20deg); z-index: 10; transition: .7s; pointer-events: none; }
@@ -110,21 +138,34 @@
         .dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.3); transition: .3s; }
         .dot.active { background: var(--accent-cyan); box-shadow: 0 0 10px var(--accent-cyan); transform: scale(1.3); }
 
-        .type-tag { position: absolute; top: 20px; right: 20px; padding: 8px 14px; border-radius: 10px; font-weight: 800; font-size: 0.75rem; z-index: 15; letter-spacing: 1px; text-transform: uppercase; backdrop-filter: blur(10px); display: flex; align-items: center; gap: 6px; }
+        .type-tag { position: absolute; top: 48px; right: 20px; padding: 8px 14px; border-radius: 10px; font-weight: 800; font-size: 0.75rem; z-index: 15; letter-spacing: 1px; text-transform: uppercase; backdrop-filter: blur(10px); display: flex; align-items: center; gap: 6px; }
+        .type-tag.no-ribbon { top: 20px; }
         .tag-slab { background: rgba(40,0,60,0.85); border: 1px solid #bd00ff; color: #fff; text-shadow: 0 1px 3px #000; box-shadow: 0 0 20px rgba(213,0,255,0.4); }
         .tag-raw { background: rgba(0,40,40,0.85); border: 1px solid #00ff9d; color: #fff; text-shadow: 0 1px 3px #000; box-shadow: 0 0 15px rgba(0,255,157,0.3); }
-        .cond-badge { position: absolute; top: 20px; left: 20px; padding: 8px 14px; border-radius: 10px; font-weight: 800; font-size: 0.75rem; z-index: 15; letter-spacing: 1px; text-transform: uppercase; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); display: flex; align-items: center; gap: 6px; box-shadow: 0 0 15px rgba(0,0,0,0.5); }
+        .cond-badge { position: absolute; top: 48px; left: 20px; padding: 8px 14px; border-radius: 10px; font-weight: 800; font-size: 0.75rem; z-index: 15; letter-spacing: 1px; text-transform: uppercase; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); display: flex; align-items: center; gap: 6px; box-shadow: 0 0 15px rgba(0,0,0,0.5); }
+        .cond-badge.no-ribbon { top: 20px; }
 
         .item-content { padding: 1.8rem; flex: 1; display: flex; flex-direction: column; position: relative; z-index: 2; }
         .item-content h3 { font-size: 1.5rem; margin-bottom: 0.8rem; font-weight: 800; line-height: 1.2; color: #fff; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
-        .item-content p { color: var(--text-dim); font-size: 1rem; line-height: 1.6; margin-bottom: 1.5rem; flex: 1; }
+        .item-content p { color: var(--text-dim); font-size: 1rem; line-height: 1.6; margin-bottom: 1.2rem; flex: 1; }
+
+        .perk-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.2rem; }
+        .perk { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 30px; font-size: 0.72rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; backdrop-filter: blur(6px); }
+        .perk-wheel { background: rgba(213,0,255,0.12); border: 1px solid rgba(213,0,255,0.55); color: #e883ff; box-shadow: 0 0 12px rgba(213,0,255,0.25); }
+        .perk-ship { background: rgba(0,255,242,0.1); border: 1px solid rgba(0,255,242,0.5); color: var(--accent-cyan); box-shadow: 0 0 12px rgba(0,255,242,0.2); }
+        .perk-raw { background: rgba(0,255,157,0.1); border: 1px solid rgba(0,255,157,0.55); color: var(--raw-green); box-shadow: 0 0 12px rgba(0,255,157,0.25); }
+
         .price-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(213,0,255,0.2); }
-        .price { font-size: 2rem; font-weight: 900; color: var(--accent-gold); text-shadow: 0 0 25px rgba(255,215,0,0.4); }
+        .price { font-size: 2.1rem; font-weight: 900; color: var(--accent-gold); text-shadow: 0 0 25px rgba(255,215,0,0.7), 0 0 55px rgba(255,180,0,0.35); }
+        .card-raw-tier .price { color: var(--raw-green); text-shadow: 0 0 25px rgba(0,255,157,0.7), 0 0 55px rgba(0,255,157,0.35); }
         .stock { font-size: 0.9rem; color: var(--text-bright); background: rgba(213,0,255,0.2); padding: 6px 14px; border-radius: 30px; font-weight: 700; border: 1px solid rgba(213,0,255,0.4); }
 
         .buy-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 1.2rem; border-radius: 16px; background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan)); color: #fff; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 1.1rem; letter-spacing: 1.5px; line-height: 1.1; transition: .4s; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.3); cursor: pointer; box-shadow: 0 10px 30px rgba(213,0,255,0.3), inset 0 2px 0 rgba(255,255,255,0.4); }
         .buy-btn:hover { transform: translateY(-5px); box-shadow: 0 0 50px rgba(0,255,242,0.8); border-color: #fff; }
         .btn-subtext { font-size: 0.75rem; opacity: 0.9; margin-top: 4px; font-weight: 700; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.8); text-transform: none; }
+        .raw-btn { background: linear-gradient(90deg, #00c98a, #00fff2) !important; color: #002a1c !important; text-shadow: 0 1px 0 rgba(255,255,255,0.3) !important; box-shadow: 0 10px 30px rgba(0,255,157,0.35), inset 0 2px 0 rgba(255,255,255,0.5) !important; }
+        .raw-btn .btn-subtext { color: #003a28 !important; text-shadow: none !important; }
+        .raw-btn:hover { box-shadow: 0 0 45px rgba(0,255,157,0.8) !important; }
         .sold-out { background: #0f0f1a !important; color: #666 !important; pointer-events: none; border: 2px solid #2a2a3a !important; box-shadow: inset 0 0 20px rgba(0,0,0,0.5) !important; }
         .sold-out .btn-subtext { display: none; }
 
@@ -152,8 +193,31 @@
             .p-pichu { width: 90px; opacity: 0.3; left: 3%; }
             .p-magikarp { width: 120px; opacity: 0.32; right: 3%; }
             main { padding: 1.5rem 1rem; width: 95%; border-radius: 25px; }
+            .tier-header { padding: 16px 18px 18px; margin: 2.8rem auto 1.8rem; }
+            .tier-title { letter-spacing: 3px; }
             .store-grid { grid-template-columns: 1fr; gap: 30px; }
         }
+        /* ---------- MOBILE ANTI-FLICKER ----------
+           Same fix as the storefront: near-solid glass + frozen conic borders on
+           touch devices to stop Android Chrome flicker. Desktop unchanged. */
+        @media (hover: none), (pointer: coarse) {
+            body::before { animation: none; background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%; }
+            .grain, .particles { display: none; }
+            .top-nav .nav-link, main, .glass-panel, .tier-header, .type-tag, .cond-badge,
+            .perk, .carousel-btn, .image-modal {
+                backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+            }
+            main { background: rgba(6,6,16,0.94); }
+            .glass-panel { background: linear-gradient(160deg, rgba(24,24,42,0.97), rgba(10,10,20,0.98)); }
+            .neon-card-wrapper::before { animation: none !important; opacity: 0.35 !important; filter: none !important; }
+            .neon-card-wrapper, .glass-panel, .item-img { will-change: auto !important; }
+            .neon-card-wrapper:hover { transform: none; }
+            .glass-panel::after { display: none; }
+            .item-img-box::before { display: none; }
+            .card-avail { animation: none; box-shadow: 0 0 35px rgba(213,0,255,0.5); }
+            .tier-header::after { animation: none; opacity: 0.85; box-shadow: 0 0 18px currentColor; }
+        }
+
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
             body::before { animation: none; }
@@ -161,6 +225,7 @@
     </style>
 </head>
 <body>
+    <div class="led-topbar"></div>
     <div class="grain"></div>
     <div class="particles"></div>
     <div class="parallax-layer">
@@ -184,10 +249,10 @@
     </header>
 
     <main>
-        <div class="store-grid" id="store-container"></div>
+        <div id="vault-sections"></div>
     </main>
 
-    <footer><p>© 2025 PBM Breaks · The Crystal League v2.0 · Not affiliated with Nintendo</p></footer>
+    <footer><p>© 2025 PBM Breaks · The Crystal League v3.0 · Not affiliated with Nintendo</p></footer>
 
     <div id="myModal" class="image-modal" onclick="closeModal()">
         <button class="close-modal" aria-label="Close image">&times;</button>
@@ -219,8 +284,7 @@
             throw lastErr || new Error('Request failed');
         }
 
-        function renderSkeletons(containerId, count) {
-            const container = document.getElementById(containerId);
+        function renderSkeletons(container, count) {
             let html = '';
             for (let i = 0; i < count; i++) html += '<div class="skeleton"></div>';
             container.innerHTML = html;
@@ -247,89 +311,135 @@
             else { const m = document.getElementById(`main-img-${id}`); if (m) openModal(m.src); }
         }
 
+        function buildVaultCard(item) {
+            const id = esc(item.id);
+            const isSlab = item.type === 'slab';
+            let tagClass = 'tag-raw', wrapperClass = 'card-raw-tier', tagText = '<i class="ph-fill ph-cards"></i> RAW CARD';
+
+            if (isSlab) {
+                wrapperClass = '';
+                const graderName = item.grader && item.grader !== 'Other' ? item.grader : 'GRADED';
+                tagText = `<i class="ph-fill ph-certificate"></i> ${esc(graderName)} SLAB`;
+                if (graderName === 'PSA') { wrapperClass = 'card-psa'; tagClass = 'tag-psa'; }
+                else if (graderName === 'BGS') { wrapperClass = 'card-bgs'; tagClass = 'tag-bgs'; }
+                else if (graderName === 'CGC') { wrapperClass = 'card-cgc'; tagClass = 'tag-cgc'; }
+                else if (graderName === 'SGC') { wrapperClass = 'card-sgc'; tagClass = 'tag-sgc'; }
+                else if (graderName === 'ACE') { wrapperClass = 'card-ace'; tagClass = 'tag-ace'; }
+                else { tagClass = 'tag-slab'; }
+            }
+
+            const isEnded = toInt(item.stock) <= 0;
+            const isAvail = !isEnded;
+
+            let ribbonHTML = '';
+            if (isAvail) {
+                wrapperClass += ' card-avail';
+                ribbonHTML = '<div class="avail-ribbon"><span class="avail-dot"></span> IN THE VAULT — ENTER NOW <span class="avail-dot"></span></div>';
+            } else {
+                wrapperClass += ' card-closed';
+            }
+            const posClass = isAvail ? '' : ' no-ribbon';
+
+            let conditionHTML = '';
+            if (item.type === 'raw' && item.condition) {
+                let color = '#00ff9d';
+                if (item.condition === 'Mint (M)') color = '#00fff2';
+                if (item.condition.includes('LP')) color = '#b2ff59';
+                if (item.condition.includes('MP')) color = '#ffeb3b';
+                if (item.condition.includes('HP')) color = '#ff9800';
+                if (item.condition.includes('DMG')) color = '#ff4444';
+                const extraStyle = item.condition === 'Mint (M)' ? 'box-shadow:0 0 20px rgba(0,255,242,0.6);font-weight:900;' : '';
+                conditionHTML = `<div class="cond-badge${posClass}" style="color:${color};border:1px solid ${color};${extraStyle}">⭐ ${esc(item.condition)}</div>`;
+            }
+
+            const perks = isSlab
+                ? '<span class="perk perk-wheel"><i class="ph-fill ph-spinner-ball"></i> Wheel pick</span><span class="perk perk-ship"><i class="ph-fill ph-truck"></i> Free shipping</span>'
+                : '<span class="perk perk-raw"><i class="ph-fill ph-magnifying-glass"></i> Fresh pull</span><span class="perk perk-ship"><i class="ph-fill ph-truck"></i> Free shipping</span>';
+
+            let btnHTML;
+            const btnClass = isSlab ? 'buy-btn' : 'buy-btn raw-btn';
+            if (isEnded) btnHTML = '<div class="buy-btn sold-out">SOLD OUT</div>';
+            else if (item.googleFormLink) btnHTML = `<a href="${esc(item.googleFormLink)}" target="_blank" rel="noopener" class="${btnClass}" onclick="trackClick('${id}')"><span>ENTER FOR A CHANCE</span><span class="btn-subtext">Only pay if picked on the wheel</span></a>`;
+            else btnHTML = '<div class="buy-btn sold-out" style="background:#555;border-color:#777;">COMING SOON</div>';
+
+            const imgArray = (item.images && item.images.length > 0) ? item.images : (item.image ? [item.image] : ['https://assets.pokemon.com/assets/cms2/img/misc/trading-card-games/cards/tcg_default_card.png']);
+            window.vaultImages[item.id] = imgArray;
+            window.currentImgIndex[item.id] = 0;
+
+            let imgHTML;
+            if (imgArray.length > 1) {
+                const dotsHTML = imgArray.map((_, idx) => `<div class="dot ${idx === 0 ? 'active' : ''}"></div>`).join('');
+                imgHTML = `
+                    <img src="${esc(imgArray[0])}" class="item-img" id="main-img-${id}" alt="${esc(item.name)}" loading="lazy">
+                    <button class="carousel-btn prev" aria-label="Previous image" onclick="switchImg(event, '${id}', -1)"><i class="ph-bold ph-caret-left"></i></button>
+                    <button class="carousel-btn next" aria-label="Next image" onclick="switchImg(event, '${id}', 1)"><i class="ph-bold ph-caret-right"></i></button>
+                    <div class="img-dots" id="dots-${id}">${dotsHTML}</div>`;
+            } else imgHTML = `<img src="${esc(imgArray[0])}" class="item-img" id="main-img-${id}" alt="${esc(item.name)}" loading="lazy">`;
+
+            return `
+                <div class="neon-card-wrapper ${wrapperClass}" id="card-${id}">
+                    <div class="item-card glass-panel">
+                        ${ribbonHTML}
+                        ${conditionHTML}
+                        <div class="type-tag ${tagClass}${posClass}">${tagText}</div>
+                        <div class="item-img-box" onclick="openItemModal('${id}')">${imgHTML}</div>
+                        <div class="item-content">
+                            <h3>${esc(item.name)}</h3>
+                            <p>${esc(item.description)}</p>
+                            <div class="perk-row">${perks}</div>
+                            <div class="price-row"><span class="price">$${money(item.price)}</span><span class="stock">${toInt(item.stock) > 1 ? toInt(item.stock) + ' Available' : '1 of 1'}</span></div>
+                            <div id="btn-container-${id}">${btnHTML}</div>
+                        </div>
+                    </div>
+                </div>`;
+        }
+
         async function loadVault() {
-            renderSkeletons('store-container', 3);
-            const container = document.getElementById('store-container');
+            const sections = document.getElementById('vault-sections');
+            sections.innerHTML = '<div class="store-grid" id="vault-loading"></div>';
+            renderSkeletons(document.getElementById('vault-loading'), 3);
             try {
                 const res = await fetchWithRetry(`${API_URL}/items`);
                 const items = await res.json();
                 if (!Array.isArray(items)) throw new Error(items && items.error ? items.error : 'Bad data');
 
                 items.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-                let storeHTML = '', visibleCount = 0;
 
+                const slabs = [], raws = [];
                 items.forEach(item => {
-                    if (!item || item.hidden || (item.type !== 'slab' && item.type !== 'raw')) return;
-                    visibleCount++;
-                    const id = esc(item.id);
-                    const isSlab = item.type === 'slab';
-                    let tagClass = 'tag-raw', wrapperClass = '', tagText = '<i class="ph-fill ph-cards"></i> RAW CARD';
-
-                    if (isSlab) {
-                        const graderName = item.grader && item.grader !== 'Other' ? item.grader : 'GRADED';
-                        tagText = `<i class="ph-fill ph-certificate"></i> ${esc(graderName)} SLAB`;
-                        if (graderName === 'PSA') { wrapperClass = 'card-psa'; tagClass = 'tag-psa'; }
-                        else if (graderName === 'BGS') { wrapperClass = 'card-bgs'; tagClass = 'tag-bgs'; }
-                        else if (graderName === 'CGC') { wrapperClass = 'card-cgc'; tagClass = 'tag-cgc'; }
-                        else if (graderName === 'SGC') { wrapperClass = 'card-sgc'; tagClass = 'tag-sgc'; }
-                        else if (graderName === 'ACE') { wrapperClass = 'card-ace'; tagClass = 'tag-ace'; }
-                        else { tagClass = 'tag-slab'; }
-                    }
-
-                    let conditionHTML = '';
-                    if (item.type === 'raw' && item.condition) {
-                        let color = '#00ff9d';
-                        if (item.condition === 'Mint (M)') color = '#00fff2';
-                        if (item.condition.includes('LP')) color = '#b2ff59';
-                        if (item.condition.includes('MP')) color = '#ffeb3b';
-                        if (item.condition.includes('HP')) color = '#ff9800';
-                        if (item.condition.includes('DMG')) color = '#ff4444';
-                        const extraStyle = item.condition === 'Mint (M)' ? 'box-shadow:0 0 20px rgba(0,255,242,0.6);font-weight:900;' : '';
-                        conditionHTML = `<div class="cond-badge" style="color:${color};border:1px solid ${color};${extraStyle}">⭐ ${esc(item.condition)}</div>`;
-                    }
-
-                    const isEnded = toInt(item.stock) <= 0;
-                    let btnHTML;
-                    if (isEnded) btnHTML = '<div class="buy-btn sold-out">SOLD OUT</div>';
-                    else if (item.googleFormLink) btnHTML = `<a href="${esc(item.googleFormLink)}" target="_blank" rel="noopener" class="buy-btn" onclick="trackClick('${id}')"><span>ENTER FOR A CHANCE</span><span class="btn-subtext">Only pay if picked on the wheel</span></a>`;
-                    else btnHTML = '<div class="buy-btn sold-out" style="background:#555;border-color:#777;">COMING SOON</div>';
-
-                    const imgArray = (item.images && item.images.length > 0) ? item.images : (item.image ? [item.image] : ['https://assets.pokemon.com/assets/cms2/img/misc/trading-card-games/cards/tcg_default_card.png']);
-                    window.vaultImages[item.id] = imgArray;
-                    window.currentImgIndex[item.id] = 0;
-
-                    let imgHTML;
-                    if (imgArray.length > 1) {
-                        const dotsHTML = imgArray.map((_, idx) => `<div class="dot ${idx === 0 ? 'active' : ''}"></div>`).join('');
-                        imgHTML = `
-                            <img src="${esc(imgArray[0])}" class="item-img" id="main-img-${id}" alt="${esc(item.name)}" loading="lazy">
-                            <button class="carousel-btn prev" aria-label="Previous image" onclick="switchImg(event, '${id}', -1)"><i class="ph-bold ph-caret-left"></i></button>
-                            <button class="carousel-btn next" aria-label="Next image" onclick="switchImg(event, '${id}', 1)"><i class="ph-bold ph-caret-right"></i></button>
-                            <div class="img-dots" id="dots-${id}">${dotsHTML}</div>`;
-                    } else imgHTML = `<img src="${esc(imgArray[0])}" class="item-img" id="main-img-${id}" alt="${esc(item.name)}" loading="lazy">`;
-
-                    storeHTML += `
-                        <div class="neon-card-wrapper ${wrapperClass}" id="card-${id}">
-                            <div class="item-card glass-panel">
-                                ${conditionHTML}
-                                <div class="type-tag ${tagClass}">${tagText}</div>
-                                <div class="item-img-box" onclick="openItemModal('${id}')">${imgHTML}</div>
-                                <div class="item-content">
-                                    <h3>${esc(item.name)}</h3>
-                                    <p>${esc(item.description)}</p>
-                                    <div class="price-row"><span class="price">$${money(item.price)}</span><span class="stock">${toInt(item.stock) > 1 ? toInt(item.stock) + ' Available' : '1 of 1'}</span></div>
-                                    <div id="btn-container-${id}">${btnHTML}</div>
-                                </div>
-                            </div>
-                        </div>`;
+                    if (!item || item.hidden) return;
+                    if (item.type === 'slab') slabs.push(item);
+                    else if (item.type === 'raw') raws.push(item);
                 });
 
-                if (visibleCount === 0) storeHTML = `<div class="locked-card"><h2>The Vault is locked</h2><p>No singles or slabs are listed right now. Check back soon — fresh pulls land here after every break.</p></div>`;
-                container.innerHTML = storeHTML;
+                if (slabs.length === 0 && raws.length === 0) {
+                    sections.innerHTML = `<div class="store-grid"><div class="locked-card"><h2>The Vault is locked</h2><p>No singles or slabs are listed right now. Check back soon — fresh pulls land here after every break.</p></div></div>`;
+                    return;
+                }
+
+                let html = '';
+                if (slabs.length > 0) {
+                    html += `
+                        <div class="tier-header th-slab">
+                            <div class="tier-title"><i class="ph-fill ph-certificate"></i> GRADED SLABS <i class="ph-fill ph-certificate"></i></div>
+                            <div class="tier-tagline">Authenticated hits · PSA / BGS / CGC &amp; more</div>
+                        </div>
+                        <div class="store-grid">${slabs.map(buildVaultCard).join('')}</div>`;
+                }
+                if (raws.length > 0) {
+                    html += `
+                        <div class="tier-header th-raw">
+                            <div class="tier-title"><i class="ph-fill ph-cards"></i> RAW SINGLES <i class="ph-fill ph-cards"></i></div>
+                            <div class="tier-tagline">Fresh pulls straight from the breaks</div>
+                        </div>
+                        <div class="store-grid">${raws.map(buildVaultCard).join('')}</div>`;
+                }
+
+                sections.innerHTML = html;
                 bindTilt();
             } catch (e) {
                 console.error('Vault error:', e);
-                container.innerHTML = `<div class="error-card"><h2>Couldn't open the Vault</h2><p>The server didn't answer in time. This usually clears in a few seconds.</p><button class="retry-btn" onclick="loadVault()">Try again</button></div>`;
+                sections.innerHTML = `<div class="store-grid"><div class="error-card"><h2>Couldn't open the Vault</h2><p>The server didn't answer in time. This usually clears in a few seconds.</p><button class="retry-btn" onclick="loadVault()">Try again</button></div></div>`;
             }
         }
 
@@ -367,7 +477,7 @@
         }
 
         initParallax();
-        loadVault(); 
+        loadVault();
     </script>
 </body>
 </html>
