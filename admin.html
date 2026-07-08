@@ -143,6 +143,12 @@
 
         @media(max-width: 600px) { .flex-row { flex-direction: column; gap: 0; } .flex-row > div { width: 100%; } .card { padding: 1.2rem; } h1 { font-size: 1.6rem; } .tier-grid { grid-template-columns: repeat(3, 1fr); } }
         @media(min-width: 600px) { li { flex-direction: row; align-items: center; justify-content: space-between; } .btn-group { width: auto; flex-shrink: 0; flex-direction: column; gap: 8px; } .btn-group button { padding: 8px 20px; width: 100%; } }
+        @media (hover: none), (pointer: coarse) {
+            body::before { animation: none; background-size: 100% 100%, 100% 100%, 100% 100%; }
+            .grain { display: none; }
+            .card, .toast { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+            .card { background: rgba(18,18,34,0.97); }
+        }
         @media (prefers-reduced-motion: reduce) { body::before { animation: none; } * { transition-duration: 0.001ms !important; animation-duration: 0.001ms !important; } }
     </style>
 </head>
