@@ -291,6 +291,30 @@
             .epic-empty-inner { padding: 3rem 1.5rem; }
         }
 
+        /* ---------- MOBILE ANTI-FLICKER ----------
+           Android Chrome flickers/black-boxes when backdrop-filter blur layers sit
+           under animated conic gradients. On touch devices we swap blurred glass
+           for near-solid glass and freeze the heavy animations. Desktop unchanged. */
+        @media (hover: none), (pointer: coarse) {
+            body::before { animation: none; background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%; }
+            .grain, .particles { display: none; }
+            .top-nav .nav-link, main, .glass-panel, .tier-header, .section-header,
+            .type-tag, .time-tag-bottom, .perk, .yt-label, .bell-btn, .epic-empty-inner, .image-modal {
+                backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+            }
+            main { background: rgba(6,6,16,0.94); }
+            .glass-panel { background: linear-gradient(160deg, rgba(24,24,42,0.97), rgba(10,10,20,0.98)); }
+            .card-baller-bundle .glass-panel { background: linear-gradient(160deg, rgba(48,38,8,0.97), rgba(16,11,0,0.98)); }
+            .neon-card-wrapper::before, .epic-empty-wrapper::before { animation: none !important; opacity: 0.35 !important; }
+            .neon-card-wrapper, .glass-panel, .item-img, .logo-animator, .icon-float-wrapper, .sub-btn, .bell-btn { will-change: auto !important; }
+            .neon-card-wrapper:hover { transform: none; }
+            .glass-panel::after { display: none; }
+            h1::after { display: none; }
+            .card-live-now { animation: none; box-shadow: 0 0 35px rgba(255,0,64,0.55); }
+            .card-live-now.card-baller-bundle { animation: none; box-shadow: 0 0 40px rgba(255,215,0,0.6), 0 0 70px rgba(255,0,64,0.25); }
+            .tier-header::after { animation: none; opacity: 0.85; box-shadow: 0 0 18px currentColor; }
+        }
+
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
             body::before { animation: none; }
@@ -469,10 +493,10 @@
                 perks: '<span class="perk perk-gold"><i class="ph-fill ph-crown"></i> Super premium</span><span class="perk perk-ship"><i class="ph-fill ph-truck"></i> Free shipping</span>'
             },
             bundle: {
-                headerClass: 'th-bundle', icon: 'ph-sketch-logo', title: 'BUNDLE BREAKS', tagline: 'Crazy value mixes · shipping always included',
+                headerClass: 'th-bundle', icon: 'ph-sketch-logo', title: 'BUNDLE BREAKS', tagline: 'Crazy value · shipping always included',
                 wrapper: 'card-bundle-tier', tag: 'tag-bundle', tagHTML: '<i class="ph-fill ph-sketch-logo"></i> BUNDLE BREAK',
-                btn: 'buy-btn bundle-btn', btnText: 'LOCK IN SPOT', btnSub: 'Max value per dollar',
-                perks: '<span class="perk perk-value"><i class="ph-fill ph-lightning"></i> Crazy value mix</span><span class="perk perk-ship"><i class="ph-fill ph-truck"></i> Shipping included</span>'
+                btn: 'buy-btn bundle-btn', btnText: 'LOCK IN SPOT', btnSub: 'Great value per dollar',
+                perks: '<span class="perk perk-value"><i class="ph-fill ph-lightning"></i> Crazy value</span><span class="perk perk-ship"><i class="ph-fill ph-truck"></i> Shipping included</span>'
             },
             msrp: {
                 headerClass: 'th-msrp', icon: 'ph-seal-check', title: 'MSRP BREAKS', tagline: 'Retail prices · no markup, ever',
