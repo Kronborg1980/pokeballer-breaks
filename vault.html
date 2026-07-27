@@ -8,7 +8,7 @@
     <link rel="icon" type="image/svg+xml" href="https://upload.wikimedia.org/wikipedia/commons/5/53/Pok%C3%A9_Ball_icon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Tilt+Neon&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
         :root {
@@ -38,9 +38,6 @@
         }
         @keyframes aurora { 0%,100% { background-position: 0% 0%, 100% 0%, 50% 100%, 0 0; } 50% { background-position: 30% 20%, 70% 30%, 40% 80%, 0 0; } }
 
-        .led-topbar { position: fixed; top: 0; left: 0; right: 0; height: 4px; z-index: 100; background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan), var(--accent-gold), var(--accent-live), var(--accent-purple)); background-size: 300% 100%; animation: ledFlow 6s linear infinite; box-shadow: 0 0 18px rgba(213,0,255,0.7), 0 0 40px rgba(0,255,242,0.5); }
-        @keyframes ledFlow { 0% { background-position: 0% 0; } 100% { background-position: 300% 0; } }
-
         .grain { position: fixed; inset: 0; z-index: -9; pointer-events: none; background-image: var(--grain); background-size: 140px; opacity: 0.04; mix-blend-mode: overlay; }
         .particles { position: fixed; inset: 0; pointer-events: none; z-index: -7; background-image: radial-gradient(circle at 20% 30%, var(--accent-cyan) 1px, transparent 3px), radial-gradient(circle at 80% 70%, var(--accent-purple) 1px, transparent 3px); background-size: 120px 120px; opacity: 0.4; }
 
@@ -58,14 +55,50 @@
         @keyframes hop { 0%,100% { transform: translateY(0) scale(1,1); } 20% { transform: translateY(-26px) scale(0.97,1.03); } 45% { transform: translateY(0) scale(1.04,0.96); } 60% { transform: translateY(0) scale(1,1); } }
         @keyframes flop { 0%,100% { transform: rotate(-11deg) translateY(0); } 50% { transform: rotate(11deg) translateY(-12px); } }
 
+        /* ---------- VEGAS NEON SIGN SYSTEM ----------
+           Every letter is its own glass tube: white-hot core + colored glow
+           (--tube). JS wraps each letter in a span with a randomized flicker
+           duration/delay, so the sign twinkles letter by letter — and a few
+           random tubes get the harsh dying-tube sputter. */
+        .neon-sign { font-family: 'Tilt Neon', 'Inter', sans-serif; font-weight: 400; }
+        .neon-word { white-space: nowrap; }
+        .nl {
+            color: #fff; display: inline-block;
+            text-shadow:
+                0 0 4px rgba(255,255,255,0.95),
+                0 0 10px var(--tube, var(--accent-purple)),
+                0 0 21px var(--tube, var(--accent-purple)),
+                0 0 44px var(--tube, var(--accent-purple)),
+                0 0 80px var(--tube, var(--accent-purple));
+            animation: tubeFlicker var(--fd, 6s) linear infinite;
+        }
+        @keyframes tubeFlicker {
+            0%, 6.9%, 8.6%, 41.9%, 43.4%, 78.9%, 80.4%, 100% { opacity: 1; }
+            7.2% { opacity: 0.55; }
+            7.9% { opacity: 0.9; }
+            42.3% { opacity: 0.45; }
+            42.9% { opacity: 1; }
+            79.3% { opacity: 0.65; }
+        }
+        .nl-dying { animation-name: tubeDying; animation-timing-function: steps(1, end); }
+        @keyframes tubeDying {
+            0%, 5.9%, 8.1%, 27.9%, 32.1%, 55.9%, 60.1%, 100% { opacity: 1; }
+            6% { opacity: 0.25; text-shadow: none; }
+            7% { opacity: 0.8; }
+            28% { opacity: 0.15; text-shadow: none; }
+            29.5% { opacity: 0.85; }
+            30.6% { opacity: 0.25; text-shadow: none; }
+            56% { opacity: 0.2; text-shadow: none; }
+            57.8% { opacity: 0.9; }
+        }
+
         .top-nav { display: flex; justify-content: center; gap: 20px; padding: 26px 16px 22px; position: relative; z-index: 10; flex-wrap: wrap; }
         .nav-link { padding: 11px 26px; border-radius: 30px; color: #fff; text-decoration: none; font-weight: 800; letter-spacing: 1px; border: 1px solid rgba(255,255,255,0.18); background: rgba(0,0,0,0.45); backdrop-filter: blur(14px); transition: transform .3s, box-shadow .3s, border-color .3s, background .3s; display: flex; align-items: center; gap: 8px; }
         .nav-link:hover { background: rgba(255,255,255,0.08); border-color: var(--accent-cyan); box-shadow: 0 0 22px rgba(0,255,242,0.4); transform: translateY(-2px); }
         .nav-active { border-color: var(--accent-purple); box-shadow: 0 0 22px rgba(213,0,255,0.4); background: linear-gradient(90deg, rgba(213,0,255,0.2), transparent); pointer-events: none; }
 
         header { display: flex; flex-direction: column; align-items: center; padding: 1rem 1rem 2rem; position: relative; z-index: 2; }
-        h1 { font-size: clamp(3rem, 8vw, 5.5rem); font-weight: 900; letter-spacing: -2px; text-transform: uppercase; margin: 0; line-height: 1; position: relative; z-index: 1; background: linear-gradient(110deg, #ffffff, #d500ff, #ff6ad5, #00fff2, #6ad7ff, #ffd700, #d500ff, #ffffff); background-size: 300% 100%; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 28px rgba(213,0,255,0.55)) drop-shadow(0 0 50px rgba(0,255,242,0.3)); animation: holo 9s linear infinite; }
-        @keyframes holo { 0% { background-position: 0% 50%; } 100% { background-position: 300% 50%; } }
+        h1 { font-family: 'Tilt Neon', 'Inter', sans-serif; font-weight: 400; font-size: clamp(2.8rem, 7.5vw, 5.2rem); letter-spacing: 3px; text-transform: uppercase; margin: 0; line-height: 1.05; position: relative; z-index: 1; }
         .brand-strip { display: flex; align-items: center; gap: 12px; margin-top: 14px; flex-wrap: wrap; justify-content: center; }
         .subtitle { color: var(--accent-gold); font-weight: 700; letter-spacing: 4px; text-transform: uppercase; text-shadow: 0 0 10px rgba(255,215,0,0.5); }
 
@@ -77,13 +110,12 @@
         .tier-header:first-child { margin-top: 0.5rem; }
         .tier-header::after { content: ''; position: absolute; left: 8%; right: 8%; bottom: 0; height: 3px; border-radius: 3px; background: currentColor; animation: ledBreathe 2.4s ease-in-out infinite; }
         @keyframes ledBreathe { 0%,100% { opacity: 0.5; box-shadow: 0 0 8px currentColor; } 50% { opacity: 1; box-shadow: 0 0 26px currentColor, 0 0 60px currentColor; } }
-        .tier-title { font-size: clamp(1.5rem, 4vw, 2.2rem); font-weight: 900; letter-spacing: 5px; text-transform: uppercase; display: flex; align-items: center; gap: 14px; }
+        .tier-title { font-family: 'Tilt Neon', 'Inter', sans-serif; font-weight: 400; font-size: clamp(1.5rem, 4vw, 2.2rem); letter-spacing: 5px; text-transform: uppercase; display: flex; align-items: center; gap: 14px; }
+        .tier-title i { text-shadow: 0 0 18px currentColor, 0 0 40px currentColor; }
         .tier-tagline { font-size: 0.85rem; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; opacity: 0.85; }
-        .th-slab { color: #e883ff; border-color: rgba(213,0,255,0.55); background: linear-gradient(160deg, rgba(45,0,60,0.55), rgba(15,0,25,0.75)); box-shadow: 0 0 45px rgba(213,0,255,0.22), inset 0 2px 0 rgba(255,255,255,0.2), inset 0 0 40px rgba(213,0,255,0.06); }
-        .th-slab .tier-title { text-shadow: 0 0 24px rgba(213,0,255,0.9), 0 0 60px rgba(213,0,255,0.5); }
-        .th-raw { color: var(--raw-green); border-color: rgba(0,255,157,0.55); background: linear-gradient(160deg, rgba(0,45,30,0.55), rgba(0,15,10,0.75)); box-shadow: 0 0 45px rgba(0,255,157,0.2), inset 0 2px 0 rgba(255,255,255,0.2), inset 0 0 40px rgba(0,255,157,0.06); }
-        .th-raw .tier-title { text-shadow: 0 0 24px rgba(0,255,157,0.9), 0 0 60px rgba(0,255,157,0.5); }
-
+        .th-slab { --tube: #d24bff; color: #e883ff; border-color: rgba(213,0,255,0.55); background: linear-gradient(160deg, rgba(45,0,60,0.55), rgba(15,0,25,0.75)); box-shadow: 0 0 45px rgba(213,0,255,0.22), inset 0 2px 0 rgba(255,255,255,0.2), inset 0 0 40px rgba(213,0,255,0.06); }
+        .th-raw { --tube: #00ff9d; color: var(--raw-green); border-color: rgba(0,255,157,0.55); background: linear-gradient(160deg, rgba(0,45,30,0.55), rgba(0,15,10,0.75)); box-shadow: 0 0 45px rgba(0,255,157,0.2), inset 0 2px 0 rgba(255,255,255,0.2), inset 0 0 40px rgba(0,255,157,0.06); }
+        
         .store-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 35px; }
         .item-card { display: flex; flex-direction: column; height: 100%; }
 
@@ -218,9 +250,11 @@
         }
         /* ---------- MOBILE ANTI-FLICKER ----------
            Same fix as the storefront: near-solid glass + frozen conic borders on
-           touch devices to stop Android Chrome flicker. Desktop unchanged. */
+           touch devices to stop Android Chrome flicker. Desktop unchanged.
+           The Vegas neon flicker is opacity-only (GPU-cheap) so it stays ON —
+           that flicker is intentional, not a bug. */
         @media (hover: none), (pointer: coarse) {
-            body::before { animation: none; background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%; }
+            body::before { animation: none; background-size: 100% 100%, 100% 100%, 100% 100%; }
             .grain, .particles { display: none; }
             .top-nav .nav-link, main, .glass-panel, .tier-header, .type-tag, .cond-badge,
             .perk, .carousel-btn, .image-modal {
@@ -245,7 +279,6 @@
     </style>
 </head>
 <body>
-    <div class="led-topbar"></div>
     <div class="grain"></div>
     <div class="particles"></div>
     <div class="parallax-layer">
@@ -262,7 +295,7 @@
     </nav>
 
     <header>
-        <h1>THE VAULT</h1>
+        <h1 id="site-title">THE VAULT</h1>
         <div class="brand-strip">
             <span class="subtitle">Singles &amp; Graded Slabs</span>
         </div>
@@ -288,6 +321,40 @@
         function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
         function money(n) { const v = Number(n); return isFinite(v) ? v.toFixed(2) : '0.00'; }
         function toInt(n) { const v = parseInt(n, 10); return isFinite(v) ? v : 0; }
+
+        /* ---------- VEGAS NEON: per-letter tube wrapping ---------- */
+        function neonize(el, palette) {
+            if (!el || el.dataset.neon === '1') return;
+            el.dataset.neon = '1';
+            el.classList.add('neon-sign');
+            let w = 0;
+            Array.from(el.childNodes).forEach(node => {
+                if (node.nodeType !== 3 || !node.textContent.trim()) return;
+                const frag = document.createDocumentFragment();
+                node.textContent.split(/(\s+)/).forEach(part => {
+                    if (!part) return;
+                    if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(' ')); return; }
+                    const word = document.createElement('span');
+                    word.className = 'neon-word';
+                    if (palette && palette.length) word.style.setProperty('--tube', palette[w++ % palette.length]);
+                    for (const ch of part) {
+                        const s = document.createElement('span');
+                        s.className = 'nl' + (Math.random() < 0.12 ? ' nl-dying' : '');
+                        s.style.setProperty('--fd', (3.5 + Math.random() * 6).toFixed(2) + 's');
+                        s.style.animationDelay = (-Math.random() * 9).toFixed(2) + 's';
+                        s.textContent = ch;
+                        word.appendChild(s);
+                    }
+                    frag.appendChild(word);
+                });
+                el.replaceChild(frag, node);
+            });
+        }
+        const SIGN_PALETTE = ['#d24bff', '#ff2d95'];
+        function applyNeon() {
+            neonize(document.getElementById('site-title'), SIGN_PALETTE);
+            document.querySelectorAll('.tier-title').forEach(t => neonize(t));
+        }
 
         async function fetchWithRetry(url, opts = {}, retries = 2) {
             let lastErr;
@@ -457,6 +524,7 @@
                 }
 
                 sections.innerHTML = html;
+                applyNeon();
                 bindTilt();
             } catch (e) {
                 console.error('Vault error:', e);
@@ -498,6 +566,7 @@
         }
 
         initParallax();
+        applyNeon();
         loadVault();
     </script>
 </body>
