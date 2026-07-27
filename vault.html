@@ -80,6 +80,14 @@
             42.9% { opacity: 1; }
             79.3% { opacity: 0.65; }
         }
+        /* Smaller signs (nav, subtitle, card names) get a tighter glow */
+        .neon-sm .nl {
+            text-shadow:
+                0 0 3px rgba(255,255,255,0.9),
+                0 0 8px var(--tube, var(--accent-purple)),
+                0 0 16px var(--tube, var(--accent-purple)),
+                0 0 30px var(--tube, var(--accent-purple));
+        }
         .nl-dying { animation-name: tubeDying; animation-timing-function: steps(1, end); }
         @keyframes tubeDying {
             0%, 5.9%, 8.1%, 27.9%, 32.1%, 55.9%, 60.1%, 100% { opacity: 1; }
@@ -100,6 +108,13 @@
         header { display: flex; flex-direction: column; align-items: center; padding: 1rem 1rem 2rem; position: relative; z-index: 2; }
         h1 { font-family: 'Tilt Neon', 'Inter', sans-serif; font-weight: 400; font-size: clamp(2.8rem, 7.5vw, 5.2rem); letter-spacing: 3px; text-transform: uppercase; margin: 0; line-height: 1.05; position: relative; z-index: 1; }
         .brand-strip { display: flex; align-items: center; gap: 12px; margin-top: 14px; flex-wrap: wrap; justify-content: center; }
+        .subtitle { --tube: #ffd700; }
+        .card-psa { --tube: #ff4444; }
+        .card-bgs { --tube: #e6c27a; }
+        .card-cgc { --tube: #00d2ff; }
+        .card-sgc { --tube: #ffffff; }
+        .card-ace { --tube: #00ff88; }
+        .card-raw-tier { --tube: #00ff9d; }
         .subtitle { color: var(--accent-gold); font-weight: 700; letter-spacing: 4px; text-transform: uppercase; text-shadow: 0 0 10px rgba(255,215,0,0.5); }
 
         main { position: relative; z-index: 2; max-width: 1250px; margin: 0 auto 4rem; padding: 2.5rem; border-radius: 35px; background: rgba(5,5,14,0.66); backdrop-filter: blur(18px) saturate(140%); -webkit-backdrop-filter: blur(18px) saturate(140%); border: 2px solid rgba(213,0,255,0.3); box-shadow: 0 0 100px rgba(0,0,0,0.8), inset 0 0 30px rgba(213,0,255,0.05), inset 0 2px 0 rgba(255,255,255,0.14), 0 0 40px rgba(0,255,242,0.1); animation: shellIn 0.9s cubic-bezier(0.22,1,0.36,1) both; }
@@ -323,10 +338,11 @@
         function toInt(n) { const v = parseInt(n, 10); return isFinite(v) ? v : 0; }
 
         /* ---------- VEGAS NEON: per-letter tube wrapping ---------- */
-        function neonize(el, palette) {
+        function neonize(el, palette, small) {
             if (!el || el.dataset.neon === '1') return;
             el.dataset.neon = '1';
             el.classList.add('neon-sign');
+            if (small) el.classList.add('neon-sm');
             let w = 0;
             Array.from(el.childNodes).forEach(node => {
                 if (node.nodeType !== 3 || !node.textContent.trim()) return;
@@ -354,6 +370,9 @@
         function applyNeon() {
             neonize(document.getElementById('site-title'), SIGN_PALETTE);
             document.querySelectorAll('.tier-title').forEach(t => neonize(t));
+            document.querySelectorAll('.top-nav .nav-link').forEach(t => neonize(t, SIGN_PALETTE, true));
+            document.querySelectorAll('.subtitle').forEach(t => neonize(t, null, true));
+            document.querySelectorAll('.item-content h3').forEach(t => neonize(t, null, true));
         }
 
         async function fetchWithRetry(url, opts = {}, retries = 2) {
