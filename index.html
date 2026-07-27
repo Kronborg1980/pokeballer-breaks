@@ -88,6 +88,14 @@
             79.3% { opacity: 0.65; }
         }
         /* The occasional bad tube: hard on/off cuts, glow drops out entirely */
+        /* Smaller signs (nav, labels, card names) get a tighter glow */
+        .neon-sm .nl {
+            text-shadow:
+                0 0 3px rgba(255,255,255,0.9),
+                0 0 8px var(--tube, var(--accent-cyan)),
+                0 0 16px var(--tube, var(--accent-cyan)),
+                0 0 30px var(--tube, var(--accent-cyan));
+        }
         .nl-dying { animation-name: tubeDying; animation-timing-function: steps(1, end); }
         @keyframes tubeDying {
             0%, 5.9%, 8.1%, 27.9%, 32.1%, 55.9%, 60.1%, 100% { opacity: 1; }
@@ -261,6 +269,12 @@
         .yt-label { padding: 10px 18px; border-radius: 12px; font-weight: 900; font-size: 0.85rem; letter-spacing: 0.8px; z-index: 2; box-shadow: 0 5px 20px rgba(0,0,0,0.6); text-transform: uppercase; display: inline-flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.7); border: 1px solid rgba(255,255,255,0.25); backdrop-filter: blur(8px); }
         .lbl-hunt { color: #00eeff; border-color: #00eeff; text-shadow: 0 0 10px #00eeff; }
         .lbl-universal { background: linear-gradient(135deg, #ff0055, #ff0000); color: #fff; border: none; box-shadow: 0 0 25px rgba(255,0,85,0.5); animation: badgePulse 1s infinite alternate; }
+        .lbl-hunt { --tube: #00eeff; }
+        .lbl-universal { --tube: #ff3355; }
+        .sub-text h3 { --tube: #ffd700; }
+        .card-msrp { --tube: #00ff9d; }
+        .card-bundle-tier { --tube: #d24bff; }
+        .card-baller-bundle { --tube: #ffcc33; }
         .yt-open-btn { background: rgba(255,0,64,0.15); border: 1px solid rgba(255,0,64,0.5); color: #fff; padding: 8px 16px; border-radius: 10px; text-decoration: none; font-weight: 800; font-size: 0.8rem; display: flex; align-items: center; gap: 6px; transition: .3s; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 0 15px rgba(255,0,64,0.2); }
         .yt-open-btn:hover { background: rgba(255,0,64,0.8); box-shadow: 0 0 20px rgba(255,0,64,0.6); transform: scale(1.05); }
 
@@ -423,10 +437,11 @@
            duration + delay (so no two letters blink together). ~12% of tubes
            get the harsh dying-tube animation. Words cycle through the palette;
            if no palette is given, the sign's own --tube color is inherited. */
-        function neonize(el, palette) {
+        function neonize(el, palette, small) {
             if (!el || el.dataset.neon === '1') return;
             el.dataset.neon = '1';
             el.classList.add('neon-sign');
+            if (small) el.classList.add('neon-sm');
             let w = 0;
             Array.from(el.childNodes).forEach(node => {
                 if (node.nodeType !== 3 || !node.textContent.trim()) return;
@@ -455,6 +470,10 @@
             neonize(document.getElementById('site-title'), SIGN_PALETTE);
             document.querySelectorAll('.section-title').forEach(t => neonize(t, SIGN_PALETTE));
             document.querySelectorAll('.tier-title').forEach(t => neonize(t));
+            document.querySelectorAll('.top-nav .nav-link').forEach(t => neonize(t, SIGN_PALETTE, true));
+            document.querySelectorAll('.yt-label').forEach(t => neonize(t, null, true));
+            document.querySelectorAll('.sub-text h3').forEach(t => neonize(t, null, true));
+            document.querySelectorAll('.item-content h3').forEach(t => neonize(t, null, true));
         }
 
         async function fetchWithRetry(url, opts = {}, retries = 2) {
@@ -561,6 +580,7 @@
                             </div>
                         </div>`;
                 }).join('');
+                applyNeon();
                 bindTilt();
             } catch (e) {
                 console.error('Feed error:', e);
