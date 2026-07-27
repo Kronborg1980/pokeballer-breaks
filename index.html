@@ -8,7 +8,7 @@
     <link rel="icon" type="image/svg+xml" href="https://upload.wikimedia.org/wikipedia/commons/5/53/Pok%C3%A9_Ball_icon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Tilt+Neon&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
         :root {
@@ -38,10 +38,6 @@
         }
         @keyframes aurora { 0%, 100% { background-position: 0% 0%, 100% 0%, 50% 100%, 0 0; } 50% { background-position: 30% 20%, 70% 30%, 40% 80%, 0 0; } }
 
-        /* LED strip across the very top of the page */
-        .led-topbar { position: fixed; top: 0; left: 0; right: 0; height: 4px; z-index: 100; background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple), var(--accent-gold), var(--accent-live), var(--accent-cyan)); background-size: 300% 100%; animation: ledFlow 6s linear infinite; box-shadow: 0 0 18px rgba(0,255,242,0.7), 0 0 40px rgba(213,0,255,0.5); }
-        @keyframes ledFlow { 0% { background-position: 0% 0; } 100% { background-position: 300% 0; } }
-
         .grain { position: fixed; inset: 0; z-index: -9; pointer-events: none; background-image: var(--grain); background-size: 140px; opacity: 0.04; mix-blend-mode: overlay; }
         .particles { position: fixed; inset: 0; pointer-events: none; z-index: -7; background-image: radial-gradient(circle at 20% 30%, var(--accent-cyan) 1px, transparent 3px), radial-gradient(circle at 80% 70%, var(--accent-purple) 1px, transparent 3px); background-size: 120px 120px; opacity: 0.4; }
 
@@ -65,6 +61,45 @@
         @keyframes hop { 0%,100% { transform: translateY(0) scale(1,1); } 20% { transform: translateY(-26px) scale(0.97,1.03); } 45% { transform: translateY(0) scale(1.04,0.96); } 60% { transform: translateY(0) scale(1,1); } }
         @keyframes flop { 0%,100% { transform: rotate(-11deg) translateY(0); } 50% { transform: rotate(11deg) translateY(-12px); } }
 
+        /* ---------- VEGAS NEON SIGN SYSTEM ----------
+           Every letter is its own glass tube: white-hot core + colored glow
+           (--tube). JS wraps each letter in a span with a randomized flicker
+           duration/delay, so the sign twinkles letter by letter — and a few
+           random tubes get the harsh dying-tube sputter. */
+        .neon-sign { font-family: 'Tilt Neon', 'Inter', sans-serif; font-weight: 400; }
+        .neon-word { white-space: nowrap; }
+        .nl {
+            color: #fff; display: inline-block;
+            text-shadow:
+                0 0 4px rgba(255,255,255,0.95),
+                0 0 10px var(--tube, var(--accent-cyan)),
+                0 0 21px var(--tube, var(--accent-cyan)),
+                0 0 44px var(--tube, var(--accent-cyan)),
+                0 0 80px var(--tube, var(--accent-cyan));
+            animation: tubeFlicker var(--fd, 6s) linear infinite;
+        }
+        /* Mostly-on twinkle: brief dips, long steady stretches */
+        @keyframes tubeFlicker {
+            0%, 6.9%, 8.6%, 41.9%, 43.4%, 78.9%, 80.4%, 100% { opacity: 1; }
+            7.2% { opacity: 0.55; }
+            7.9% { opacity: 0.9; }
+            42.3% { opacity: 0.45; }
+            42.9% { opacity: 1; }
+            79.3% { opacity: 0.65; }
+        }
+        /* The occasional bad tube: hard on/off cuts, glow drops out entirely */
+        .nl-dying { animation-name: tubeDying; animation-timing-function: steps(1, end); }
+        @keyframes tubeDying {
+            0%, 5.9%, 8.1%, 27.9%, 32.1%, 55.9%, 60.1%, 100% { opacity: 1; }
+            6% { opacity: 0.25; text-shadow: none; }
+            7% { opacity: 0.8; }
+            28% { opacity: 0.15; text-shadow: none; }
+            29.5% { opacity: 0.85; }
+            30.6% { opacity: 0.25; text-shadow: none; }
+            56% { opacity: 0.2; text-shadow: none; }
+            57.8% { opacity: 0.9; }
+        }
+
         /* ---------- NAV ---------- */
         .top-nav { display: flex; justify-content: center; gap: 20px; padding: 26px 16px 22px; position: relative; z-index: 10; flex-wrap: wrap; }
         .nav-link { padding: 11px 26px; border-radius: 30px; color: #fff; text-decoration: none; font-weight: 800; letter-spacing: 1px; border: 1px solid rgba(255,255,255,0.18); background: rgba(0,0,0,0.45); backdrop-filter: blur(14px); transition: transform .3s, box-shadow .3s, border-color .3s, background .3s; display: flex; align-items: center; gap: 8px; }
@@ -79,22 +114,10 @@
         .logo-animator { animation: float 6s infinite ease-in-out; will-change: transform; }
 
         h1 {
-            font-size: clamp(3.5rem, 9vw, 6.5rem); font-weight: 900; letter-spacing: -2px; text-transform: uppercase;
-            margin: 0; line-height: 1; text-align: center; position: relative; display: inline-block; z-index: 1;
-            background: linear-gradient(110deg, #ffffff, #00fff2, #6ad7ff, #d500ff, #ff6ad5, #ffd700, #00fff2, #ffffff);
-            background-size: 300% 100%;
-            -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 28px rgba(0,255,242,0.55)) drop-shadow(0 0 50px rgba(213,0,255,0.35));
-            animation: holo 9s linear infinite;
+            font-family: 'Tilt Neon', 'Inter', sans-serif; font-weight: 400;
+            font-size: clamp(3.2rem, 8.5vw, 6.2rem); letter-spacing: 3px; text-transform: uppercase;
+            margin: 0; line-height: 1.05; text-align: center; position: relative; display: inline-block; z-index: 1;
         }
-        @keyframes holo { 0% { background-position: 0% 50%; } 100% { background-position: 300% 50%; } }
-        h1::after {
-            content: attr(data-text); position: absolute; inset: 0; z-index: 2;
-            background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,0.9) 45%, #fff 50%, rgba(255,255,255,0.9) 55%, transparent 70%);
-            background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-            animation: glassShimmer 5s infinite linear; pointer-events: none; mix-blend-mode: overlay;
-        }
-        @keyframes glassShimmer { 0% { background-position: 150% 0; } 100% { background-position: -150% 0; } }
 
         /* ---------- MAIN SHELL ---------- */
         main {
@@ -107,21 +130,20 @@
 
         .section-header { display: flex; align-items: center; justify-content: center; gap: 1.5rem; margin: 4rem auto 1rem; background: linear-gradient(90deg, rgba(0,255,242,0.1), rgba(213,0,255,0.1)); border: 1px solid rgba(0,255,242,0.4); padding: 15px 50px; border-radius: 60px; max-width: 700px; box-shadow: 0 0 30px rgba(0,255,242,0.2), inset 0 2px 0 rgba(255,255,255,0.2); backdrop-filter: blur(12px); }
         .section-line { height: 4px; background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent); flex: 1; border-radius: 10px; box-shadow: 0 0 15px var(--accent-cyan); opacity: 0.7; }
-        .section-title { color: #fff; font-weight: 900; letter-spacing: 4px; font-size: 1.5rem; text-shadow: 0 0 20px var(--accent-cyan), 0 0 40px var(--accent-purple); text-align: center; }
+        .section-title { font-family: 'Tilt Neon', 'Inter', sans-serif; font-weight: 400; color: #fff; letter-spacing: 4px; font-size: 1.6rem; text-align: center; }
 
         /* ---------- TIER HEADERS (LED signs) ---------- */
         .tier-header { position: relative; display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 4.5rem auto 2.2rem; max-width: 760px; padding: 22px 40px 20px; border-radius: 24px; backdrop-filter: blur(14px); overflow: hidden; border: 1px solid; }
         .tier-header::after { content: ''; position: absolute; left: 8%; right: 8%; bottom: 0; height: 3px; border-radius: 3px; background: currentColor; filter: blur(0.5px); animation: ledBreathe 2.4s ease-in-out infinite; }
         @keyframes ledBreathe { 0%,100% { opacity: 0.5; box-shadow: 0 0 8px currentColor; } 50% { opacity: 1; box-shadow: 0 0 26px currentColor, 0 0 60px currentColor; } }
-        .tier-title { font-size: clamp(1.5rem, 4vw, 2.2rem); font-weight: 900; letter-spacing: 5px; text-transform: uppercase; display: flex; align-items: center; gap: 14px; }
+        .tier-title { font-family: 'Tilt Neon', 'Inter', sans-serif; font-weight: 400; font-size: clamp(1.5rem, 4vw, 2.2rem); letter-spacing: 5px; text-transform: uppercase; display: flex; align-items: center; gap: 14px; }
+        .tier-title i { text-shadow: 0 0 18px currentColor, 0 0 40px currentColor; }
         .tier-tagline { font-size: 0.85rem; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; opacity: 0.85; }
 
-        .th-baller { color: var(--accent-gold); border-color: rgba(255,215,0,0.55); background: linear-gradient(160deg, rgba(60,45,0,0.55), rgba(20,15,0,0.75)); box-shadow: 0 0 45px rgba(255,215,0,0.22), inset 0 2px 0 rgba(255,255,255,0.25), inset 0 0 40px rgba(255,215,0,0.06); }
-        .th-baller .tier-title { text-shadow: 0 0 24px rgba(255,215,0,0.9), 0 0 60px rgba(255,180,0,0.5); }
-        .th-bundle { color: #e883ff; border-color: rgba(213,0,255,0.55); background: linear-gradient(160deg, rgba(45,0,60,0.55), rgba(15,0,25,0.75)); box-shadow: 0 0 45px rgba(213,0,255,0.22), inset 0 2px 0 rgba(255,255,255,0.2), inset 0 0 40px rgba(213,0,255,0.06); }
-        .th-bundle .tier-title { text-shadow: 0 0 24px rgba(213,0,255,0.9), 0 0 60px rgba(213,0,255,0.5); }
-        .th-msrp { color: var(--msrp-green); border-color: rgba(0,255,157,0.55); background: linear-gradient(160deg, rgba(0,45,30,0.55), rgba(0,15,10,0.75)); box-shadow: 0 0 45px rgba(0,255,157,0.2), inset 0 2px 0 rgba(255,255,255,0.2), inset 0 0 40px rgba(0,255,157,0.06); }
-        .th-msrp .tier-title { text-shadow: 0 0 24px rgba(0,255,157,0.9), 0 0 60px rgba(0,255,157,0.5); }
+        /* Each tier sign glows in its own tube color (picked up by the .nl letters) */
+        .th-baller { --tube: #ffcc33; color: var(--accent-gold); border-color: rgba(255,215,0,0.55); background: linear-gradient(160deg, rgba(60,45,0,0.55), rgba(20,15,0,0.75)); box-shadow: 0 0 45px rgba(255,215,0,0.22), inset 0 2px 0 rgba(255,255,255,0.25), inset 0 0 40px rgba(255,215,0,0.06); }
+        .th-bundle { --tube: #d24bff; color: #e883ff; border-color: rgba(213,0,255,0.55); background: linear-gradient(160deg, rgba(45,0,60,0.55), rgba(15,0,25,0.75)); box-shadow: 0 0 45px rgba(213,0,255,0.22), inset 0 2px 0 rgba(255,255,255,0.2), inset 0 0 40px rgba(213,0,255,0.06); }
+        .th-msrp { --tube: #00ff9d; color: var(--msrp-green); border-color: rgba(0,255,157,0.55); background: linear-gradient(160deg, rgba(0,45,30,0.55), rgba(0,15,10,0.75)); box-shadow: 0 0 45px rgba(0,255,157,0.2), inset 0 2px 0 rgba(255,255,255,0.2), inset 0 0 40px rgba(0,255,157,0.06); }
 
         /* ---------- NEON CARDS ---------- */
         .neon-card-wrapper { position: relative; border-radius: 26px; padding: 3px; background: rgba(0,0,0,0.2); box-shadow: 0 0 25px rgba(0,255,242,0.2), 0 0 50px rgba(213,0,255,0.15); overflow: hidden; transition: transform .4s cubic-bezier(0.25,0.8,0.25,1), box-shadow .4s; perspective: 1000px; will-change: transform; }
@@ -302,7 +324,9 @@
         /* ---------- MOBILE ANTI-FLICKER ----------
            Android Chrome flickers/black-boxes when backdrop-filter blur layers sit
            under animated conic gradients. On touch devices we swap blurred glass
-           for near-solid glass and freeze the heavy animations. Desktop unchanged. */
+           for near-solid glass and freeze the heavy animations. Desktop unchanged.
+           NOTE: the Vegas neon flicker animates opacity only, which is GPU-cheap,
+           so it stays ON for mobile — that flicker is intentional, not a bug. */
         @media (hover: none), (pointer: coarse) {
             body::before { animation: none; background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%; }
             .grain, .particles { display: none; }
@@ -320,7 +344,6 @@
             .glass-panel::after { opacity: 1; mix-blend-mode: normal; background: linear-gradient(115deg, transparent 42%, rgba(255,255,255,0.05) 50%, transparent 58%); background-size: 250% 100%; animation: sheenFlow 7s linear infinite; }
             .neon-card-wrapper, .glass-panel, .item-img, .logo-animator, .icon-float-wrapper, .sub-btn, .bell-btn { will-change: auto !important; }
             .neon-card-wrapper:hover { transform: none; }
-            h1::after { display: none; }
             .card-live-now { animation: none; box-shadow: 0 0 32px rgba(var(--lg),0.6), 0 0 60px rgba(var(--lg),0.25); }
             .tier-header::after { animation: ledOpacity 2.4s ease-in-out infinite; box-shadow: 0 0 18px currentColor; }
         }
@@ -332,7 +355,6 @@
     </style>
 </head>
 <body>
-    <div class="led-topbar"></div>
     <div class="grain"></div>
     <div class="particles"></div>
     <div class="parallax-layer">
@@ -355,7 +377,7 @@
     <header>
         <div class="header-wrapper">
             <div class="logo-animator logo-left"><img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="header-logo" alt="Suicune"></div>
-            <h1 data-text="PBM BREAKS">PBM BREAKS</h1>
+            <h1 id="site-title">PBM BREAKS</h1>
             <div class="logo-animator logo-right"><img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="header-logo" alt="Suicune"></div>
         </div>
     </header>
@@ -395,6 +417,45 @@
         function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
         function money(n) { const v = Number(n); return isFinite(v) ? v.toFixed(2) : '0.00'; }
         function toInt(n) { const v = parseInt(n, 10); return isFinite(v) ? v : 0; }
+
+        /* ---------- VEGAS NEON: per-letter tube wrapping ----------
+           Wraps every letter of a sign in its own span with a random flicker
+           duration + delay (so no two letters blink together). ~12% of tubes
+           get the harsh dying-tube animation. Words cycle through the palette;
+           if no palette is given, the sign's own --tube color is inherited. */
+        function neonize(el, palette) {
+            if (!el || el.dataset.neon === '1') return;
+            el.dataset.neon = '1';
+            el.classList.add('neon-sign');
+            let w = 0;
+            Array.from(el.childNodes).forEach(node => {
+                if (node.nodeType !== 3 || !node.textContent.trim()) return;
+                const frag = document.createDocumentFragment();
+                node.textContent.split(/(\s+)/).forEach(part => {
+                    if (!part) return;
+                    if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(' ')); return; }
+                    const word = document.createElement('span');
+                    word.className = 'neon-word';
+                    if (palette && palette.length) word.style.setProperty('--tube', palette[w++ % palette.length]);
+                    for (const ch of part) {
+                        const s = document.createElement('span');
+                        s.className = 'nl' + (Math.random() < 0.12 ? ' nl-dying' : '');
+                        s.style.setProperty('--fd', (3.5 + Math.random() * 6).toFixed(2) + 's');
+                        s.style.animationDelay = (-Math.random() * 9).toFixed(2) + 's';
+                        s.textContent = ch;
+                        word.appendChild(s);
+                    }
+                    frag.appendChild(word);
+                });
+                el.replaceChild(frag, node);
+            });
+        }
+        const SIGN_PALETTE = ['#00f7ff', '#ff2d95'];
+        function applyNeon() {
+            neonize(document.getElementById('site-title'), SIGN_PALETTE);
+            document.querySelectorAll('.section-title').forEach(t => neonize(t, SIGN_PALETTE));
+            document.querySelectorAll('.tier-title').forEach(t => neonize(t));
+        }
 
         async function fetchWithRetry(url, opts = {}, retries = 2) {
             let lastErr;
@@ -582,6 +643,7 @@
             const sections = document.getElementById('store-sections');
             sections.innerHTML = '<div class="section-header"><span class="section-line"></span><span class="section-title">AVAILABLE BREAKS</span><span class="section-line"></span></div><div class="store-grid" id="store-loading"></div>';
             renderSkeletons(document.getElementById('store-loading'), 3);
+            applyNeon();
             try {
                 const res = await fetchWithRetry(`${API_URL}/items`);
                 const items = await res.json();
@@ -617,6 +679,7 @@
                             </div>
                         </div>
                         </div>`;
+                    applyNeon();
                     return;
                 }
 
@@ -633,6 +696,7 @@
                 });
 
                 sections.innerHTML = html;
+                applyNeon();
                 startCountdownTimer();
                 bindTilt();
             } catch (e) {
@@ -717,6 +781,7 @@
         }
 
         initParallax();
+        applyNeon();
         loadVideos();
         loadStore();
     </script>
