@@ -3,411 +3,469 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PBM Breaks · The Crystal League</title>
+    <title>Happy Birthday · PBM Breaks Party Edition</title>
 
-    <link rel="icon" type="image/svg+xml" href="https://upload.wikimedia.org/wikipedia/commons/5/53/Pok%C3%A9_Ball_icon.svg">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%82%3C/text%3E%3C/svg%3E">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Tilt+Neon&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
+        /* =========================================================
+           PBM BREAKS · BIRTHDAY EDITION
+           Palette is party-supply-aisle, not neon-arcade:
+           frosting cream paper, grape, party pink, pool blue,
+           candle yellow, mint. Ink is deep plum, never black.
+           ========================================================= */
         :root {
-            --bg-dark: #02030c;
-            --accent-cyan: #00fff2;
-            --accent-purple: #d500ff;
-            --accent-gold: #ffd700;
-            --accent-live: #ff0040;
-            --msrp-green: #00ff9d;
-            --text-bright: #ffffff;
-            --text-dim: #aab0d8;
-            --guardian-size: clamp(120px, 14vw, 200px);
-            --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            --paper: #fff4e8;
+            --ink: #2a1338;
+            --ink-soft: #6b5480;
+            --pink: #ff3d8b;
+            --grape: #7a2bff;
+            --pool: #21c7ff;
+            --candle: #ffc93c;
+            --mint: #2fe3a5;
+            --cherry: #ff5252;
+            --guest-size: clamp(110px, 13vw, 180px);
+            --card-radius: 26px;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg-dark); color: var(--text-bright); min-height: 100vh; overflow-x: hidden; position: relative; -webkit-font-smoothing: antialiased; }
 
+        body {
+            font-family: 'Inter', sans-serif; color: var(--ink); background: var(--paper);
+            min-height: 100vh; overflow-x: hidden; position: relative; -webkit-font-smoothing: antialiased;
+        }
+
+        /* Wrapping-paper backdrop: soft party lights over cream */
         body::before {
             content: ''; position: fixed; inset: 0; z-index: -10; pointer-events: none;
             background:
-                radial-gradient(60% 50% at 20% 0%, rgba(0,255,242,0.18), transparent 70%),
-                radial-gradient(55% 50% at 85% 12%, rgba(213,0,255,0.20), transparent 70%),
-                radial-gradient(60% 60% at 50% 110%, rgba(157,78,221,0.20), transparent 70%),
-                linear-gradient(to bottom, #02030c, #06031a 60%, #02030c);
-            background-size: 200% 200%, 200% 200%, 200% 200%, 100% 100%;
-            animation: aurora 26s ease-in-out infinite;
+                radial-gradient(55% 45% at 12% 0%, rgba(255,61,139,0.22), transparent 70%),
+                radial-gradient(50% 45% at 88% 8%, rgba(33,199,255,0.22), transparent 70%),
+                radial-gradient(60% 55% at 50% 108%, rgba(122,43,255,0.18), transparent 70%),
+                linear-gradient(to bottom, #fff8f0, #ffeef6 55%, #f3f0ff);
         }
-        @keyframes aurora { 0%, 100% { background-position: 0% 0%, 100% 0%, 50% 100%, 0 0; } 50% { background-position: 30% 20%, 70% 30%, 40% 80%, 0 0; } }
+        /* Polka dots, because it is a birthday party */
+        .dots {
+            position: fixed; inset: 0; z-index: -9; pointer-events: none; opacity: 0.5;
+            background-image:
+                radial-gradient(circle at 25% 25%, rgba(255,61,139,0.18) 4px, transparent 5px),
+                radial-gradient(circle at 75% 75%, rgba(33,199,255,0.16) 4px, transparent 5px);
+            background-size: 130px 130px;
+        }
 
-        .grain { position: fixed; inset: 0; z-index: -9; pointer-events: none; background-image: var(--grain); background-size: 140px; opacity: 0.04; mix-blend-mode: overlay; }
-        .particles { position: fixed; inset: 0; pointer-events: none; z-index: -7; background-image: radial-gradient(circle at 20% 30%, var(--accent-cyan) 1px, transparent 3px), radial-gradient(circle at 80% 70%, var(--accent-purple) 1px, transparent 3px); background-size: 120px 120px; opacity: 0.4; }
-
+        /* ---------- BALLOONS + PARTY GUESTS ---------- */
         .parallax-layer { position: fixed; inset: 0; z-index: -8; pointer-events: none; will-change: transform; }
-        .poke-bg { position: fixed; pointer-events: none; opacity: 0.3; will-change: transform; backface-visibility: hidden; }
-        .p-suicune  { top: 50%; left: 50%; transform: translate(-50%, -50%); width: clamp(500px, 70vw, 1000px); opacity: 0.05; animation: breathe 8s ease-in-out infinite; }
-        .p-rayquaza { top: -5%; left: -5%;  width: var(--guardian-size); animation: float 14s infinite ease-in-out; }
-        .p-charizard{ top: -5%; right: -5%; width: var(--guardian-size); animation: floatFlipped 13s infinite ease-in-out; }
-        .p-gengar   { top: 45%; left: -2%;  width: calc(var(--guardian-size)*0.8); animation: floatMid 9s infinite ease-in-out 1s; opacity: 0.2; }
-        .p-gardevoir{ top: 45%; right: -2%; width: calc(var(--guardian-size)*0.8); animation: floatMid 10s infinite ease-in-out 2s; opacity: 0.2; }
-        .p-vaporeon { bottom: 16%; left: 4%; width: calc(var(--guardian-size)*0.7); transform-origin: bottom center; animation: sway 12s infinite ease-in-out; opacity: 0.22; }
-        .p-cubone   { bottom: 16%; right: 4%; width: calc(var(--guardian-size)*0.6); opacity: 0.22; }
-        .p-pichu    { bottom: 1%; left: 6%; width: calc(var(--guardian-size)*0.72); opacity: 0.34; transform-origin: bottom center; animation: hop 3s infinite ease-in-out; filter: drop-shadow(0 0 18px rgba(255,221,0,0.35)); }
-        .p-magikarp { bottom: 0%; right: 7%; width: calc(var(--guardian-size)*0.9); opacity: 0.36; transform-origin: bottom center; animation: flop 2.6s infinite ease-in-out; filter: drop-shadow(0 0 18px rgba(255,120,40,0.3)); }
+        .balloon {
+            position: fixed; bottom: -220px; width: 58px; height: 72px; opacity: 0.55;
+            border-radius: 50% 50% 46% 46%;
+            background: radial-gradient(circle at 32% 26%, rgba(255,255,255,0.85), var(--b) 62%);
+            animation: rise var(--rt) linear infinite; animation-delay: var(--rd);
+        }
+        .balloon::after { content: ''; position: absolute; left: 50%; top: 100%; width: 1px; height: 78px; background: rgba(42,19,56,0.18); }
+        .balloon::before { content: ''; position: absolute; left: 50%; top: 99%; width: 8px; height: 7px; transform: translateX(-50%); background: var(--b); clip-path: polygon(50% 0, 0 100%, 100% 100%); }
+        @keyframes rise {
+            0%   { transform: translate3d(0, 0, 0); }
+            50%  { transform: translate3d(26px, -58vh, 0); }
+            100% { transform: translate3d(-14px, -125vh, 0); }
+        }
 
-        @keyframes breathe { 0%,100% { opacity: 0.05; } 50% { opacity: 0.09; } }
-        @keyframes float { 0%,100% { transform: translate3d(0,0,0); } 50% { transform: translate3d(20px,-30px,0); } }
-        @keyframes floatFlipped { 0%,100% { transform: scaleX(-1) translate3d(0,0,0); } 50% { transform: scaleX(-1) translate3d(-20px,-30px,0); } }
-        @keyframes floatMid { 0%,100% { transform: translate3d(0,-50%,0); } 50% { transform: translate3d(15px, calc(-50% - 20px),0); } }
-        @keyframes sway { 0%,100% { transform: rotate(-2deg); } 50% { transform: rotate(4deg); } }
-        @keyframes hop { 0%,100% { transform: translateY(0) scale(1,1); } 20% { transform: translateY(-26px) scale(0.97,1.03); } 45% { transform: translateY(0) scale(1.04,0.96); } 60% { transform: translateY(0) scale(1,1); } }
-        @keyframes flop { 0%,100% { transform: rotate(-11deg) translateY(0); } 50% { transform: rotate(11deg) translateY(-12px); } }
+        .guest-bg { position: fixed; pointer-events: none; opacity: 0.28; will-change: transform; backface-visibility: hidden; }
+        .g-pikachu   { top: -3%; left: -3%; width: var(--guest-size); animation: bob 12s infinite ease-in-out; }
+        .g-jiggly    { top: -3%; right: -3%; width: var(--guest-size); animation: bobFlipped 13s infinite ease-in-out; }
+        .g-snorlax   { bottom: 15%; left: 3%; width: calc(var(--guest-size)*0.85); opacity: 0.2; animation: sway 11s infinite ease-in-out; }
+        .g-eevee     { bottom: 15%; right: 3%; width: calc(var(--guest-size)*0.7); opacity: 0.22; animation: sway 9s infinite ease-in-out 1s; }
+        .g-pichu     { bottom: 1%; left: 6%; width: calc(var(--guest-size)*0.7); opacity: 0.35; transform-origin: bottom center; animation: hop 3s infinite ease-in-out; }
+        .g-magikarp  { bottom: 0%; right: 7%; width: calc(var(--guest-size)*0.85); opacity: 0.35; transform-origin: bottom center; animation: flop 2.6s infinite ease-in-out; }
 
-        /* ---------- VEGAS NEON SIGN SYSTEM ----------
-           Every letter is its own glass tube: white-hot core + colored glow
-           (--tube). JS wraps each letter in a span with a randomized flicker
-           duration/delay, so the sign twinkles letter by letter — and a few
-           random tubes get the harsh dying-tube sputter. */
-        .neon-sign { font-family: 'Tilt Neon', 'Inter', sans-serif; font-weight: 400; }
-        .neon-word { white-space: nowrap; }
-        .nl {
-            color: #fff; display: inline-block;
-            text-shadow:
-                0 0 4px rgba(255,255,255,0.95),
-                0 0 10px var(--tube, var(--accent-cyan)),
-                0 0 21px var(--tube, var(--accent-cyan)),
-                0 0 44px var(--tube, var(--accent-cyan)),
-                0 0 80px var(--tube, var(--accent-cyan));
-            animation: tubeFlicker var(--fd, 6s) linear infinite;
+        @keyframes bob { 0%,100% { transform: translate3d(0,0,0); } 50% { transform: translate3d(16px,-24px,0); } }
+        @keyframes bobFlipped { 0%,100% { transform: scaleX(-1) translate3d(0,0,0); } 50% { transform: scaleX(-1) translate3d(-16px,-24px,0); } }
+        @keyframes sway { 0%,100% { transform: rotate(-2deg); } 50% { transform: rotate(3deg); } }
+        @keyframes hop { 0%,100% { transform: translateY(0) scale(1,1); } 20% { transform: translateY(-24px) scale(0.97,1.03); } 45% { transform: translateY(0) scale(1.04,0.96); } 60% { transform: translateY(0) scale(1,1); } }
+        @keyframes flop { 0%,100% { transform: rotate(-11deg) translateY(0); } 50% { transform: rotate(11deg) translateY(-10px); } }
+
+        /* ---------- CONFETTI ---------- */
+        .confetti-layer { position: fixed; inset: 0; z-index: 60; pointer-events: none; overflow: hidden; }
+        .confetto { position: absolute; top: -14vh; width: 9px; height: 15px; border-radius: 2px; opacity: 0.92; will-change: transform; }
+        .confetto.round { border-radius: 50%; height: 9px; }
+        .confetto.strip { width: 4px; height: 20px; }
+        @keyframes fall { to { transform: translate3d(var(--dx), 125vh, 0) rotate(var(--spin)); } }
+
+        /* ---------- BANNER LETTERS (the signature) ----------
+           Every letter of a heading hangs off a string as its own pennant flag,
+           alternating party colors, swaying on a staggered delay. Built by JS
+           in bannerize(), so any heading can be strung up. */
+        .banner { display: inline-flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; position: relative; }
+        .banner-word { display: inline-flex; white-space: nowrap; }
+        .banner-gap { width: 0.45em; }
+        .flag {
+            display: inline-flex; justify-content: center; align-self: flex-start;
+            padding: 0.16em 0.1em 0.72em; width: 0.92em;
+            color: #fff; background: var(--fc, var(--pink));
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            transform-origin: 50% 0; animation: flagSway var(--fs, 3.6s) ease-in-out infinite alternate;
+            animation-delay: var(--fdel, 0s);
+            text-shadow: 0 2px 0 rgba(42,19,56,0.22);
         }
-        /* Mostly-on twinkle: brief dips, long steady stretches */
-        @keyframes tubeFlicker {
-            0%, 6.9%, 8.6%, 41.9%, 43.4%, 78.9%, 80.4%, 100% { opacity: 1; }
-            7.2% { opacity: 0.55; }
-            7.9% { opacity: 0.9; }
-            42.3% { opacity: 0.45; }
-            42.9% { opacity: 1; }
-            79.3% { opacity: 0.65; }
+        @keyframes flagSway { from { transform: rotate(-3.5deg); } to { transform: rotate(3.5deg); } }
+        /* The string the flags hang from */
+        .banner::before {
+            content: ''; position: absolute; left: -2%; right: -2%; top: 0.06em; height: 3px;
+            border-radius: 3px; background: var(--ink); opacity: 0.65;
         }
-        /* The occasional bad tube: hard on/off cuts, glow drops out entirely */
-        /* Smaller signs (nav, labels, card names) get a tighter glow */
-        .neon-sm .nl {
-            text-shadow:
-                0 0 3px rgba(255,255,255,0.9),
-                0 0 8px var(--tube, var(--accent-cyan)),
-                0 0 16px var(--tube, var(--accent-cyan)),
-                0 0 30px var(--tube, var(--accent-cyan));
-        }
-        .nl-dying { animation-name: tubeDying; animation-timing-function: steps(1, end); }
-        @keyframes tubeDying {
-            0%, 5.9%, 8.1%, 27.9%, 32.1%, 55.9%, 60.1%, 100% { opacity: 1; }
-            6% { opacity: 0.25; text-shadow: none; }
-            7% { opacity: 0.8; }
-            28% { opacity: 0.15; text-shadow: none; }
-            29.5% { opacity: 0.85; }
-            30.6% { opacity: 0.25; text-shadow: none; }
-            56% { opacity: 0.2; text-shadow: none; }
-            57.8% { opacity: 0.9; }
-        }
+        /* Smaller headings get bouncing letters instead of flags — same party, less rope */
+        .bounce-sign .bl { display: inline-block; color: var(--bc, var(--grape)); animation: letterBounce 2.4s ease-in-out infinite; animation-delay: var(--bdel, 0s); }
+        @keyframes letterBounce { 0%, 72%, 100% { transform: translateY(0) rotate(0); } 82% { transform: translateY(-6px) rotate(-4deg); } 91% { transform: translateY(-2px) rotate(2deg); } }
 
         /* ---------- NAV ---------- */
-        .top-nav { display: flex; justify-content: center; gap: 20px; padding: 26px 16px 22px; position: relative; z-index: 10; flex-wrap: wrap; }
-        .nav-link { padding: 11px 26px; border-radius: 30px; color: #fff; text-decoration: none; font-weight: 800; letter-spacing: 1px; border: 1px solid rgba(255,255,255,0.18); background: rgba(0,0,0,0.45); backdrop-filter: blur(14px); transition: transform .3s, box-shadow .3s, border-color .3s, background .3s; display: flex; align-items: center; gap: 8px; }
-        .nav-link:hover { background: rgba(255,255,255,0.08); border-color: var(--accent-purple); box-shadow: 0 0 22px rgba(213,0,255,0.4); transform: translateY(-2px); }
-        .nav-active { border-color: var(--accent-cyan); box-shadow: 0 0 22px rgba(0,255,242,0.4); background: linear-gradient(90deg, rgba(0,255,242,0.2), transparent); pointer-events: none; }
+        .top-nav { display: flex; justify-content: center; gap: 16px; padding: 26px 16px 18px; position: relative; z-index: 10; flex-wrap: wrap; }
+        .nav-link {
+            font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 1rem; letter-spacing: 0.5px;
+            padding: 11px 24px; border-radius: 40px; color: var(--ink); text-decoration: none;
+            background: #fff; border: 3px solid var(--ink); box-shadow: 0 4px 0 var(--ink);
+            transition: transform .16s ease, box-shadow .16s ease, background .2s;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .nav-link:hover { transform: translateY(-3px); box-shadow: 0 7px 0 var(--ink); background: var(--candle); }
+        .nav-active { background: var(--pink); color: #fff; pointer-events: none; }
 
         /* ---------- HEADER ---------- */
-        header { display: flex; flex-direction: column; align-items: center; padding: 1rem; position: relative; z-index: 2; }
-        .header-wrapper { display: flex; align-items: center; gap: 2rem; }
-        .header-logo { width: 160px; display: block; filter: drop-shadow(0 0 35px var(--accent-cyan)); }
-        .logo-left .header-logo { transform: scaleX(-1); }
-        .logo-animator { animation: float 6s infinite ease-in-out; will-change: transform; }
+        header { display: flex; flex-direction: column; align-items: center; padding: 0.5rem 1rem 0; position: relative; z-index: 2; }
+        .kicker {
+            font-family: 'Fredoka', sans-serif; font-weight: 500; letter-spacing: 3px; text-transform: uppercase;
+            font-size: 0.85rem; color: var(--ink-soft); margin-bottom: 1.1rem; display: flex; align-items: center; gap: 10px;
+        }
+        .kicker i { color: var(--pink); font-size: 1.1rem; }
+        .header-wrapper { display: flex; align-items: center; justify-content: center; gap: 1.6rem; width: 100%; }
+        .header-hat { width: 120px; animation: bob 6s infinite ease-in-out; }
+        .header-hat.mirror { transform: scaleX(-1); }
 
         h1 {
-            font-family: 'Tilt Neon', 'Inter', sans-serif; font-weight: 400;
-            font-size: clamp(3.2rem, 8.5vw, 6.2rem); letter-spacing: 3px; text-transform: uppercase;
-            margin: 0; line-height: 1.05; text-align: center; position: relative; display: inline-block; z-index: 1;
+            font-family: 'Fredoka', sans-serif; font-weight: 700;
+            font-size: clamp(2.4rem, 7.2vw, 5rem); letter-spacing: 1px; text-transform: uppercase;
+            line-height: 1; text-align: center; margin: 0;
         }
+        .subtitle {
+            margin-top: 1.4rem; font-family: 'Fredoka', sans-serif; font-weight: 500; font-size: clamp(0.85rem, 2.2vw, 1.05rem);
+            letter-spacing: 2px; text-transform: uppercase; color: var(--ink-soft); text-align: center;
+        }
+
+        /* ---------- THE CAKE (blow out the candles) ---------- */
+        .cake-stage { display: flex; flex-direction: column; align-items: center; gap: 12px; margin: 1.6rem 0 0.4rem; }
+        .cake-btn { background: none; border: none; padding: 0; cursor: pointer; display: block; }
+        .cake { width: clamp(190px, 30vw, 250px); height: auto; filter: drop-shadow(0 14px 16px rgba(122,43,255,0.22)); }
+        .flame { transform-origin: 50% 100%; animation: flicker 1.05s ease-in-out infinite alternate; }
+        .flame:nth-of-type(2) { animation-delay: .3s; } .flame:nth-of-type(3) { animation-delay: .6s; }
+        @keyframes flicker { from { transform: scaleY(1) scaleX(1); opacity: 1; } to { transform: scaleY(0.82) scaleX(1.08); opacity: 0.85; } }
+        .cake-out .flame { opacity: 0; transform: scaleY(0.15); animation: none; transition: opacity .35s, transform .35s; }
+        .smoke { opacity: 0; }
+        .cake-out .smoke { animation: smokeUp 2.4s ease-out infinite; }
+        @keyframes smokeUp { 0% { opacity: .5; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-26px) scale(1.6); } }
+        .cake-hint {
+            font-family: 'Fredoka', sans-serif; font-weight: 500; font-size: 0.95rem; color: var(--ink-soft);
+            background: #fff; border: 2px dashed var(--grape); border-radius: 30px; padding: 8px 20px;
+            display: flex; align-items: center; gap: 8px; text-align: center;
+        }
+        .cake-hint.lit-again { border-color: var(--pink); color: var(--pink); }
+
+        .party-btn {
+            font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 1.05rem; letter-spacing: 1px; text-transform: uppercase;
+            margin: 1.2rem 0 0.4rem; padding: 14px 32px; border-radius: 40px; cursor: pointer; color: #fff;
+            background: linear-gradient(100deg, var(--pink), var(--grape));
+            border: 3px solid var(--ink); box-shadow: 0 5px 0 var(--ink);
+            display: inline-flex; align-items: center; gap: 10px;
+            transition: transform .16s ease, box-shadow .16s ease;
+        }
+        .party-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 0 var(--ink); }
+        .party-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--ink); }
 
         /* ---------- MAIN SHELL ---------- */
         main {
-            position: relative; z-index: 2; max-width: 1250px; margin: 1rem auto 4rem; padding: 2.5rem;
-            border-radius: 35px; background: rgba(5,5,14,0.66); backdrop-filter: blur(18px) saturate(140%); -webkit-backdrop-filter: blur(18px) saturate(140%);
-            border: 2px solid rgba(0,255,242,0.3); box-shadow: 0 0 80px rgba(0,0,0,0.8), inset 0 0 30px rgba(0,255,242,0.05), inset 0 2px 0 rgba(255,255,255,0.14), 0 0 30px rgba(213,0,255,0.15);
-            animation: shellIn 0.9s cubic-bezier(0.22,1,0.36,1) both;
+            position: relative; z-index: 2; max-width: 1250px; margin: 2rem auto 4rem; padding: 3rem 2.5rem 2.5rem;
+            border-radius: 34px; background: rgba(255,255,255,0.82); backdrop-filter: blur(10px);
+            border: 4px solid var(--ink); box-shadow: 0 10px 0 rgba(42,19,56,0.9), 0 30px 60px rgba(122,43,255,0.18);
+            animation: shellIn .8s cubic-bezier(0.22,1,0.36,1) both;
         }
-        @keyframes shellIn { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes shellIn { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+        /* Bunting strung across the top of the party room */
+        main::before {
+            content: ''; position: absolute; top: -4px; left: -4px; right: -4px; height: 22px;
+            border-radius: 30px 30px 0 0;
+            background:
+                repeating-linear-gradient(90deg, var(--pink) 0 26px, var(--candle) 26px 52px, var(--pool) 52px 78px, var(--grape) 78px 104px, var(--mint) 104px 130px);
+        }
 
-        .section-header { display: flex; align-items: center; justify-content: center; gap: 1.5rem; margin: 4rem auto 1rem; background: linear-gradient(90deg, rgba(0,255,242,0.1), rgba(213,0,255,0.1)); border: 1px solid rgba(0,255,242,0.4); padding: 15px 50px; border-radius: 60px; max-width: 700px; box-shadow: 0 0 30px rgba(0,255,242,0.2), inset 0 2px 0 rgba(255,255,255,0.2); backdrop-filter: blur(12px); }
-        .section-line { height: 4px; background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent); flex: 1; border-radius: 10px; box-shadow: 0 0 15px var(--accent-cyan); opacity: 0.7; }
-        .section-title { font-family: 'Tilt Neon', 'Inter', sans-serif; font-weight: 400; color: #fff; letter-spacing: 4px; font-size: 1.6rem; text-align: center; }
+        .section-header {
+            display: flex; align-items: center; justify-content: center; gap: 1.2rem; margin: 3.5rem auto 1.6rem;
+            max-width: 720px; padding: 12px 34px; border-radius: 60px;
+            background: #fff; border: 3px solid var(--ink); box-shadow: 0 5px 0 var(--ink);
+        }
+        .section-line { height: 4px; flex: 1; border-radius: 10px; background: repeating-linear-gradient(90deg, var(--pink) 0 10px, transparent 10px 20px); }
+        .section-title { font-family: 'Fredoka', sans-serif; font-weight: 600; letter-spacing: 2px; font-size: 1.35rem; text-align: center; text-transform: uppercase; }
 
-        /* ---------- TIER HEADERS (LED signs) ---------- */
-        .tier-header { position: relative; display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 4.5rem auto 2.2rem; max-width: 760px; padding: 22px 40px 20px; border-radius: 24px; backdrop-filter: blur(14px); overflow: hidden; border: 1px solid; }
-        .tier-header::after { content: ''; position: absolute; left: 8%; right: 8%; bottom: 0; height: 3px; border-radius: 3px; background: currentColor; filter: blur(0.5px); animation: ledBreathe 2.4s ease-in-out infinite; }
-        @keyframes ledBreathe { 0%,100% { opacity: 0.5; box-shadow: 0 0 8px currentColor; } 50% { opacity: 1; box-shadow: 0 0 26px currentColor, 0 0 60px currentColor; } }
-        .tier-title { font-family: 'Tilt Neon', 'Inter', sans-serif; font-weight: 400; font-size: clamp(1.5rem, 4vw, 2.2rem); letter-spacing: 5px; text-transform: uppercase; display: flex; align-items: center; gap: 14px; }
-        .tier-title i { text-shadow: 0 0 18px currentColor, 0 0 40px currentColor; }
-        .tier-tagline { font-size: 0.85rem; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; opacity: 0.85; }
+        /* ---------- TIER HEADERS (three party tables) ---------- */
+        .tier-header {
+            position: relative; display: flex; flex-direction: column; align-items: center; gap: 8px;
+            margin: 4rem auto 2rem; max-width: 780px; padding: 20px 36px; border-radius: 24px;
+            border: 4px solid var(--ink); box-shadow: 0 6px 0 var(--ink);
+        }
+        .tier-title { font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: clamp(1.35rem, 3.6vw, 2rem); letter-spacing: 2px; text-transform: uppercase; display: flex; align-items: center; gap: 12px; }
+        .tier-tagline { font-size: 0.82rem; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase; color: var(--ink); opacity: 0.7; text-align: center; }
+        .th-baller { background: linear-gradient(160deg, #fff0c2, #ffe08a); }
+        .th-bundle { background: linear-gradient(160deg, #f0e2ff, #dcc4ff); }
+        .th-msrp   { background: linear-gradient(160deg, #d9fff1, #b4f7de); }
 
-        /* Each tier sign glows in its own tube color (picked up by the .nl letters) */
-        .th-baller { --tube: #ffcc33; color: var(--accent-gold); border-color: rgba(255,215,0,0.55); background: linear-gradient(160deg, rgba(60,45,0,0.55), rgba(20,15,0,0.75)); box-shadow: 0 0 45px rgba(255,215,0,0.22), inset 0 2px 0 rgba(255,255,255,0.25), inset 0 0 40px rgba(255,215,0,0.06); }
-        .th-bundle { --tube: #d24bff; color: #e883ff; border-color: rgba(213,0,255,0.55); background: linear-gradient(160deg, rgba(45,0,60,0.55), rgba(15,0,25,0.75)); box-shadow: 0 0 45px rgba(213,0,255,0.22), inset 0 2px 0 rgba(255,255,255,0.2), inset 0 0 40px rgba(213,0,255,0.06); }
-        .th-msrp { --tube: #00ff9d; color: var(--msrp-green); border-color: rgba(0,255,157,0.55); background: linear-gradient(160deg, rgba(0,45,30,0.55), rgba(0,15,10,0.75)); box-shadow: 0 0 45px rgba(0,255,157,0.2), inset 0 2px 0 rgba(255,255,255,0.2), inset 0 0 40px rgba(0,255,157,0.06); }
+        /* ---------- CARDS (gift boxes on the table) ---------- */
+        .store-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 34px; }
+        .gift-card {
+            position: relative; border-radius: var(--card-radius); overflow: hidden; background: #fff;
+            border: 4px solid var(--ink); box-shadow: 0 8px 0 var(--ink);
+            transition: transform .3s cubic-bezier(0.25,0.8,0.25,1), box-shadow .3s;
+            perspective: 1000px; will-change: transform;
+        }
+        .gift-card:hover { transform: translateY(-8px) rotate(-0.6deg); box-shadow: 0 16px 0 var(--ink); }
+        .card-inner { position: relative; height: 100%; width: 100%; display: flex; flex-direction: column; transition: transform .18s ease-out; }
+        .card-msrp { background: linear-gradient(180deg, #f2fff9, #fff); }
+        .card-bundle-tier { background: linear-gradient(180deg, #faf3ff, #fff); }
+        .card-baller-bundle { background: linear-gradient(180deg, #fffaeb, #fff); }
 
-        /* ---------- NEON CARDS ---------- */
-        .neon-card-wrapper { position: relative; border-radius: 26px; padding: 3px; background: rgba(0,0,0,0.2); box-shadow: 0 0 25px rgba(0,255,242,0.2), 0 0 50px rgba(213,0,255,0.15); overflow: hidden; transition: transform .4s cubic-bezier(0.25,0.8,0.25,1), box-shadow .4s; perspective: 1000px; will-change: transform; }
-        .neon-card-wrapper:hover { transform: translateY(-10px) scale(1.02); box-shadow: 0 0 50px rgba(0,255,242,0.6), 0 0 80px rgba(213,0,255,0.5); }
-        .neon-card-wrapper::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: conic-gradient(transparent 0deg, transparent 90deg, var(--accent-cyan) 130deg, #fff 155deg, var(--accent-purple) 180deg, transparent 220deg); animation: spinBorder 5s linear infinite; z-index: 0; opacity: 0.8; will-change: transform; }
-        @keyframes spinBorder { 100% { transform: rotate(360deg); } }
+        /* Ribbon down the gift box, in the tier's color */
+        .gift-card::after {
+            content: ''; position: absolute; top: 0; bottom: 0; left: 50%; width: 0; z-index: 0; pointer-events: none;
+        }
 
-        .glass-panel { position: relative; height: 100%; width: 100%; z-index: 1; overflow: hidden; border-radius: 24px; background: linear-gradient(160deg, rgba(22,22,40,0.52), rgba(8,8,18,0.72)); backdrop-filter: blur(22px) saturate(150%); -webkit-backdrop-filter: blur(22px) saturate(150%); border: 1px solid rgba(0,255,242,0.1); border-top: 2px solid rgba(255,255,255,0.45); border-bottom: 1px solid rgba(0,0,0,0.3); box-shadow: inset 0 0 30px rgba(0,0,0,0.7), inset 0 6px 14px rgba(255,255,255,0.12), 0 10px 30px rgba(0,0,0,0.5); transition: transform .18s ease-out; }
-        .glass-panel::after { content: ''; position: absolute; inset: 0; z-index: 4; pointer-events: none; opacity: 0; transition: opacity .5s; background: linear-gradient(115deg, transparent 30%, rgba(0,255,242,0.12) 42%, rgba(213,0,255,0.14) 50%, rgba(255,215,0,0.12) 58%, transparent 70%); mix-blend-mode: screen; }
-        .neon-card-wrapper:hover .glass-panel::after { opacity: 1; }
+        .live-ribbon {
+            position: relative; z-index: 8; display: flex; align-items: center; justify-content: center; gap: 10px;
+            padding: 10px 0; font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 0.9rem; letter-spacing: 2px;
+            text-transform: uppercase; color: #fff; border-bottom: 4px solid var(--ink);
+            background-size: 220% 100%; animation: ribbonFlow 3s linear infinite;
+        }
+        .rb-green { background-image: linear-gradient(90deg, #16b184, #2fe3a5, #7dffd8, #16b184); color: #06342a; }
+        .rb-purple { background-image: linear-gradient(90deg, #5c17d6, #7a2bff, #c58bff, #5c17d6); }
+        .rb-gold { background-image: linear-gradient(90deg, #e2960a, #ffc93c, #fff0b8, #e2960a); color: #4a2d00; }
+        @keyframes ribbonFlow { 0% { background-position: 0 0; } 100% { background-position: 220% 0; } }
+        .live-dot { width: 9px; height: 9px; border-radius: 50%; background: currentColor; animation: dotBlink 1s ease-in-out infinite; }
+        @keyframes dotBlink { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .35; transform: scale(.7); } }
 
-        /* Tier card skins */
-        .card-msrp { box-shadow: 0 0 25px rgba(0,255,157,0.22), 0 0 50px rgba(0,255,157,0.1); }
-        .card-msrp::before { background: conic-gradient(transparent 0deg, transparent 90deg, var(--msrp-green) 130deg, #fff 155deg, #00c9ff 180deg, transparent 220deg); }
-        .card-msrp:hover { box-shadow: 0 0 50px rgba(0,255,157,0.55), 0 0 90px rgba(0,255,157,0.3); }
+        .type-tag {
+            position: absolute; top: 58px; right: 16px; z-index: 7; padding: 7px 13px; border-radius: 30px;
+            font-weight: 800; font-size: 0.7rem; letter-spacing: 1px; text-transform: uppercase;
+            display: flex; align-items: center; gap: 6px; border: 3px solid var(--ink); box-shadow: 0 3px 0 var(--ink);
+        }
+        .type-tag.no-ribbon { top: 16px; }
+        .tag-msrp { background: var(--mint); color: #06342a; }
+        .tag-bundle { background: var(--grape); color: #fff; }
+        .tag-baller { background: var(--candle); color: #4a2d00; }
 
-        .card-bundle-tier { box-shadow: 0 0 25px rgba(213,0,255,0.28), 0 0 55px rgba(213,0,255,0.15); }
-        .card-bundle-tier::before { background: conic-gradient(transparent 0deg, transparent 80deg, var(--accent-purple) 125deg, #ff6ad5 150deg, #fff 160deg, #7b2bff 190deg, transparent 230deg); animation-duration: 4s; }
-        .card-bundle-tier:hover { box-shadow: 0 0 55px rgba(213,0,255,0.65), 0 0 100px rgba(123,43,255,0.4); }
+        .time-tag-bottom {
+            position: absolute; bottom: 12px; left: 12px; z-index: 6; padding: 7px 14px; border-radius: 30px;
+            font-weight: 800; font-size: 0.75rem; letter-spacing: .5px; text-transform: uppercase;
+            background: #fff; color: var(--ink); border: 3px solid var(--ink); box-shadow: 0 3px 0 var(--ink);
+            display: flex; align-items: center; gap: 6px; pointer-events: none;
+        }
+        .time-tag-bottom.closing-soon { background: var(--cherry); color: #fff; animation: badgePulse .9s infinite alternate; }
+        @keyframes badgePulse { from { transform: scale(1); } to { transform: scale(1.06); } }
 
-        .card-baller-bundle { border: 2px solid rgba(255,215,0,0.85) !important; box-shadow: 0 0 45px rgba(255,215,0,0.35), 0 0 90px rgba(255,180,0,0.18) !important; }
-        .card-baller-bundle::before { background: conic-gradient(transparent 0deg, transparent 70deg, #bf953f 115deg, #fff8dc 145deg, #ffd700 160deg, #b38728 195deg, transparent 240deg) !important; animation-duration: 3.5s !important; }
-        .card-baller-bundle:hover { box-shadow: 0 0 60px rgba(255,215,0,0.7), 0 0 120px rgba(255,180,0,0.4) !important; }
-        .card-baller-bundle .glass-panel { background: linear-gradient(160deg, rgba(48,38,8,0.55), rgba(15,10,0,0.78)); border-top: 2px solid rgba(255,240,180,0.6); }
+        .item-img-box { height: 250px; overflow: hidden; position: relative; cursor: zoom-in; border-bottom: 4px solid var(--ink); }
+        .item-img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s cubic-bezier(0.25,0.8,0.25,1); }
+        .gift-card:hover .item-img { transform: scale(1.09) rotate(1deg); }
 
-        /* LIVE (open) state — each tier glows in its own color */
-        .card-live-now { --lg: 213,0,255; animation: liveGlow 1.8s ease-in-out infinite alternate; }
-        @keyframes liveGlow { from { box-shadow: 0 0 28px rgba(var(--lg),0.35), 0 0 55px rgba(var(--lg),0.15); } to { box-shadow: 0 0 60px rgba(var(--lg),0.75), 0 0 110px rgba(var(--lg),0.35); } }
-        .card-msrp.card-live-now { --lg: 0,255,157; }
-        .card-bundle-tier.card-live-now { --lg: 213,0,255; }
-        .card-baller-bundle.card-live-now { --lg: 255,215,0; }
+        .item-content { padding: 1.6rem; flex: 1; display: flex; flex-direction: column; position: relative; z-index: 2; }
+        .item-content h3 { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 1.45rem; line-height: 1.2; margin-bottom: 0.7rem; }
+        .item-content p { color: var(--ink-soft); font-size: 0.98rem; line-height: 1.6; margin-bottom: 1.1rem; flex: 1; }
+        .date-row {
+            display: flex; align-items: center; gap: 8px; color: var(--ink); font-weight: 800; font-size: 0.85rem;
+            margin-bottom: 12px; padding-bottom: 12px; border-bottom: 2px dashed rgba(42,19,56,0.2);
+            text-transform: uppercase; letter-spacing: .5px;
+        }
+        .date-row i { color: var(--pink); font-size: 1.1rem; }
 
-        .live-ribbon { position: absolute; top: 0; left: 0; right: 0; z-index: 8; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 9px 0; font-weight: 900; font-size: 0.85rem; letter-spacing: 3px; text-transform: uppercase; color: #fff; background-size: 220% 100%; animation: ribbonFlow 2.5s linear infinite; text-shadow: 0 1px 3px rgba(0,0,0,0.6); box-shadow: 0 4px 25px rgba(var(--lg,213,0,255),0.8), inset 0 1px 0 rgba(255,255,255,0.4); border-bottom: 1px solid rgba(255,255,255,0.35); }
-        .rb-green { background-image: linear-gradient(90deg, #00c98a, #00fff2, #7dfff0, #00c98a); color: #002a1c; text-shadow: none; }
-        .rb-green .live-dot { background: #003a28; box-shadow: 0 0 10px rgba(0,60,40,0.9); }
-        .rb-purple { background-image: linear-gradient(90deg, #7b2bff, #d500ff, #ff6ad5, #7b2bff); }
-        .rb-gold { background-image: linear-gradient(90deg, #bf953f, #fcf6ba, #ffd700, #b38728, #bf953f); color: #231800; text-shadow: none; }
-        .rb-gold .live-dot { background: #3a2a00; box-shadow: 0 0 10px rgba(60,42,0,0.9); }
-        @keyframes ribbonFlow { 0% { background-position: 0% 0; } 100% { background-position: 220% 0; } }
-        @keyframes sheenFlow { 0% { background-position: 200% 0; } 100% { background-position: -100% 0; } }
-        @keyframes ledOpacity { 0%, 100% { opacity: 0.45; } 50% { opacity: 1; } }
-        .live-dot { width: 10px; height: 10px; border-radius: 50%; background: #fff; box-shadow: 0 0 12px #fff, 0 0 25px #fff; animation: dotBlink 1s ease-in-out infinite; }
-        @keyframes dotBlink { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.35; transform: scale(0.7); } }
+        .perk-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.1rem; }
+        .perk { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 30px; font-size: 0.7rem; font-weight: 800; letter-spacing: .8px; text-transform: uppercase; border: 2px solid var(--ink); }
+        .perk-ship { background: #e3f6ff; color: #06506b; }
+        .perk-value { background: #f3e6ff; color: #4a1290; }
+        .perk-msrp { background: #ddfff2; color: #06342a; }
+        .perk-gold { background: #fff2cc; color: #4a2d00; }
 
-        .store-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 35px; }
-        .store-grid:not(:has(.neon-card-wrapper:only-child)) { }
-        .item-card { display: flex; flex-direction: column; height: 100%; }
-        .type-tag { position: absolute; top: 48px; right: 20px; padding: 8px 14px; border-radius: 10px; font-weight: 800; font-size: 0.75rem; z-index: 7; letter-spacing: 1px; text-transform: uppercase; backdrop-filter: blur(10px); display: flex; align-items: center; gap: 6px; }
-        .type-tag.no-ribbon { top: 20px; }
-        .tag-msrp   { background: rgba(0,40,40,0.85); border: 1px solid var(--msrp-green); color: #fff; text-shadow: 0 1px 3px #000; box-shadow: 0 0 15px rgba(0,255,157,0.35); }
-        .tag-bundle { background: rgba(40,0,60,0.85); border: 1px solid #bd00ff; color: #fff; text-shadow: 0 1px 3px #000; box-shadow: 0 0 20px rgba(213,0,255,0.45); }
-        .tag-baller { background: rgba(0,0,0,0.95); border: 1px solid #ffd700; color: #ffd700; text-shadow: 0 0 10px rgba(255,215,0,0.8); box-shadow: 0 0 20px rgba(255,215,0,0.55), inset 0 0 10px rgba(255,215,0,0.2); }
+        .price-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 1.3rem; padding-top: 1.2rem; border-top: 2px dashed rgba(42,19,56,0.2); }
+        .price { font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 2rem; line-height: 1; }
+        .card-msrp .price { color: #10a97c; }
+        .card-bundle-tier .price { color: var(--grape); }
+        .card-baller-bundle .price { color: #d99a00; }
+        .stock { font-size: 0.8rem; font-weight: 800; color: var(--ink); background: #fff; padding: 7px 13px; border-radius: 30px; border: 2px solid var(--ink); white-space: nowrap; }
 
-        /* Countdown to close */
-        .time-tag-bottom { position: absolute; bottom: 10px; left: 10px; padding: 7px 14px; border-radius: 10px; font-weight: 800; font-size: 0.78rem; z-index: 6; letter-spacing: 0.5px; text-transform: uppercase; background: rgba(0,0,0,0.85); backdrop-filter: blur(6px); border: 1px solid var(--accent-cyan); color: #fff; text-shadow: 0 1px 2px #000; box-shadow: 0 0 15px rgba(0,255,242,0.35); display: flex; align-items: center; gap: 6px; pointer-events: none; transition: .3s; }
-        .time-tag-bottom.closing-soon { border-color: var(--accent-live); box-shadow: 0 0 22px rgba(255,0,64,0.8); animation: badgePulse 0.9s infinite alternate; }
-        @keyframes badgePulse { from { transform: scale(1); } to { transform: scale(1.05); } }
+        .buy-btn {
+            display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+            padding: 1.1rem; border-radius: 18px; text-decoration: none; cursor: pointer;
+            font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 1.05rem; letter-spacing: 1px; text-transform: uppercase; line-height: 1.15;
+            border: 3px solid var(--ink); box-shadow: 0 6px 0 var(--ink);
+            transition: transform .16s ease, box-shadow .16s ease;
+        }
+        .buy-btn:hover { transform: translateY(-3px); box-shadow: 0 9px 0 var(--ink); }
+        .buy-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--ink); }
+        .btn-subtext { font-family: 'Inter', sans-serif; font-size: 0.72rem; font-weight: 700; letter-spacing: .4px; text-transform: none; margin-top: 5px; opacity: .8; }
+        .msrp-btn { background: var(--mint); color: #06342a; }
+        .bundle-btn { background: linear-gradient(100deg, var(--grape), var(--pink)); color: #fff; }
+        .baller-btn { background: linear-gradient(100deg, var(--candle), #ffe89a); color: #4a2d00; }
 
-        .item-img-box { height: 260px; overflow: hidden; position: relative; cursor: zoom-in; border-bottom: 1px solid rgba(0,255,242,0.2); }
-        .item-img-box::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(10,10,25,0.9), transparent 60%); pointer-events: none; }
-        .item-img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s cubic-bezier(0.25,0.8,0.25,1); will-change: transform; }
-        .neon-card-wrapper:hover .item-img { transform: scale(1.12) rotate(1deg); }
-
-        .item-content { padding: 1.8rem; flex: 1; display: flex; flex-direction: column; position: relative; z-index: 2; }
-        .item-content h3 { font-size: 1.5rem; margin-bottom: 0.8rem; font-weight: 800; line-height: 1.2; color: #fff; text-shadow: 0 2px 5px rgba(0,0,0,0.8); letter-spacing: 0.5px; }
-        .item-content p { color: var(--text-dim); font-size: 1rem; line-height: 1.6; margin-bottom: 1.2rem; flex: 1; }
-        .date-row { display: flex; align-items: center; gap: 8px; color: var(--accent-gold); font-weight: 700; font-size: 0.95rem; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); text-transform: uppercase; letter-spacing: 0.5px; text-shadow: 0 0 15px rgba(255,215,0,0.4); }
-
-        /* Perk pills (tier value props) */
-        .perk-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.2rem; }
-        .perk { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 30px; font-size: 0.72rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; backdrop-filter: blur(6px); }
-        .perk-ship { background: rgba(0,255,242,0.1); border: 1px solid rgba(0,255,242,0.5); color: var(--accent-cyan); box-shadow: 0 0 12px rgba(0,255,242,0.2); }
-        .perk-value { background: rgba(213,0,255,0.12); border: 1px solid rgba(213,0,255,0.55); color: #e883ff; box-shadow: 0 0 12px rgba(213,0,255,0.25); }
-        .perk-msrp { background: rgba(0,255,157,0.1); border: 1px solid rgba(0,255,157,0.55); color: var(--msrp-green); box-shadow: 0 0 12px rgba(0,255,157,0.25); }
-        .perk-gold { background: linear-gradient(90deg, rgba(255,215,0,0.18), rgba(255,180,0,0.1)); border: 1px solid rgba(255,215,0,0.6); color: var(--accent-gold); box-shadow: 0 0 14px rgba(255,215,0,0.3); }
-
-        .price-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(0,255,242,0.2); }
-        .price { font-size: 2.1rem; font-weight: 900; color: var(--accent-cyan); text-shadow: 0 0 25px rgba(0,255,242,0.7), 0 0 55px rgba(0,255,242,0.35); }
-        .card-baller-bundle .price { color: var(--accent-gold); text-shadow: 0 0 25px rgba(255,215,0,0.7), 0 0 55px rgba(255,180,0,0.35); }
-        .card-bundle-tier .price { color: #e883ff; text-shadow: 0 0 25px rgba(213,0,255,0.7), 0 0 55px rgba(213,0,255,0.35); }
-        .card-msrp .price { color: var(--msrp-green); text-shadow: 0 0 25px rgba(0,255,157,0.7), 0 0 55px rgba(0,255,157,0.35); }
-        .stock { font-size: 0.9rem; color: var(--text-dim); background: rgba(0,255,242,0.08); padding: 6px 14px; border-radius: 30px; font-weight: 700; border: 1px solid rgba(0,255,242,0.2); }
-
-        .buy-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 1.2rem; border-radius: 16px; background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple)); color: #fff; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 1.1rem; letter-spacing: 1.5px; line-height: 1.1; transition: transform .4s cubic-bezier(0.25,0.8,0.25,1), box-shadow .4s; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.3); cursor: pointer; box-shadow: 0 10px 30px rgba(0,255,242,0.3), inset 0 2px 0 rgba(255,255,255,0.4); will-change: transform; }
-        .buy-btn:hover { transform: translateY(-5px); box-shadow: 0 0 50px rgba(189,0,255,0.8); border-color: #fff; }
-        .btn-subtext { font-size: 0.75rem; opacity: 0.9; margin-top: 4px; font-weight: 700; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
-
-        .msrp-btn { background: linear-gradient(90deg, #00c98a, #00fff2) !important; color: #002a1c !important; text-shadow: 0 1px 0 rgba(255,255,255,0.3) !important; box-shadow: 0 10px 30px rgba(0,255,157,0.35), inset 0 2px 0 rgba(255,255,255,0.5) !important; }
-        .msrp-btn .btn-subtext { color: #003a28 !important; text-shadow: none !important; }
-        .msrp-btn:hover { box-shadow: 0 0 45px rgba(0,255,157,0.8) !important; }
-
-        .bundle-btn { background: linear-gradient(90deg, #7b2bff, var(--accent-purple), #ff6ad5) !important; background-size: 200% auto !important; animation: goldShine 4s linear infinite; box-shadow: 0 10px 30px rgba(213,0,255,0.4), inset 0 2px 0 rgba(255,255,255,0.4) !important; }
-        .bundle-btn:hover { box-shadow: 0 0 50px rgba(213,0,255,0.9) !important; }
-
-        .baller-btn { background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 25%, #b38728 50%, #fcf6ba 75%, #aa771c 100%) !important; background-size: 200% auto !important; color: #000 !important; text-shadow: 0 1px 0 rgba(255,255,255,0.4) !important; box-shadow: 0 4px 15px rgba(0,0,0,0.5), inset 0 0 10px rgba(255,255,255,0.5), 0 0 25px rgba(255,215,0,0.35) !important; border: 1px solid #7a5d1a !important; position: relative; overflow: hidden; animation: goldShine 3s linear infinite; }
-        .baller-btn .btn-subtext { color: #333 !important; text-shadow: none !important; }
-        .baller-btn::after { content: ''; position: absolute; top: -50%; left: -60%; width: 20%; height: 200%; background: rgba(255,255,255,0.8); transform: rotate(30deg); animation: sweep 4s infinite; }
-        @keyframes sweep { 0% { left: -60%; } 20% { left: 120%; } 100% { left: 120%; } }
-        @keyframes goldShine { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        .baller-btn:hover { box-shadow: 0 0 40px rgba(255,215,0,0.9) !important; filter: brightness(1.1); }
-
-        .sold-out { background: #0f0f1a !important; color: #666 !important; pointer-events: none; border: 2px solid #2a2a3a !important; box-shadow: inset 0 0 20px rgba(0,0,0,0.5) !important; }
+        .sold-out { background: #efeaf3 !important; color: #9c8fab !important; pointer-events: none; box-shadow: 0 6px 0 rgba(42,19,56,0.35) !important; }
         .sold-out .btn-subtext { display: none; }
-        .card-closed { filter: saturate(0.35) brightness(0.75); }
-        .card-closed::before { animation-play-state: paused !important; opacity: 0.25 !important; }
-        .card-closed:hover { transform: none; }
+        .card-closed { filter: saturate(0.35); opacity: 0.82; }
+        .card-closed:hover { transform: none; box-shadow: 0 8px 0 var(--ink); }
 
-        .skeleton { position: relative; overflow: hidden; background: rgba(255,255,255,0.03); border-radius: 24px; min-height: 450px; border: 1px solid rgba(0,255,242,0.15); box-shadow: 0 0 30px rgba(0,255,242,0.05); }
-        .skeleton::after { content: ''; position: absolute; inset: 0; transform: translateX(-100%); background: linear-gradient(90deg, transparent, rgba(0,255,242,0.08), transparent); animation: shimmer 1.6s infinite; }
+        .skeleton { position: relative; overflow: hidden; min-height: 430px; border-radius: var(--card-radius); background: #fff; border: 4px solid rgba(42,19,56,0.25); }
+        .skeleton::after { content: ''; position: absolute; inset: 0; transform: translateX(-100%); background: linear-gradient(90deg, transparent, rgba(122,43,255,0.12), transparent); animation: shimmer 1.6s infinite; }
         @keyframes shimmer { 100% { transform: translateX(100%); } }
 
-        .yt-container { display: grid; gap: 35px; grid-template-columns: 1fr; }
+        /* ---------- CHANNEL FEED ---------- */
+        .yt-container { display: grid; gap: 32px; grid-template-columns: 1fr; }
         @media (min-width: 900px) { .yt-container { grid-template-columns: 1fr 1fr; } }
-        .yt-card { display: flex; flex-direction: column; padding: 0; }
-        .yt-label { padding: 10px 18px; border-radius: 12px; font-weight: 900; font-size: 0.85rem; letter-spacing: 0.8px; z-index: 2; box-shadow: 0 5px 20px rgba(0,0,0,0.6); text-transform: uppercase; display: inline-flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.7); border: 1px solid rgba(255,255,255,0.25); backdrop-filter: blur(8px); }
-        .lbl-hunt { color: #00eeff; border-color: #00eeff; text-shadow: 0 0 10px #00eeff; }
-        .lbl-universal { background: linear-gradient(135deg, #ff0055, #ff0000); color: #fff; border: none; box-shadow: 0 0 25px rgba(255,0,85,0.5); animation: badgePulse 1s infinite alternate; }
-        .lbl-hunt { --tube: #00eeff; }
-        .lbl-universal { --tube: #ff3355; }
-        .sub-text h3 { --tube: #ffd700; }
-        .card-msrp { --tube: #00ff9d; }
-        .card-bundle-tier { --tube: #d24bff; }
-        .card-baller-bundle { --tube: #ffcc33; }
-        .yt-open-btn { background: rgba(255,0,64,0.15); border: 1px solid rgba(255,0,64,0.5); color: #fff; padding: 8px 16px; border-radius: 10px; text-decoration: none; font-weight: 800; font-size: 0.8rem; display: flex; align-items: center; gap: 6px; transition: .3s; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 0 15px rgba(255,0,64,0.2); }
-        .yt-open-btn:hover { background: rgba(255,0,64,0.8); box-shadow: 0 0 20px rgba(255,0,64,0.6); transform: scale(1.05); }
+        .yt-card { display: flex; flex-direction: column; }
+        .yt-label { padding: 9px 16px; border-radius: 30px; font-weight: 800; font-size: 0.78rem; letter-spacing: .8px; text-transform: uppercase; display: inline-flex; align-items: center; gap: 8px; border: 3px solid var(--ink); box-shadow: 0 3px 0 var(--ink); }
+        .lbl-hunt { background: var(--pool); color: #06344a; }
+        .lbl-universal { background: var(--cherry); color: #fff; animation: badgePulse 1s infinite alternate; }
+        .yt-open-btn { padding: 8px 15px; border-radius: 30px; text-decoration: none; font-weight: 800; font-size: 0.75rem; text-transform: uppercase; letter-spacing: .8px; display: flex; align-items: center; gap: 6px; background: #fff; color: var(--ink); border: 3px solid var(--ink); box-shadow: 0 3px 0 var(--ink); transition: transform .16s, box-shadow .16s; }
+        .yt-open-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 var(--ink); }
 
-        .sub-info-panel { display: flex; align-items: center; justify-content: space-between; padding: 2.5rem; gap: 3rem; flex-wrap: wrap; }
+        /* ---------- BIRTHDAY CARD PANEL ---------- */
+        .card-panel { display: flex; align-items: center; justify-content: space-between; padding: 2.2rem; gap: 2.5rem; flex-wrap: wrap; background: linear-gradient(150deg, #fff0f7, #fff8e6); }
         .sub-text { flex: 1; min-width: 300px; }
-        .sub-text h3 { display: flex; align-items: center; gap: 10px; font-size: 1.6rem; color: var(--accent-gold); margin-bottom: 0.8rem; text-shadow: 0 0 15px rgba(255,215,0,0.4); }
-        .sub-text p { color: var(--text-dim); line-height: 1.7; font-size: 1rem; }
-        .sub-actions { display: flex; gap: 20px; align-items: center; justify-content: center; }
-        .sub-btn { background: linear-gradient(135deg, #ff0000, #dd0000); color: #fff; padding: 14px 32px; border-radius: 50px; text-decoration: none; font-weight: 900; display: flex; align-items: center; gap: 10px; box-shadow: 0 0 25px rgba(255,0,0,0.5), inset 0 2px 0 rgba(255,255,255,0.4); border: 1px solid rgba(255,50,50,0.8); letter-spacing: 1px; font-size: 1.2rem; white-space: nowrap; transition: transform .3s, box-shadow .3s; will-change: transform; }
-        .sub-btn:hover { transform: translateY(-3px); box-shadow: 0 0 40px rgba(255,0,0,0.8); }
-        .bell-btn { background: rgba(20,20,20,0.6); color: var(--accent-gold); width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1.6rem; border: 2px solid var(--accent-gold); box-shadow: 0 0 20px rgba(255,215,0,0.3), inset 0 2px 5px rgba(255,255,255,0.2); flex-shrink: 0; backdrop-filter: blur(5px); transition: transform .3s, box-shadow .3s, background .3s; will-change: transform; }
-        .bell-btn:hover { transform: translateY(-3px); box-shadow: 0 0 30px rgba(255,215,0,0.6); background: rgba(255,215,0,0.1); }
+        .sub-text h3 { font-family: 'Fredoka', sans-serif; font-weight: 700; display: flex; align-items: center; gap: 10px; font-size: 1.5rem; margin-bottom: 0.7rem; }
+        .sub-text h3 i { color: var(--pink); }
+        .sub-text p { color: var(--ink-soft); line-height: 1.7; font-size: 1rem; }
+        .sub-actions { display: flex; gap: 16px; align-items: center; justify-content: center; }
+        .sub-btn { font-family: 'Fredoka', sans-serif; font-weight: 600; background: var(--cherry); color: #fff; padding: 14px 28px; border-radius: 40px; text-decoration: none; display: flex; align-items: center; gap: 10px; border: 3px solid var(--ink); box-shadow: 0 5px 0 var(--ink); letter-spacing: 1px; font-size: 1.1rem; white-space: nowrap; transition: transform .16s, box-shadow .16s; }
+        .sub-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 0 var(--ink); }
+        .bell-btn { background: var(--candle); color: #4a2d00; width: 54px; height: 54px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1.5rem; border: 3px solid var(--ink); box-shadow: 0 5px 0 var(--ink); flex-shrink: 0; transition: transform .16s, box-shadow .16s; }
+        .bell-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 0 var(--ink); }
 
-        footer { text-align: center; padding: 3rem 0 4rem; color: var(--text-dim); font-size: 0.9rem; position: relative; z-index: 2; letter-spacing: 1px; }
-
-        .epic-empty-wrapper { grid-column: 1 / -1; position: relative; margin: 2rem auto; max-width: 800px; padding: 4px; border-radius: 30px; background: rgba(0,0,0,0.5); box-shadow: 0 0 50px rgba(0,255,242,0.2), 0 0 80px rgba(213,0,255,0.2); overflow: hidden; }
-        .epic-empty-wrapper::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: conic-gradient(transparent 0deg, var(--accent-cyan) 60deg, #fff 90deg, var(--accent-purple) 120deg, transparent 180deg, var(--accent-gold) 240deg, #fff 270deg, var(--accent-live) 300deg, transparent 360deg); animation: spinBorder 4s linear infinite; z-index: 0; opacity: 0.8; filter: blur(8px); }
-        .epic-empty-inner { position: relative; z-index: 1; background: linear-gradient(160deg, rgba(10,10,20,0.85), rgba(5,5,15,0.95)); backdrop-filter: blur(20px); border-radius: 26px; padding: 4rem 3rem; text-align: center; border: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; align-items: center; box-shadow: inset 0 0 40px rgba(0,0,0,0.8); }
-        .empty-icon-container { position: relative; width: 140px; height: 140px; margin-bottom: 2.5rem; display: flex; align-items: center; justify-content: center; }
-        .empty-icon-container::before { content: ''; position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle, rgba(0,255,242,0.4), transparent 70%); animation: pulseCore 2s infinite alternate; }
-        @keyframes pulseCore { 0% { transform: scale(0.8); opacity: 0.5; } 100% { transform: scale(1.5); opacity: 1; box-shadow: 0 0 30px var(--accent-cyan); } }
-        .icon-float-wrapper { animation: float 4s infinite ease-in-out; z-index: 2; display: flex; align-items: center; justify-content: center; will-change: transform; }
-        .empty-icon { width: 120px; height: auto; filter: drop-shadow(0 0 20px var(--accent-cyan)) drop-shadow(0 0 40px var(--accent-purple)); }
-        .letter-content { text-align: center; max-width: 650px; margin: 0 auto; color: #c0c0d0; font-size: 1.1rem; line-height: 1.7; font-weight: 500; }
-        .letter-content p { margin-bottom: 1.2rem; }
-
+        /* ---------- EMPTY / ERROR ---------- */
+        .empty-wrapper { grid-column: 1 / -1; margin: 1.5rem auto; max-width: 800px; padding: 3.5rem 2.5rem; text-align: center; border-radius: 30px; background: #fff; border: 4px solid var(--ink); box-shadow: 0 8px 0 var(--ink); display: flex; flex-direction: column; align-items: center; }
+        .empty-icon { width: 120px; image-rendering: pixelated; animation: hop 3s infinite ease-in-out; }
+        .letter-content { max-width: 640px; margin: 1.8rem auto 0; color: var(--ink-soft); font-size: 1.05rem; line-height: 1.7; }
+        .letter-content p { margin-bottom: 1.1rem; }
+        .letter-headline { font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 1.6rem; color: var(--ink); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1.4rem; }
+        .signoff { font-family: 'Fredoka', sans-serif; font-weight: 600; color: var(--pink); font-size: 1.3rem; margin-top: 2.2rem; }
         .feed-fallback { grid-column: 1/-1; text-align: center; padding: 2rem; }
-        .error-card { grid-column: 1/-1; text-align: center; padding: 4rem; background: rgba(0,0,0,0.5); border-radius: 20px; border: 1px solid rgba(255,0,64,0.3); }
-        .error-card h2 { color: #ff4444; margin-bottom: 1rem; }
-        .error-card p { color: var(--text-dim); margin-bottom: 1.5rem; }
-        .retry-btn { background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple)); border: none; color: #fff; padding: 12px 28px; border-radius: 12px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; box-shadow: 0 0 20px rgba(0,255,242,0.3); transition: transform .3s, box-shadow .3s; }
-        .retry-btn:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(213,0,255,0.6); }
+        .error-card { grid-column: 1/-1; text-align: center; padding: 3rem 2rem; background: #fff; border-radius: 26px; border: 4px solid var(--ink); box-shadow: 0 8px 0 var(--ink); }
+        .error-card h2 { font-family: 'Fredoka', sans-serif; font-weight: 600; margin-bottom: .8rem; }
+        .error-card p { color: var(--ink-soft); margin-bottom: 1.4rem; }
+        .retry-btn { font-family: 'Fredoka', sans-serif; font-weight: 600; background: var(--pool); color: #06344a; border: 3px solid var(--ink); box-shadow: 0 5px 0 var(--ink); padding: 12px 26px; border-radius: 40px; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: transform .16s, box-shadow .16s; }
+        .retry-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 0 var(--ink); }
 
-        .image-modal { display: none; position: fixed; inset: 0; z-index: 9999; padding-top: 50px; width: 100%; height: 100%; overflow: auto; background: rgba(0,0,0,0.9); align-items: center; justify-content: center; backdrop-filter: blur(20px); }
-        .modal-content { margin: auto; display: block; max-width: 90%; max-height: 85vh; border: 3px solid var(--accent-cyan); box-shadow: 0 0 100px rgba(0,255,242,0.8); border-radius: 20px; }
-        .close-modal { position: absolute; top: 30px; right: 40px; color: var(--accent-cyan); font-size: 50px; font-weight: 900; cursor: pointer; z-index: 10000; text-shadow: 0 0 20px var(--accent-cyan); background: none; border: none; line-height: 1; }
+        footer { text-align: center; padding: 2.5rem 1rem 4rem; color: var(--ink-soft); font-size: 0.9rem; position: relative; z-index: 2; letter-spacing: .5px; }
 
-        a:focus-visible, button:focus-visible { outline: 3px solid var(--accent-cyan); outline-offset: 3px; border-radius: 8px; }
+        /* ---------- IMAGE MODAL ---------- */
+        .image-modal { display: none; position: fixed; inset: 0; z-index: 9999; width: 100%; height: 100%; overflow: auto; background: rgba(42,19,56,0.88); align-items: center; justify-content: center; }
+        .modal-content { margin: auto; display: block; max-width: 90%; max-height: 85vh; border: 5px solid #fff; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+        .close-modal { position: absolute; top: 24px; right: 30px; color: #fff; font-size: 46px; font-weight: 700; cursor: pointer; background: none; border: none; line-height: 1; }
 
-        @media (max-width: 1300px) { .p-gengar, .p-gardevoir { display: none; } }
+        a:focus-visible, button:focus-visible { outline: 4px solid var(--grape); outline-offset: 3px; border-radius: 8px; }
+
+        @media (max-width: 1200px) { .g-snorlax, .g-eevee { display: none; } }
         @media (max-width: 768px) {
-            .p-rayquaza, .p-charizard, .p-gengar, .p-gardevoir, .p-vaporeon, .p-cubone { display: none; }
-            .p-suicune { width: 120vw; opacity: 0.08; top: 40%; }
-            .p-pichu { width: 90px; opacity: 0.3; left: 3%; }
-            .p-magikarp { width: 120px; opacity: 0.32; right: 3%; }
-            .header-wrapper { flex-direction: column; gap: 1.5rem; text-align: center; }
-            h1 { font-size: clamp(3rem, 11vw, 4rem); }
-            .logo-right { display: none; } .header-logo { width: 110px; } .logo-left .header-logo { transform: scaleX(1); }
-            main { padding: 1.5rem 1rem; margin: 1rem auto 3rem; width: 95%; border-radius: 25px; }
-            .section-header { width: 100%; padding: 12px 20px; border-radius: 40px; gap: 1rem; margin: 2.5rem auto 2rem; }
-            .section-title { font-size: 1.1rem; white-space: nowrap; letter-spacing: 2px; } .section-line { height: 3px; min-width: 30px; }
-            .tier-header { padding: 16px 18px 18px; margin: 3rem auto 1.8rem; }
-            .tier-title { letter-spacing: 3px; }
-            .store-grid { grid-template-columns: 1fr; gap: 30px; }
-            .sub-info-panel { flex-direction: column; text-align: center; gap: 1.5rem; padding: 2rem 1.2rem; }
-            .sub-text { min-width: 100%; } .sub-text h3 { font-size: 1.25rem; justify-content: center; }
-            .sub-actions { width: 100%; justify-content: center; gap: 15px; }
-            .epic-empty-inner { padding: 3rem 1.5rem; }
+            .g-pikachu, .g-jiggly, .g-snorlax, .g-eevee { display: none; }
+            .g-pichu { width: 84px; opacity: .3; left: 3%; }
+            .g-magikarp { width: 110px; opacity: .3; right: 3%; }
+            .header-hat { display: none; }
+            main { padding: 2.4rem 1.1rem 1.6rem; margin: 1.4rem auto 3rem; width: 94%; border-radius: 26px; }
+            .section-header { width: 100%; padding: 10px 18px; gap: .8rem; margin: 2.6rem auto 1.4rem; }
+            .section-title { font-size: 1.05rem; letter-spacing: 1px; }
+            .tier-header { padding: 16px 18px; margin: 2.8rem auto 1.6rem; }
+            .store-grid { grid-template-columns: 1fr; gap: 28px; }
+            .card-panel { flex-direction: column; text-align: center; gap: 1.4rem; padding: 1.8rem 1.2rem; }
+            .sub-text { min-width: 100%; } .sub-text h3 { justify-content: center; font-size: 1.25rem; }
+            .empty-wrapper { padding: 2.4rem 1.4rem; }
         }
 
-        /* ---------- MOBILE ANTI-FLICKER ----------
-           Android Chrome flickers/black-boxes when backdrop-filter blur layers sit
-           under animated conic gradients. On touch devices we swap blurred glass
-           for near-solid glass and freeze the heavy animations. Desktop unchanged.
-           NOTE: the Vegas neon flicker animates opacity only, which is GPU-cheap,
-           so it stays ON for mobile — that flicker is intentional, not a bug. */
+        /* Touch devices: drop the blur layers, keep the party */
         @media (hover: none), (pointer: coarse) {
-            body::before { animation: none; background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%; }
-            .grain, .particles { display: none; }
-            .top-nav .nav-link, main, .glass-panel, .tier-header, .section-header,
-            .type-tag, .time-tag-bottom, .perk, .yt-label, .bell-btn, .epic-empty-inner, .image-modal {
-                backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
-            }
-            main { background: rgba(6,6,16,0.94); }
-            .glass-panel { background: linear-gradient(160deg, rgba(24,24,42,0.97), rgba(10,10,20,0.98)); }
-            .card-baller-bundle .glass-panel { background: linear-gradient(160deg, rgba(48,38,8,0.97), rgba(16,11,0,0.98)); }
-            /* Keep the LED motion — only the flicker-prone layers are gone:
-               solid glass means the transform-spun borders and gradient flows are GPU-safe */
-            .neon-card-wrapper::before { animation-duration: 7s; opacity: 0.55 !important; filter: none !important; }
-            .epic-empty-wrapper::before { filter: none !important; }
-            .glass-panel::after { opacity: 1; mix-blend-mode: normal; background: linear-gradient(115deg, transparent 42%, rgba(255,255,255,0.05) 50%, transparent 58%); background-size: 250% 100%; animation: sheenFlow 7s linear infinite; }
-            .neon-card-wrapper, .glass-panel, .item-img, .logo-animator, .icon-float-wrapper, .sub-btn, .bell-btn { will-change: auto !important; }
-            .neon-card-wrapper:hover { transform: none; }
-            .card-live-now { animation: none; box-shadow: 0 0 32px rgba(var(--lg),0.6), 0 0 60px rgba(var(--lg),0.25); }
-            .tier-header::after { animation: ledOpacity 2.4s ease-in-out infinite; box-shadow: 0 0 18px currentColor; }
+            main { backdrop-filter: none; background: rgba(255,255,255,0.94); }
+            .gift-card:hover { transform: none; box-shadow: 0 8px 0 var(--ink); }
         }
 
         @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
-            body::before { animation: none; }
+            *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
         }
     </style>
 </head>
 <body>
-    <div class="grain"></div>
-    <div class="particles"></div>
-    <div class="parallax-layer">
-        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="poke-bg p-suicune" alt="" loading="lazy">
-        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/384.png" class="poke-bg p-rayquaza" alt="" loading="lazy">
-        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/006.png" class="poke-bg p-charizard" alt="" loading="lazy">
-        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/094.png" class="poke-bg p-gengar" alt="" loading="lazy">
-        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/282.png" class="poke-bg p-gardevoir" alt="" loading="lazy">
-        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/134.png" class="poke-bg p-vaporeon" alt="" loading="lazy">
-        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/104.png" class="poke-bg p-cubone" alt="" loading="lazy">
-        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/172.png" class="poke-bg p-pichu" alt="" loading="lazy">
-        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/129.png" class="poke-bg p-magikarp" alt="" loading="lazy">
+    <div class="dots"></div>
+    <div class="confetti-layer" id="confetti-layer" aria-hidden="true"></div>
+
+    <div class="parallax-layer" aria-hidden="true">
+        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/025.png" class="guest-bg g-pikachu" alt="" loading="lazy">
+        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/039.png" class="guest-bg g-jiggly" alt="" loading="lazy">
+        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/143.png" class="guest-bg g-snorlax" alt="" loading="lazy">
+        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/133.png" class="guest-bg g-eevee" alt="" loading="lazy">
+        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/172.png" class="guest-bg g-pichu" alt="" loading="lazy">
+        <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/129.png" class="guest-bg g-magikarp" alt="" loading="lazy">
     </div>
 
     <nav class="top-nav">
-        <a href="index.html" class="nav-link nav-active"><i class="ph-fill ph-monitor-play"></i> LIVE BREAKS</a>
-        <a href="vault.html" class="nav-link"><i class="ph-fill ph-storefront"></i> THE VAULT</a>
+        <a href="index.html" class="nav-link nav-active"><i class="ph-fill ph-confetti"></i> The party</a>
+        <a href="vault.html" class="nav-link"><i class="ph-fill ph-gift"></i> The vault</a>
     </nav>
 
     <header>
+        <div class="kicker"><i class="ph-fill ph-cake"></i> One year older, same pull luck <i class="ph-fill ph-cake"></i></div>
+
         <div class="header-wrapper">
-            <div class="logo-animator logo-left"><img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="header-logo" alt="Suicune"></div>
-            <h1 id="site-title">PBM BREAKS</h1>
-            <div class="logo-animator logo-right"><img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="header-logo" alt="Suicune"></div>
+            <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="header-hat" alt="" loading="lazy">
+            <h1 id="site-title">HAPPY BIRTHDAY MIKE</h1>
+            <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="header-hat mirror" alt="" loading="lazy">
         </div>
+
+        <div class="subtitle" id="site-subtitle">PBM Breaks · The Crystal League · Birthday Edition</div>
+
+        <div class="cake-stage">
+            <button class="cake-btn" id="cake-btn" aria-label="Blow out the candles">
+                <svg class="cake" id="cake" viewBox="0 0 260 200" xmlns="http://www.w3.org/2000/svg">
+                    <!-- candles -->
+                    <g id="candle-group">
+                        <rect x="76" y="52" width="10" height="34" rx="4" fill="#ff3d8b"/>
+                        <rect x="125" y="44" width="10" height="42" rx="4" fill="#21c7ff"/>
+                        <rect x="174" y="52" width="10" height="34" rx="4" fill="#2fe3a5"/>
+                        <path class="smoke" d="M81 50c6-6-4-10 2-16" stroke="#6b5480" stroke-width="3" stroke-linecap="round" fill="none"/>
+                        <path class="smoke" d="M130 42c6-6-4-10 2-16" stroke="#6b5480" stroke-width="3" stroke-linecap="round" fill="none"/>
+                        <path class="smoke" d="M179 50c6-6-4-10 2-16" stroke="#6b5480" stroke-width="3" stroke-linecap="round" fill="none"/>
+                        <ellipse class="flame" cx="81" cy="44" rx="7" ry="12" fill="#ffc93c"/>
+                        <ellipse class="flame" cx="130" cy="36" rx="7" ry="12" fill="#ffc93c"/>
+                        <ellipse class="flame" cx="179" cy="44" rx="7" ry="12" fill="#ffc93c"/>
+                    </g>
+                    <!-- top tier + frosting -->
+                    <rect x="58" y="84" width="144" height="34" rx="10" fill="#ffffff" stroke="#2a1338" stroke-width="5"/>
+                    <path d="M58 100c12 0 12 10 24 10s12-10 24-10 12 10 24 10 12-10 24-10 12 10 24 10 12-10 24-10v-14H58z" fill="#ff3d8b"/>
+                    <!-- bottom tier -->
+                    <rect x="34" y="118" width="192" height="58" rx="12" fill="#ffffff" stroke="#2a1338" stroke-width="5"/>
+                    <rect x="34" y="118" width="192" height="14" fill="#7a2bff"/>
+                    <circle cx="70" cy="152" r="6" fill="#21c7ff"/>
+                    <circle cx="110" cy="158" r="6" fill="#ffc93c"/>
+                    <circle cx="150" cy="150" r="6" fill="#2fe3a5"/>
+                    <circle cx="190" cy="158" r="6" fill="#ff3d8b"/>
+                    <!-- plate -->
+                    <rect x="20" y="176" width="220" height="14" rx="7" fill="#2a1338"/>
+                </svg>
+            </button>
+            <div class="cake-hint" id="cake-hint"><i class="ph-fill ph-wind"></i> Tap the cake to blow out the candles</div>
+        </div>
+
+        <button class="party-btn" id="confetti-btn"><i class="ph-fill ph-confetti"></i> Pop the confetti</button>
     </header>
 
     <main>
-        <div class="section-header"><span class="section-line"></span><span class="section-title">CHANNEL FEED</span><span class="section-line"></span></div>
+        <div class="section-header"><span class="section-line"></span><span class="section-title">Channel feed</span><span class="section-line"></span></div>
         <div id="yt-container" class="yt-container"></div>
 
-        <div class="neon-card-wrapper" style="margin-top: 40px; margin-bottom: 60px;">
-            <div class="glass-panel sub-info-panel">
+        <div class="gift-card" style="margin-top: 36px; margin-bottom: 20px;">
+            <div class="card-inner card-panel">
                 <div class="sub-text">
-                    <h3><i class="ph-fill ph-crown"></i> JOIN POKEBALLER MIKE</h3>
-                    <p><strong>Why subscribe?</strong> Support the channel and watch every hit live.<br><strong>Turn on notifications</strong> to be first in the door when a break goes live.</p>
+                    <h3><i class="ph-fill ph-cake"></i> It's Mike's birthday — come rip packs with him</h3>
+                    <p>Best present you can give a breaker: a full room. Subscribe to watch every hit live, and turn on notifications so you're in the door the second the birthday break starts.</p>
                 </div>
                 <div class="sub-actions">
-                    <a href="https://www.youtube.com/@PokeballerMike?sub_confirmation=1" target="_blank" rel="noopener" class="sub-btn"><i class="ph-fill ph-youtube-logo"></i> SUBSCRIBE</a>
+                    <a href="https://www.youtube.com/@PokeballerMike?sub_confirmation=1" target="_blank" rel="noopener" class="sub-btn"><i class="ph-fill ph-youtube-logo"></i> Subscribe</a>
                     <a href="https://www.youtube.com/@PokeballerMike?sub_confirmation=1" target="_blank" rel="noopener" class="bell-btn" title="Turn on notifications" aria-label="Turn on notifications"><i class="ph-fill ph-bell-ringing"></i></a>
                 </div>
             </div>
@@ -416,7 +474,7 @@
         <div id="store-sections"></div>
     </main>
 
-    <footer><p>© 2025 PBM Breaks · The Crystal League v3.0 · Not affiliated with Nintendo</p></footer>
+    <footer><p id="footer-text">© 2025 PBM Breaks · Birthday Edition · Cake not included · Not affiliated with Nintendo</p></footer>
 
     <div id="myModal" class="image-modal" onclick="closeModal()">
         <button class="close-modal" aria-label="Close image">&times;</button>
@@ -424,7 +482,15 @@
     </div>
 
     <script>
+        /* =======================================================
+           PARTY CONFIG — change these two lines and the whole page
+           is somebody else's birthday.
+           ======================================================= */
+        const BIRTHDAY_NAME = 'MIKE';
+        const BIRTHDAY_AGE  = '';   // e.g. '30' — leave empty to hide
+
         const API_URL = 'https://pokeballer-worker.kronborgnielsen.workers.dev/api';
+        const PARTY_COLORS = ['#ff3d8b', '#7a2bff', '#21c7ff', '#ffc93c', '#2fe3a5', '#ff5252'];
         let timerInterval = null;
 
         const wait = ms => new Promise(r => setTimeout(r, ms));
@@ -432,48 +498,139 @@
         function money(n) { const v = Number(n); return isFinite(v) ? v.toFixed(2) : '0.00'; }
         function toInt(n) { const v = parseInt(n, 10); return isFinite(v) ? v : 0; }
 
-        /* ---------- VEGAS NEON: per-letter tube wrapping ----------
-           Wraps every letter of a sign in its own span with a random flicker
-           duration + delay (so no two letters blink together). ~12% of tubes
-           get the harsh dying-tube animation. Words cycle through the palette;
-           if no palette is given, the sign's own --tube color is inherited. */
-        function neonize(el, palette, small) {
-            if (!el || el.dataset.neon === '1') return;
-            el.dataset.neon = '1';
-            el.classList.add('neon-sign');
-            if (small) el.classList.add('neon-sm');
-            let w = 0;
+        const canMotion = window.matchMedia && window.matchMedia('(pointer:fine)').matches && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        /* ---------- SIGNATURE: string the headline up as bunting ----------
+           Each letter becomes its own pennant flag hanging off a string,
+           alternating through the party palette with a staggered sway. */
+        function bannerize(el) {
+            if (!el || el.dataset.party === '1') return;
+            el.dataset.party = '1';
+            const text = el.textContent;
+            el.textContent = '';
+            const banner = document.createElement('span');
+            banner.className = 'banner';
+            let i = 0;
+            text.split(/(\s+)/).forEach(part => {
+                if (!part) return;
+                if (/^\s+$/.test(part)) { const gap = document.createElement('span'); gap.className = 'banner-gap'; banner.appendChild(gap); return; }
+                const word = document.createElement('span');
+                word.className = 'banner-word';
+                for (const ch of part) {
+                    const flag = document.createElement('span');
+                    flag.className = 'flag';
+                    flag.style.setProperty('--fc', PARTY_COLORS[i % PARTY_COLORS.length]);
+                    flag.style.setProperty('--fs', (3 + (i % 5) * 0.35).toFixed(2) + 's');
+                    flag.style.setProperty('--fdel', (-(i % 7) * 0.28).toFixed(2) + 's');
+                    flag.textContent = ch;
+                    word.appendChild(flag);
+                    i++;
+                }
+                banner.appendChild(word);
+            });
+            el.appendChild(banner);
+        }
+
+        /* Smaller headings: bouncing letters, same palette, no rope */
+        function bounceSign(el, palette) {
+            if (!el || el.dataset.party === '1') return;
+            el.dataset.party = '1';
+            el.classList.add('bounce-sign');
+            const colors = palette || PARTY_COLORS;
+            let i = 0;
             Array.from(el.childNodes).forEach(node => {
                 if (node.nodeType !== 3 || !node.textContent.trim()) return;
                 const frag = document.createDocumentFragment();
-                node.textContent.split(/(\s+)/).forEach(part => {
-                    if (!part) return;
-                    if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(' ')); return; }
-                    const word = document.createElement('span');
-                    word.className = 'neon-word';
-                    if (palette && palette.length) word.style.setProperty('--tube', palette[w++ % palette.length]);
-                    for (const ch of part) {
-                        const s = document.createElement('span');
-                        s.className = 'nl' + (Math.random() < 0.12 ? ' nl-dying' : '');
-                        s.style.setProperty('--fd', (3.5 + Math.random() * 6).toFixed(2) + 's');
-                        s.style.animationDelay = (-Math.random() * 9).toFixed(2) + 's';
-                        s.textContent = ch;
-                        word.appendChild(s);
-                    }
-                    frag.appendChild(word);
-                });
+                for (const ch of node.textContent) {
+                    if (ch === ' ') { frag.appendChild(document.createTextNode(' ')); continue; }
+                    const s = document.createElement('span');
+                    s.className = 'bl';
+                    s.style.setProperty('--bc', colors[i % colors.length]);
+                    s.style.setProperty('--bdel', (i * 0.07).toFixed(2) + 's');
+                    s.textContent = ch;
+                    frag.appendChild(s);
+                    i++;
+                }
                 el.replaceChild(frag, node);
             });
         }
-        const SIGN_PALETTE = ['#00f7ff', '#ff2d95'];
-        function applyNeon() {
-            neonize(document.getElementById('site-title'), SIGN_PALETTE);
-            document.querySelectorAll('.section-title').forEach(t => neonize(t, SIGN_PALETTE));
-            document.querySelectorAll('.tier-title').forEach(t => neonize(t));
-            document.querySelectorAll('.top-nav .nav-link').forEach(t => neonize(t, SIGN_PALETTE, true));
-            document.querySelectorAll('.yt-label').forEach(t => neonize(t, null, true));
-            document.querySelectorAll('.sub-text h3').forEach(t => neonize(t, null, true));
-            document.querySelectorAll('.item-content h3').forEach(t => neonize(t, null, true));
+
+        function applyParty() {
+            document.querySelectorAll('.section-title').forEach(t => bounceSign(t));
+            document.querySelectorAll('.tier-title').forEach(t => bounceSign(t, ['#2a1338']));
+        }
+
+        /* ---------- CONFETTI ---------- */
+        function makeConfetto(burst) {
+            const c = document.createElement('div');
+            const shape = Math.random();
+            c.className = 'confetto' + (shape > 0.7 ? ' round' : shape > 0.45 ? ' strip' : '');
+            c.style.background = PARTY_COLORS[Math.floor(Math.random() * PARTY_COLORS.length)];
+            c.style.left = (Math.random() * 100) + 'vw';
+            c.style.setProperty('--dx', (Math.random() * 220 - 110).toFixed(0) + 'px');
+            c.style.setProperty('--spin', (Math.random() * 1080 - 360).toFixed(0) + 'deg');
+            const dur = burst ? (2.4 + Math.random() * 2) : (6 + Math.random() * 6);
+            c.style.animation = `fall ${dur.toFixed(2)}s linear ${burst ? 'forwards' : 'infinite'}`;
+            if (!burst) c.style.animationDelay = (-Math.random() * dur).toFixed(2) + 's';
+            return { el: c, ms: dur * 1000 };
+        }
+
+        function ambientConfetti() {
+            if (reduceMotion) return;
+            const layer = document.getElementById('confetti-layer');
+            const count = window.innerWidth < 700 ? 22 : 45;
+            const frag = document.createDocumentFragment();
+            for (let i = 0; i < count; i++) frag.appendChild(makeConfetto(false).el);
+            layer.appendChild(frag);
+        }
+
+        function confettiBurst(count) {
+            if (reduceMotion) return;
+            const layer = document.getElementById('confetti-layer');
+            const n = count || (window.innerWidth < 700 ? 60 : 120);
+            for (let i = 0; i < n; i++) {
+                const { el, ms } = makeConfetto(true);
+                el.style.animationDelay = (Math.random() * 0.5).toFixed(2) + 's';
+                layer.appendChild(el);
+                setTimeout(() => el.remove(), ms + 900);
+            }
+        }
+
+        /* ---------- BALLOONS ---------- */
+        function releaseBalloons() {
+            if (reduceMotion) return;
+            const layer = document.querySelector('.parallax-layer');
+            const n = window.innerWidth < 700 ? 4 : 8;
+            for (let i = 0; i < n; i++) {
+                const b = document.createElement('div');
+                b.className = 'balloon';
+                b.style.setProperty('--b', PARTY_COLORS[i % PARTY_COLORS.length]);
+                b.style.setProperty('--rt', (26 + Math.random() * 22).toFixed(1) + 's');
+                b.style.setProperty('--rd', (-Math.random() * 40).toFixed(1) + 's');
+                b.style.left = (4 + Math.random() * 90) + 'vw';
+                b.style.transform = 'scale(' + (0.7 + Math.random() * 0.7).toFixed(2) + ')';
+                layer.appendChild(b);
+            }
+        }
+
+        /* ---------- THE CAKE ---------- */
+        function initCake() {
+            const cake = document.getElementById('cake');
+            const btn = document.getElementById('cake-btn');
+            const hint = document.getElementById('cake-hint');
+            if (!cake || !btn) return;
+            btn.addEventListener('click', () => {
+                const out = cake.classList.toggle('cake-out');
+                if (out) {
+                    hint.classList.add('lit-again');
+                    hint.innerHTML = '<i class="ph-fill ph-sparkle"></i> Wish made. Tap again to relight them.';
+                    confettiBurst();
+                } else {
+                    hint.classList.remove('lit-again');
+                    hint.innerHTML = '<i class="ph-fill ph-wind"></i> Tap the cake to blow out the candles';
+                }
+            });
         }
 
         async function fetchWithRetry(url, opts = {}, retries = 2) {
@@ -510,7 +667,6 @@
             } catch (e) { return new Date(localStr + '-06:00').getTime(); }
         }
 
-        /* Date only — never show the clock on the storefront */
         function formatCloseDate(isoString) {
             if (!isoString || isoString.indexOf('T') === -1) return '';
             try {
@@ -562,51 +718,55 @@
                 if (streamVideo) videos.push({ ...streamVideo, type: 'stream' });
                 if (huntVideo) videos.push({ ...huntVideo, type: 'hunt' });
 
-                if (videos.length === 0) { container.innerHTML = '<div class="feed-fallback" style="color:#888;">No videos found right now — catch the next stream soon.</div>'; return; }
+                if (videos.length === 0) {
+                    container.innerHTML = '<div class="feed-fallback" style="color:#6b5480;">No videos up yet today. The birthday stream lands on the channel first.</div>';
+                    return;
+                }
 
                 container.innerHTML = videos.map(v => {
                     const isStream = v.type === 'stream';
-                    const badgeHTML = isStream ? '<div class="yt-label lbl-universal"><i class="ph-fill ph-broadcast"></i> OFFICIAL LIVE FEED</div>' : '<div class="yt-label lbl-hunt"><i class="ph-fill ph-video"></i> LATEST HUNT</div>';
+                    const badgeHTML = isStream
+                        ? '<div class="yt-label lbl-universal"><i class="ph-fill ph-broadcast"></i> Birthday live feed</div>'
+                        : '<div class="yt-label lbl-hunt"><i class="ph-fill ph-video"></i> Latest hunt</div>';
                     const openBtnHTML = isStream
-                        ? `<a href="https://www.youtube.com/watch?v=${encodeURIComponent(v.id)}" target="_blank" rel="noopener" class="yt-open-btn"><i class="ph-fill ph-youtube-logo"></i> OPEN IN YOUTUBE</a>`
-                        : `<a href="https://www.youtube.com/watch?v=${encodeURIComponent(v.id)}" target="_blank" rel="noopener" class="yt-open-btn" style="background:rgba(0,238,255,0.15);border-color:rgba(0,238,255,0.5);box-shadow:0 0 15px rgba(0,238,255,0.2);"><i class="ph-fill ph-play-circle"></i> WATCH VIDEO</a>`;
+                        ? `<a href="https://www.youtube.com/watch?v=${encodeURIComponent(v.id)}" target="_blank" rel="noopener" class="yt-open-btn"><i class="ph-fill ph-youtube-logo"></i> Open in YouTube</a>`
+                        : `<a href="https://www.youtube.com/watch?v=${encodeURIComponent(v.id)}" target="_blank" rel="noopener" class="yt-open-btn"><i class="ph-fill ph-play-circle"></i> Watch video</a>`;
                     return `
-                        <div class="neon-card-wrapper">
-                            <div class="yt-card glass-panel" style="overflow:hidden;">
-                                <div style="padding:16px 20px 12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">${badgeHTML}${openBtnHTML}</div>
-                                <div style="aspect-ratio:16/9;width:100%;position:relative;">
+                        <div class="gift-card">
+                            <div class="yt-card card-inner">
+                                <div style="padding:16px 18px 12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">${badgeHTML}${openBtnHTML}</div>
+                                <div style="aspect-ratio:16/9;width:100%;position:relative;border-top:4px solid var(--ink);">
                                     <iframe loading="lazy" title="${esc(v.title)}" src="https://www.youtube.com/embed/${encodeURIComponent(v.id)}?autoplay=${isStream ? '1' : '0'}&mute=1&playsinline=1&controls=1&modestbranding=1&rel=0" style="position:absolute;inset:0;width:100%;height:100%;border:none;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                                 </div>
                             </div>
                         </div>`;
                 }).join('');
-                applyNeon();
                 bindTilt();
             } catch (e) {
                 console.error('Feed error:', e);
-                container.innerHTML = `<div class="feed-fallback"><a href="https://www.youtube.com/@PokeballerMike" target="_blank" rel="noopener" class="buy-btn" style="max-width:240px;margin:0 auto;">VISIT THE CHANNEL</a></div>`;
+                container.innerHTML = `<div class="feed-fallback"><a href="https://www.youtube.com/@PokeballerMike" target="_blank" rel="noopener" class="buy-btn bundle-btn" style="max-width:260px;margin:0 auto;">Visit the channel</a></div>`;
             }
         }
 
-        /* Tier config — the whole personality of each league lives here */
+        /* Tier config — three tables at the party, each with its own personality */
         const TIERS = {
             baller: {
-                headerClass: 'th-baller', icon: 'ph-crown', title: 'BALLER BUNDLES', tagline: 'The premium experience · top-shelf product only',
-                wrapper: 'card-baller-bundle', tag: 'tag-baller', tagHTML: '<i class="ph-fill ph-crown"></i> BALLER BUNDLE', ribbon: 'rb-gold',
-                btn: 'buy-btn baller-btn', btnText: 'CLAIM YOUR SPOT', btnSub: 'Premium spots go fast',
-                perks: '<span class="perk perk-gold"><i class="ph-fill ph-crown"></i> Super premium</span><span class="perk perk-ship"><i class="ph-fill ph-truck"></i> Shipping included</span>'
+                headerClass: 'th-baller', icon: 'ph-crown', title: 'BALLER BUNDLES', tagline: 'The top table · cake, candles and top-shelf product only',
+                wrapper: 'card-baller-bundle', tag: 'tag-baller', tagHTML: '<i class="ph-fill ph-crown"></i> Baller bundle', ribbon: 'rb-gold',
+                btn: 'buy-btn baller-btn', btnText: 'Claim your seat', btnSub: 'Top-table spots go fast',
+                perks: '<span class="perk perk-gold"><i class="ph-fill ph-crown"></i> Top table</span><span class="perk perk-ship"><i class="ph-fill ph-truck"></i> Shipping included</span>'
             },
             bundle: {
-                headerClass: 'th-bundle', icon: 'ph-sketch-logo', title: 'BUNDLE BREAKS', tagline: 'Crazy value · shipping always included',
-                wrapper: 'card-bundle-tier', tag: 'tag-bundle', tagHTML: '<i class="ph-fill ph-sketch-logo"></i> BUNDLE BREAK', ribbon: 'rb-purple',
-                btn: 'buy-btn bundle-btn', btnText: 'LOCK IN SPOT', btnSub: 'Great value per dollar',
-                perks: '<span class="perk perk-value"><i class="ph-fill ph-lightning"></i> Crazy value</span><span class="perk perk-ship"><i class="ph-fill ph-truck"></i> Shipping included</span>'
+                headerClass: 'th-bundle', icon: 'ph-confetti', title: 'BUNDLE BREAKS', tagline: 'Party-sized value · shipping always included',
+                wrapper: 'card-bundle-tier', tag: 'tag-bundle', tagHTML: '<i class="ph-fill ph-confetti"></i> Bundle break', ribbon: 'rb-purple',
+                btn: 'buy-btn bundle-btn', btnText: 'Grab a spot', btnSub: 'Most value per dollar',
+                perks: '<span class="perk perk-value"><i class="ph-fill ph-sparkle"></i> Party-sized value</span><span class="perk perk-ship"><i class="ph-fill ph-truck"></i> Shipping included</span>'
             },
             msrp: {
-                headerClass: 'th-msrp', icon: 'ph-seal-check', title: 'MSRP BREAKS', tagline: 'Direct-to-collector value',
-                wrapper: 'card-msrp', tag: 'tag-msrp', tagHTML: '<i class="ph-fill ph-seal-check"></i> MSRP BREAK', ribbon: 'rb-green',
-                btn: 'buy-btn msrp-btn', btnText: 'JOIN THE WHEEL', btnSub: 'Direct price, live hits',
-                perks: '<span class="perk perk-msrp"><i class="ph-fill ph-tag"></i> Great Value</span><span class="perk perk-ship"><i class="ph-fill ph-truck"></i> Shipping included</span>'
+                headerClass: 'th-msrp', icon: 'ph-gift', title: 'MSRP BREAKS', tagline: 'Goodie-bag pricing · straight to the collector',
+                wrapper: 'card-msrp', tag: 'tag-msrp', tagHTML: '<i class="ph-fill ph-gift"></i> MSRP break', ribbon: 'rb-green',
+                btn: 'buy-btn msrp-btn', btnText: 'Join the wheel', btnSub: 'Shelf price, live hits',
+                perks: '<span class="perk perk-msrp"><i class="ph-fill ph-tag"></i> Goodie-bag price</span><span class="perk perk-ship"><i class="ph-fill ph-truck"></i> Shipping included</span>'
             }
         };
 
@@ -621,9 +781,8 @@
             let ribbonHTML = '', wrapperClass = t.wrapper, timeBadgeHTML = '', dateRowHTML = '';
 
             if (isOpen) {
-                wrapperClass += ' card-live-now';
-                ribbonHTML = `<div class="live-ribbon ${t.ribbon}"><span class="live-dot"></span> OPEN NOW — JOIN THE BREAK <span class="live-dot"></span></div>`;
-                if (endTime) timeBadgeHTML = `<div class="time-tag-bottom close-watch" data-end="${esc(item.scheduleEnd)}" data-id="${id}"><i class="ph-fill ph-calendar-x"></i> CLOSES ${formatCloseShort(item.scheduleEnd)}</div>`;
+                ribbonHTML = `<div class="live-ribbon ${t.ribbon}"><span class="live-dot"></span> The party's on — join this break <span class="live-dot"></span></div>`;
+                if (endTime) timeBadgeHTML = `<div class="time-tag-bottom close-watch" data-end="${esc(item.scheduleEnd)}" data-id="${id}"><i class="ph-fill ph-calendar-x"></i> Closes ${formatCloseShort(item.scheduleEnd)}</div>`;
             } else {
                 wrapperClass += ' card-closed';
             }
@@ -631,17 +790,17 @@
             if (item.scheduleEnd) dateRowHTML = `<div class="date-row"><i class="ph-fill ph-calendar-x"></i> Closes ${formatCloseDate(item.scheduleEnd)}</div>`;
 
             let btnHTML;
-            if (isEnded) btnHTML = '<div class="buy-btn sold-out">BREAK CLOSED</div>';
+            if (isEnded) btnHTML = '<div class="buy-btn sold-out">Break closed</div>';
             else if (item.googleFormLink) btnHTML = `<a href="${esc(item.googleFormLink)}" target="_blank" rel="noopener" class="${t.btn}" onclick="trackClick('${id}')"><span>${t.btnText}</span><span class="btn-subtext">${t.btnSub}</span></a>`;
-            else btnHTML = '<div class="buy-btn sold-out" style="background:#555;border-color:#777;">COMING SOON</div>';
+            else btnHTML = '<div class="buy-btn sold-out">Opening soon</div>';
 
             const img = item.image || 'https://assets.pokemon.com/assets/cms2/img/misc/trading-card-games/cards/tcg_default_card.png';
             const tagPosClass = isOpen ? '' : ' no-ribbon';
 
             return `
-                <div class="neon-card-wrapper ${wrapperClass}" id="card-${id}">
-                    <div class="item-card glass-panel">
-                        ${ribbonHTML}
+                <div class="gift-card ${wrapperClass}" id="card-${id}">
+                    <div class="item-card card-inner">
+                        <div id="ribbon-container-${id}">${ribbonHTML}</div>
                         <div class="type-tag ${t.tag}${tagPosClass}">${t.tagHTML}</div>
                         <div class="item-img-box" onclick="openModal('${esc(img)}')">
                             <img src="${esc(img)}" class="item-img" alt="${esc(item.name)}" loading="lazy">
@@ -652,7 +811,7 @@
                             ${dateRowHTML}
                             <p>${esc(item.description)}</p>
                             <div class="perk-row">${t.perks}</div>
-                            <div class="price-row"><span class="price">$${money(item.price)}</span><span class="stock">${toInt(item.stock)} Break Spots</span></div>
+                            <div class="price-row"><span class="price">$${money(item.price)}</span><span class="stock">${toInt(item.stock)} spots</span></div>
                             <div id="btn-container-${id}">${btnHTML}</div>
                         </div>
                     </div>
@@ -661,9 +820,9 @@
 
         async function loadStore() {
             const sections = document.getElementById('store-sections');
-            sections.innerHTML = '<div class="section-header"><span class="section-line"></span><span class="section-title">AVAILABLE BREAKS</span><span class="section-line"></span></div><div class="store-grid" id="store-loading"></div>';
+            sections.innerHTML = '<div class="section-header"><span class="section-line"></span><span class="section-title">Open breaks</span><span class="section-line"></span></div><div class="store-grid" id="store-loading"></div>';
             renderSkeletons(document.getElementById('store-loading'), 3);
-            applyNeon();
+            applyParty();
             try {
                 const res = await fetchWithRetry(`${API_URL}/items`);
                 const items = await res.json();
@@ -683,23 +842,21 @@
 
                 if (total === 0) {
                     sections.innerHTML = `
-                        <div class="section-header"><span class="section-line"></span><span class="section-title">AVAILABLE BREAKS</span><span class="section-line"></span></div>
+                        <div class="section-header"><span class="section-line"></span><span class="section-title">Open breaks</span><span class="section-line"></span></div>
                         <div class="store-grid">
-                        <div class="epic-empty-wrapper">
-                            <div class="epic-empty-inner">
-                                <div class="empty-icon-container"><div class="icon-float-wrapper"><img src="https://play.pokemonshowdown.com/sprites/xyani/klinklang.gif" class="empty-icon" alt="Klinklang"></div></div>
+                            <div class="empty-wrapper">
+                                <img src="https://play.pokemonshowdown.com/sprites/xyani/jigglypuff.gif" class="empty-icon" alt="Jigglypuff">
                                 <div class="letter-content">
-                                    <p style="font-size:1.6rem;color:#fff;font-weight:800;margin-bottom:1.5rem;text-transform:uppercase;letter-spacing:1px;">No breaks live right now</p>
-                                    <p>I'm out hitting the shelves at <strong>Costco, Walmart, and Target</strong> to track down the best packs for the next stream.</p>
-                                    <p>The hunt never stops — big sets and exclusive bundles are getting secured for you right now.</p>
-                                    <p>Hit the <i class="ph-fill ph-bell-ringing" style="color:var(--accent-gold);vertical-align:middle;"></i> bell above to be first in when new stock drops.</p>
-                                    <p style="color:var(--accent-cyan);font-weight:700;font-size:1.4rem;margin-top:3rem;margin-bottom:0;">Catch you on the next hunt!</p>
-                                    <h3 style="color:#fff;font-size:1.2rem;margin-top:1.5rem;text-shadow:0 0 15px var(--accent-cyan);text-transform:uppercase;letter-spacing:2px;">— Pokeballer Mike</h3>
+                                    <p class="letter-headline">No breaks open right now</p>
+                                    <p>It's my birthday, so I'm out doing the only thing better than opening packs: buying more of them at <strong>Costco, Walmart and Target</strong>.</p>
+                                    <p>New spots go up as soon as the stock is home and the cake is gone.</p>
+                                    <p>Hit the <i class="ph-fill ph-bell-ringing" style="color:var(--pink);vertical-align:middle;"></i> bell above to be first in the room when they do.</p>
+                                    <p class="signoff">See you at the next break!</p>
+                                    <p style="font-family:'Fredoka',sans-serif;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--ink);">— Pokeballer Mike</p>
                                 </div>
                             </div>
-                        </div>
                         </div>`;
-                    applyNeon();
+                    applyParty();
                     return;
                 }
 
@@ -716,18 +873,17 @@
                 });
 
                 sections.innerHTML = html;
-                applyNeon();
+                applyParty();
                 startCountdownTimer();
                 bindTilt();
             } catch (e) {
                 console.error('Store error:', e);
-                sections.innerHTML = `<div class="store-grid"><div class="error-card"><h2>Couldn't load the breaks</h2><p>The server didn't answer in time. This usually clears in a few seconds.</p><button class="retry-btn" onclick="loadStore()">Try again</button></div></div>`;
+                sections.innerHTML = `<div class="store-grid"><div class="error-card"><h2>The breaks didn't load</h2><p>The server didn't answer in time. This usually clears in a few seconds.</p><button class="retry-btn" onclick="loadStore()">Try again</button></div></div>`;
             }
         }
 
-        /* Silent close-watcher: no visible countdown. The badge shows only the date;
-           in the last hour it flips to CLOSING SOON, and at the internal close time
-           the card locks itself live on screen. */
+        /* Silent close-watcher: the badge shows the date only. In the last hour it
+           flips to "Closing soon", and at close time the card locks itself live. */
         function updateTimers() {
             const watchers = document.querySelectorAll('.close-watch');
             if (watchers.length === 0 && timerInterval) { clearInterval(timerInterval); timerInterval = null; return; }
@@ -739,17 +895,15 @@
                 const distance = endTarget - now;
 
                 if (distance <= 0) {
-                    // Break just closed — lock the card live on screen
                     const btnContainer = document.getElementById(`btn-container-${itemId}`);
-                    if (btnContainer) btnContainer.innerHTML = '<div class="buy-btn sold-out">BREAK CLOSED</div>';
+                    if (btnContainer) btnContainer.innerHTML = '<div class="buy-btn sold-out">Break closed</div>';
                     const badgeContainer = document.getElementById(`badge-container-${itemId}`);
                     if (badgeContainer) badgeContainer.innerHTML = '';
+                    const ribbonContainer = document.getElementById(`ribbon-container-${itemId}`);
+                    if (ribbonContainer) ribbonContainer.innerHTML = '';
                     const card = document.getElementById(`card-${itemId}`);
                     if (card) {
-                        card.classList.remove('card-live-now');
                         card.classList.add('card-closed');
-                        const ribbon = card.querySelector('.live-ribbon');
-                        if (ribbon) ribbon.remove();
                         const tag = card.querySelector('.type-tag');
                         if (tag) tag.classList.add('no-ribbon');
                     }
@@ -759,7 +913,7 @@
 
                 if (distance < 3600000 && !w.classList.contains('closing-soon')) {
                     w.classList.add('closing-soon');
-                    w.innerHTML = '<i class="ph-fill ph-lightning"></i> CLOSING SOON';
+                    w.innerHTML = '<i class="ph-fill ph-lightning"></i> Closing soon';
                 }
             });
         }
@@ -770,20 +924,18 @@
         function closeModal() { document.getElementById('myModal').style.display = 'none'; }
         document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-        const canMotion = window.matchMedia && window.matchMedia('(pointer:fine)').matches && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
         function bindTilt() {
             if (!canMotion) return;
-            document.querySelectorAll('.neon-card-wrapper').forEach(card => {
+            document.querySelectorAll('.gift-card').forEach(card => {
                 if (card.dataset.tilt) return;
                 card.dataset.tilt = '1';
-                const panel = card.querySelector('.glass-panel');
+                const panel = card.querySelector('.card-inner');
                 if (!panel) return;
                 card.addEventListener('mousemove', ev => {
                     const r = card.getBoundingClientRect();
                     const px = (ev.clientX - r.left) / r.width - 0.5;
                     const py = (ev.clientY - r.top) / r.height - 0.5;
-                    panel.style.transform = `rotateY(${(px * 5).toFixed(2)}deg) rotateX(${(-py * 5).toFixed(2)}deg)`;
+                    panel.style.transform = `rotateY(${(px * 4).toFixed(2)}deg) rotateX(${(-py * 4).toFixed(2)}deg)`;
                 });
                 card.addEventListener('mouseleave', () => { panel.style.transform = ''; });
             });
@@ -794,14 +946,34 @@
             if (!canMotion || !layer) return;
             let raf = null, tx = 0, ty = 0;
             window.addEventListener('mousemove', e => {
-                tx = (e.clientX / window.innerWidth - 0.5) * 26;
-                ty = (e.clientY / window.innerHeight - 0.5) * 26;
+                tx = (e.clientX / window.innerWidth - 0.5) * 22;
+                ty = (e.clientY / window.innerHeight - 0.5) * 22;
                 if (!raf) raf = requestAnimationFrame(() => { layer.style.transform = `translate3d(${tx.toFixed(1)}px, ${ty.toFixed(1)}px, 0)`; raf = null; });
             }, { passive: true });
         }
 
+        /* ---------- PARTY SETUP ---------- */
+        function personalise() {
+            const title = document.getElementById('site-title');
+            title.textContent = 'HAPPY BIRTHDAY ' + BIRTHDAY_NAME;
+            bannerize(title);
+            if (BIRTHDAY_AGE) {
+                document.getElementById('site-subtitle').textContent =
+                    `${BIRTHDAY_AGE} today · PBM Breaks · The Crystal League · Birthday Edition`;
+            }
+            document.title = `Happy Birthday ${BIRTHDAY_NAME} · PBM Breaks`;
+            document.querySelectorAll('.sub-text h3').forEach(h => {
+                h.innerHTML = h.innerHTML.replace('Mike', BIRTHDAY_NAME.charAt(0) + BIRTHDAY_NAME.slice(1).toLowerCase());
+            });
+        }
+
+        personalise();
+        applyParty();
+        ambientConfetti();
+        releaseBalloons();
+        initCake();
         initParallax();
-        applyNeon();
+        confettiBurst(window.innerWidth < 700 ? 45 : 90);  // one pop on arrival
         loadVideos();
         loadStore();
     </script>
