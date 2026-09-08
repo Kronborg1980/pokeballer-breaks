@@ -12,7 +12,7 @@
     <style>
         :root {
             --bg: #02030c; --card: rgba(20,20,38,0.92); --accent: #00fff2; --purple: #d500ff;
-            --text: #ffffff; --gold: #ffd700; --dim: #aab0d8; --green: #00ff9d; --live: #ff0040;
+            --text: #ffffff; --gold: #ffd700; --dim: #aab0d8; --green: #00ff9d; --live: #ff0040; --orange: #ff9900;
             --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
         }
         * { box-sizing: border-box; }
@@ -49,23 +49,28 @@
         .flex-row > div { flex: 1; }
 
         /* ---------- TIER TILE PICKER ---------- */
-        .tier-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 1.4rem; }
+        .tier-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 1.4rem; }
         .tier-grid-store { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 1.4rem; }
         .tier-tile { position: relative; border: 2px solid #3a3a55; border-radius: 14px; padding: 14px 8px 12px; background: rgba(0,0,0,0.45); cursor: pointer; text-align: center; transition: .2s; user-select: none; }
         .tier-tile i { font-size: 1.6rem; display: block; margin-bottom: 6px; }
         .tier-tile .t-name { font-weight: 900; font-size: 0.82rem; letter-spacing: 1px; text-transform: uppercase; display: block; }
         .tier-tile .t-sub { font-size: 0.62rem; color: var(--dim); display: block; margin-top: 3px; letter-spacing: 0.3px; }
         .tier-tile:hover { transform: translateY(-2px); border-color: #666; }
+        
         .tt-msrp i, .tt-msrp .t-name { color: var(--green); }
         .tt-bundle i, .tt-bundle .t-name { color: #e883ff; }
         .tt-baller i, .tt-baller .t-name { color: var(--gold); }
+        .tt-pack i, .tt-pack .t-name { color: var(--orange); }
         .tt-slab i, .tt-slab .t-name { color: var(--purple); }
         .tt-raw i, .tt-raw .t-name { color: var(--green); }
+        
         .tier-tile.selected.tt-msrp { border-color: var(--green); box-shadow: 0 0 22px rgba(0,255,157,0.4); background: rgba(0,255,157,0.08); }
         .tier-tile.selected.tt-bundle { border-color: var(--purple); box-shadow: 0 0 22px rgba(213,0,255,0.45); background: rgba(213,0,255,0.08); }
         .tier-tile.selected.tt-baller { border-color: var(--gold); box-shadow: 0 0 22px rgba(255,215,0,0.45); background: rgba(255,215,0,0.08); }
+        .tier-tile.selected.tt-pack { border-color: var(--orange); box-shadow: 0 0 22px rgba(255,153,0,0.45); background: rgba(255,153,0,0.08); }
         .tier-tile.selected.tt-slab { border-color: var(--purple); box-shadow: 0 0 22px rgba(213,0,255,0.45); background: rgba(213,0,255,0.08); }
         .tier-tile.selected.tt-raw { border-color: var(--green); box-shadow: 0 0 22px rgba(0,255,157,0.4); background: rgba(0,255,157,0.08); }
+        
         .group-label { font-size: 0.7rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--dim); margin: 0 0 8px 2px; }
 
         /* ---------- QUICK CLOSE CHIPS ---------- */
@@ -113,6 +118,7 @@
         .b-msrp { color: var(--green); border: 1px solid var(--green); background: linear-gradient(135deg, rgba(0,255,157,0.15), transparent); }
         .b-bundle { color: #f0dfff; border: 1px solid var(--purple); background: linear-gradient(135deg, rgba(213,0,255,0.25), rgba(100,0,255,0.15)); }
         .b-baller { background: var(--gold); color: #000; border: 1px solid var(--gold); box-shadow: 0 0 10px rgba(255,215,0,0.4); }
+        .b-pack { color: #ff9900; border: 1px solid #ff9900; background: linear-gradient(135deg, rgba(255,153,0,0.15), transparent); }
         .b-slab { background: #1a1a3a; color: #d500ff; border: 1px solid #d500ff; }
         .b-psa { background: rgba(50,0,0,0.85); border: 1px solid #ff3333; color: #ff5555; }
         .b-bgs { background: rgba(40,30,0,0.85); border: 1px solid #e6c27a; color: #e6c27a; }
@@ -155,7 +161,7 @@
 
         a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, .tier-tile:focus-visible, .vis-pill:focus-visible, .chip:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 
-        @media(max-width: 600px) { .flex-row { flex-direction: column; gap: 0; } .flex-row > div { width: 100%; } .card { padding: 1.2rem; } h1 { font-size: 1.6rem; } .tier-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media(max-width: 600px) { .flex-row { flex-direction: column; gap: 0; } .flex-row > div { width: 100%; } .card { padding: 1.2rem; } h1 { font-size: 1.6rem; } .tier-grid { grid-template-columns: repeat(2, 1fr); } }
         @media(min-width: 600px) { li { flex-direction: row; align-items: center; justify-content: space-between; } .btn-group { width: auto; flex-shrink: 0; flex-direction: column; gap: 8px; } .btn-group button { padding: 8px 20px; width: 100%; } }
         @media (hover: none), (pointer: coarse) {
             body::before { animation: none; background-size: 100% 100%, 100% 100%, 100% 100%; }
@@ -194,6 +200,9 @@
                     <div class="tier-tile tt-baller" data-type="baller" tabindex="0" role="button">
                         <i class="ph-fill ph-crown"></i><span class="t-name">Baller</span><span class="t-sub">Super premium</span>
                     </div>
+                    <div class="tier-tile tt-pack" data-type="pack" tabindex="0" role="button">
+                        <i class="ph-fill ph-package"></i><span class="t-name">Single Pack</span><span class="t-sub">Custom Qty Checkout</span>
+                    </div>
                 </div>
 
                 <p class="group-label">The Vault (store)</p>
@@ -231,6 +240,20 @@
                     </select>
                 </div>
 
+                <div id="pack-limits-container" style="display:none; margin-bottom:1rem;">
+                    <label style="color:#ff9900;">📦 Single Pack Quantity Limits</label>
+                    <div class="flex-row">
+                        <div>
+                            <label for="item-min-buy">Min Buy Qty</label>
+                            <input type="number" id="item-min-buy" value="1" min="1" style="border:1px solid #ff9900;">
+                        </div>
+                        <div>
+                            <label for="item-max-buy">Max Buy Qty</label>
+                            <input type="number" id="item-max-buy" value="10" min="1" style="border:1px solid #ff9900;">
+                        </div>
+                    </div>
+                </div>
+
                 <div class="open-note"><i class="ph-fill ph-broadcast"></i> Breaks are OPEN the moment you save them. They close when the timer below runs out (or stock hits 0).</div>
 
                 <div id="close-time-container">
@@ -262,8 +285,10 @@
                     </div>
                 </div>
 
-                <label for="item-google-form-link">Payment link (PayPal.me / Stripe / Streamlabs)</label>
-                <input type="url" id="item-google-form-link" placeholder="https://…">
+                <div id="payment-link-container">
+                    <label for="item-google-form-link">Payment link (PayPal.me / Stripe / Streamlabs)</label>
+                    <input type="url" id="item-google-form-link" placeholder="https://…">
+                </div>
 
                 <label for="item-image">Images (select multiple — auto-compressed before upload)</label>
                 <input type="file" id="item-image" multiple accept="image/*">
@@ -399,7 +424,10 @@
             document.querySelectorAll('.tier-tile').forEach(t => t.classList.toggle('selected', t.dataset.type === selectedType));
             document.getElementById('condition-container').style.display = selectedType === 'raw' ? 'block' : 'none';
             document.getElementById('grader-container').style.display = selectedType === 'slab' ? 'block' : 'none';
-            const isBreak = selectedType === 'msrp' || selectedType === 'bundle' || selectedType === 'baller';
+            document.getElementById('pack-limits-container').style.display = selectedType === 'pack' ? 'block' : 'none';
+            document.getElementById('payment-link-container').style.display = selectedType === 'pack' ? 'none' : 'block';
+            
+            const isBreak = selectedType === 'msrp' || selectedType === 'bundle' || selectedType === 'baller' || selectedType === 'pack';
             document.getElementById('close-time-container').style.display = isBreak ? 'block' : 'none';
             document.querySelector('.open-note').style.display = isBreak ? 'flex' : 'none';
             if (!editingId) document.getElementById('submit-btn').innerText = isBreak ? '🚀 Publish break' : '💾 Save to Vault';
@@ -515,7 +543,10 @@
                 const desc = document.getElementById('item-description').value;
                 const price = Number(document.getElementById('item-price').value);
                 const stock = toInt(document.getElementById('item-stock').value, 1);
-                const form = document.getElementById('item-google-form-link').value;
+                const form = type === 'pack' ? '' : document.getElementById('item-google-form-link').value;
+                
+                const minBuy = type === 'pack' ? toInt(document.getElementById('item-min-buy').value, 1) : null;
+                const maxBuy = type === 'pack' ? toInt(document.getElementById('item-max-buy').value, 10) : null;
 
                 const fileInput = document.getElementById('item-image');
                 let imagesArray = editingId ? [...currentImages] : [];
@@ -538,7 +569,8 @@
                     stock, googleFormLink: form, image: img, images: imagesArray,
                     clickCount: editingId ? currentClicks : 0,
                     createdAt: editingId ? currentCreatedAt : Date.now(),
-                    hidden, scheduleDate: '', scheduleEnd, condition, grader
+                    hidden, scheduleDate: '', scheduleEnd, condition, grader,
+                    minBuy, maxBuy
                 };
 
                 const url = editingId ? `${API_URL}/items/${editingId}` : `${API_URL}/items`;
@@ -562,6 +594,8 @@
             editingId = null; currentImage = ''; currentImages = []; currentCreatedAt = null; currentClicks = 0;
             ['item-name', 'item-description', 'item-price', 'item-google-form-link', 'item-schedule-end'].forEach(id => document.getElementById(id).value = '');
             document.getElementById('item-stock').value = '1';
+            document.getElementById('item-min-buy').value = '1';
+            document.getElementById('item-max-buy').value = '10';
             document.getElementById('item-image').value = '';
             document.getElementById('img-preview').innerHTML = '';
             document.getElementById('item-condition').value = 'Mint (M)';
@@ -627,6 +661,7 @@
                 let badgeClass = 'b-msrp', badgeText = 'MSRP';
                 if (item.type === 'baller') { badgeClass = 'b-baller'; badgeText = '<i class="ph-fill ph-crown"></i> BALLER'; }
                 else if (item.type === 'bundle') { badgeClass = 'b-bundle'; badgeText = '<i class="ph-fill ph-sketch-logo"></i> BUNDLE'; }
+                else if (item.type === 'pack') { badgeClass = 'b-pack'; badgeText = '<i class="ph-fill ph-package"></i> PACK'; }
                 else if (item.type === 'slab') {
                     const g = item.grader;
                     if (g === 'PSA') badgeClass = 'b-psa'; else if (g === 'BGS') badgeClass = 'b-bgs';
@@ -642,7 +677,7 @@
 
                 /* Open / closed status — mirrors the storefront rules exactly */
                 let statusBadge = '';
-                const isBreak = item.type === 'msrp' || item.type === 'bundle' || item.type === 'baller';
+                const isBreak = item.type === 'msrp' || item.type === 'bundle' || item.type === 'baller' || item.type === 'pack';
                 if (isBreak && !item.hidden) {
                     const endMs = centralToMs(item.scheduleEnd);
                     const closed = toInt(item.stock) <= 0 || (endMs && now >= endMs);
@@ -700,6 +735,10 @@
             document.getElementById('item-image').value = '';
             document.getElementById('item-condition').value = item.condition || 'Mint (M)';
             document.getElementById('item-grader').value = item.grader || 'PSA';
+            
+            document.getElementById('item-min-buy').value = item.minBuy || 1;
+            document.getElementById('item-max-buy').value = item.maxBuy || 10;
+            
             applyTypeUI();
 
             const preview = document.getElementById('img-preview');
