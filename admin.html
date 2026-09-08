@@ -12,7 +12,8 @@
     <style>
         :root {
             --bg: #02030c; --card: rgba(20,20,38,0.92); --accent: #00fff2; --purple: #d500ff;
-            --text: #ffffff; --gold: #ffd700; --dim: #aab0d8; --green: #00ff9d; --live: #ff0040; --orange: #ff9900;
+            --text: #ffffff; --gold: #ffd700; --dim: #aab0d8; --green: #00ff9d; --live: #ff0040;
+            --orange: #ff9900;
             --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
         }
         * { box-sizing: border-box; }
@@ -56,21 +57,18 @@
         .tier-tile .t-name { font-weight: 900; font-size: 0.82rem; letter-spacing: 1px; text-transform: uppercase; display: block; }
         .tier-tile .t-sub { font-size: 0.62rem; color: var(--dim); display: block; margin-top: 3px; letter-spacing: 0.3px; }
         .tier-tile:hover { transform: translateY(-2px); border-color: #666; }
-        
         .tt-msrp i, .tt-msrp .t-name { color: var(--green); }
         .tt-bundle i, .tt-bundle .t-name { color: #e883ff; }
         .tt-baller i, .tt-baller .t-name { color: var(--gold); }
         .tt-pack i, .tt-pack .t-name { color: var(--orange); }
         .tt-slab i, .tt-slab .t-name { color: var(--purple); }
         .tt-raw i, .tt-raw .t-name { color: var(--green); }
-        
         .tier-tile.selected.tt-msrp { border-color: var(--green); box-shadow: 0 0 22px rgba(0,255,157,0.4); background: rgba(0,255,157,0.08); }
         .tier-tile.selected.tt-bundle { border-color: var(--purple); box-shadow: 0 0 22px rgba(213,0,255,0.45); background: rgba(213,0,255,0.08); }
         .tier-tile.selected.tt-baller { border-color: var(--gold); box-shadow: 0 0 22px rgba(255,215,0,0.45); background: rgba(255,215,0,0.08); }
         .tier-tile.selected.tt-pack { border-color: var(--orange); box-shadow: 0 0 22px rgba(255,153,0,0.45); background: rgba(255,153,0,0.08); }
         .tier-tile.selected.tt-slab { border-color: var(--purple); box-shadow: 0 0 22px rgba(213,0,255,0.45); background: rgba(213,0,255,0.08); }
         .tier-tile.selected.tt-raw { border-color: var(--green); box-shadow: 0 0 22px rgba(0,255,157,0.4); background: rgba(0,255,157,0.08); }
-        
         .group-label { font-size: 0.7rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--dim); margin: 0 0 8px 2px; }
 
         /* ---------- QUICK CLOSE CHIPS ---------- */
@@ -189,7 +187,7 @@
             <div class="card">
                 <h2 style="margin-top:0;margin-bottom:1.2rem;font-size:1.4rem;border-bottom:1px solid #333;padding-bottom:10px;">⚡ Quick add</h2>
 
-                <p class="group-label">Live breaks</p>
+                <p class="group-label">Live breaks & Packs</p>
                 <div class="tier-grid" id="tier-breaks">
                     <div class="tier-tile tt-msrp" data-type="msrp" tabindex="0" role="button">
                         <i class="ph-fill ph-seal-check"></i><span class="t-name">MSRP</span><span class="t-sub">At retail price</span>
@@ -241,15 +239,15 @@
                 </div>
 
                 <div id="pack-limits-container" style="display:none; margin-bottom:1rem;">
-                    <label style="color:#ff9900;">📦 Single Pack Quantity Limits</label>
+                    <label style="color:var(--orange);">📦 Single Pack Quantity Limits</label>
                     <div class="flex-row">
                         <div>
                             <label for="item-min-buy">Min Buy Qty</label>
-                            <input type="number" id="item-min-buy" value="1" min="1" style="border:1px solid #ff9900;">
+                            <input type="number" id="item-min-buy" value="1" min="1" style="border:1px solid var(--orange);">
                         </div>
                         <div>
                             <label for="item-max-buy">Max Buy Qty</label>
-                            <input type="number" id="item-max-buy" value="10" min="1" style="border:1px solid #ff9900;">
+                            <input type="number" id="item-max-buy" value="10" min="1" style="border:1px solid var(--orange);">
                         </div>
                     </div>
                 </div>
@@ -280,7 +278,7 @@
                         <input type="number" id="item-price" placeholder="0.00" step="0.01" min="0">
                     </div>
                     <div>
-                        <label for="item-stock">Spots / stock</label>
+                        <label for="item-stock" id="stock-label">Spots / stock</label>
                         <input type="number" id="item-stock" value="1" min="0">
                     </div>
                 </div>
@@ -424,9 +422,12 @@
             document.querySelectorAll('.tier-tile').forEach(t => t.classList.toggle('selected', t.dataset.type === selectedType));
             document.getElementById('condition-container').style.display = selectedType === 'raw' ? 'block' : 'none';
             document.getElementById('grader-container').style.display = selectedType === 'slab' ? 'block' : 'none';
+            
+            // Single pack specific visibility
             document.getElementById('pack-limits-container').style.display = selectedType === 'pack' ? 'block' : 'none';
             document.getElementById('payment-link-container').style.display = selectedType === 'pack' ? 'none' : 'block';
-            
+            document.getElementById('stock-label').innerText = selectedType === 'pack' ? 'Packs in stock' : 'Spots / stock';
+
             const isBreak = selectedType === 'msrp' || selectedType === 'bundle' || selectedType === 'baller' || selectedType === 'pack';
             document.getElementById('close-time-container').style.display = isBreak ? 'block' : 'none';
             document.querySelector('.open-note').style.display = isBreak ? 'flex' : 'none';
@@ -543,10 +544,10 @@
                 const desc = document.getElementById('item-description').value;
                 const price = Number(document.getElementById('item-price').value);
                 const stock = toInt(document.getElementById('item-stock').value, 1);
-                const form = type === 'pack' ? '' : document.getElementById('item-google-form-link').value;
                 
                 const minBuy = type === 'pack' ? toInt(document.getElementById('item-min-buy').value, 1) : null;
                 const maxBuy = type === 'pack' ? toInt(document.getElementById('item-max-buy').value, 10) : null;
+                const form = type === 'pack' ? '' : document.getElementById('item-google-form-link').value;
 
                 const fileInput = document.getElementById('item-image');
                 let imagesArray = editingId ? [...currentImages] : [];
@@ -675,7 +676,7 @@
                 const imgCount = item.images && item.images.length > 1 ? `<span class="badge" style="background:#444;border:1px solid #777;"><i class="ph-fill ph-images"></i> ${item.images.length}</span>` : '';
                 const opacity = item.hidden ? 'opacity:0.6;' : '';
 
-                /* Open / closed status — mirrors the storefront rules exactly */
+                /* Open / closed status */
                 let statusBadge = '';
                 const isBreak = item.type === 'msrp' || item.type === 'bundle' || item.type === 'baller' || item.type === 'pack';
                 if (isBreak && !item.hidden) {
@@ -689,6 +690,10 @@
                 let timeBadge = '';
                 if (item.scheduleEnd) timeBadge = `<span class="badge b-time"><i class="ph-fill ph-clock"></i> Closes ${esc(formatLiteralDate(item.scheduleEnd))}</span>`;
 
+                const isPack = item.type === 'pack';
+                const stockLabel = isPack ? 'Packs' : 'Stock';
+                const limitsBadge = isPack && item.minBuy ? `<span class="click-badge" style="margin-left:8px;">Min: ${item.minBuy} / Max: ${item.maxBuy}</span>` : '';
+
                 return `
                     <li style="${opacity}">
                         <div class="item-content">
@@ -701,7 +706,8 @@
                             <div class="item-meta">${timeBadge}</div>
                             <div class="item-meta">
                                 <span><strong>$${money(item.price)}</strong></span>
-                                <span>• Stock: ${toInt(item.stock)}</span>
+                                <span>• ${stockLabel}: ${toInt(item.stock)}</span>
+                                ${limitsBadge}
                                 <span class="click-badge">🖱️ ${toInt(item.clickCount)}</span>
                             </div>
                         </div>
@@ -758,7 +764,6 @@
         }
 
         /* ---------- WINNER EMAILS ---------- */
-        // Winners pay here — NOT the signup form stored on the item.
         const PAYMENT_LINK = 'https://streamlabs.com/pokballer/tip';
         let winnerItem = null;
         const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
@@ -803,7 +808,6 @@
             btn.innerText = `Sending to ${emails.length}…`;
 
             try {
-                // retries = 0 on purpose: a retry could double-send emails
                 const res = await fetchWithRetry(`${API_URL}/notify-winners`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
