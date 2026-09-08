@@ -225,7 +225,7 @@
         .card-bundle-tier .price { color: #e883ff; text-shadow: 0 0 25px rgba(213,0,255,0.7), 0 0 55px rgba(213,0,255,0.35); }
         .card-msrp .price { color: var(--msrp-green); text-shadow: 0 0 25px rgba(0,255,157,0.7), 0 0 55px rgba(0,255,157,0.35); }
         .card-pack-tier .price { color: #ff9900; text-shadow: 0 0 25px rgba(255,153,0,0.7), 0 0 55px rgba(255,153,0,0.35); }
-        
+
         .stock { font-size: 0.9rem; color: var(--text-dim); background: rgba(0,255,242,0.08); padding: 6px 14px; border-radius: 30px; font-weight: 700; border: 1px solid rgba(0,255,242,0.2); }
 
         .buy-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 1.2rem; border-radius: 16px; background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple)); color: #fff; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 1.1rem; letter-spacing: 1.5px; line-height: 1.1; transition: transform .4s cubic-bezier(0.25,0.8,0.25,1), box-shadow .4s; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.3); cursor: pointer; box-shadow: 0 10px 30px rgba(0,255,242,0.3), inset 0 2px 0 rgba(255,255,255,0.4); will-change: transform; }
@@ -384,7 +384,7 @@
         <div class="glass-panel" style="background:rgba(12,12,24,0.96); padding:2rem; width:100%; max-width:500px; border-radius:20px; border:2px solid var(--accent-cyan); position:relative; box-shadow: 0 0 60px rgba(0,255,242,0.35);">
             <button class="close-modal" style="top:15px; right:18px; font-size:35px;" onclick="closeCheckout()">&times;</button>
             <h2 id="co-title" style="color:var(--accent-cyan); margin-bottom:1.2rem; font-family:'Tilt Neon', sans-serif;">Select Pack Quantity</h2>
-            
+
             <label style="font-weight: 700; color: var(--text-dim); margin-bottom: 6px; font-size:0.85rem; display: block;">Quantity to Buy (<span id="co-bounds" style="color:#00ff9d;"></span>)</label>
             <div class="qty-control-row">
                 <button type="button" class="qty-btn" onclick="stepQty(-1)">-</button>
@@ -394,18 +394,18 @@
 
             <label style="font-weight: 700; color: var(--text-dim); margin-bottom: 6px; font-size:0.85rem; display: block;">Full Name</label>
             <input type="text" id="co-name" class="checkout-input" placeholder="Your name">
-            
+
             <label style="font-weight: 700; color: var(--text-dim); margin-bottom: 6px; font-size:0.85rem; display: block;">Email Address</label>
             <input type="email" id="co-email" class="checkout-input" placeholder="you@example.com">
-            
+
             <label style="font-weight: 700; color: var(--text-dim); margin-bottom: 6px; font-size:0.85rem; display: block;">Shipping Address</label>
             <textarea id="co-address" rows="3" class="checkout-input" style="resize:vertical;" placeholder="Full mailing address with postal code"></textarea>
-            
+
             <div style="display:flex; justify-content:space-between; align-items:center; margin: 1.2rem 0; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);">
                 <span style="font-size:1.1rem; color:var(--text-dim); font-weight:700;">Total to Pay:</span>
                 <span style="font-size:2rem; font-weight:900; color:#ffd700; text-shadow:0 0 15px rgba(255,215,0,0.5);">$<span id="co-total">0.00</span></span>
             </div>
-            
+
             <button id="co-pay-btn" onclick="submitCheckout()" class="buy-btn pack-btn" style="width:100%; border:none;">
                 <span>PAY NOW</span>
                 <span class="btn-subtext">Streamlabs tip checkout</span>
@@ -422,6 +422,7 @@
         function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
         function money(n) { const v = Number(n); return isFinite(v) ? v.toFixed(2) : '0.00'; }
         function toInt(n) { const v = parseInt(n, 10); return isFinite(v) ? v : 0; }
+        function isEmail(s) { return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(s || '').trim()); }
 
         function neonize(el, palette, small) {
             if (!el || el.dataset.neon === '1') return;
@@ -753,10 +754,10 @@
 
         function startCountdownTimer() { if (timerInterval) clearInterval(timerInterval); updateTimers(); timerInterval = setInterval(updateTimers, 5000); }
         function trackClick(id) { fetch(`${API_URL}/click`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }), keepalive: true }).catch(() => {}); return true; }
-        
+
         function openModal(src) { document.getElementById('myModal').style.display = 'flex'; document.getElementById('img01').src = src; }
         function closeModal() { document.getElementById('myModal').style.display = 'none'; }
-        
+
         /* ---------- CHECKOUT MODAL & QUANTITY LIMIT LOGIC ---------- */
         let activeCheckoutItem = null;
 
@@ -765,17 +766,17 @@
             const stock = Math.max(0, parseInt(activeCheckoutItem.stock, 10) || 0);
             const userMin = Math.max(1, parseInt(activeCheckoutItem.minBuy, 10) || 1);
             const userMax = Math.max(userMin, parseInt(activeCheckoutItem.maxBuy, 10) || 10);
-            
+
             // Cannot buy more than what is actually in stock
             const effectiveMax = Math.min(userMax, stock);
             const effectiveMin = Math.min(userMin, effectiveMax);
             return { min: effectiveMin, max: effectiveMax, stock };
         }
-        
+
         function openCheckout(id) {
             activeCheckoutItem = window.storeItems.find(i => String(i.id) === String(id));
             if (!activeCheckoutItem) return;
-            
+
             const { min, max, stock } = getLimits();
             if (stock <= 0) {
                 alert('This item is currently sold out!');
@@ -784,22 +785,22 @@
 
             document.getElementById('co-title').innerText = activeCheckoutItem.name;
             document.getElementById('co-bounds').innerText = `Min: ${min} | Max: ${max} | Available: ${stock}`;
-            
+
             const qtyEl = document.getElementById('co-qty');
             qtyEl.min = min;
             qtyEl.max = max;
             qtyEl.value = min;
-            
+
             document.getElementById('co-name').value = '';
             document.getElementById('co-email').value = '';
             document.getElementById('co-address').value = '';
-            
+
             updateTotal();
             document.getElementById('checkoutModal').style.display = 'flex';
         }
-        
-        function closeCheckout() { 
-            document.getElementById('checkoutModal').style.display = 'none'; 
+
+        function closeCheckout() {
+            document.getElementById('checkoutModal').style.display = 'none';
             activeCheckoutItem = null;
             const btn = document.getElementById('co-pay-btn');
             btn.disabled = false;
@@ -849,7 +850,7 @@
         async function submitCheckout() {
             if (!activeCheckoutItem) return;
             const { min, max, stock } = getLimits();
-            
+
             const name = document.getElementById('co-name').value.trim();
             const email = document.getElementById('co-email').value.trim();
             const address = document.getElementById('co-address').value.trim();
@@ -863,6 +864,12 @@
 
             if (!name || !email || !address) {
                 alert('Please fill out your Name, Email, and Shipping Address.');
+                return;
+            }
+
+            // A malformed address makes the order email bounce, so catch it here
+            if (!isEmail(email)) {
+                alert('That email address does not look right. Check it and try again.');
                 return;
             }
 
@@ -899,11 +906,19 @@
                         buyerName: name,
                         buyerEmail: email,
                         buyerAddress: address,
-                        notifyEmail: 'pokeballer4free@gmail.com'
+                        notifyEmail: 'michael.lorenz.10@gmail.com'
                     })
                 });
 
                 const result = await res.json();
+
+                // The worker reports exactly what happened to the order email.
+                // Open the browser console (F12) after a test order to read this.
+                console.log('Order response:', result);
+                if (result.emailStatus && result.emailStatus !== 'sent') {
+                    console.warn('ORDER EMAIL NOT SENT →', result.emailStatus);
+                }
+
                 if (!res.ok || result.error) {
                     alert(result.error || 'Could not complete order. Please verify stock.');
                     btn.disabled = false;
@@ -916,7 +931,7 @@
                     activeCheckoutItem.stock = result.remainingStock;
                     const badge = document.getElementById(`stock-badge-${activeCheckoutItem.id}`);
                     if (badge) badge.innerText = `${result.remainingStock} Packs in stock`;
-                    
+
                     if (result.remainingStock <= 0) {
                         const btnBox = document.getElementById(`btn-container-${activeCheckoutItem.id}`);
                         if (btnBox) btnBox.innerHTML = '<div class="buy-btn sold-out">SOLD OUT</div>';
@@ -934,9 +949,9 @@
             // Redirect to tip page
             window.location.href = "https://streamlabs.com/pokballer/tip";
         }
-        
-        document.addEventListener('keydown', e => { 
-            if (e.key === 'Escape') { closeModal(); closeCheckout(); } 
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') { closeModal(); closeCheckout(); }
         });
 
         loadVideos();
