@@ -61,11 +61,6 @@
         @keyframes hop { 0%,100% { transform: translateY(0) scale(1,1); } 20% { transform: translateY(-26px) scale(0.97,1.03); } 45% { transform: translateY(0) scale(1.04,0.96); } 60% { transform: translateY(0) scale(1,1); } }
         @keyframes flop { 0%,100% { transform: rotate(-11deg) translateY(0); } 50% { transform: rotate(11deg) translateY(-12px); } }
 
-        /* ---------- VEGAS NEON SIGN SYSTEM ----------
-           Every letter is its own glass tube: white-hot core + colored glow
-           (--tube). JS wraps each letter in a span with a randomized flicker
-           duration/delay, so the sign twinkles letter by letter — and a few
-           random tubes get the harsh dying-tube sputter. */
         .neon-sign { font-family: 'Tilt Neon', 'Inter', sans-serif; font-weight: 400; }
         .neon-word { white-space: nowrap; }
         .nl {
@@ -78,7 +73,6 @@
                 0 0 80px var(--tube, var(--accent-cyan));
             animation: tubeFlicker var(--fd, 6s) linear infinite;
         }
-        /* Mostly-on twinkle: brief dips, long steady stretches */
         @keyframes tubeFlicker {
             0%, 6.9%, 8.6%, 41.9%, 43.4%, 78.9%, 80.4%, 100% { opacity: 1; }
             7.2% { opacity: 0.55; }
@@ -87,8 +81,6 @@
             42.9% { opacity: 1; }
             79.3% { opacity: 0.65; }
         }
-        /* The occasional bad tube: hard on/off cuts, glow drops out entirely */
-        /* Smaller signs (nav, labels, card names) get a tighter glow */
         .neon-sm .nl {
             text-shadow:
                 0 0 3px rgba(255,255,255,0.9),
@@ -108,13 +100,11 @@
             57.8% { opacity: 0.9; }
         }
 
-        /* ---------- NAV ---------- */
         .top-nav { display: flex; justify-content: center; gap: 20px; padding: 26px 16px 22px; position: relative; z-index: 10; flex-wrap: wrap; }
         .nav-link { padding: 11px 26px; border-radius: 30px; color: #fff; text-decoration: none; font-weight: 800; letter-spacing: 1px; border: 1px solid rgba(255,255,255,0.18); background: rgba(0,0,0,0.45); backdrop-filter: blur(14px); transition: transform .3s, box-shadow .3s, border-color .3s, background .3s; display: flex; align-items: center; gap: 8px; }
         .nav-link:hover { background: rgba(255,255,255,0.08); border-color: var(--accent-purple); box-shadow: 0 0 22px rgba(213,0,255,0.4); transform: translateY(-2px); }
         .nav-active { border-color: var(--accent-cyan); box-shadow: 0 0 22px rgba(0,255,242,0.4); background: linear-gradient(90deg, rgba(0,255,242,0.2), transparent); pointer-events: none; }
 
-        /* ---------- HEADER ---------- */
         header { display: flex; flex-direction: column; align-items: center; padding: 1rem; position: relative; z-index: 2; }
         .header-wrapper { display: flex; align-items: center; gap: 2rem; }
         .header-logo { width: 160px; display: block; filter: drop-shadow(0 0 35px var(--accent-cyan)); }
@@ -127,7 +117,6 @@
             margin: 0; line-height: 1.05; text-align: center; position: relative; display: inline-block; z-index: 1;
         }
 
-        /* ---------- MAIN SHELL ---------- */
         main {
             position: relative; z-index: 2; max-width: 1250px; margin: 1rem auto 4rem; padding: 2.5rem;
             border-radius: 35px; background: rgba(5,5,14,0.66); backdrop-filter: blur(18px) saturate(140%); -webkit-backdrop-filter: blur(18px) saturate(140%);
@@ -140,7 +129,6 @@
         .section-line { height: 4px; background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent); flex: 1; border-radius: 10px; box-shadow: 0 0 15px var(--accent-cyan); opacity: 0.7; }
         .section-title { font-family: 'Tilt Neon', 'Inter', sans-serif; font-weight: 400; color: #fff; letter-spacing: 4px; font-size: 1.6rem; text-align: center; }
 
-        /* ---------- TIER HEADERS (LED signs) ---------- */
         .tier-header { position: relative; display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 4.5rem auto 2.2rem; max-width: 760px; padding: 22px 40px 20px; border-radius: 24px; backdrop-filter: blur(14px); overflow: hidden; border: 1px solid; }
         .tier-header::after { content: ''; position: absolute; left: 8%; right: 8%; bottom: 0; height: 3px; border-radius: 3px; background: currentColor; filter: blur(0.5px); animation: ledBreathe 2.4s ease-in-out infinite; }
         @keyframes ledBreathe { 0%,100% { opacity: 0.5; box-shadow: 0 0 8px currentColor; } 50% { opacity: 1; box-shadow: 0 0 26px currentColor, 0 0 60px currentColor; } }
@@ -148,13 +136,11 @@
         .tier-title i { text-shadow: 0 0 18px currentColor, 0 0 40px currentColor; }
         .tier-tagline { font-size: 0.85rem; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; opacity: 0.85; }
 
-        /* Each tier sign glows in its own tube color (picked up by the .nl letters) */
         .th-baller { --tube: #ffcc33; color: var(--accent-gold); border-color: rgba(255,215,0,0.55); background: linear-gradient(160deg, rgba(60,45,0,0.55), rgba(20,15,0,0.75)); box-shadow: 0 0 45px rgba(255,215,0,0.22), inset 0 2px 0 rgba(255,255,255,0.25), inset 0 0 40px rgba(255,215,0,0.06); }
         .th-bundle { --tube: #d24bff; color: #e883ff; border-color: rgba(213,0,255,0.55); background: linear-gradient(160deg, rgba(45,0,60,0.55), rgba(15,0,25,0.75)); box-shadow: 0 0 45px rgba(213,0,255,0.22), inset 0 2px 0 rgba(255,255,255,0.2), inset 0 0 40px rgba(213,0,255,0.06); }
         .th-msrp { --tube: #00ff9d; color: var(--msrp-green); border-color: rgba(0,255,157,0.55); background: linear-gradient(160deg, rgba(0,45,30,0.55), rgba(0,15,10,0.75)); box-shadow: 0 0 45px rgba(0,255,157,0.2), inset 0 2px 0 rgba(255,255,255,0.2), inset 0 0 40px rgba(0,255,157,0.06); }
-        .th-pack { --tube: #00ff9d; color: var(--msrp-green); border-color: rgba(0,255,157,0.55); background: linear-gradient(160deg, rgba(0,45,30,0.55), rgba(0,15,10,0.75)); box-shadow: 0 0 45px rgba(0,255,157,0.2), inset 0 2px 0 rgba(255,255,255,0.2), inset 0 0 40px rgba(0,255,157,0.06); }
+        .th-pack { --tube: #ff9900; color: #ff9900; border-color: rgba(255,153,0,0.55); background: linear-gradient(160deg, rgba(50,30,0,0.55), rgba(20,10,0,0.75)); box-shadow: 0 0 45px rgba(255,153,0,0.2), inset 0 2px 0 rgba(255,255,255,0.2), inset 0 0 40px rgba(255,153,0,0.06); }
 
-        /* ---------- NEON CARDS ---------- */
         .neon-card-wrapper { position: relative; border-radius: 26px; padding: 3px; background: rgba(0,0,0,0.2); box-shadow: 0 0 25px rgba(0,255,242,0.2), 0 0 50px rgba(213,0,255,0.15); overflow: hidden; transition: transform .4s cubic-bezier(0.25,0.8,0.25,1), box-shadow .4s; perspective: 1000px; will-change: transform; }
         .neon-card-wrapper:hover { transform: translateY(-10px) scale(1.02); box-shadow: 0 0 50px rgba(0,255,242,0.6), 0 0 80px rgba(213,0,255,0.5); }
         .neon-card-wrapper::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: conic-gradient(transparent 0deg, transparent 90deg, var(--accent-cyan) 130deg, #fff 155deg, var(--accent-purple) 180deg, transparent 220deg); animation: spinBorder 5s linear infinite; z-index: 0; opacity: 0.8; will-change: transform; }
@@ -164,7 +150,6 @@
         .glass-panel::after { content: ''; position: absolute; inset: 0; z-index: 4; pointer-events: none; opacity: 0; transition: opacity .5s; background: linear-gradient(115deg, transparent 30%, rgba(0,255,242,0.12) 42%, rgba(213,0,255,0.14) 50%, rgba(255,215,0,0.12) 58%, transparent 70%); mix-blend-mode: screen; }
         .neon-card-wrapper:hover .glass-panel::after { opacity: 1; }
 
-        /* Tier card skins */
         .card-msrp { box-shadow: 0 0 25px rgba(0,255,157,0.22), 0 0 50px rgba(0,255,157,0.1); }
         .card-msrp::before { background: conic-gradient(transparent 0deg, transparent 90deg, var(--msrp-green) 130deg, #fff 155deg, #00c9ff 180deg, transparent 220deg); }
         .card-msrp:hover { box-shadow: 0 0 50px rgba(0,255,157,0.55), 0 0 90px rgba(0,255,157,0.3); }
@@ -178,12 +163,16 @@
         .card-baller-bundle:hover { box-shadow: 0 0 60px rgba(255,215,0,0.7), 0 0 120px rgba(255,180,0,0.4) !important; }
         .card-baller-bundle .glass-panel { background: linear-gradient(160deg, rgba(48,38,8,0.55), rgba(15,10,0,0.78)); border-top: 2px solid rgba(255,240,180,0.6); }
 
-        /* LIVE (open) state — each tier glows in its own color */
+        .card-pack-tier { box-shadow: 0 0 25px rgba(255,153,0,0.25), 0 0 50px rgba(255,153,0,0.1); }
+        .card-pack-tier::before { background: conic-gradient(transparent 0deg, transparent 90deg, #ff9900 130deg, #fff 155deg, #ffd700 180deg, transparent 220deg); }
+        .card-pack-tier:hover { box-shadow: 0 0 50px rgba(255,153,0,0.6), 0 0 90px rgba(255,153,0,0.3); }
+
         .card-live-now { --lg: 213,0,255; animation: liveGlow 1.8s ease-in-out infinite alternate; }
         @keyframes liveGlow { from { box-shadow: 0 0 28px rgba(var(--lg),0.35), 0 0 55px rgba(var(--lg),0.15); } to { box-shadow: 0 0 60px rgba(var(--lg),0.75), 0 0 110px rgba(var(--lg),0.35); } }
         .card-msrp.card-live-now { --lg: 0,255,157; }
         .card-bundle-tier.card-live-now { --lg: 213,0,255; }
         .card-baller-bundle.card-live-now { --lg: 255,215,0; }
+        .card-pack-tier.card-live-now { --lg: 255,153,0; }
 
         .live-ribbon { position: absolute; top: 0; left: 0; right: 0; z-index: 8; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 9px 0; font-weight: 900; font-size: 0.85rem; letter-spacing: 3px; text-transform: uppercase; color: #fff; background-size: 220% 100%; animation: ribbonFlow 2.5s linear infinite; text-shadow: 0 1px 3px rgba(0,0,0,0.6); box-shadow: 0 4px 25px rgba(var(--lg,213,0,255),0.8), inset 0 1px 0 rgba(255,255,255,0.4); border-bottom: 1px solid rgba(255,255,255,0.35); }
         .rb-green { background-image: linear-gradient(90deg, #00c98a, #00fff2, #7dfff0, #00c98a); color: #002a1c; text-shadow: none; }
@@ -191,6 +180,8 @@
         .rb-purple { background-image: linear-gradient(90deg, #7b2bff, #d500ff, #ff6ad5, #7b2bff); }
         .rb-gold { background-image: linear-gradient(90deg, #bf953f, #fcf6ba, #ffd700, #b38728, #bf953f); color: #231800; text-shadow: none; }
         .rb-gold .live-dot { background: #3a2a00; box-shadow: 0 0 10px rgba(60,42,0,0.9); }
+        .rb-orange { background-image: linear-gradient(90deg, #ff7700, #ffaa00, #fff0aa, #ff7700); color: #331500; text-shadow: none; }
+        .rb-orange .live-dot { background: #552000; box-shadow: 0 0 10px rgba(80,30,0,0.9); }
         @keyframes ribbonFlow { 0% { background-position: 0% 0; } 100% { background-position: 220% 0; } }
         @keyframes sheenFlow { 0% { background-position: 200% 0; } 100% { background-position: -100% 0; } }
         @keyframes ledOpacity { 0%, 100% { opacity: 0.45; } 50% { opacity: 1; } }
@@ -198,16 +189,14 @@
         @keyframes dotBlink { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.35; transform: scale(0.7); } }
 
         .store-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 35px; }
-        .store-grid:not(:has(.neon-card-wrapper:only-child)) { }
         .item-card { display: flex; flex-direction: column; height: 100%; }
         .type-tag { position: absolute; top: 48px; right: 20px; padding: 8px 14px; border-radius: 10px; font-weight: 800; font-size: 0.75rem; z-index: 7; letter-spacing: 1px; text-transform: uppercase; backdrop-filter: blur(10px); display: flex; align-items: center; gap: 6px; }
         .type-tag.no-ribbon { top: 20px; }
         .tag-msrp   { background: rgba(0,40,40,0.85); border: 1px solid var(--msrp-green); color: #fff; text-shadow: 0 1px 3px #000; box-shadow: 0 0 15px rgba(0,255,157,0.35); }
         .tag-bundle { background: rgba(40,0,60,0.85); border: 1px solid #bd00ff; color: #fff; text-shadow: 0 1px 3px #000; box-shadow: 0 0 20px rgba(213,0,255,0.45); }
         .tag-baller { background: rgba(0,0,0,0.95); border: 1px solid #ffd700; color: #ffd700; text-shadow: 0 0 10px rgba(255,215,0,0.8); box-shadow: 0 0 20px rgba(255,215,0,0.55), inset 0 0 10px rgba(255,215,0,0.2); }
-        .tag-pack   { background: rgba(0,40,40,0.85); border: 1px solid var(--msrp-green); color: #fff; text-shadow: 0 1px 3px #000; box-shadow: 0 0 15px rgba(0,255,157,0.35); }
+        .tag-pack   { background: rgba(40,20,0,0.85); border: 1px solid #ff9900; color: #ff9900; text-shadow: 0 0 10px rgba(255,153,0,0.8); box-shadow: 0 0 20px rgba(255,153,0,0.4); }
 
-        /* Countdown to close */
         .time-tag-bottom { position: absolute; bottom: 10px; left: 10px; padding: 7px 14px; border-radius: 10px; font-weight: 800; font-size: 0.78rem; z-index: 6; letter-spacing: 0.5px; text-transform: uppercase; background: rgba(0,0,0,0.85); backdrop-filter: blur(6px); border: 1px solid var(--accent-cyan); color: #fff; text-shadow: 0 1px 2px #000; box-shadow: 0 0 15px rgba(0,255,242,0.35); display: flex; align-items: center; gap: 6px; pointer-events: none; transition: .3s; }
         .time-tag-bottom.closing-soon { border-color: var(--accent-live); box-shadow: 0 0 22px rgba(255,0,64,0.8); animation: badgePulse 0.9s infinite alternate; }
         @keyframes badgePulse { from { transform: scale(1); } to { transform: scale(1.05); } }
@@ -222,12 +211,12 @@
         .item-content p { color: var(--text-dim); font-size: 1rem; line-height: 1.6; margin-bottom: 1.2rem; flex: 1; }
         .date-row { display: flex; align-items: center; gap: 8px; color: var(--accent-gold); font-weight: 700; font-size: 0.95rem; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); text-transform: uppercase; letter-spacing: 0.5px; text-shadow: 0 0 15px rgba(255,215,0,0.4); }
 
-        /* Perk pills (tier value props) */
         .perk-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.2rem; }
         .perk { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 30px; font-size: 0.72rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; backdrop-filter: blur(6px); }
         .perk-ship { background: rgba(0,255,242,0.1); border: 1px solid rgba(0,255,242,0.5); color: var(--accent-cyan); box-shadow: 0 0 12px rgba(0,255,242,0.2); }
         .perk-value { background: rgba(213,0,255,0.12); border: 1px solid rgba(213,0,255,0.55); color: #e883ff; box-shadow: 0 0 12px rgba(213,0,255,0.25); }
         .perk-msrp { background: rgba(0,255,157,0.1); border: 1px solid rgba(0,255,157,0.55); color: var(--msrp-green); box-shadow: 0 0 12px rgba(0,255,157,0.25); }
+        .perk-orange { background: rgba(255,153,0,0.15); border: 1px solid #ff9900; color: #ff9900; box-shadow: 0 0 12px rgba(255,153,0,0.25); }
         .perk-gold { background: linear-gradient(90deg, rgba(255,215,0,0.18), rgba(255,180,0,0.1)); border: 1px solid rgba(255,215,0,0.6); color: var(--accent-gold); box-shadow: 0 0 14px rgba(255,215,0,0.3); }
 
         .price-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(0,255,242,0.2); }
@@ -235,6 +224,8 @@
         .card-baller-bundle .price { color: var(--accent-gold); text-shadow: 0 0 25px rgba(255,215,0,0.7), 0 0 55px rgba(255,180,0,0.35); }
         .card-bundle-tier .price { color: #e883ff; text-shadow: 0 0 25px rgba(213,0,255,0.7), 0 0 55px rgba(213,0,255,0.35); }
         .card-msrp .price { color: var(--msrp-green); text-shadow: 0 0 25px rgba(0,255,157,0.7), 0 0 55px rgba(0,255,157,0.35); }
+        .card-pack-tier .price { color: #ff9900; text-shadow: 0 0 25px rgba(255,153,0,0.7), 0 0 55px rgba(255,153,0,0.35); }
+        
         .stock { font-size: 0.9rem; color: var(--text-dim); background: rgba(0,255,242,0.08); padding: 6px 14px; border-radius: 30px; font-weight: 700; border: 1px solid rgba(0,255,242,0.2); }
 
         .buy-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 1.2rem; border-radius: 16px; background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple)); color: #fff; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 1.1rem; letter-spacing: 1.5px; line-height: 1.1; transition: transform .4s cubic-bezier(0.25,0.8,0.25,1), box-shadow .4s; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.3); cursor: pointer; box-shadow: 0 10px 30px rgba(0,255,242,0.3), inset 0 2px 0 rgba(255,255,255,0.4); will-change: transform; }
@@ -245,14 +236,15 @@
         .msrp-btn .btn-subtext { color: #003a28 !important; text-shadow: none !important; }
         .msrp-btn:hover { box-shadow: 0 0 45px rgba(0,255,157,0.8) !important; }
 
+        .pack-btn { background: linear-gradient(90deg, #ff7700, #ffaa00) !important; color: #2b1100 !important; text-shadow: 0 1px 0 rgba(255,255,255,0.3) !important; box-shadow: 0 10px 30px rgba(255,153,0,0.35), inset 0 2px 0 rgba(255,255,255,0.5) !important; }
+        .pack-btn .btn-subtext { color: #3d1a00 !important; text-shadow: none !important; }
+        .pack-btn:hover { box-shadow: 0 0 45px rgba(255,153,0,0.8) !important; }
+
         .bundle-btn { background: linear-gradient(90deg, #7b2bff, var(--accent-purple), #ff6ad5) !important; background-size: 200% auto !important; animation: goldShine 4s linear infinite; box-shadow: 0 10px 30px rgba(213,0,255,0.4), inset 0 2px 0 rgba(255,255,255,0.4) !important; }
         .bundle-btn:hover { box-shadow: 0 0 50px rgba(213,0,255,0.9) !important; }
 
         .baller-btn { background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 25%, #b38728 50%, #fcf6ba 75%, #aa771c 100%) !important; background-size: 200% auto !important; color: #000 !important; text-shadow: 0 1px 0 rgba(255,255,255,0.4) !important; box-shadow: 0 4px 15px rgba(0,0,0,0.5), inset 0 0 10px rgba(255,255,255,0.5), 0 0 25px rgba(255,215,0,0.35) !important; border: 1px solid #7a5d1a !important; position: relative; overflow: hidden; animation: goldShine 3s linear infinite; }
         .baller-btn .btn-subtext { color: #333 !important; text-shadow: none !important; }
-        .baller-btn::after { content: ''; position: absolute; top: -50%; left: -60%; width: 20%; height: 200%; background: rgba(255,255,255,0.8); transform: rotate(30deg); animation: sweep 4s infinite; }
-        @keyframes sweep { 0% { left: -60%; } 20% { left: 120%; } 100% { left: 120%; } }
-        @keyframes goldShine { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         .baller-btn:hover { box-shadow: 0 0 40px rgba(255,215,0,0.9) !important; filter: brightness(1.1); }
 
         .sold-out { background: #0f0f1a !important; color: #666 !important; pointer-events: none; border: 2px solid #2a2a3a !important; box-shadow: inset 0 0 20px rgba(0,0,0,0.5) !important; }
@@ -274,9 +266,10 @@
         .lbl-hunt { --tube: #00eeff; }
         .lbl-universal { --tube: #ff3355; }
         .sub-text h3 { --tube: #ffd700; }
-        .card-msrp, .card-pack { --tube: #00ff9d; }
+        .card-msrp { --tube: #00ff9d; }
         .card-bundle-tier { --tube: #d24bff; }
         .card-baller-bundle { --tube: #ffcc33; }
+        .card-pack-tier { --tube: #ff9900; }
         .yt-open-btn { background: rgba(255,0,64,0.15); border: 1px solid rgba(255,0,64,0.5); color: #fff; padding: 8px 16px; border-radius: 10px; text-decoration: none; font-weight: 800; font-size: 0.8rem; display: flex; align-items: center; gap: 6px; transition: .3s; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 0 15px rgba(255,0,64,0.2); }
         .yt-open-btn:hover { background: rgba(255,0,64,0.8); box-shadow: 0 0 20px rgba(255,0,64,0.6); transform: scale(1.05); }
 
@@ -310,67 +303,23 @@
         .retry-btn { background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple)); border: none; color: #fff; padding: 12px 28px; border-radius: 12px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; box-shadow: 0 0 20px rgba(0,255,242,0.3); transition: transform .3s, box-shadow .3s; }
         .retry-btn:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(213,0,255,0.6); }
 
-        .image-modal { display: none; position: fixed; inset: 0; z-index: 9999; padding-top: 50px; width: 100%; height: 100%; overflow: auto; background: rgba(0,0,0,0.9); align-items: center; justify-content: center; backdrop-filter: blur(20px); }
+        .image-modal { display: none; position: fixed; inset: 0; z-index: 9999; padding: 30px 15px; width: 100%; height: 100%; overflow: auto; background: rgba(0,0,0,0.9); align-items: center; justify-content: center; backdrop-filter: blur(20px); }
         .modal-content { margin: auto; display: block; max-width: 90%; max-height: 85vh; border: 3px solid var(--accent-cyan); box-shadow: 0 0 100px rgba(0,255,242,0.8); border-radius: 20px; }
-        .close-modal { position: absolute; top: 30px; right: 40px; color: var(--accent-cyan); font-size: 50px; font-weight: 900; cursor: pointer; z-index: 10000; text-shadow: 0 0 20px var(--accent-cyan); background: none; border: none; line-height: 1; }
+        .close-modal { position: absolute; top: 25px; right: 25px; color: var(--accent-cyan); font-size: 40px; font-weight: 900; cursor: pointer; z-index: 10000; text-shadow: 0 0 20px var(--accent-cyan); background: none; border: none; line-height: 1; }
 
-        /* Checkout Modal specific styling */
-        .checkout-input { width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 8px; background: rgba(0,0,0,0.4); color: #fff; border: 1px solid rgba(0,255,242,0.3); font-family: 'Inter', sans-serif; transition: 0.3s; }
-        .checkout-input:focus { border-color: var(--accent-cyan); outline: none; box-shadow: 0 0 12px rgba(0,255,242,0.4); }
+        .checkout-input { width: 100%; padding: 12px 14px; margin-bottom: 14px; border-radius: 8px; background: rgba(0,0,0,0.5); color: #fff; border: 1px solid #3a3a55; font-family: 'Inter', sans-serif; font-size: 0.95rem; transition: 0.2s; }
+        .checkout-input:focus { border-color: var(--accent-cyan); outline: none; box-shadow: 0 0 12px rgba(0,255,242,0.3); }
+
+        .qty-control-row { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
+        .qty-btn { width: 44px; height: 44px; border-radius: 8px; background: rgba(255,255,255,0.08); border: 1px solid #4a4a66; color: #fff; font-size: 1.4rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; user-select: none; }
+        .qty-btn:hover { background: rgba(0,255,242,0.2); border-color: var(--accent-cyan); }
+        .qty-btn:active { transform: scale(0.95); }
 
         a:focus-visible, button:focus-visible { outline: 3px solid var(--accent-cyan); outline-offset: 3px; border-radius: 8px; }
 
-        @media (max-width: 1300px) { .p-gengar, .p-gardevoir { display: none; } }
         @media (max-width: 768px) {
-            .p-rayquaza, .p-charizard, .p-gengar, .p-gardevoir, .p-vaporeon, .p-cubone { display: none; }
-            .p-suicune { width: 120vw; opacity: 0.08; top: 40%; }
-            .p-pichu { width: 90px; opacity: 0.3; left: 3%; }
-            .p-magikarp { width: 120px; opacity: 0.32; right: 3%; }
-            .header-wrapper { flex-direction: column; gap: 1.5rem; text-align: center; }
-            h1 { font-size: clamp(3rem, 11vw, 4rem); }
-            .logo-right { display: none; } .header-logo { width: 110px; } .logo-left .header-logo { transform: scaleX(1); }
-            main { padding: 1.5rem 1rem; margin: 1rem auto 3rem; width: 95%; border-radius: 25px; }
-            .section-header { width: 100%; padding: 12px 20px; border-radius: 40px; gap: 1rem; margin: 2.5rem auto 2rem; }
-            .section-title { font-size: 1.1rem; white-space: nowrap; letter-spacing: 2px; } .section-line { height: 3px; min-width: 30px; }
-            .tier-header { padding: 16px 18px 18px; margin: 3rem auto 1.8rem; }
-            .tier-title { letter-spacing: 3px; }
-            .store-grid { grid-template-columns: 1fr; gap: 30px; }
-            .sub-info-panel { flex-direction: column; text-align: center; gap: 1.5rem; padding: 2rem 1.2rem; }
-            .sub-text { min-width: 100%; } .sub-text h3 { font-size: 1.25rem; justify-content: center; }
-            .sub-actions { width: 100%; justify-content: center; gap: 15px; }
-            .epic-empty-inner { padding: 3rem 1.5rem; }
-        }
-
-        /* ---------- MOBILE ANTI-FLICKER ----------
-           Android Chrome flickers/black-boxes when backdrop-filter blur layers sit
-           under animated conic gradients. On touch devices we swap blurred glass
-           for near-solid glass and freeze the heavy animations. Desktop unchanged.
-           NOTE: the Vegas neon flicker animates opacity only, which is GPU-cheap,
-           so it stays ON for mobile — that flicker is intentional, not a bug. */
-        @media (hover: none), (pointer: coarse) {
-            body::before { animation: none; background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%; }
-            .grain, .particles { display: none; }
-            .top-nav .nav-link, main, .glass-panel, .tier-header, .section-header,
-            .type-tag, .time-tag-bottom, .perk, .yt-label, .bell-btn, .epic-empty-inner, .image-modal {
-                backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
-            }
-            main { background: rgba(6,6,16,0.94); }
-            .glass-panel { background: linear-gradient(160deg, rgba(24,24,42,0.97), rgba(10,10,20,0.98)); }
-            .card-baller-bundle .glass-panel { background: linear-gradient(160deg, rgba(48,38,8,0.97), rgba(16,11,0,0.98)); }
-            /* Keep the LED motion — only the flicker-prone layers are gone:
-               solid glass means the transform-spun borders and gradient flows are GPU-safe */
-            .neon-card-wrapper::before { animation-duration: 7s; opacity: 0.55 !important; filter: none !important; }
-            .epic-empty-wrapper::before { filter: none !important; }
-            .glass-panel::after { opacity: 1; mix-blend-mode: normal; background: linear-gradient(115deg, transparent 42%, rgba(255,255,255,0.05) 50%, transparent 58%); background-size: 250% 100%; animation: sheenFlow 7s linear infinite; }
-            .neon-card-wrapper, .glass-panel, .item-img, .logo-animator, .icon-float-wrapper, .sub-btn, .bell-btn { will-change: auto !important; }
-            .neon-card-wrapper:hover { transform: none; }
-            .card-live-now { animation: none; box-shadow: 0 0 32px rgba(var(--lg),0.6), 0 0 60px rgba(var(--lg),0.25); }
-            .tier-header::after { animation: ledOpacity 2.4s ease-in-out infinite; box-shadow: 0 0 18px currentColor; }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
-            body::before { animation: none; }
+            main { padding: 1.5rem 1rem; width: 95%; }
+            .store-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -430,29 +379,36 @@
         <img class="modal-content" id="img01" alt="Expanded item image">
     </div>
 
-    <!-- NEW Checkout Modal for Single Packs -->
+    <!-- Checkout Modal for Single Packs -->
     <div id="checkoutModal" class="image-modal" onclick="if(event.target===this) closeCheckout()">
-        <div class="modal-content glass-panel" style="background:var(--bg-dark); padding:2.5rem; width:100%; max-width:550px; border-radius:16px; border:2px solid var(--accent-cyan); position:relative; box-shadow: 0 0 60px rgba(0,255,242,0.4); text-align: left;">
-            <button class="close-modal" style="top:15px; right:20px; font-size:35px;" onclick="closeCheckout()">&times;</button>
-            <h2 id="co-title" style="color:var(--accent-cyan); margin-bottom:1.5rem; font-family:'Tilt Neon', sans-serif; text-shadow: 0 0 15px rgba(0,255,242,0.4);">Secure Your Packs</h2>
+        <div class="glass-panel" style="background:rgba(12,12,24,0.96); padding:2rem; width:100%; max-width:500px; border-radius:20px; border:2px solid var(--accent-cyan); position:relative; box-shadow: 0 0 60px rgba(0,255,242,0.35);">
+            <button class="close-modal" style="top:15px; right:18px; font-size:35px;" onclick="closeCheckout()">&times;</button>
+            <h2 id="co-title" style="color:var(--accent-cyan); margin-bottom:1.2rem; font-family:'Tilt Neon', sans-serif;">Select Pack Quantity</h2>
             
-            <label style="font-weight: 700; color: var(--text-dim); margin-bottom: 6px; display: block;">Full Name</label>
-            <input type="text" id="co-name" class="checkout-input" placeholder="Ash Ketchum" required>
+            <label style="font-weight: 700; color: var(--text-dim); margin-bottom: 6px; font-size:0.85rem; display: block;">Quantity to Buy (<span id="co-bounds" style="color:#00ff9d;"></span>)</label>
+            <div class="qty-control-row">
+                <button type="button" class="qty-btn" onclick="stepQty(-1)">-</button>
+                <input type="number" id="co-qty" class="checkout-input" style="margin-bottom:0; text-align:center; font-size:1.25rem; font-weight:800;" oninput="onQtyInput()" onblur="clampQtyOnBlur()">
+                <button type="button" class="qty-btn" onclick="stepQty(1)">+</button>
+            </div>
+
+            <label style="font-weight: 700; color: var(--text-dim); margin-bottom: 6px; font-size:0.85rem; display: block;">Full Name</label>
+            <input type="text" id="co-name" class="checkout-input" placeholder="Your name">
             
-            <label style="font-weight: 700; color: var(--text-dim); margin-bottom: 6px; display: block;">Email Address</label>
-            <input type="email" id="co-email" class="checkout-input" placeholder="ash@pokemon.com" required>
+            <label style="font-weight: 700; color: var(--text-dim); margin-bottom: 6px; font-size:0.85rem; display: block;">Email Address</label>
+            <input type="email" id="co-email" class="checkout-input" placeholder="you@example.com">
             
-            <label style="font-weight: 700; color: var(--text-dim); margin-bottom: 6px; display: block;">Shipping Info</label>
-            <textarea id="co-address" rows="3" class="checkout-input" style="resize:vertical;" placeholder="Full mailing address..." required></textarea>
+            <label style="font-weight: 700; color: var(--text-dim); margin-bottom: 6px; font-size:0.85rem; display: block;">Shipping Address</label>
+            <textarea id="co-address" rows="3" class="checkout-input" style="resize:vertical;" placeholder="Full mailing address with postal code"></textarea>
             
-            <label style="font-weight: 700; color: var(--text-dim); margin-bottom: 6px; display: block;">Quantity (<span id="co-bounds"></span>)</label>
-            <input type="number" id="co-qty" oninput="calcTotal()" class="checkout-input" required>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin: 1.2rem 0; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);">
+                <span style="font-size:1.1rem; color:var(--text-dim); font-weight:700;">Total to Pay:</span>
+                <span style="font-size:2rem; font-weight:900; color:#ffd700; text-shadow:0 0 15px rgba(255,215,0,0.5);">$<span id="co-total">0.00</span></span>
+            </div>
             
-            <div style="font-size:1.8rem; font-weight:900; margin-bottom:1.5rem; color: #fff; text-shadow: 0 0 15px rgba(255,255,255,0.4);">Total: $<span id="co-total">0.00</span></div>
-            
-            <button id="co-pay-btn" onclick="submitCheckout()" class="buy-btn msrp-btn" style="width:100%; border:none;">
+            <button id="co-pay-btn" onclick="submitCheckout()" class="buy-btn pack-btn" style="width:100%; border:none;">
                 <span>PAY NOW</span>
-                <span class="btn-subtext">Redirects to Streamlabs Checkout</span>
+                <span class="btn-subtext">Streamlabs tip checkout</span>
             </button>
         </div>
     </div>
@@ -460,18 +416,13 @@
     <script>
         const API_URL = 'https://pokeballer-worker.kronborgnielsen.workers.dev/api';
         let timerInterval = null;
-        window.storeItems = []; // Globably store items to access in the modal
+        window.storeItems = [];
 
         const wait = ms => new Promise(r => setTimeout(r, ms));
         function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
         function money(n) { const v = Number(n); return isFinite(v) ? v.toFixed(2) : '0.00'; }
         function toInt(n) { const v = parseInt(n, 10); return isFinite(v) ? v : 0; }
 
-        /* ---------- VEGAS NEON: per-letter tube wrapping ----------
-           Wraps every letter of a sign in its own span with a random flicker
-           duration + delay (so no two letters blink together). ~12% of tubes
-           get the harsh dying-tube animation. Words cycle through the palette;
-           if no palette is given, the sign's own --tube color is inherited. */
         function neonize(el, palette, small) {
             if (!el || el.dataset.neon === '1') return;
             el.dataset.neon = '1';
@@ -529,7 +480,6 @@
             throw lastErr || new Error('Request failed');
         }
 
-        /* Interprets the stored local datetime as US Central time, returns epoch ms */
         function centralToMs(localStr) {
             if (!localStr || localStr.indexOf('T') === -1) return null;
             try {
@@ -545,7 +495,6 @@
             } catch (e) { return new Date(localStr + '-06:00').getTime(); }
         }
 
-        /* Date only — never show the clock on the storefront */
         function formatCloseDate(isoString) {
             if (!isoString || isoString.indexOf('T') === -1) return '';
             try {
@@ -616,14 +565,12 @@
                         </div>`;
                 }).join('');
                 applyNeon();
-                bindTilt();
             } catch (e) {
                 console.error('Feed error:', e);
                 container.innerHTML = `<div class="feed-fallback"><a href="https://www.youtube.com/@PokeballerMike" target="_blank" rel="noopener" class="buy-btn" style="max-width:240px;margin:0 auto;">VISIT THE CHANNEL</a></div>`;
             }
         }
 
-        /* Tier config — the whole personality of each league lives here */
         const TIERS = {
             baller: {
                 headerClass: 'th-baller', icon: 'ph-crown', title: 'BALLER BUNDLES', tagline: 'The premium experience · top-shelf product only',
@@ -644,10 +591,10 @@
                 perks: '<span class="perk perk-msrp"><i class="ph-fill ph-tag"></i> Great Value</span><span class="perk perk-ship"><i class="ph-fill ph-truck"></i> Shipping included</span>'
             },
             pack: {
-                headerClass: 'th-pack', icon: 'ph-package', title: 'SINGLE PACKS', tagline: 'Build your custom quantity',
-                wrapper: 'card-msrp', tag: 'tag-pack', tagHTML: '<i class="ph-fill ph-package"></i> SINGLE PACKS', ribbon: 'rb-green',
-                btn: 'buy-btn msrp-btn', btnText: 'BUY PACKS', btnSub: 'Select quantity',
-                perks: '<span class="perk perk-msrp"><i class="ph-fill ph-package"></i> Custom Qty</span><span class="perk perk-ship"><i class="ph-fill ph-truck"></i> Shipping included</span>'
+                headerClass: 'th-pack', icon: 'ph-package', title: 'SINGLE PACKS', tagline: 'Direct booster packs · sealed or live rip',
+                wrapper: 'card-pack-tier', tag: 'tag-pack', tagHTML: '<i class="ph-fill ph-package"></i> SINGLE PACKS', ribbon: 'rb-orange',
+                btn: 'buy-btn pack-btn', btnText: 'BUY PACKS', btnSub: 'Choose pack quantity',
+                perks: '<span class="perk perk-orange"><i class="ph-fill ph-package"></i> Direct Packs</span><span class="perk perk-ship"><i class="ph-fill ph-truck"></i> Shipping included</span>'
             }
         };
 
@@ -656,14 +603,15 @@
             const id = esc(item.id);
             const now = Date.now();
             const endTime = centralToMs(item.scheduleEnd);
-            const isEnded = toInt(item.stock) <= 0 || (endTime && now >= endTime);
+            const stockNum = toInt(item.stock);
+            const isEnded = stockNum <= 0 || (endTime && now >= endTime);
             const isOpen = !isEnded;
 
             let ribbonHTML = '', wrapperClass = t.wrapper, timeBadgeHTML = '', dateRowHTML = '';
 
             if (isOpen) {
                 wrapperClass += ' card-live-now';
-                ribbonHTML = `<div class="live-ribbon ${t.ribbon}"><span class="live-dot"></span> OPEN NOW — JOIN THE BREAK <span class="live-dot"></span></div>`;
+                ribbonHTML = `<div class="live-ribbon ${t.ribbon}"><span class="live-dot"></span> OPEN NOW <span class="live-dot"></span></div>`;
                 if (endTime) timeBadgeHTML = `<div class="time-tag-bottom close-watch" data-end="${esc(item.scheduleEnd)}" data-id="${id}"><i class="ph-fill ph-calendar-x"></i> CLOSES ${formatCloseShort(item.scheduleEnd)}</div>`;
             } else {
                 wrapperClass += ' card-closed';
@@ -673,7 +621,7 @@
 
             let btnHTML;
             if (isEnded) {
-                btnHTML = '<div class="buy-btn sold-out">BREAK CLOSED</div>';
+                btnHTML = tier === 'pack' ? '<div class="buy-btn sold-out">SOLD OUT</div>' : '<div class="buy-btn sold-out">BREAK CLOSED</div>';
             } else if (tier === 'pack') {
                 btnHTML = `<button onclick="openCheckout('${id}')" class="${t.btn}" style="border:none; width:100%; cursor:pointer;"><span>${t.btnText}</span><span class="btn-subtext">${t.btnSub}</span></button>`;
             } else if (item.googleFormLink) {
@@ -684,6 +632,9 @@
 
             const img = item.image || 'https://assets.pokemon.com/assets/cms2/img/misc/trading-card-games/cards/tcg_default_card.png';
             const tagPosClass = isOpen ? '' : ' no-ribbon';
+
+            // Distinct text: "Packs in stock" for packs, "Break Spots" for breaks
+            const stockLabel = tier === 'pack' ? `${stockNum} Packs in stock` : `${stockNum} Break Spots`;
 
             return `
                 <div class="neon-card-wrapper ${wrapperClass}" id="card-${id}">
@@ -699,7 +650,10 @@
                             ${dateRowHTML}
                             <p>${esc(item.description)}</p>
                             <div class="perk-row">${t.perks}</div>
-                            <div class="price-row"><span class="price">$${money(item.price)}</span><span class="stock">${toInt(item.stock)} Spots</span></div>
+                            <div class="price-row">
+                                <span class="price">$${money(item.price)}</span>
+                                <span class="stock" id="stock-badge-${id}">${stockLabel}</span>
+                            </div>
                             <div id="btn-container-${id}">${btnHTML}</div>
                         </div>
                     </div>
@@ -717,7 +671,7 @@
                 if (!Array.isArray(items)) throw new Error(items && items.error ? items.error : 'Bad data');
 
                 items.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-                window.storeItems = items; // Store for the modal to access easily
+                window.storeItems = items;
 
                 const groups = { baller: [], bundle: [], msrp: [], pack: [] };
                 items.forEach(item => {
@@ -738,12 +692,9 @@
                             <div class="epic-empty-inner">
                                 <div class="empty-icon-container"><div class="icon-float-wrapper"><img src="https://play.pokemonshowdown.com/sprites/xyani/klinklang.gif" class="empty-icon" alt="Klinklang"></div></div>
                                 <div class="letter-content">
-                                    <p style="font-size:1.6rem;color:#fff;font-weight:800;margin-bottom:1.5rem;text-transform:uppercase;letter-spacing:1px;">No breaks live right now</p>
-                                    <p>I'm out hitting the shelves at <strong>Costco, Walmart, and Target</strong> to track down the best packs for the next stream.</p>
-                                    <p>The hunt never stops — big sets and exclusive bundles are getting secured for you right now.</p>
-                                    <p>Hit the <i class="ph-fill ph-bell-ringing" style="color:var(--accent-gold);vertical-align:middle;"></i> bell above to be first in when new stock drops.</p>
-                                    <p style="color:var(--accent-cyan);font-weight:700;font-size:1.4rem;margin-top:3rem;margin-bottom:0;">Catch you on the next hunt!</p>
-                                    <h3 style="color:#fff;font-size:1.2rem;margin-top:1.5rem;text-shadow:0 0 15px var(--accent-cyan);text-transform:uppercase;letter-spacing:2px;">— Pokeballer Mike</h3>
+                                    <p style="font-size:1.6rem;color:#fff;font-weight:800;margin-bottom:1.5rem;text-transform:uppercase;letter-spacing:1px;">No items live right now</p>
+                                    <p>I'm out hunting the shelves for new inventory!</p>
+                                    <h3 style="color:#fff;font-size:1.2rem;margin-top:1.5rem;">— Pokeballer Mike</h3>
                                 </div>
                             </div>
                         </div>
@@ -767,16 +718,12 @@
                 sections.innerHTML = html;
                 applyNeon();
                 startCountdownTimer();
-                bindTilt();
             } catch (e) {
                 console.error('Store error:', e);
-                sections.innerHTML = `<div class="store-grid"><div class="error-card"><h2>Couldn't load the breaks</h2><p>The server didn't answer in time. This usually clears in a few seconds.</p><button class="retry-btn" onclick="loadStore()">Try again</button></div></div>`;
+                sections.innerHTML = `<div class="store-grid"><div class="error-card"><h2>Couldn't load items</h2><p>Connection timed out.</p><button class="retry-btn" onclick="loadStore()">Try again</button></div></div>`;
             }
         }
 
-        /* Silent close-watcher: no visible countdown. The badge shows only the date;
-           in the last hour it flips to CLOSING SOON, and at the internal close time
-           the card locks itself live on screen. */
         function updateTimers() {
             const watchers = document.querySelectorAll('.close-watch');
             if (watchers.length === 0 && timerInterval) { clearInterval(timerInterval); timerInterval = null; return; }
@@ -788,9 +735,8 @@
                 const distance = endTarget - now;
 
                 if (distance <= 0) {
-                    // Break just closed — lock the card live on screen
                     const btnContainer = document.getElementById(`btn-container-${itemId}`);
-                    if (btnContainer) btnContainer.innerHTML = '<div class="buy-btn sold-out">BREAK CLOSED</div>';
+                    if (btnContainer) btnContainer.innerHTML = '<div class="buy-btn sold-out">CLOSED</div>';
                     const badgeContainer = document.getElementById(`badge-container-${itemId}`);
                     if (badgeContainer) badgeContainer.innerHTML = '';
                     const card = document.getElementById(`card-${itemId}`);
@@ -799,16 +745,8 @@
                         card.classList.add('card-closed');
                         const ribbon = card.querySelector('.live-ribbon');
                         if (ribbon) ribbon.remove();
-                        const tag = card.querySelector('.type-tag');
-                        if (tag) tag.classList.add('no-ribbon');
                     }
                     w.classList.remove('close-watch');
-                    return;
-                }
-
-                if (distance < 3600000 && !w.classList.contains('closing-soon')) {
-                    w.classList.add('closing-soon');
-                    w.innerHTML = '<i class="ph-fill ph-lightning"></i> CLOSING SOON';
                 }
             });
         }
@@ -816,95 +754,146 @@
         function startCountdownTimer() { if (timerInterval) clearInterval(timerInterval); updateTimers(); timerInterval = setInterval(updateTimers, 5000); }
         function trackClick(id) { fetch(`${API_URL}/click`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }), keepalive: true }).catch(() => {}); return true; }
         
-        /* ---------- IMAGE MODAL ---------- */
         function openModal(src) { document.getElementById('myModal').style.display = 'flex'; document.getElementById('img01').src = src; }
         function closeModal() { document.getElementById('myModal').style.display = 'none'; }
         
-        /* ---------- CHECKOUT MODAL LOGIC ---------- */
+        /* ---------- CHECKOUT MODAL & QUANTITY LIMIT LOGIC ---------- */
         let activeCheckoutItem = null;
+
+        function getLimits() {
+            if (!activeCheckoutItem) return { min: 1, max: 1, stock: 0 };
+            const stock = Math.max(0, parseInt(activeCheckoutItem.stock, 10) || 0);
+            const userMin = Math.max(1, parseInt(activeCheckoutItem.minBuy, 10) || 1);
+            const userMax = Math.max(userMin, parseInt(activeCheckoutItem.maxBuy, 10) || 10);
+            
+            // Cannot buy more than what is actually in stock
+            const effectiveMax = Math.min(userMax, stock);
+            const effectiveMin = Math.min(userMin, effectiveMax);
+            return { min: effectiveMin, max: effectiveMax, stock };
+        }
         
         function openCheckout(id) {
             activeCheckoutItem = window.storeItems.find(i => String(i.id) === String(id));
             if (!activeCheckoutItem) return;
             
+            const { min, max, stock } = getLimits();
+            if (stock <= 0) {
+                alert('This item is currently sold out!');
+                return;
+            }
+
             document.getElementById('co-title').innerText = activeCheckoutItem.name;
-            
-            const minB = parseInt(activeCheckoutItem.minBuy) || 1;
-            const maxB = Math.min(parseInt(activeCheckoutItem.maxBuy) || 10, parseInt(activeCheckoutItem.stock) || 1);
-            
-            document.getElementById('co-bounds').innerText = `Min: ${minB}, Max: ${maxB}`;
+            document.getElementById('co-bounds').innerText = `Min: ${min} | Max: ${max} | Available: ${stock}`;
             
             const qtyEl = document.getElementById('co-qty');
-            qtyEl.min = minB;
-            qtyEl.max = maxB;
-            qtyEl.value = minB;
+            qtyEl.min = min;
+            qtyEl.max = max;
+            qtyEl.value = min;
             
             document.getElementById('co-name').value = '';
             document.getElementById('co-email').value = '';
             document.getElementById('co-address').value = '';
             
-            calcTotal();
+            updateTotal();
             document.getElementById('checkoutModal').style.display = 'flex';
         }
         
         function closeCheckout() { 
             document.getElementById('checkoutModal').style.display = 'none'; 
             activeCheckoutItem = null;
-            
             const btn = document.getElementById('co-pay-btn');
             btn.disabled = false;
-            btn.innerHTML = `<span>PAY NOW</span><span class="btn-subtext">Redirects to Streamlabs Checkout</span>`;
+            btn.innerHTML = `<span>PAY NOW</span><span class="btn-subtext">Streamlabs tip checkout</span>`;
         }
 
-        function calcTotal() {
+        function stepQty(delta) {
+            const { min, max } = getLimits();
+            const qtyEl = document.getElementById('co-qty');
+            let val = parseInt(qtyEl.value, 10) || min;
+            val += delta;
+            if (val < min) val = min;
+            if (val > max) val = max;
+            qtyEl.value = val;
+            updateTotal();
+        }
+
+        function onQtyInput() {
+            const { max } = getLimits();
+            const qtyEl = document.getElementById('co-qty');
+            let val = parseInt(qtyEl.value, 10);
+            if (!isNaN(val) && val > max) {
+                qtyEl.value = max; // Clamp immediately if exceeding max
+            }
+            updateTotal();
+        }
+
+        function clampQtyOnBlur() {
+            const { min, max } = getLimits();
+            const qtyEl = document.getElementById('co-qty');
+            let val = parseInt(qtyEl.value, 10);
+            if (isNaN(val) || val < min) val = min;
+            if (val > max) val = max;
+            qtyEl.value = val;
+            updateTotal();
+        }
+
+        function updateTotal() {
             if (!activeCheckoutItem) return;
-            let qty = parseInt(document.getElementById('co-qty').value, 10) || 0;
-            const minB = parseInt(activeCheckoutItem.minBuy) || 1;
-            const maxB = Math.min(parseInt(activeCheckoutItem.maxBuy) || 10, parseInt(activeCheckoutItem.stock) || 1);
-            
-            // Constrain display quantity to limits
-            if (qty > maxB) qty = maxB;
-            if (qty < minB) qty = minB;
-            
-            const total = (qty * parseFloat(activeCheckoutItem.price)).toFixed(2);
-            document.getElementById('co-total').innerText = total;
+            const { min, max } = getLimits();
+            let qty = parseInt(document.getElementById('co-qty').value, 10);
+            if (isNaN(qty)) qty = min;
+            const price = parseFloat(activeCheckoutItem.price || 0);
+            document.getElementById('co-total').innerText = (qty * price).toFixed(2);
         }
 
         async function submitCheckout() {
             if (!activeCheckoutItem) return;
+            const { min, max, stock } = getLimits();
             
             const name = document.getElementById('co-name').value.trim();
             const email = document.getElementById('co-email').value.trim();
             const address = document.getElementById('co-address').value.trim();
-            let qty = parseInt(document.getElementById('co-qty').value, 10) || 0;
-            
-            if (!name || !email || !address || !qty) {
-                alert('Please fill out all shipping details before paying.');
+            let qty = parseInt(document.getElementById('co-qty').value, 10);
+
+            if (stock <= 0) {
+                alert('This item just sold out.');
+                closeCheckout();
                 return;
             }
 
-            const minB = parseInt(activeCheckoutItem.minBuy) || 1;
-            const maxB = Math.min(parseInt(activeCheckoutItem.maxBuy) || 10, parseInt(activeCheckoutItem.stock) || 1);
-            
-            if (qty > maxB || qty < minB) {
-                alert(`Please select a quantity between ${minB} and ${maxB}.`);
+            if (!name || !email || !address) {
+                alert('Please fill out your Name, Email, and Shipping Address.');
+                return;
+            }
+
+            // Hard enforcement of limits
+            if (isNaN(qty) || qty < min) {
+                alert(`You cannot purchase less than the minimum of ${min} pack${min > 1 ? 's' : ''}.`);
+                document.getElementById('co-qty').value = min;
+                updateTotal();
+                return;
+            }
+
+            if (qty > max) {
+                alert(`You cannot purchase more than the limit of ${max} pack${max > 1 ? 's' : ''}.`);
+                document.getElementById('co-qty').value = max;
+                updateTotal();
                 return;
             }
 
             const total = (qty * parseFloat(activeCheckoutItem.price)).toFixed(2);
-            
             const btn = document.getElementById('co-pay-btn');
             btn.disabled = true;
-            btn.innerHTML = `<span>PROCESSING...</span><span class="btn-subtext">Securing your packs</span>`;
+            btn.innerHTML = `<span>RESERVING PACKS...</span><span class="btn-subtext">Connecting to payment</span>`;
 
             try {
-                // Post to your worker to handle the email notification before redirecting
-                await fetch(`${API_URL}/purchase-notification`, {
+                // Decrement stock in KV and dispatch notification email
+                const res = await fetch(`${API_URL}/purchase-notification`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        itemName: activeCheckoutItem.name,
                         itemId: activeCheckoutItem.id,
+                        itemName: activeCheckoutItem.name,
                         qty: qty,
                         totalPrice: total,
                         buyerName: name,
@@ -913,11 +902,36 @@
                         notifyEmail: 'pokeballer4free@gmail.com'
                     })
                 });
+
+                const result = await res.json();
+                if (!res.ok || result.error) {
+                    alert(result.error || 'Could not complete order. Please verify stock.');
+                    btn.disabled = false;
+                    btn.innerHTML = `<span>PAY NOW</span><span class="btn-subtext">Streamlabs tip checkout</span>`;
+                    return;
+                }
+
+                // Decrement stock live on the page card immediately
+                if (result.remainingStock != null) {
+                    activeCheckoutItem.stock = result.remainingStock;
+                    const badge = document.getElementById(`stock-badge-${activeCheckoutItem.id}`);
+                    if (badge) badge.innerText = `${result.remainingStock} Packs in stock`;
+                    
+                    if (result.remainingStock <= 0) {
+                        const btnBox = document.getElementById(`btn-container-${activeCheckoutItem.id}`);
+                        if (btnBox) btnBox.innerHTML = '<div class="buy-btn sold-out">SOLD OUT</div>';
+                        const card = document.getElementById(`card-${activeCheckoutItem.id}`);
+                        if (card) {
+                            card.classList.remove('card-live-now');
+                            card.classList.add('card-closed');
+                        }
+                    }
+                }
             } catch (e) {
-                console.error('Notification endpoint failed, but continuing to checkout', e);
+                console.error('Purchase request failed:', e);
             }
-            
-            // Redirect to Streamlabs 
+
+            // Redirect to tip page
             window.location.href = "https://streamlabs.com/pokballer/tip";
         }
         
@@ -925,38 +939,6 @@
             if (e.key === 'Escape') { closeModal(); closeCheckout(); } 
         });
 
-        const canMotion = window.matchMedia && window.matchMedia('(pointer:fine)').matches && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-        function bindTilt() {
-            if (!canMotion) return;
-            document.querySelectorAll('.neon-card-wrapper').forEach(card => {
-                if (card.dataset.tilt) return;
-                card.dataset.tilt = '1';
-                const panel = card.querySelector('.glass-panel');
-                if (!panel) return;
-                card.addEventListener('mousemove', ev => {
-                    const r = card.getBoundingClientRect();
-                    const px = (ev.clientX - r.left) / r.width - 0.5;
-                    const py = (ev.clientY - r.top) / r.height - 0.5;
-                    panel.style.transform = `rotateY(${(px * 5).toFixed(2)}deg) rotateX(${(-py * 5).toFixed(2)}deg)`;
-                });
-                card.addEventListener('mouseleave', () => { panel.style.transform = ''; });
-            });
-        }
-
-        function initParallax() {
-            const layer = document.querySelector('.parallax-layer');
-            if (!canMotion || !layer) return;
-            let raf = null, tx = 0, ty = 0;
-            window.addEventListener('mousemove', e => {
-                tx = (e.clientX / window.innerWidth - 0.5) * 26;
-                ty = (e.clientY / window.innerHeight - 0.5) * 26;
-                if (!raf) raf = requestAnimationFrame(() => { layer.style.transform = `translate3d(${tx.toFixed(1)}px, ${ty.toFixed(1)}px, 0)`; raf = null; });
-            }, { passive: true });
-        }
-
-        initParallax();
-        applyNeon();
         loadVideos();
         loadStore();
     </script>
