@@ -152,6 +152,7 @@
         .th-baller { --tube: #ffcc33; color: var(--accent-gold); border-color: rgba(255,215,0,0.55); background: linear-gradient(160deg, rgba(60,45,0,0.55), rgba(20,15,0,0.75)); box-shadow: 0 0 45px rgba(255,215,0,0.22), inset 0 2px 0 rgba(255,255,255,0.25), inset 0 0 40px rgba(255,215,0,0.06); }
         .th-bundle { --tube: #d24bff; color: #e883ff; border-color: rgba(213,0,255,0.55); background: linear-gradient(160deg, rgba(45,0,60,0.55), rgba(15,0,25,0.75)); box-shadow: 0 0 45px rgba(213,0,255,0.22), inset 0 2px 0 rgba(255,255,255,0.2), inset 0 0 40px rgba(213,0,255,0.06); }
         .th-msrp { --tube: #00ff9d; color: var(--msrp-green); border-color: rgba(0,255,157,0.55); background: linear-gradient(160deg, rgba(0,45,30,0.55), rgba(0,15,10,0.75)); box-shadow: 0 0 45px rgba(0,255,157,0.2), inset 0 2px 0 rgba(255,255,255,0.2), inset 0 0 40px rgba(0,255,157,0.06); }
+        .th-pack { --tube: #00ff9d; color: var(--msrp-green); border-color: rgba(0,255,157,0.55); background: linear-gradient(160deg, rgba(0,45,30,0.55), rgba(0,15,10,0.75)); box-shadow: 0 0 45px rgba(0,255,157,0.2), inset 0 2px 0 rgba(255,255,255,0.2), inset 0 0 40px rgba(0,255,157,0.06); }
 
         /* ---------- NEON CARDS ---------- */
         .neon-card-wrapper { position: relative; border-radius: 26px; padding: 3px; background: rgba(0,0,0,0.2); box-shadow: 0 0 25px rgba(0,255,242,0.2), 0 0 50px rgba(213,0,255,0.15); overflow: hidden; transition: transform .4s cubic-bezier(0.25,0.8,0.25,1), box-shadow .4s; perspective: 1000px; will-change: transform; }
@@ -204,6 +205,7 @@
         .tag-msrp   { background: rgba(0,40,40,0.85); border: 1px solid var(--msrp-green); color: #fff; text-shadow: 0 1px 3px #000; box-shadow: 0 0 15px rgba(0,255,157,0.35); }
         .tag-bundle { background: rgba(40,0,60,0.85); border: 1px solid #bd00ff; color: #fff; text-shadow: 0 1px 3px #000; box-shadow: 0 0 20px rgba(213,0,255,0.45); }
         .tag-baller { background: rgba(0,0,0,0.95); border: 1px solid #ffd700; color: #ffd700; text-shadow: 0 0 10px rgba(255,215,0,0.8); box-shadow: 0 0 20px rgba(255,215,0,0.55), inset 0 0 10px rgba(255,215,0,0.2); }
+        .tag-pack   { background: rgba(0,40,40,0.85); border: 1px solid var(--msrp-green); color: #fff; text-shadow: 0 1px 3px #000; box-shadow: 0 0 15px rgba(0,255,157,0.35); }
 
         /* Countdown to close */
         .time-tag-bottom { position: absolute; bottom: 10px; left: 10px; padding: 7px 14px; border-radius: 10px; font-weight: 800; font-size: 0.78rem; z-index: 6; letter-spacing: 0.5px; text-transform: uppercase; background: rgba(0,0,0,0.85); backdrop-filter: blur(6px); border: 1px solid var(--accent-cyan); color: #fff; text-shadow: 0 1px 2px #000; box-shadow: 0 0 15px rgba(0,255,242,0.35); display: flex; align-items: center; gap: 6px; pointer-events: none; transition: .3s; }
@@ -272,7 +274,7 @@
         .lbl-hunt { --tube: #00eeff; }
         .lbl-universal { --tube: #ff3355; }
         .sub-text h3 { --tube: #ffd700; }
-        .card-msrp { --tube: #00ff9d; }
+        .card-msrp, .card-pack { --tube: #00ff9d; }
         .card-bundle-tier { --tube: #d24bff; }
         .card-baller-bundle { --tube: #ffcc33; }
         .yt-open-btn { background: rgba(255,0,64,0.15); border: 1px solid rgba(255,0,64,0.5); color: #fff; padding: 8px 16px; border-radius: 10px; text-decoration: none; font-weight: 800; font-size: 0.8rem; display: flex; align-items: center; gap: 6px; transition: .3s; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 0 15px rgba(255,0,64,0.2); }
@@ -311,6 +313,10 @@
         .image-modal { display: none; position: fixed; inset: 0; z-index: 9999; padding-top: 50px; width: 100%; height: 100%; overflow: auto; background: rgba(0,0,0,0.9); align-items: center; justify-content: center; backdrop-filter: blur(20px); }
         .modal-content { margin: auto; display: block; max-width: 90%; max-height: 85vh; border: 3px solid var(--accent-cyan); box-shadow: 0 0 100px rgba(0,255,242,0.8); border-radius: 20px; }
         .close-modal { position: absolute; top: 30px; right: 40px; color: var(--accent-cyan); font-size: 50px; font-weight: 900; cursor: pointer; z-index: 10000; text-shadow: 0 0 20px var(--accent-cyan); background: none; border: none; line-height: 1; }
+
+        /* Checkout Modal specific styling */
+        .checkout-input { width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 8px; background: rgba(0,0,0,0.4); color: #fff; border: 1px solid rgba(0,255,242,0.3); font-family: 'Inter', sans-serif; transition: 0.3s; }
+        .checkout-input:focus { border-color: var(--accent-cyan); outline: none; box-shadow: 0 0 12px rgba(0,255,242,0.4); }
 
         a:focus-visible, button:focus-visible { outline: 3px solid var(--accent-cyan); outline-offset: 3px; border-radius: 8px; }
 
@@ -418,14 +424,43 @@
 
     <footer><p>© 2025 PBM Breaks · The Crystal League v3.0 · Not affiliated with Nintendo</p></footer>
 
-    <div id="myModal" class="image-modal" onclick="closeModal()">
+    <!-- Standard Image Modal -->
+    <div id="myModal" class="image-modal" onclick="if(event.target===this) closeModal()">
         <button class="close-modal" aria-label="Close image">&times;</button>
         <img class="modal-content" id="img01" alt="Expanded item image">
+    </div>
+
+    <!-- NEW Checkout Modal for Single Packs -->
+    <div id="checkoutModal" class="image-modal" onclick="if(event.target===this) closeCheckout()">
+        <div class="modal-content glass-panel" style="background:var(--bg-dark); padding:2.5rem; width:100%; max-width:550px; border-radius:16px; border:2px solid var(--accent-cyan); position:relative; box-shadow: 0 0 60px rgba(0,255,242,0.4); text-align: left;">
+            <button class="close-modal" style="top:15px; right:20px; font-size:35px;" onclick="closeCheckout()">&times;</button>
+            <h2 id="co-title" style="color:var(--accent-cyan); margin-bottom:1.5rem; font-family:'Tilt Neon', sans-serif; text-shadow: 0 0 15px rgba(0,255,242,0.4);">Secure Your Packs</h2>
+            
+            <label style="font-weight: 700; color: var(--text-dim); margin-bottom: 6px; display: block;">Full Name</label>
+            <input type="text" id="co-name" class="checkout-input" placeholder="Ash Ketchum" required>
+            
+            <label style="font-weight: 700; color: var(--text-dim); margin-bottom: 6px; display: block;">Email Address</label>
+            <input type="email" id="co-email" class="checkout-input" placeholder="ash@pokemon.com" required>
+            
+            <label style="font-weight: 700; color: var(--text-dim); margin-bottom: 6px; display: block;">Shipping Info</label>
+            <textarea id="co-address" rows="3" class="checkout-input" style="resize:vertical;" placeholder="Full mailing address..." required></textarea>
+            
+            <label style="font-weight: 700; color: var(--text-dim); margin-bottom: 6px; display: block;">Quantity (<span id="co-bounds"></span>)</label>
+            <input type="number" id="co-qty" oninput="calcTotal()" class="checkout-input" required>
+            
+            <div style="font-size:1.8rem; font-weight:900; margin-bottom:1.5rem; color: #fff; text-shadow: 0 0 15px rgba(255,255,255,0.4);">Total: $<span id="co-total">0.00</span></div>
+            
+            <button id="co-pay-btn" onclick="submitCheckout()" class="buy-btn msrp-btn" style="width:100%; border:none;">
+                <span>PAY NOW</span>
+                <span class="btn-subtext">Redirects to Streamlabs Checkout</span>
+            </button>
+        </div>
     </div>
 
     <script>
         const API_URL = 'https://pokeballer-worker.kronborgnielsen.workers.dev/api';
         let timerInterval = null;
+        window.storeItems = []; // Globably store items to access in the modal
 
         const wait = ms => new Promise(r => setTimeout(r, ms));
         function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
@@ -607,6 +642,12 @@
                 wrapper: 'card-msrp', tag: 'tag-msrp', tagHTML: '<i class="ph-fill ph-seal-check"></i> MSRP BREAK', ribbon: 'rb-green',
                 btn: 'buy-btn msrp-btn', btnText: 'JOIN THE WHEEL', btnSub: 'Direct price, live hits',
                 perks: '<span class="perk perk-msrp"><i class="ph-fill ph-tag"></i> Great Value</span><span class="perk perk-ship"><i class="ph-fill ph-truck"></i> Shipping included</span>'
+            },
+            pack: {
+                headerClass: 'th-pack', icon: 'ph-package', title: 'SINGLE PACKS', tagline: 'Build your custom quantity',
+                wrapper: 'card-msrp', tag: 'tag-pack', tagHTML: '<i class="ph-fill ph-package"></i> SINGLE PACKS', ribbon: 'rb-green',
+                btn: 'buy-btn msrp-btn', btnText: 'BUY PACKS', btnSub: 'Select quantity',
+                perks: '<span class="perk perk-msrp"><i class="ph-fill ph-package"></i> Custom Qty</span><span class="perk perk-ship"><i class="ph-fill ph-truck"></i> Shipping included</span>'
             }
         };
 
@@ -631,9 +672,15 @@
             if (item.scheduleEnd) dateRowHTML = `<div class="date-row"><i class="ph-fill ph-calendar-x"></i> Closes ${formatCloseDate(item.scheduleEnd)}</div>`;
 
             let btnHTML;
-            if (isEnded) btnHTML = '<div class="buy-btn sold-out">BREAK CLOSED</div>';
-            else if (item.googleFormLink) btnHTML = `<a href="${esc(item.googleFormLink)}" target="_blank" rel="noopener" class="${t.btn}" onclick="trackClick('${id}')"><span>${t.btnText}</span><span class="btn-subtext">${t.btnSub}</span></a>`;
-            else btnHTML = '<div class="buy-btn sold-out" style="background:#555;border-color:#777;">COMING SOON</div>';
+            if (isEnded) {
+                btnHTML = '<div class="buy-btn sold-out">BREAK CLOSED</div>';
+            } else if (tier === 'pack') {
+                btnHTML = `<button onclick="openCheckout('${id}')" class="${t.btn}" style="border:none; width:100%; cursor:pointer;"><span>${t.btnText}</span><span class="btn-subtext">${t.btnSub}</span></button>`;
+            } else if (item.googleFormLink) {
+                btnHTML = `<a href="${esc(item.googleFormLink)}" target="_blank" rel="noopener" class="${t.btn}" onclick="trackClick('${id}')"><span>${t.btnText}</span><span class="btn-subtext">${t.btnSub}</span></a>`;
+            } else {
+                btnHTML = '<div class="buy-btn sold-out" style="background:#555;border-color:#777;">COMING SOON</div>';
+            }
 
             const img = item.image || 'https://assets.pokemon.com/assets/cms2/img/misc/trading-card-games/cards/tcg_default_card.png';
             const tagPosClass = isOpen ? '' : ' no-ribbon';
@@ -652,7 +699,7 @@
                             ${dateRowHTML}
                             <p>${esc(item.description)}</p>
                             <div class="perk-row">${t.perks}</div>
-                            <div class="price-row"><span class="price">$${money(item.price)}</span><span class="stock">${toInt(item.stock)} Break Spots</span></div>
+                            <div class="price-row"><span class="price">$${money(item.price)}</span><span class="stock">${toInt(item.stock)} Spots</span></div>
                             <div id="btn-container-${id}">${btnHTML}</div>
                         </div>
                     </div>
@@ -670,16 +717,18 @@
                 if (!Array.isArray(items)) throw new Error(items && items.error ? items.error : 'Bad data');
 
                 items.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+                window.storeItems = items; // Store for the modal to access easily
 
-                const groups = { baller: [], bundle: [], msrp: [] };
+                const groups = { baller: [], bundle: [], msrp: [], pack: [] };
                 items.forEach(item => {
                     if (!item || item.hidden) return;
                     if (item.type === 'baller') groups.baller.push(item);
                     else if (item.type === 'bundle') groups.bundle.push(item);
                     else if (item.type === 'msrp') groups.msrp.push(item);
+                    else if (item.type === 'pack') groups.pack.push(item);
                 });
 
-                const total = groups.baller.length + groups.bundle.length + groups.msrp.length;
+                const total = groups.baller.length + groups.bundle.length + groups.msrp.length + groups.pack.length;
 
                 if (total === 0) {
                     sections.innerHTML = `
@@ -704,7 +753,7 @@
                 }
 
                 let html = '';
-                ['baller', 'bundle', 'msrp'].forEach(tier => {
+                ['baller', 'bundle', 'msrp', 'pack'].forEach(tier => {
                     if (groups[tier].length === 0) return;
                     const t = TIERS[tier];
                     html += `
@@ -766,9 +815,115 @@
 
         function startCountdownTimer() { if (timerInterval) clearInterval(timerInterval); updateTimers(); timerInterval = setInterval(updateTimers, 5000); }
         function trackClick(id) { fetch(`${API_URL}/click`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }), keepalive: true }).catch(() => {}); return true; }
+        
+        /* ---------- IMAGE MODAL ---------- */
         function openModal(src) { document.getElementById('myModal').style.display = 'flex'; document.getElementById('img01').src = src; }
         function closeModal() { document.getElementById('myModal').style.display = 'none'; }
-        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+        
+        /* ---------- CHECKOUT MODAL LOGIC ---------- */
+        let activeCheckoutItem = null;
+        
+        function openCheckout(id) {
+            activeCheckoutItem = window.storeItems.find(i => String(i.id) === String(id));
+            if (!activeCheckoutItem) return;
+            
+            document.getElementById('co-title').innerText = activeCheckoutItem.name;
+            
+            const minB = parseInt(activeCheckoutItem.minBuy) || 1;
+            const maxB = Math.min(parseInt(activeCheckoutItem.maxBuy) || 10, parseInt(activeCheckoutItem.stock) || 1);
+            
+            document.getElementById('co-bounds').innerText = `Min: ${minB}, Max: ${maxB}`;
+            
+            const qtyEl = document.getElementById('co-qty');
+            qtyEl.min = minB;
+            qtyEl.max = maxB;
+            qtyEl.value = minB;
+            
+            document.getElementById('co-name').value = '';
+            document.getElementById('co-email').value = '';
+            document.getElementById('co-address').value = '';
+            
+            calcTotal();
+            document.getElementById('checkoutModal').style.display = 'flex';
+        }
+        
+        function closeCheckout() { 
+            document.getElementById('checkoutModal').style.display = 'none'; 
+            activeCheckoutItem = null;
+            
+            const btn = document.getElementById('co-pay-btn');
+            btn.disabled = false;
+            btn.innerHTML = `<span>PAY NOW</span><span class="btn-subtext">Redirects to Streamlabs Checkout</span>`;
+        }
+
+        function calcTotal() {
+            if (!activeCheckoutItem) return;
+            let qty = parseInt(document.getElementById('co-qty').value, 10) || 0;
+            const minB = parseInt(activeCheckoutItem.minBuy) || 1;
+            const maxB = Math.min(parseInt(activeCheckoutItem.maxBuy) || 10, parseInt(activeCheckoutItem.stock) || 1);
+            
+            // Constrain display quantity to limits
+            if (qty > maxB) qty = maxB;
+            if (qty < minB) qty = minB;
+            
+            const total = (qty * parseFloat(activeCheckoutItem.price)).toFixed(2);
+            document.getElementById('co-total').innerText = total;
+        }
+
+        async function submitCheckout() {
+            if (!activeCheckoutItem) return;
+            
+            const name = document.getElementById('co-name').value.trim();
+            const email = document.getElementById('co-email').value.trim();
+            const address = document.getElementById('co-address').value.trim();
+            let qty = parseInt(document.getElementById('co-qty').value, 10) || 0;
+            
+            if (!name || !email || !address || !qty) {
+                alert('Please fill out all shipping details before paying.');
+                return;
+            }
+
+            const minB = parseInt(activeCheckoutItem.minBuy) || 1;
+            const maxB = Math.min(parseInt(activeCheckoutItem.maxBuy) || 10, parseInt(activeCheckoutItem.stock) || 1);
+            
+            if (qty > maxB || qty < minB) {
+                alert(`Please select a quantity between ${minB} and ${maxB}.`);
+                return;
+            }
+
+            const total = (qty * parseFloat(activeCheckoutItem.price)).toFixed(2);
+            
+            const btn = document.getElementById('co-pay-btn');
+            btn.disabled = true;
+            btn.innerHTML = `<span>PROCESSING...</span><span class="btn-subtext">Securing your packs</span>`;
+
+            try {
+                // Post to your worker to handle the email notification before redirecting
+                await fetch(`${API_URL}/purchase-notification`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        itemName: activeCheckoutItem.name,
+                        itemId: activeCheckoutItem.id,
+                        qty: qty,
+                        totalPrice: total,
+                        buyerName: name,
+                        buyerEmail: email,
+                        buyerAddress: address,
+                        notifyEmail: 'pokeballer4free@gmail.com'
+                    })
+                });
+            } catch (e) {
+                console.error('Notification endpoint failed, but continuing to checkout', e);
+            }
+            
+            // Redirect to Streamlabs 
+            window.location.href = "https://streamlabs.com/pokballer/tip";
+        }
+        
+        document.addEventListener('keydown', e => { 
+            if (e.key === 'Escape') { closeModal(); closeCheckout(); } 
+        });
 
         const canMotion = window.matchMedia && window.matchMedia('(pointer:fine)').matches && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
