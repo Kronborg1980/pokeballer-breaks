@@ -255,6 +255,9 @@
                 <div class="open-note"><i class="ph-fill ph-broadcast"></i> Breaks are OPEN the moment you save them. They close when the timer below runs out (or stock hits 0).</div>
 
                 <div id="close-time-container">
+                    <label for="item-go-live-time" style="color:var(--accent-cyan);">🚀 Go Live Time (US Central - Optional)</label>
+                    <input type="datetime-local" id="item-go-live-time" style="border:1px solid var(--accent-cyan);">
+
                     <label for="item-schedule-end" style="color:#ff8ba7;">🔴 Close time (US Central)</label>
                     <input type="datetime-local" id="item-schedule-end">
                     <div class="chip-row">
@@ -540,6 +543,7 @@
                 const hidden = selectedHidden;
                 const condition = type === 'raw' ? document.getElementById('item-condition').value : null;
                 const grader = type === 'slab' ? document.getElementById('item-grader').value : null;
+                const goLiveTime = document.getElementById('item-go-live-time').value;
                 const scheduleEnd = document.getElementById('item-schedule-end').value;
                 const desc = document.getElementById('item-description').value;
                 const price = Number(document.getElementById('item-price').value);
@@ -570,7 +574,7 @@
                     stock, googleFormLink: form, image: img, images: imagesArray,
                     clickCount: editingId ? currentClicks : 0,
                     createdAt: editingId ? currentCreatedAt : Date.now(),
-                    hidden, scheduleDate: '', scheduleEnd, condition, grader,
+                    hidden, scheduleDate: '', scheduleEnd, goLiveTime, condition, grader,
                     minBuy, maxBuy
                 };
 
@@ -593,7 +597,7 @@
 
         function resetForm() {
             editingId = null; currentImage = ''; currentImages = []; currentCreatedAt = null; currentClicks = 0;
-            ['item-name', 'item-description', 'item-price', 'item-google-form-link', 'item-schedule-end'].forEach(id => document.getElementById(id).value = '');
+            ['item-name', 'item-description', 'item-price', 'item-google-form-link', 'item-schedule-end', 'item-go-live-time'].forEach(id => document.getElementById(id).value = '');
             document.getElementById('item-stock').value = '1';
             document.getElementById('item-min-buy').value = '1';
             document.getElementById('item-max-buy').value = '10';
@@ -676,19 +680,27 @@
                 const imgCount = item.images && item.images.length > 1 ? `<span class="badge" style="background:#444;border:1px solid #777;"><i class="ph-fill ph-images"></i> ${item.images.length}</span>` : '';
                 const opacity = item.hidden ? 'opacity:0.6;' : '';
 
-                /* Open / closed status */
+                /* Open / closed / upcoming status */
                 let statusBadge = '';
                 const isBreak = item.type === 'msrp' || item.type === 'bundle' || item.type === 'baller' || item.type === 'pack';
                 if (isBreak && !item.hidden) {
                     const endMs = centralToMs(item.scheduleEnd);
+                    const goLiveMs = centralToMs(item.goLiveTime);
                     const closed = toInt(item.stock) <= 0 || (endMs && now >= endMs);
-                    statusBadge = closed
-                        ? '<span class="badge b-closed"><i class="ph-fill ph-lock"></i> CLOSED</span>'
-                        : '<span class="badge b-open"><i class="ph-fill ph-broadcast"></i> OPEN</span>';
+                    const upcoming = !closed && (goLiveMs && now < goLiveMs);
+                    
+                    if (closed) {
+                        statusBadge = '<span class="badge b-closed"><i class="ph-fill ph-lock"></i> CLOSED</span>';
+                    } else if (upcoming) {
+                        statusBadge = '<span class="badge" style="background:#555; color:#fff;"><i class="ph-fill ph-clock-countdown"></i> UPCOMING</span>';
+                    } else {
+                        statusBadge = '<span class="badge b-open"><i class="ph-fill ph-broadcast"></i> OPEN</span>';
+                    }
                 }
 
                 let timeBadge = '';
-                if (item.scheduleEnd) timeBadge = `<span class="badge b-time"><i class="ph-fill ph-clock"></i> Closes ${esc(formatLiteralDate(item.scheduleEnd))}</span>`;
+                if (item.goLiveTime) timeBadge += `<span class="badge b-time" style="background:rgba(0,255,242,0.1); border-color:var(--accent-cyan); color:var(--accent-cyan);"><i class="ph-fill ph-rocket"></i> Lives @ ${esc(formatLiteralDate(item.goLiveTime))}</span> `;
+                if (item.scheduleEnd) timeBadge += `<span class="badge b-time"><i class="ph-fill ph-clock"></i> Closes ${esc(formatLiteralDate(item.scheduleEnd))}</span>`;
 
                 const isPack = item.type === 'pack';
                 const stockLabel = isPack ? 'Packs' : 'Stock';
@@ -733,6 +745,7 @@
             selectedHidden = !!item.hidden;
             document.querySelectorAll('.vis-pill').forEach(p => p.classList.toggle('selected', (p.dataset.vis === 'true') === selectedHidden));
             document.getElementById('item-schedule-end').value = (item.scheduleEnd && item.scheduleEnd.indexOf('T') > -1) ? item.scheduleEnd : '';
+            document.getElementById('item-go-live-time').value = (item.goLiveTime && item.goLiveTime.indexOf('T') > -1) ? item.goLiveTime : '';
             document.getElementById('item-name').value = item.name || '';
             document.getElementById('item-description').value = item.description || '';
             document.getElementById('item-price').value = item.price != null ? item.price : '';
