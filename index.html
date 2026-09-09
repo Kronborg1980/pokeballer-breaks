@@ -253,7 +253,7 @@
         .card-closed::before { animation-play-state: paused !important; opacity: 0.25 !important; }
         .card-closed:hover { transform: none; }
 
-        /* --- NEW UPCOMING VISUAL FIXES --- */
+        /* --- UPCOMING VISUAL FIXES --- */
         .card-upcoming { filter: none !important; }
         .card-upcoming .item-img-box::after {
             content: ''; position: absolute; inset: 0;
@@ -403,7 +403,7 @@
     <div id="checkoutModal" class="image-modal" onclick="if(event.target===this) closeCheckout()">
         <div class="glass-panel" style="background:rgba(12,12,24,0.96); padding:2rem; width:100%; max-width:500px; border-radius:20px; border:2px solid var(--accent-cyan); position:relative; box-shadow: 0 0 60px rgba(0,255,242,0.35);">
             <button class="close-modal" style="top:15px; right:18px; font-size:35px;" onclick="closeCheckout()">&times;</button>
-            <h2 id="co-title" style="color:var(--accent-cyan); margin-bottom:1.2rem; font-family:'Tilt Neon', sans-serif;">Select Pack Quantity</h2>
+            <h2 id="co-title" style="color:var(--accent-cyan); margin-bottom:1.2rem; font-family:'Tilt Neon', sans-serif;">Select Quantity</h2>
 
             <label style="font-weight: 700; color: var(--text-dim); margin-bottom: 6px; font-size:0.85rem; display: block;">Quantity to Buy (<span id="co-bounds" style="color:#00ff9d;"></span>)</label>
             <div class="qty-control-row">
@@ -663,8 +663,11 @@
             const img = item.image || 'https://assets.pokemon.com/assets/cms2/img/misc/trading-card-games/cards/tcg_default_card.png';
             const tagPosClass = isOpen ? '' : ' no-ribbon';
 
-            // Distinct text: "Packs in stock" for packs, "Break Spots" for breaks
-            const stockLabel = tier === 'pack' ? `${stockNum} Packs in stock` : `${stockNum} Break Spots`;
+            // Feature: dynamic label choice from the worker
+            let labelText = 'Packs in stock';
+            if (item.stockLabelType === 'bundles') labelText = 'Bundles in stock';
+            if (item.stockLabelType === 'spots') labelText = 'Break Spots';
+            const stockLabel = `${stockNum} ${labelText}`;
 
             return `
                 <div class="neon-card-wrapper ${wrapperClass}" id="card-${id}">
@@ -793,6 +796,7 @@
                 const distance = target - now;
 
                 if (distance <= 0) {
+                    // Timer hit 0! Change UI briefly and reload data.
                     w.classList.remove('live-countdown');
                     w.innerHTML = `<span>OPENING NOW...</span><span class="btn-subtext" style="color:var(--accent-cyan);">Fetching store items</span>`;
                     setTimeout(loadStore, 1000);
@@ -820,7 +824,7 @@
         function startCountdownTimer() { 
             if (timerInterval) clearInterval(timerInterval); 
             updateTimers(); 
-            timerInterval = setInterval(updateTimers, 1000); 
+            timerInterval = setInterval(updateTimers, 1000); // Ticks every 1 second for precision
         }
         function trackClick(id) { fetch(`${API_URL}/click`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }), keepalive: true }).catch(() => {}); return true; }
 
@@ -936,11 +940,13 @@
                 return;
             }
 
+            // A malformed address makes the order email bounce, so catch it here
             if (!isEmail(email)) {
                 alert('That email address does not look right. Check it and try again.');
                 return;
             }
 
+            // Hard enforcement of limits
             if (isNaN(qty) || qty < min) {
                 alert(`You cannot purchase less than the minimum of ${min} pack${min > 1 ? 's' : ''}.`);
                 document.getElementById('co-qty').value = min;
@@ -979,6 +985,9 @@
 
                 const result = await res.json();
 
+                // The worker reports exactly what happened to the order email.
+                // Open the browser console (F12) after a test order to read this.
+                console.log('Order response:', result);
                 if (result.emailStatus && result.emailStatus !== 'sent') {
                     console.warn('ORDER EMAIL NOT SENT →', result.emailStatus);
                 }
@@ -990,10 +999,16 @@
                     return;
                 }
 
+                // Decrement stock live on the page card immediately
                 if (result.remainingStock != null) {
                     activeCheckoutItem.stock = result.remainingStock;
                     const badge = document.getElementById(`stock-badge-${activeCheckoutItem.id}`);
-                    if (badge) badge.innerText = `${result.remainingStock} Packs in stock`;
+                    
+                    let labelTxt = 'Packs in stock';
+                    if (activeCheckoutItem.stockLabelType === 'bundles') labelTxt = 'Bundles in stock';
+                    if (activeCheckoutItem.stockLabelType === 'spots') labelTxt = 'Break Spots';
+
+                    if (badge) badge.innerText = `${result.remainingStock} ${labelTxt}`;
 
                     if (result.remainingStock <= 0) {
                         const btnBox = document.getElementById(`btn-container-${activeCheckoutItem.id}`);
@@ -1009,6 +1024,7 @@
                 console.error('Purchase request failed:', e);
             }
 
+            // Redirect to tip page
             window.location.href = "https://streamlabs.com/pokballer/tip";
         }
 
