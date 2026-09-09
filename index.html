@@ -253,6 +253,28 @@
         .card-closed::before { animation-play-state: paused !important; opacity: 0.25 !important; }
         .card-closed:hover { transform: none; }
 
+        /* --- NEW UPCOMING VISUAL FIXES --- */
+        .card-upcoming { filter: none !important; }
+        .card-upcoming .item-img-box::after {
+            content: ''; position: absolute; inset: 0;
+            background: rgba(0, 0, 0, 0.45); pointer-events: none;
+        }
+        .rb-upcoming {
+            background: linear-gradient(90deg, #0f2027, #203a43, #2c5364);
+            color: #fff; border-bottom: 1px solid #4bc0c8;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); text-shadow: none;
+        }
+        .upcoming-btn {
+            background: rgba(10, 20, 30, 0.8) !important;
+            border: 1px solid rgba(0, 255, 242, 0.4) !important;
+            color: #fff !important; pointer-events: none; box-shadow: none !important;
+        }
+        .upcoming-btn .btn-subtext {
+            display: block !important;
+            color: var(--accent-cyan) !important;
+            font-size: 0.9rem; margin-top: 5px; text-shadow: 0 0 10px rgba(0, 255, 242, 0.6);
+        }
+
         .skeleton { position: relative; overflow: hidden; background: rgba(255,255,255,0.03); border-radius: 24px; min-height: 450px; border: 1px solid rgba(0,255,242,0.15); box-shadow: 0 0 30px rgba(0,255,242,0.05); }
         .skeleton::after { content: ''; position: absolute; inset: 0; transform: translateX(-100%); background: linear-gradient(90deg, transparent, rgba(0,255,242,0.08), transparent); animation: shimmer 1.6s infinite; }
         @keyframes shimmer { 100% { transform: translateX(100%); } }
@@ -617,8 +639,8 @@
                 ribbonHTML = `<div class="live-ribbon ${t.ribbon}"><span class="live-dot"></span> OPEN NOW <span class="live-dot"></span></div>`;
                 if (endTime) timeBadgeHTML = `<div class="time-tag-bottom close-watch" data-end="${esc(item.scheduleEnd)}" data-id="${id}"><i class="ph-fill ph-calendar-x"></i> CLOSES ${formatCloseShort(item.scheduleEnd)}</div>`;
             } else if (isFuture) {
-                wrapperClass += ' card-closed';
-                ribbonHTML = `<div class="live-ribbon" style="background:#333; background-image:none; color:#fff; text-shadow:none; box-shadow:none;"><span class="live-dot" style="background:transparent;box-shadow:none;animation:none;"></span> UPCOMING <span class="live-dot" style="background:transparent;box-shadow:none;animation:none;"></span></div>`;
+                wrapperClass += ' card-upcoming';
+                ribbonHTML = `<div class="live-ribbon rb-upcoming">UPCOMING BREAK</div>`;
             } else {
                 wrapperClass += ' card-closed';
             }
@@ -629,7 +651,7 @@
             if (isEnded) {
                 btnHTML = tier === 'pack' ? '<div class="buy-btn sold-out">SOLD OUT</div>' : '<div class="buy-btn sold-out">BREAK CLOSED</div>';
             } else if (isFuture) {
-                btnHTML = `<div class="buy-btn sold-out live-countdown" style="background:#222;border-color:#444;" data-live="${esc(item.goLiveTime)}" id="btn-live-${id}"><span>GOING LIVE IN</span><span class="btn-subtext" style="color:var(--accent-cyan);">CALCULATING...</span></div>`;
+                btnHTML = `<div class="buy-btn upcoming-btn live-countdown" data-live="${esc(item.goLiveTime)}" id="btn-live-${id}"><span>GOING LIVE IN</span><span class="btn-subtext">CALCULATING...</span></div>`;
             } else if (tier === 'pack') {
                 btnHTML = `<button onclick="openCheckout('${id}')" class="${t.btn}" style="border:none; width:100%; cursor:pointer;"><span>${t.btnText}</span><span class="btn-subtext">${t.btnSub}</span></button>`;
             } else if (item.googleFormLink) {
@@ -771,7 +793,6 @@
                 const distance = target - now;
 
                 if (distance <= 0) {
-                    // Timer hit 0! Change UI briefly and reload data.
                     w.classList.remove('live-countdown');
                     w.innerHTML = `<span>OPENING NOW...</span><span class="btn-subtext" style="color:var(--accent-cyan);">Fetching store items</span>`;
                     setTimeout(loadStore, 1000);
@@ -799,7 +820,7 @@
         function startCountdownTimer() { 
             if (timerInterval) clearInterval(timerInterval); 
             updateTimers(); 
-            timerInterval = setInterval(updateTimers, 1000); // Ticks every 1 second for precision
+            timerInterval = setInterval(updateTimers, 1000); 
         }
         function trackClick(id) { fetch(`${API_URL}/click`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }), keepalive: true }).catch(() => {}); return true; }
 
@@ -915,13 +936,11 @@
                 return;
             }
 
-            // A malformed address makes the order email bounce, so catch it here
             if (!isEmail(email)) {
                 alert('That email address does not look right. Check it and try again.');
                 return;
             }
 
-            // Hard enforcement of limits
             if (isNaN(qty) || qty < min) {
                 alert(`You cannot purchase less than the minimum of ${min} pack${min > 1 ? 's' : ''}.`);
                 document.getElementById('co-qty').value = min;
@@ -960,9 +979,6 @@
 
                 const result = await res.json();
 
-                // The worker reports exactly what happened to the order email.
-                // Open the browser console (F12) after a test order to read this.
-                console.log('Order response:', result);
                 if (result.emailStatus && result.emailStatus !== 'sent') {
                     console.warn('ORDER EMAIL NOT SENT →', result.emailStatus);
                 }
@@ -974,7 +990,6 @@
                     return;
                 }
 
-                // Decrement stock live on the page card immediately
                 if (result.remainingStock != null) {
                     activeCheckoutItem.stock = result.remainingStock;
                     const badge = document.getElementById(`stock-badge-${activeCheckoutItem.id}`);
@@ -994,7 +1009,6 @@
                 console.error('Purchase request failed:', e);
             }
 
-            // Redirect to tip page
             window.location.href = "https://streamlabs.com/pokballer/tip";
         }
 
