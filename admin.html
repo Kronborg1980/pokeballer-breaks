@@ -30,7 +30,7 @@
         }
         @keyframes aurora { 0%,100% { background-position: 0% 0%, 100% 0%, 0 0; } 50% { background-position: 30% 20%, 70% 30%, 0 0; } }
         .led-topbar { position: fixed; top: 0; left: 0; right: 0; height: 4px; z-index: 100; background: linear-gradient(90deg, var(--accent), var(--purple), var(--gold), var(--live), var(--accent)); background-size: 300% 100%; animation: ledFlow 6s linear infinite; box-shadow: 0 0 18px rgba(0,255,242,0.7); }
-        @keyframes ledFlow { 0% { background-position: 0% 0; } 100% { background-position: 300% 0; } }
+        @keyframes ledFlow { 0% { background-position: 0% 0%; } 100% { background-position: 300% 0%; } }
         .grain { position: fixed; inset: 0; z-index: -2; pointer-events: none; background-image: var(--grain); background-size: 140px; opacity: 0.04; mix-blend-mode: overlay; }
         .suicune-bg { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 800px; opacity: 0.07; z-index: -1; pointer-events: none; filter: drop-shadow(0 0 80px var(--accent)); }
 
@@ -138,7 +138,6 @@
         .btn-del { background: #ff0055; } .btn-del:hover { background: #cc0044; }
         .btn-mail { background: linear-gradient(135deg, #bf953f, #b38728); color: #fff; } .btn-mail:hover { filter: brightness(1.2); }
 
-        /* ---------- WINNER EMAIL MODAL ---------- */
         textarea { width: 100%; padding: 12px; margin-bottom: 1rem; background: rgba(0,0,0,0.5); border: 1px solid #3a3a55; color: #fff; border-radius: 8px; font-size: 0.95rem; font-family: 'Inter', sans-serif; resize: vertical; transition: border-color .2s, box-shadow .2s; }
         textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 12px rgba(0,255,242,0.25); }
         .email-modal { display: none; position: fixed; inset: 0; z-index: 9998; background: rgba(0,0,0,0.75); backdrop-filter: blur(8px); align-items: flex-start; justify-content: center; overflow-y: auto; padding: 3rem 1rem; }
@@ -286,6 +285,16 @@
                     </div>
                 </div>
 
+                <!-- STOCK LABEL TYPE SELECTOR -->
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label for="stock-label-type">Stock Text Display</label>
+                    <select id="stock-label-type">
+                        <option value="packs">Packs in stock</option>
+                        <option value="bundles">Bundles in stock</option>
+                        <option value="spots">Break Spots</option>
+                    </select>
+                </div>
+
                 <div id="payment-link-container">
                     <label for="item-google-form-link">Payment link (PayPal.me / Stripe / Streamlabs)</label>
                     <input type="url" id="item-google-form-link" placeholder="https://…">
@@ -364,7 +373,6 @@
         let selectedType = 'msrp';
         let selectedHidden = false;
 
-        /* ---------- HELPERS ---------- */
         const wait = ms => new Promise(r => setTimeout(r, ms));
         function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
         function money(n) { const v = Number(n); return isFinite(v) ? v.toFixed(2) : '0.00'; }
@@ -395,7 +403,6 @@
             throw lastErr || new Error('Request failed');
         }
 
-        /* Same Central-time interpretation as the storefront */
         function centralToMs(localStr) {
             if (!localStr || localStr.indexOf('T') === -1) return null;
             try {
@@ -411,7 +418,6 @@
             } catch (e) { return new Date(localStr + '-06:00').getTime(); }
         }
 
-        /* ---------- BOOT ---------- */
         if (localStorage.getItem('adminToken')) {
             document.getElementById('login-section').style.display = 'none';
             document.getElementById('admin-section').style.display = 'block';
@@ -420,13 +426,11 @@
 
         document.getElementById('login-password').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
 
-        /* ---------- TIER TILES ---------- */
         function applyTypeUI() {
             document.querySelectorAll('.tier-tile').forEach(t => t.classList.toggle('selected', t.dataset.type === selectedType));
             document.getElementById('condition-container').style.display = selectedType === 'raw' ? 'block' : 'none';
             document.getElementById('grader-container').style.display = selectedType === 'slab' ? 'block' : 'none';
             
-            // Single pack specific visibility
             document.getElementById('pack-limits-container').style.display = selectedType === 'pack' ? 'block' : 'none';
             document.getElementById('payment-link-container').style.display = selectedType === 'pack' ? 'none' : 'block';
             document.getElementById('stock-label').innerText = selectedType === 'pack' ? 'Packs in stock' : 'Spots / stock';
@@ -443,7 +447,6 @@
         });
         applyTypeUI();
 
-        /* ---------- VISIBILITY PILLS ---------- */
         document.querySelectorAll('.vis-pill').forEach(pill => {
             const pick = () => {
                 selectedHidden = pill.dataset.vis === 'true';
@@ -453,7 +456,6 @@
             pill.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } });
         });
 
-        /* ---------- QUICK CLOSE CHIPS ---------- */
         function setClose(hours) {
             const input = document.getElementById('item-schedule-end');
             if (!hours) { input.value = ''; toast('Close time cleared — break stays open until stock runs out.'); return; }
@@ -483,7 +485,6 @@
             renderInventory();
         }
 
-        /* ---------- LOGIN ---------- */
         async function login() {
             const u = document.getElementById('login-username').value;
             const p = document.getElementById('login-password').value;
@@ -496,7 +497,6 @@
             } catch (e) { toast('Could not reach the server. Try again.', true); }
         }
 
-        /* ---------- IMAGE COMPRESSION (robust, never hangs) ---------- */
         function compressImage(file) {
             return new Promise(resolve => {
                 let settled = false;
@@ -528,7 +528,6 @@
             });
         }
 
-        /* ---------- SAVE ---------- */
         async function submitItem() {
             const btn = document.getElementById('submit-btn');
 
@@ -548,6 +547,7 @@
                 const desc = document.getElementById('item-description').value;
                 const price = Number(document.getElementById('item-price').value);
                 const stock = toInt(document.getElementById('item-stock').value, 1);
+                const stockLabelType = document.getElementById('stock-label-type').value;
                 
                 const minBuy = type === 'pack' ? toInt(document.getElementById('item-min-buy').value, 1) : null;
                 const maxBuy = type === 'pack' ? toInt(document.getElementById('item-max-buy').value, 10) : null;
@@ -563,7 +563,6 @@
                         if (result) compressed.push(result);
                     }
                     if (compressed.length > 0) imagesArray = compressed;
-                    else toast('Those images couldn\'t be processed — saving without new images.', true);
                 }
 
                 const img = imagesArray.length > 0 ? imagesArray[0] : (editingId ? currentImage : '');
@@ -571,7 +570,7 @@
                 const body = {
                     type, name, description: desc,
                     price: isFinite(price) ? price : 0,
-                    stock, googleFormLink: form, image: img, images: imagesArray,
+                    stock, stockLabelType, googleFormLink: form, image: img, images: imagesArray,
                     clickCount: editingId ? currentClicks : 0,
                     createdAt: editingId ? currentCreatedAt : Date.now(),
                     hidden, scheduleDate: '', scheduleEnd, goLiveTime, condition, grader,
@@ -588,10 +587,10 @@
                 loadItems();
             } catch (e) {
                 console.error('Save error:', e);
-                toast('Save failed — the server didn\'t confirm. Nothing was lost; try again.', true);
+                toast('Save failed — try again.', true);
             } finally {
                 btn.disabled = false;
-                if (btn.innerText === 'Processing & saving…') applyTypeUI();
+                applyTypeUI();
             }
         }
 
@@ -599,6 +598,7 @@
             editingId = null; currentImage = ''; currentImages = []; currentCreatedAt = null; currentClicks = 0;
             ['item-name', 'item-description', 'item-price', 'item-google-form-link', 'item-schedule-end', 'item-go-live-time'].forEach(id => document.getElementById(id).value = '');
             document.getElementById('item-stock').value = '1';
+            document.getElementById('stock-label-type').value = 'packs';
             document.getElementById('item-min-buy').value = '1';
             document.getElementById('item-max-buy').value = '10';
             document.getElementById('item-image').value = '';
@@ -625,19 +625,17 @@
             } catch (e) { return val; }
         }
 
-        /* ---------- LOAD + RENDER ---------- */
         async function loadItems() {
             const listContainer = document.getElementById('inventory-list');
             listContainer.innerHTML = '<div class="empty-state">Loading inventory…</div>';
             try {
                 const res = await fetchWithRetry(`${API_URL}/items`);
                 const items = await res.json();
-                if (!Array.isArray(items)) throw new Error(items && items.error ? items.error : 'Bad data');
+                if (!Array.isArray(items)) throw new Error('Bad data');
                 items.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
                 allItems = items;
                 renderInventory();
             } catch (e) {
-                console.error('Load error:', e);
                 listContainer.innerHTML = '<div class="empty-state">Couldn\'t load inventory. <button class="btn-edit" style="border:none;padding:6px 14px;border-radius:6px;cursor:pointer;color:#fff;font-weight:800;margin-left:8px;" onclick="loadItems()">Retry</button></div>';
             }
         }
@@ -667,20 +665,14 @@
                 if (item.type === 'baller') { badgeClass = 'b-baller'; badgeText = '<i class="ph-fill ph-crown"></i> BALLER'; }
                 else if (item.type === 'bundle') { badgeClass = 'b-bundle'; badgeText = '<i class="ph-fill ph-sketch-logo"></i> BUNDLE'; }
                 else if (item.type === 'pack') { badgeClass = 'b-pack'; badgeText = '<i class="ph-fill ph-package"></i> PACK'; }
-                else if (item.type === 'slab') {
-                    const g = item.grader;
-                    if (g === 'PSA') badgeClass = 'b-psa'; else if (g === 'BGS') badgeClass = 'b-bgs';
-                    else if (g === 'CGC') badgeClass = 'b-cgc'; else if (g === 'SGC') badgeClass = 'b-sgc';
-                    else if (g === 'ACE') badgeClass = 'b-ace'; else badgeClass = 'b-slab';
-                    badgeText = `🔍 ${esc(g || 'SLAB')}`;
-                } else if (item.type === 'raw') { badgeClass = 'b-raw'; badgeText = '🃏 RAW'; }
+                else if (item.type === 'slab') { badgeClass = 'b-slab'; badgeText = `🔍 ${esc(item.grader || 'SLAB')}`; }
+                else if (item.type === 'raw') { badgeClass = 'b-raw'; badgeText = '🃏 RAW'; }
 
                 const hiddenBadge = item.hidden ? '<span class="badge b-hidden"><i class="ph-fill ph-eye-slash"></i> HIDDEN</span>' : '';
                 const condBadge = item.type === 'raw' && item.condition ? `<span class="badge b-cond">${esc(item.condition)}</span>` : '';
                 const imgCount = item.images && item.images.length > 1 ? `<span class="badge" style="background:#444;border:1px solid #777;"><i class="ph-fill ph-images"></i> ${item.images.length}</span>` : '';
                 const opacity = item.hidden ? 'opacity:0.6;' : '';
 
-                /* Open / closed / upcoming status */
                 let statusBadge = '';
                 const isBreak = item.type === 'msrp' || item.type === 'bundle' || item.type === 'baller' || item.type === 'pack';
                 if (isBreak && !item.hidden) {
@@ -689,13 +681,9 @@
                     const closed = toInt(item.stock) <= 0 || (endMs && now >= endMs);
                     const upcoming = !closed && (goLiveMs && now < goLiveMs);
                     
-                    if (closed) {
-                        statusBadge = '<span class="badge b-closed"><i class="ph-fill ph-lock"></i> CLOSED</span>';
-                    } else if (upcoming) {
-                        statusBadge = '<span class="badge" style="background:#555; color:#fff;"><i class="ph-fill ph-clock-countdown"></i> UPCOMING</span>';
-                    } else {
-                        statusBadge = '<span class="badge b-open"><i class="ph-fill ph-broadcast"></i> OPEN</span>';
-                    }
+                    if (closed) statusBadge = '<span class="badge b-closed"><i class="ph-fill ph-lock"></i> CLOSED</span>';
+                    else if (upcoming) statusBadge = '<span class="badge" style="background:#555; color:#fff;"><i class="ph-fill ph-clock-countdown"></i> UPCOMING</span>';
+                    else statusBadge = '<span class="badge b-open"><i class="ph-fill ph-broadcast"></i> OPEN</span>';
                 }
 
                 let timeBadge = '';
@@ -703,7 +691,6 @@
                 if (item.scheduleEnd) timeBadge += `<span class="badge b-time"><i class="ph-fill ph-clock"></i> Closes ${esc(formatLiteralDate(item.scheduleEnd))}</span>`;
 
                 const isPack = item.type === 'pack';
-                const stockLabel = isPack ? 'Packs' : 'Stock';
                 const limitsBadge = isPack && item.minBuy ? `<span class="click-badge" style="margin-left:8px;">Min: ${item.minBuy} / Max: ${item.maxBuy}</span>` : '';
 
                 return `
@@ -718,7 +705,7 @@
                             <div class="item-meta">${timeBadge}</div>
                             <div class="item-meta">
                                 <span><strong>$${money(item.price)}</strong></span>
-                                <span>• ${stockLabel}: ${toInt(item.stock)}</span>
+                                <span>• Stock: ${toInt(item.stock)} (${item.stockLabelType || 'packs'})</span>
                                 ${limitsBadge}
                                 <span class="click-badge">🖱️ ${toInt(item.clickCount)}</span>
                             </div>
@@ -750,6 +737,7 @@
             document.getElementById('item-description').value = item.description || '';
             document.getElementById('item-price').value = item.price != null ? item.price : '';
             document.getElementById('item-stock').value = toInt(item.stock, 1);
+            document.getElementById('stock-label-type').value = item.stockLabelType || 'packs';
             document.getElementById('item-google-form-link').value = item.googleFormLink || '';
             document.getElementById('item-image').value = '';
             document.getElementById('item-condition').value = item.condition || 'Mint (M)';
@@ -776,7 +764,6 @@
             } catch (e) { toast('Delete failed — try again.', true); }
         }
 
-        /* ---------- WINNER EMAILS ---------- */
         const PAYMENT_LINK = 'https://streamlabs.com/pokballer/tip';
         let winnerItem = null;
         const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
@@ -812,9 +799,9 @@
             const emails = parseWinnerEmails();
 
             if (emails.length === 0) { toast('Add at least one valid email.', true); return; }
-            if (emails.length > 100) { toast('Max 100 emails per send (free-tier daily limit).', true); return; }
+            if (emails.length > 100) { toast('Max 100 emails per send.', true); return; }
             if (!/^https:\/\//.test(link)) { toast('Payment link must start with https://', true); return; }
-            if (!confirm(`Send "you've been picked" emails to ${emails.length} winner${emails.length === 1 ? '' : 's'}?`)) return;
+            if (!confirm(`Send emails to ${emails.length} winner${emails.length === 1 ? '' : 's'}?`)) return;
 
             const btn = document.getElementById('wm-send');
             btn.disabled = true;
@@ -838,13 +825,11 @@
                 document.getElementById('wm-result').innerHTML =
                     `<div class="wm-ok">✅ Sent: ${sent.length}</div>` +
                     (failed.length ? `<div class="wm-bad">⚠️ Failed: ${failed.map(f => esc(f.to || f)).join(', ')}</div>` : '');
-                toast(failed.length ? `Sent ${sent.length}, ${failed.length} failed — details in the panel.` : `All ${sent.length} winner emails sent! 🎉`, failed.length > 0);
+                toast(failed.length ? `Sent ${sent.length}, ${failed.length} failed.` : `All ${sent.length} winner emails sent! 🎉`, failed.length > 0);
                 document.getElementById('wm-emails').value = '';
                 document.getElementById('wm-count').textContent = '0 valid emails';
             } catch (e) {
-                console.error('Winner email error:', e);
-                const is401 = String(e && e.message).includes('401');
-                toast(is401 ? 'Session expired — log out and log back in, then send again.' : 'Sending failed — is the latest worker deployed?', true);
+                toast('Sending failed — verify session or worker.', true);
             } finally {
                 btn.disabled = false;
                 btn.innerText = 'Send winner emails';
