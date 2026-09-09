@@ -373,13 +373,11 @@
 
     <footer><p>© 2025 PBM Breaks · The Crystal League v3.0 · Not affiliated with Nintendo</p></footer>
 
-    <!-- Standard Image Modal -->
     <div id="myModal" class="image-modal" onclick="if(event.target===this) closeModal()">
         <button class="close-modal" aria-label="Close image">&times;</button>
         <img class="modal-content" id="img01" alt="Expanded item image">
     </div>
 
-    <!-- Checkout Modal for Single Packs -->
     <div id="checkoutModal" class="image-modal" onclick="if(event.target===this) closeCheckout()">
         <div class="glass-panel" style="background:rgba(12,12,24,0.96); padding:2rem; width:100%; max-width:500px; border-radius:20px; border:2px solid var(--accent-cyan); position:relative; box-shadow: 0 0 60px rgba(0,255,242,0.35);">
             <button class="close-modal" style="top:15px; right:18px; font-size:35px;" onclick="closeCheckout()">&times;</button>
@@ -395,7 +393,7 @@
             <label style="font-weight: 700; color: var(--text-dim); margin-bottom: 6px; font-size:0.85rem; display: block;">Full Name</label>
             <input type="text" id="co-name" class="checkout-input" placeholder="Your name">
 
-            <label style="font-weight: 700; color: var(--text-dim); margin-bottom: 6px; font-size:0.85rem; display: block;">Email Address</label>
+            <label style="font-weight: 700; color: var(--text-dim); margin-bottom: 6px; font-size:0.85rem; display: block;">Email Address <span style="color:#ff0040;font-size:0.75rem;">(Limit 1 purchase per pack type)</span></label>
             <input type="email" id="co-email" class="checkout-input" placeholder="you@example.com">
 
             <label style="font-weight: 700; color: var(--text-dim); margin-bottom: 6px; font-size:0.85rem; display: block;">Shipping Address</label>
@@ -603,10 +601,14 @@
             const t = TIERS[tier];
             const id = esc(item.id);
             const now = Date.now();
+            
             const endTime = centralToMs(item.scheduleEnd);
+            const goLiveTime = centralToMs(item.goLiveTime);
             const stockNum = toInt(item.stock);
+            
             const isEnded = stockNum <= 0 || (endTime && now >= endTime);
-            const isOpen = !isEnded;
+            const isFuture = goLiveTime && now < goLiveTime;
+            const isOpen = !isEnded && !isFuture;
 
             let ribbonHTML = '', wrapperClass = t.wrapper, timeBadgeHTML = '', dateRowHTML = '';
 
@@ -614,6 +616,9 @@
                 wrapperClass += ' card-live-now';
                 ribbonHTML = `<div class="live-ribbon ${t.ribbon}"><span class="live-dot"></span> OPEN NOW <span class="live-dot"></span></div>`;
                 if (endTime) timeBadgeHTML = `<div class="time-tag-bottom close-watch" data-end="${esc(item.scheduleEnd)}" data-id="${id}"><i class="ph-fill ph-calendar-x"></i> CLOSES ${formatCloseShort(item.scheduleEnd)}</div>`;
+            } else if (isFuture) {
+                wrapperClass += ' card-closed';
+                ribbonHTML = `<div class="live-ribbon" style="background:#333; background-image:none; color:#fff; text-shadow:none; box-shadow:none;"><span class="live-dot" style="background:transparent;box-shadow:none;animation:none;"></span> UPCOMING <span class="live-dot" style="background:transparent;box-shadow:none;animation:none;"></span></div>`;
             } else {
                 wrapperClass += ' card-closed';
             }
@@ -623,6 +628,8 @@
             let btnHTML;
             if (isEnded) {
                 btnHTML = tier === 'pack' ? '<div class="buy-btn sold-out">SOLD OUT</div>' : '<div class="buy-btn sold-out">BREAK CLOSED</div>';
+            } else if (isFuture) {
+                btnHTML = `<div class="buy-btn sold-out live-countdown" style="background:#222;border-color:#444;" data-live="${esc(item.goLiveTime)}" id="btn-live-${id}"><span>GOING LIVE IN</span><span class="btn-subtext" style="color:var(--accent-cyan);">CALCULATING...</span></div>`;
             } else if (tier === 'pack') {
                 btnHTML = `<button onclick="openCheckout('${id}')" class="${t.btn}" style="border:none; width:100%; cursor:pointer;"><span>${t.btnText}</span><span class="btn-subtext">${t.btnSub}</span></button>`;
             } else if (item.googleFormLink) {
@@ -727,9 +734,14 @@
 
         function updateTimers() {
             const watchers = document.querySelectorAll('.close-watch');
-            if (watchers.length === 0 && timerInterval) { clearInterval(timerInterval); timerInterval = null; return; }
+            const countdowns = document.querySelectorAll('.live-countdown');
+            
+            let activeTimers = false;
             const now = Date.now();
+
+            // 1. Process items about to close
             watchers.forEach(w => {
+                activeTimers = true;
                 const itemId = w.dataset.id;
                 const endTarget = centralToMs(w.dataset.end);
                 if (!endTarget) return;
@@ -750,9 +762,45 @@
                     w.classList.remove('close-watch');
                 }
             });
+
+            // 2. Process active Go-Live countdowns
+            countdowns.forEach(w => {
+                activeTimers = true;
+                const target = centralToMs(w.dataset.live);
+                if (!target) return;
+                const distance = target - now;
+
+                if (distance <= 0) {
+                    // Timer hit 0! Change UI briefly and reload data.
+                    w.classList.remove('live-countdown');
+                    w.innerHTML = `<span>OPENING NOW...</span><span class="btn-subtext" style="color:var(--accent-cyan);">Fetching store items</span>`;
+                    setTimeout(loadStore, 1000);
+                } else {
+                    const d = Math.floor(distance / (1000 * 60 * 60 * 24));
+                    const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    const s = Math.floor((distance % (1000 * 60)) / 1000);
+                    
+                    let str = '';
+                    if (d > 0) str += `${d}d `;
+                    if (h > 0 || d > 0) str += `${h}h `;
+                    str += `${m}m ${s}s`;
+
+                    w.innerHTML = `<span>GOING LIVE IN</span><span class="btn-subtext" style="color:var(--accent-cyan); font-size:0.9rem;">${str}</span>`;
+                }
+            });
+
+            if (!activeTimers && timerInterval) { 
+                clearInterval(timerInterval); 
+                timerInterval = null; 
+            }
         }
 
-        function startCountdownTimer() { if (timerInterval) clearInterval(timerInterval); updateTimers(); timerInterval = setInterval(updateTimers, 5000); }
+        function startCountdownTimer() { 
+            if (timerInterval) clearInterval(timerInterval); 
+            updateTimers(); 
+            timerInterval = setInterval(updateTimers, 1000); // Ticks every 1 second for precision
+        }
         function trackClick(id) { fetch(`${API_URL}/click`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }), keepalive: true }).catch(() => {}); return true; }
 
         function openModal(src) { document.getElementById('myModal').style.display = 'flex'; document.getElementById('img01').src = src; }
@@ -894,7 +942,7 @@
             btn.innerHTML = `<span>RESERVING PACKS...</span><span class="btn-subtext">Connecting to payment</span>`;
 
             try {
-                // Decrement stock in KV and dispatch notification email
+                // Decrement stock in KV, enforce 1-purchase per pack per email, and dispatch notification email
                 const res = await fetch(`${API_URL}/purchase-notification`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
