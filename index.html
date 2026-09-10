@@ -227,6 +227,7 @@
         .card-pack-tier .price { color: #ff9900; text-shadow: 0 0 25px rgba(255,153,0,0.7), 0 0 55px rgba(255,153,0,0.35); }
 
         .stock { font-size: 0.9rem; color: var(--text-dim); background: rgba(0,255,242,0.08); padding: 6px 14px; border-radius: 30px; font-weight: 700; border: 1px solid rgba(0,255,242,0.2); }
+        .limit-note { display: block; text-align: center; font-size: 0.72rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: #ff9900; margin-top: 10px; opacity: 0.9; }
 
         .buy-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 1.2rem; border-radius: 16px; background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple)); color: #fff; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 1.1rem; letter-spacing: 1.5px; line-height: 1.1; transition: transform .4s cubic-bezier(0.25,0.8,0.25,1), box-shadow .4s; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.3); cursor: pointer; box-shadow: 0 10px 30px rgba(0,255,242,0.3), inset 0 2px 0 rgba(255,255,255,0.4); will-change: transform; }
         .buy-btn:hover { transform: translateY(-5px); box-shadow: 0 0 50px rgba(189,0,255,0.8); border-color: #fff; }
@@ -332,10 +333,15 @@
         .checkout-input { width: 100%; padding: 12px 14px; margin-bottom: 14px; border-radius: 8px; background: rgba(0,0,0,0.5); color: #fff; border: 1px solid #3a3a55; font-family: 'Inter', sans-serif; font-size: 0.95rem; transition: 0.2s; }
         .checkout-input:focus { border-color: var(--accent-cyan); outline: none; box-shadow: 0 0 12px rgba(0,255,242,0.3); }
 
-        .qty-control-row { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
+        .qty-control-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
         .qty-btn { width: 44px; height: 44px; border-radius: 8px; background: rgba(255,255,255,0.08); border: 1px solid #4a4a66; color: #fff; font-size: 1.4rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; user-select: none; }
-        .qty-btn:hover { background: rgba(0,255,242,0.2); border-color: var(--accent-cyan); }
+        .qty-btn:hover:not(:disabled) { background: rgba(0,255,242,0.2); border-color: var(--accent-cyan); }
         .qty-btn:active { transform: scale(0.95); }
+        .qty-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        .qty-warning { color: #ff9900; font-size: 0.82rem; font-weight: 700; min-height: 20px; margin-bottom: 10px; }
+        .co-error { color: #ff5577; font-size: 0.9rem; font-weight: 700; margin-bottom: 10px; min-height: 20px; }
+        .ref-box { background: rgba(0,255,242,0.08); border: 1px solid var(--accent-cyan); border-radius: 12px; padding: 16px; text-align: center; margin-bottom: 14px; }
+        .ref-code { font-size: 1.8rem; font-weight: 900; letter-spacing: 3px; color: var(--accent-cyan); text-shadow: 0 0 18px rgba(0,255,242,0.6); display: block; margin: 6px 0; }
 
         a:focus-visible, button:focus-visible { outline: 3px solid var(--accent-cyan); outline-offset: 3px; border-radius: 8px; }
 
@@ -405,36 +411,58 @@
             <button class="close-modal" style="top:15px; right:18px; font-size:35px;" onclick="closeCheckout()">&times;</button>
             <h2 id="co-title" style="color:var(--accent-cyan); margin-bottom:1.2rem; font-family:'Tilt Neon', sans-serif;">Select Quantity</h2>
 
-            <label style="font-weight: 700; color: var(--text-dim); margin-bottom: 6px; font-size:0.85rem; display: block;">Quantity to Buy (<span id="co-bounds" style="color:#00ff9d;"></span>)</label>
-            <div class="qty-control-row">
-                <button type="button" class="qty-btn" onclick="stepQty(-1)">-</button>
-                <input type="number" id="co-qty" class="checkout-input" style="margin-bottom:0; text-align:center; font-size:1.25rem; font-weight:800;" oninput="onQtyInput()" onblur="clampQtyOnBlur()">
-                <button type="button" class="qty-btn" onclick="stepQty(1)">+</button>
+            <div id="co-form">
+                <label style="font-weight: 700; color: var(--text-dim); margin-bottom: 6px; font-size:0.85rem; display: block;">Quantity to Buy (<span id="co-bounds" style="color:#00ff9d;"></span>)</label>
+                <div class="qty-control-row">
+                    <button type="button" class="qty-btn" id="co-minus" onclick="stepQty(-1)">-</button>
+                    <input type="number" id="co-qty" class="checkout-input" style="margin-bottom:0; text-align:center; font-size:1.25rem; font-weight:800;" step="1" inputmode="numeric" oninput="onQtyInput()" onblur="clampQtyOnBlur()">
+                    <button type="button" class="qty-btn" id="co-plus" onclick="stepQty(1)">+</button>
+                </div>
+                <div class="qty-warning" id="co-qty-warning"></div>
+
+                <label style="font-weight: 700; color: var(--text-dim); margin-bottom: 6px; font-size:0.85rem; display: block;">Full Name</label>
+                <input type="text" id="co-name" class="checkout-input" placeholder="Your name">
+
+                <label style="font-weight: 700; color: var(--text-dim); margin-bottom: 6px; font-size:0.85rem; display: block;">Email Address <span style="color:#ff0040;font-size:0.75rem;">(Limit 1 purchase per pack type)</span></label>
+                <input type="email" id="co-email" class="checkout-input" placeholder="you@example.com">
+
+                <label style="font-weight: 700; color: var(--text-dim); margin-bottom: 6px; font-size:0.85rem; display: block;">Shipping Address</label>
+                <textarea id="co-address" rows="3" class="checkout-input" style="resize:vertical;" placeholder="Full mailing address with postal code"></textarea>
+
+                <div style="display:flex; justify-content:space-between; align-items:center; margin: 1.2rem 0; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);">
+                    <span style="font-size:1.1rem; color:var(--text-dim); font-weight:700;">Total to Pay:</span>
+                    <span style="font-size:2rem; font-weight:900; color:#ffd700; text-shadow:0 0 15px rgba(255,215,0,0.5);">$<span id="co-total">0.00</span></span>
+                </div>
+
+                <div class="co-error" id="co-error"></div>
+
+                <button id="co-pay-btn" onclick="submitCheckout()" class="buy-btn pack-btn" style="width:100%; border:none;">
+                    <span>RESERVE &amp; PAY</span>
+                    <span class="btn-subtext">Streamlabs tip checkout</span>
+                </button>
             </div>
 
-            <label style="font-weight: 700; color: var(--text-dim); margin-bottom: 6px; font-size:0.85rem; display: block;">Full Name</label>
-            <input type="text" id="co-name" class="checkout-input" placeholder="Your name">
-
-            <label style="font-weight: 700; color: var(--text-dim); margin-bottom: 6px; font-size:0.85rem; display: block;">Email Address <span style="color:#ff0040;font-size:0.75rem;">(Limit 1 purchase per pack type)</span></label>
-            <input type="email" id="co-email" class="checkout-input" placeholder="you@example.com">
-
-            <label style="font-weight: 700; color: var(--text-dim); margin-bottom: 6px; font-size:0.85rem; display: block;">Shipping Address</label>
-            <textarea id="co-address" rows="3" class="checkout-input" style="resize:vertical;" placeholder="Full mailing address with postal code"></textarea>
-
-            <div style="display:flex; justify-content:space-between; align-items:center; margin: 1.2rem 0; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);">
-                <span style="font-size:1.1rem; color:var(--text-dim); font-weight:700;">Total to Pay:</span>
-                <span style="font-size:2rem; font-weight:900; color:#ffd700; text-shadow:0 0 15px rgba(255,215,0,0.5);">$<span id="co-total">0.00</span></span>
+            <div id="co-confirm" style="display:none;">
+                <div class="ref-box">
+                    <span style="font-size:0.8rem;font-weight:800;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;">Your order reference</span>
+                    <span class="ref-code" id="co-ref">PBM-XXXXXX</span>
+                    <span style="font-size:0.85rem;color:#fff;">Put this code in the Streamlabs tip message so Mike can match your payment to your order.</span>
+                </div>
+                <p style="color:var(--text-dim);font-size:0.95rem;line-height:1.6;margin-bottom:1rem;text-align:center;">
+                    Reserved: <strong id="co-ref-qty" style="color:#fff;"></strong> · Amount to pay: <strong id="co-ref-total" style="color:#ffd700;"></strong>
+                </p>
+                <button onclick="goToPayment()" class="buy-btn pack-btn" style="width:100%;border:none;">
+                    <span>CONTINUE TO PAYMENT</span>
+                    <span class="btn-subtext">Opens Streamlabs</span>
+                </button>
             </div>
-
-            <button id="co-pay-btn" onclick="submitCheckout()" class="buy-btn pack-btn" style="width:100%; border:none;">
-                <span>PAY NOW</span>
-                <span class="btn-subtext">Streamlabs tip checkout</span>
-            </button>
         </div>
     </div>
 
     <script>
         const API_URL = 'https://pokeballer-worker.kronborgnielsen.workers.dev/api';
+        const TIP_URL = 'https://streamlabs.com/pokballer/tip';
+        const DEFAULT_MAX_BUY = 10;
         let timerInterval = null;
         window.storeItems = [];
 
@@ -619,15 +647,33 @@
             }
         };
 
+        // Single source of truth on the page for what a buyer is allowed to order.
+        // The worker re-derives the same numbers from KV and has the final say.
+        function limitsFor(item) {
+            const stock = Math.max(0, toInt(item && item.stock));
+            const minRaw = Math.max(1, toInt(item && item.minBuy) || 1);
+            const maxRaw = toInt(item && item.maxBuy);
+            const maxBuy = maxRaw > 0 ? maxRaw : DEFAULT_MAX_BUY;
+            const max = Math.max(1, Math.min(maxBuy, stock));
+            const min = Math.min(Math.max(1, minRaw), max);
+            return { min, max, stock, maxBuy };
+        }
+
+        function unitWord(item) {
+            if (item && item.stockLabelType === 'bundles') return 'bundles';
+            if (item && item.stockLabelType === 'spots') return 'spots';
+            return 'packs';
+        }
+
         function buildCard(item, tier) {
             const t = TIERS[tier];
             const id = esc(item.id);
             const now = Date.now();
-            
+
             const endTime = centralToMs(item.scheduleEnd);
             const goLiveTime = centralToMs(item.goLiveTime);
             const stockNum = toInt(item.stock);
-            
+
             const isEnded = stockNum <= 0 || (endTime && now >= endTime);
             const isFuture = goLiveTime && now < goLiveTime;
             const isOpen = !isEnded && !isFuture;
@@ -653,7 +699,9 @@
             } else if (isFuture) {
                 btnHTML = `<div class="buy-btn upcoming-btn live-countdown" data-live="${esc(item.goLiveTime)}" id="btn-live-${id}"><span>GOING LIVE IN</span><span class="btn-subtext">CALCULATING...</span></div>`;
             } else if (tier === 'pack') {
-                btnHTML = `<button onclick="openCheckout('${id}')" class="${t.btn}" style="border:none; width:100%; cursor:pointer;"><span>${t.btnText}</span><span class="btn-subtext">${t.btnSub}</span></button>`;
+                const lim = limitsFor(item);
+                btnHTML = `<button onclick="openCheckout('${id}')" class="${t.btn}" style="border:none; width:100%; cursor:pointer;"><span>${t.btnText}</span><span class="btn-subtext">${t.btnSub}</span></button>`
+                    + `<span class="limit-note">Limit ${lim.maxBuy} ${unitWord(item)} per person · 1 order per email</span>`;
             } else if (item.googleFormLink) {
                 btnHTML = `<a href="${esc(item.googleFormLink)}" target="_blank" rel="noopener" class="${t.btn}" onclick="trackClick('${id}')"><span>${t.btnText}</span><span class="btn-subtext">${t.btnSub}</span></a>`;
             } else {
@@ -663,7 +711,6 @@
             const img = item.image || 'https://assets.pokemon.com/assets/cms2/img/misc/trading-card-games/cards/tcg_default_card.png';
             const tagPosClass = isOpen ? '' : ' no-ribbon';
 
-            // Feature: dynamic label choice from the worker
             let labelText = 'Packs in stock';
             if (item.stockLabelType === 'bundles') labelText = 'Bundles in stock';
             if (item.stockLabelType === 'spots') labelText = 'Break Spots';
@@ -760,11 +807,10 @@
         function updateTimers() {
             const watchers = document.querySelectorAll('.close-watch');
             const countdowns = document.querySelectorAll('.live-countdown');
-            
+
             let activeTimers = false;
             const now = Date.now();
 
-            // 1. Process items about to close
             watchers.forEach(w => {
                 activeTimers = true;
                 const itemId = w.dataset.id;
@@ -785,10 +831,14 @@
                         if (ribbon) ribbon.remove();
                     }
                     w.classList.remove('close-watch');
+                    // If the buyer has this item open in the checkout, shut it down.
+                    if (activeCheckoutItem && String(activeCheckoutItem.id) === String(itemId)) {
+                        showCheckoutError('This drop just closed.');
+                        document.getElementById('co-pay-btn').disabled = true;
+                    }
                 }
             });
 
-            // 2. Process active Go-Live countdowns
             countdowns.forEach(w => {
                 activeTimers = true;
                 const target = centralToMs(w.dataset.live);
@@ -796,7 +846,6 @@
                 const distance = target - now;
 
                 if (distance <= 0) {
-                    // Timer hit 0! Change UI briefly and reload data.
                     w.classList.remove('live-countdown');
                     w.innerHTML = `<span>OPENING NOW...</span><span class="btn-subtext" style="color:var(--accent-cyan);">Fetching store items</span>`;
                     setTimeout(loadStore, 1000);
@@ -805,7 +854,7 @@
                     const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                     const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                     const s = Math.floor((distance % (1000 * 60)) / 1000);
-                    
+
                     let str = '';
                     if (d > 0) str += `${d}d `;
                     if (h > 0 || d > 0) str += `${h}h `;
@@ -815,165 +864,188 @@
                 }
             });
 
-            if (!activeTimers && timerInterval) { 
-                clearInterval(timerInterval); 
-                timerInterval = null; 
+            if (!activeTimers && timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
             }
         }
 
-        function startCountdownTimer() { 
-            if (timerInterval) clearInterval(timerInterval); 
-            updateTimers(); 
-            timerInterval = setInterval(updateTimers, 1000); // Ticks every 1 second for precision
+        function startCountdownTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            updateTimers();
+            timerInterval = setInterval(updateTimers, 1000);
         }
         function trackClick(id) { fetch(`${API_URL}/click`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }), keepalive: true }).catch(() => {}); return true; }
 
         function openModal(src) { document.getElementById('myModal').style.display = 'flex'; document.getElementById('img01').src = src; }
         function closeModal() { document.getElementById('myModal').style.display = 'none'; }
 
-        /* ---------- CHECKOUT MODAL & QUANTITY LIMIT LOGIC ---------- */
+        /* ---------- CHECKOUT ---------- */
         let activeCheckoutItem = null;
+        let checkoutBusy = false;
+        let confirmedOrder = null;
+
+        function showCheckoutError(msg) { document.getElementById('co-error').textContent = msg || ''; }
+        function showQtyWarning(msg) { document.getElementById('co-qty-warning').textContent = msg || ''; }
 
         function getLimits() {
-            if (!activeCheckoutItem) return { min: 1, max: 1, stock: 0 };
-            const stock = Math.max(0, parseInt(activeCheckoutItem.stock, 10) || 0);
-            const userMin = Math.max(1, parseInt(activeCheckoutItem.minBuy, 10) || 1);
-            const userMax = Math.max(userMin, parseInt(activeCheckoutItem.maxBuy, 10) || 10);
+            if (!activeCheckoutItem) return { min: 1, max: 1, stock: 0, maxBuy: 1 };
+            return limitsFor(activeCheckoutItem);
+        }
 
-            // Cannot buy more than what is actually in stock
-            const effectiveMax = Math.min(userMax, stock);
-            const effectiveMin = Math.min(userMin, effectiveMax);
-            return { min: effectiveMin, max: effectiveMax, stock };
+        // Reads the box, throws away anything that is not a whole number, and
+        // clamps to the live limits. Returns the clamped value.
+        function readQty(clamp) {
+            const el = document.getElementById('co-qty');
+            const { min, max } = getLimits();
+            const raw = String(el.value || '').trim();
+            let val = /^\d+$/.test(raw) ? parseInt(raw, 10) : NaN;
+            if (!Number.isInteger(val)) val = clamp ? min : NaN;
+            if (Number.isInteger(val)) {
+                if (val < min) { if (clamp) val = min; }
+                if (val > max) { if (clamp) val = max; }
+            }
+            return val;
+        }
+
+        function refreshQtyUI() {
+            const { min, max, stock, maxBuy } = getLimits();
+            const el = document.getElementById('co-qty');
+            const val = readQty(false);
+            document.getElementById('co-minus').disabled = !(val > min);
+            document.getElementById('co-plus').disabled = !(val < max);
+
+            if (!Number.isInteger(val)) showQtyWarning('Enter a whole number.');
+            else if (val > max) showQtyWarning(max === stock && stock < maxBuy ? `Only ${stock} left in stock.` : `Limit is ${maxBuy} per person.`);
+            else if (val < min) showQtyWarning(`Minimum order is ${min}.`);
+            else showQtyWarning('');
+
+            el.min = min; el.max = max;
+            updateTotal();
         }
 
         function openCheckout(id) {
-            activeCheckoutItem = window.storeItems.find(i => String(i.id) === String(id));
-            if (!activeCheckoutItem) return;
+            const item = window.storeItems.find(i => String(i.id) === String(id));
+            if (!item) return;
+            activeCheckoutItem = item;
+            confirmedOrder = null;
+            checkoutBusy = false;
 
-            const { min, max, stock } = getLimits();
-            if (stock <= 0) {
-                alert('This item is currently sold out!');
-                return;
-            }
+            const { min, max, stock, maxBuy } = getLimits();
+            if (stock <= 0) { alert('This item is currently sold out!'); return; }
 
-            document.getElementById('co-title').innerText = activeCheckoutItem.name;
-            document.getElementById('co-bounds').innerText = `Min: ${min} | Max: ${max} | Available: ${stock}`;
+            document.getElementById('co-form').style.display = 'block';
+            document.getElementById('co-confirm').style.display = 'none';
+            document.getElementById('co-title').innerText = item.name;
+            document.getElementById('co-bounds').innerText = `Min: ${min} | Max: ${maxBuy} | Available: ${stock}`;
 
             const qtyEl = document.getElementById('co-qty');
-            qtyEl.min = min;
-            qtyEl.max = max;
-            qtyEl.value = min;
+            qtyEl.min = min; qtyEl.max = max; qtyEl.value = min;
 
             document.getElementById('co-name').value = '';
             document.getElementById('co-email').value = '';
             document.getElementById('co-address').value = '';
+            showCheckoutError(''); showQtyWarning('');
 
-            updateTotal();
+            const btn = document.getElementById('co-pay-btn');
+            btn.disabled = false;
+            btn.innerHTML = `<span>RESERVE &amp; PAY</span><span class="btn-subtext">Streamlabs tip checkout</span>`;
+
+            refreshQtyUI();
             document.getElementById('checkoutModal').style.display = 'flex';
         }
 
         function closeCheckout() {
             document.getElementById('checkoutModal').style.display = 'none';
             activeCheckoutItem = null;
+            confirmedOrder = null;
+            checkoutBusy = false;
             const btn = document.getElementById('co-pay-btn');
             btn.disabled = false;
-            btn.innerHTML = `<span>PAY NOW</span><span class="btn-subtext">Streamlabs tip checkout</span>`;
+            btn.innerHTML = `<span>RESERVE &amp; PAY</span><span class="btn-subtext">Streamlabs tip checkout</span>`;
         }
 
         function stepQty(delta) {
             const { min, max } = getLimits();
-            const qtyEl = document.getElementById('co-qty');
-            let val = parseInt(qtyEl.value, 10) || min;
-            val += delta;
+            let val = readQty(true) + delta;
             if (val < min) val = min;
             if (val > max) val = max;
-            qtyEl.value = val;
-            updateTotal();
+            document.getElementById('co-qty').value = val;
+            refreshQtyUI();
         }
 
         function onQtyInput() {
             const { max } = getLimits();
-            const qtyEl = document.getElementById('co-qty');
-            let val = parseInt(qtyEl.value, 10);
-            if (!isNaN(val) && val > max) {
-                qtyEl.value = max; // Clamp immediately if exceeding max
-            }
-            updateTotal();
+            const el = document.getElementById('co-qty');
+            const raw = String(el.value || '').trim();
+            // Strip anything that is not a digit as it is typed or pasted
+            const digits = raw.replace(/[^\d]/g, '');
+            if (digits !== raw) el.value = digits;
+            if (digits && parseInt(digits, 10) > max) el.value = String(max);
+            refreshQtyUI();
         }
 
         function clampQtyOnBlur() {
-            const { min, max } = getLimits();
-            const qtyEl = document.getElementById('co-qty');
-            let val = parseInt(qtyEl.value, 10);
-            if (isNaN(val) || val < min) val = min;
-            if (val > max) val = max;
-            qtyEl.value = val;
-            updateTotal();
+            document.getElementById('co-qty').value = readQty(true);
+            refreshQtyUI();
         }
 
         function updateTotal() {
             if (!activeCheckoutItem) return;
-            const { min, max } = getLimits();
-            let qty = parseInt(document.getElementById('co-qty').value, 10);
-            if (isNaN(qty)) qty = min;
+            const qty = readQty(true);
             const price = parseFloat(activeCheckoutItem.price || 0);
             document.getElementById('co-total').innerText = (qty * price).toFixed(2);
         }
 
-        async function submitCheckout() {
-            if (!activeCheckoutItem) return;
-            const { min, max, stock } = getLimits();
+        function goToPayment() {
+            window.location.href = TIP_URL;
+        }
 
+        async function submitCheckout() {
+            if (!activeCheckoutItem || checkoutBusy) return;
+
+            const item = activeCheckoutItem;
+            const { min, max, stock, maxBuy } = getLimits();
             const name = document.getElementById('co-name').value.trim();
             const email = document.getElementById('co-email').value.trim();
             const address = document.getElementById('co-address').value.trim();
-            let qty = parseInt(document.getElementById('co-qty').value, 10);
+            const qty = readQty(false);
 
-            if (stock <= 0) {
-                alert('This item just sold out.');
-                closeCheckout();
-                return;
-            }
+            showCheckoutError('');
 
-            if (!name || !email || !address) {
-                alert('Please fill out your Name, Email, and Shipping Address.');
-                return;
-            }
-
-            // A malformed address makes the order email bounce, so catch it here
-            if (!isEmail(email)) {
-                alert('That email address does not look right. Check it and try again.');
-                return;
-            }
-
-            // Hard enforcement of limits
-            if (isNaN(qty) || qty < min) {
-                alert(`You cannot purchase less than the minimum of ${min} pack${min > 1 ? 's' : ''}.`);
-                document.getElementById('co-qty').value = min;
-                updateTotal();
-                return;
-            }
-
+            if (stock <= 0) { showCheckoutError('This item just sold out.'); return; }
+            if (!name || !email || !address) { showCheckoutError('Please fill out your name, email, and shipping address.'); return; }
+            if (!isEmail(email)) { showCheckoutError('That email address does not look right.'); return; }
+            if (!Number.isInteger(qty)) { showCheckoutError('Quantity must be a whole number.'); clampQtyOnBlur(); return; }
+            if (qty < min) { showCheckoutError(`Minimum order is ${min}.`); clampQtyOnBlur(); return; }
             if (qty > max) {
-                alert(`You cannot purchase more than the limit of ${max} pack${max > 1 ? 's' : ''}.`);
-                document.getElementById('co-qty').value = max;
-                updateTotal();
+                showCheckoutError(max === stock && stock < maxBuy
+                    ? `Only ${stock} left in stock.`
+                    : `Limit is ${maxBuy} per person — you asked for ${qty}.`);
+                clampQtyOnBlur();
                 return;
             }
 
-            const total = (qty * parseFloat(activeCheckoutItem.price)).toFixed(2);
+            const total = (qty * parseFloat(item.price || 0)).toFixed(2);
             const btn = document.getElementById('co-pay-btn');
+            checkoutBusy = true;
             btn.disabled = true;
-            btn.innerHTML = `<span>RESERVING PACKS...</span><span class="btn-subtext">Connecting to payment</span>`;
+            btn.innerHTML = `<span>RESERVING...</span><span class="btn-subtext">Checking stock and limits</span>`;
 
+            const resetBtn = () => {
+                checkoutBusy = false;
+                btn.disabled = false;
+                btn.innerHTML = `<span>RESERVE &amp; PAY</span><span class="btn-subtext">Streamlabs tip checkout</span>`;
+            };
+
+            let res, result;
             try {
-                // Decrement stock in KV, enforce 1-purchase per pack per email, and dispatch notification email
-                const res = await fetch(`${API_URL}/purchase-notification`, {
+                res = await fetch(`${API_URL}/purchase-notification`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        itemId: activeCheckoutItem.id,
-                        itemName: activeCheckoutItem.name,
+                        itemId: item.id,
+                        itemName: item.name,
                         qty: qty,
                         totalPrice: total,
                         buyerName: name,
@@ -982,50 +1054,59 @@
                         notifyEmail: 'michael.lorenz.10@gmail.com'
                     })
                 });
-
-                const result = await res.json();
-
-                // The worker reports exactly what happened to the order email.
-                // Open the browser console (F12) after a test order to read this.
-                console.log('Order response:', result);
-                if (result.emailStatus && result.emailStatus !== 'sent') {
-                    console.warn('ORDER EMAIL NOT SENT →', result.emailStatus);
-                }
-
-                if (!res.ok || result.error) {
-                    alert(result.error || 'Could not complete order. Please verify stock.');
-                    btn.disabled = false;
-                    btn.innerHTML = `<span>PAY NOW</span><span class="btn-subtext">Streamlabs tip checkout</span>`;
-                    return;
-                }
-
-                // Decrement stock live on the page card immediately
-                if (result.remainingStock != null) {
-                    activeCheckoutItem.stock = result.remainingStock;
-                    const badge = document.getElementById(`stock-badge-${activeCheckoutItem.id}`);
-                    
-                    let labelTxt = 'Packs in stock';
-                    if (activeCheckoutItem.stockLabelType === 'bundles') labelTxt = 'Bundles in stock';
-                    if (activeCheckoutItem.stockLabelType === 'spots') labelTxt = 'Break Spots';
-
-                    if (badge) badge.innerText = `${result.remainingStock} ${labelTxt}`;
-
-                    if (result.remainingStock <= 0) {
-                        const btnBox = document.getElementById(`btn-container-${activeCheckoutItem.id}`);
-                        if (btnBox) btnBox.innerHTML = '<div class="buy-btn sold-out">SOLD OUT</div>';
-                        const card = document.getElementById(`card-${activeCheckoutItem.id}`);
-                        if (card) {
-                            card.classList.remove('card-live-now');
-                            card.classList.add('card-closed');
-                        }
-                    }
-                }
+                result = await res.json();
             } catch (e) {
+                // Nothing was reserved, so do NOT send the buyer to the tip page.
                 console.error('Purchase request failed:', e);
+                showCheckoutError('Could not reach the store. Nothing was charged or reserved — please try again.');
+                resetBtn();
+                return;
             }
 
-            // Redirect to tip page
-            window.location.href = "https://streamlabs.com/pokballer/tip";
+            console.log('Order response:', result);
+            if (result && result.emailStatus && result.emailStatus !== 'sent') {
+                console.warn('ORDER EMAIL NOT SENT →', result.emailStatus);
+            }
+
+            if (!res.ok || !result || result.error || !result.success) {
+                showCheckoutError((result && result.error) || 'Could not complete the order.');
+                // The worker may have sent back the real limits — adopt them.
+                if (result && result.maxBuy != null) {
+                    item.maxBuy = result.maxBuy;
+                    if (result.stock != null) item.stock = result.stock;
+                    refreshQtyUI();
+                }
+                resetBtn();
+                return;
+            }
+
+            // Reserved. Update the card, then show the payment reference.
+            const confirmedQty = result.qty != null ? result.qty : qty;
+            const confirmedTotal = result.total != null ? result.total : total;
+            confirmedOrder = { ref: result.orderRef, qty: confirmedQty, total: confirmedTotal };
+
+            if (result.remainingStock != null) {
+                item.stock = result.remainingStock;
+                const badge = document.getElementById(`stock-badge-${item.id}`);
+                let labelTxt = 'Packs in stock';
+                if (item.stockLabelType === 'bundles') labelTxt = 'Bundles in stock';
+                if (item.stockLabelType === 'spots') labelTxt = 'Break Spots';
+                if (badge) badge.innerText = `${result.remainingStock} ${labelTxt}`;
+
+                if (result.remainingStock <= 0) {
+                    const btnBox = document.getElementById(`btn-container-${item.id}`);
+                    if (btnBox) btnBox.innerHTML = '<div class="buy-btn sold-out">SOLD OUT</div>';
+                    const card = document.getElementById(`card-${item.id}`);
+                    if (card) { card.classList.remove('card-live-now'); card.classList.add('card-closed'); }
+                }
+            }
+
+            document.getElementById('co-ref').textContent = result.orderRef || '—';
+            document.getElementById('co-ref-qty').textContent = `${confirmedQty} ${unitWord(item)}`;
+            document.getElementById('co-ref-total').textContent = `$${confirmedTotal}`;
+            document.getElementById('co-form').style.display = 'none';
+            document.getElementById('co-confirm').style.display = 'block';
+            checkoutBusy = false;
         }
 
         document.addEventListener('keydown', e => {
