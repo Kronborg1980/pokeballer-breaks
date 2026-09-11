@@ -326,7 +326,13 @@
         .retry-btn { background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple)); border: none; color: #fff; padding: 12px 28px; border-radius: 12px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; box-shadow: 0 0 20px rgba(0,255,242,0.3); transition: transform .3s, box-shadow .3s; }
         .retry-btn:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(213,0,255,0.6); }
 
-        .image-modal { display: none; position: fixed; inset: 0; z-index: 9999; padding: 30px 15px; width: 100%; height: 100%; overflow: auto; background: rgba(0,0,0,0.9); align-items: center; justify-content: center; backdrop-filter: blur(20px); }
+        .image-modal { display: none; position: fixed; inset: 0; z-index: 9999; padding: 30px 15px; width: 100%; height: 100%; overflow-y: auto; -webkit-overflow-scrolling: touch; background: rgba(0,0,0,0.9); align-items: flex-start; justify-content: center; backdrop-filter: blur(20px); }
+        /* margin:auto keeps a short dialog centred, but lets a tall one start at
+           the top and scroll instead of having its head and feet cut off. */
+        .image-modal > .glass-panel, .image-modal > .modal-content { margin: auto; }
+        /* .glass-panel is height:100% + overflow:hidden for product cards. Inside
+           the checkout that clipped the Pay button off the bottom of the box. */
+        #checkoutModal .glass-panel { height: auto; overflow: visible; }
         .modal-content { margin: auto; display: block; max-width: 90%; max-height: 85vh; border: 3px solid var(--accent-cyan); box-shadow: 0 0 100px rgba(0,255,242,0.8); border-radius: 20px; }
         .close-modal { position: absolute; top: 25px; right: 25px; color: var(--accent-cyan); font-size: 40px; font-weight: 900; cursor: pointer; z-index: 10000; text-shadow: 0 0 20px var(--accent-cyan); background: none; border: none; line-height: 1; }
 
