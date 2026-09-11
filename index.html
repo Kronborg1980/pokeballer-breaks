@@ -345,9 +345,105 @@
 
         a:focus-visible, button:focus-visible { outline: 3px solid var(--accent-cyan); outline-offset: 3px; border-radius: 8px; }
 
+        /* The gold/purple button shine was referenced but never defined. */
+        @keyframes goldShine { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
+
+        /* ---------- PHONE LAYOUT ----------
+           The desktop title is 51px at its smallest, which collided with the two
+           160px Suicune logos and pushed the header out of alignment. */
         @media (max-width: 768px) {
-            main { padding: 1.5rem 1rem; width: 95%; }
-            .store-grid { grid-template-columns: 1fr; }
+            main { padding: 1.5rem 1rem; width: 95%; border-radius: 25px; margin-bottom: 2rem; }
+            .store-grid { grid-template-columns: 1fr; gap: 26px; }
+
+            h1 { font-size: clamp(2rem, 11vw, 3rem); letter-spacing: 1px; }
+            .header-wrapper { gap: 0.7rem; }
+            .header-logo { width: 66px; }
+            header { padding: 0.5rem 1rem 0.5rem; }
+
+            .top-nav { gap: 10px; padding: 16px 10px 12px; }
+            .nav-link { padding: 9px 16px; font-size: 0.8rem; letter-spacing: 0.5px; }
+
+            .section-header { padding: 12px 18px; gap: 0.8rem; margin: 2.5rem auto 1rem; max-width: 100%; }
+            .section-title { font-size: 1.1rem; letter-spacing: 2px; }
+
+            .tier-header { padding: 16px 18px 18px; margin: 2.6rem auto 1.6rem; }
+            .tier-title { letter-spacing: 3px; gap: 8px; }
+            .tier-tagline { letter-spacing: 1.5px; font-size: 0.72rem; text-align: center; }
+
+            .sub-info-panel { padding: 1.5rem; gap: 1.4rem; }
+            .sub-text { min-width: 0; }
+            .sub-text h3 { font-size: 1.25rem; }
+            .sub-btn { font-size: 1rem; padding: 12px 22px; }
+            .sub-actions { width: 100%; }
+
+            .item-img-box { height: 210px; }
+            .item-content { padding: 1.3rem; }
+            .item-content h3 { font-size: 1.25rem; }
+            .type-tag { font-size: 0.62rem; padding: 6px 9px; right: 12px; top: 44px; letter-spacing: 0.5px; }
+            .type-tag.no-ribbon { top: 14px; }
+            .price { font-size: 1.75rem; }
+            .stock { font-size: 0.8rem; padding: 5px 11px; }
+            .buy-btn { font-size: 1rem; padding: 1rem; }
+
+            /* Long checkout form: start at the top so nothing is cut off. */
+            .image-modal { align-items: flex-start; padding: 16px 12px 48px; }
+
+            .p-rayquaza, .p-charizard, .p-gengar, .p-gardevoir, .p-vaporeon, .p-cubone { display: none; }
+            .p-suicune { width: 120vw; opacity: 0.08; top: 40%; }
+            .p-pichu { width: 82px; opacity: 0.3; left: 3%; }
+            .p-magikarp { width: 112px; opacity: 0.32; right: 3%; }
+        }
+
+        /* ---------- TOUCH ANTI-FLICKER ----------
+           Same treatment the Vault already uses. Android Chrome repaints the
+           whole stacking context when backdrop-filter sits under moving
+           gradients and animated box-shadows, which is the blinking you see.
+           Solid glass + opacity-only motion fixes it. The per-letter neon
+           flicker stays on: it is opacity-only, GPU-cheap, and intentional. */
+        @media (hover: none), (pointer: coarse) {
+            body::before { animation: none; background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%; }
+            .grain, .particles { display: none; }
+
+            .top-nav .nav-link, main, .glass-panel, .tier-header, .type-tag,
+            .time-tag-bottom, .perk, .image-modal, .stock, .yt-label {
+                backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+            }
+            main { background: rgba(6,6,16,0.94); }
+            .glass-panel { background: linear-gradient(160deg, rgba(24,24,42,0.97), rgba(10,10,20,0.98)); }
+            .card-baller-bundle .glass-panel { background: linear-gradient(160deg, rgba(46,36,8,0.97), rgba(14,10,0,0.98)); }
+
+            /* Animated box-shadows are the most expensive thing here — freeze them. */
+            .card-live-now { animation: none; box-shadow: 0 0 32px rgba(var(--lg),0.55), 0 0 60px rgba(var(--lg),0.22); }
+            .tier-header::after { animation: ledOpacity 2.4s ease-in-out infinite; box-shadow: 0 0 18px currentColor; }
+            .live-ribbon { animation: none; background-size: 100% 100%; }
+            .time-tag-bottom.closing-soon, .lbl-universal { animation: none; }
+            .baller-btn, .bundle-btn { animation: none !important; background-size: 100% 100% !important; }
+
+            .neon-card-wrapper::before { animation-duration: 7s; opacity: 0.55 !important; filter: none !important; }
+            .neon-card-wrapper, .glass-panel, .item-img, .logo-animator,
+            .buy-btn, .sub-btn, .bell-btn { will-change: auto !important; }
+            .neon-card-wrapper:hover { transform: none; }
+            .neon-card-wrapper:hover .item-img { transform: none; }
+            .buy-btn:hover, .sub-btn:hover, .bell-btn:hover, .nav-link:hover { transform: none; }
+            .glass-panel::after {
+                opacity: 1; mix-blend-mode: normal;
+                background: linear-gradient(115deg, transparent 42%, rgba(255,255,255,0.05) 50%, transparent 58%);
+                background-size: 250% 100%; animation: sheenFlow 7s linear infinite;
+            }
+
+            /* Lighter glow on card titles — five shadow layers per letter is a lot
+               of work on a phone when there are a dozen cards. */
+            .item-content h3 .nl {
+                text-shadow: 0 0 3px rgba(255,255,255,0.9), 0 0 10px var(--tube, var(--accent-cyan));
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.001ms !important; animation-iteration-count: 1 !important;
+                transition-duration: 0.001ms !important;
+            }
+            body::before { animation: none; }
         }
     </style>
 </head>
@@ -446,7 +542,7 @@
                 <div class="ref-box">
                     <span style="font-size:0.8rem;font-weight:800;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;">Your order reference</span>
                     <span class="ref-code" id="co-ref">PBM-XXXXXX</span>
-                    <span style="font-size:0.85rem;color:#fff;">Put your Youtube name in the Streamlabs tip message so Mike can match your payment to your order.</span>
+                    <span style="font-size:0.85rem;color:#fff;">Put this code in the Streamlabs tip message so Mike can match your payment to your order.</span>
                 </div>
                 <p style="color:var(--text-dim);font-size:0.95rem;line-height:1.6;margin-bottom:1rem;text-align:center;">
                     Reserved: <strong id="co-ref-qty" style="color:#fff;"></strong> · Amount to pay: <strong id="co-ref-total" style="color:#ffd700;"></strong>
