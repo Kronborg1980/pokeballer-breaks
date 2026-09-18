@@ -137,6 +137,7 @@
         .btn-edit { background: #00b8ff; } .btn-edit:hover { background: #0088cc; }
         .btn-del { background: #ff0055; } .btn-del:hover { background: #cc0044; }
         .btn-mail { background: linear-gradient(135deg, #bf953f, #b38728); color: #fff; } .btn-mail:hover { filter: brightness(1.2); }
+        .btn-buyers { background: linear-gradient(135deg, #ff7700, #ffaa00); color: #2b1100 !important; } .btn-buyers:hover { filter: brightness(1.15); }
 
         textarea { width: 100%; padding: 12px; margin-bottom: 1rem; background: rgba(0,0,0,0.5); border: 1px solid #3a3a55; color: #fff; border-radius: 8px; font-size: 0.95rem; font-family: 'Inter', sans-serif; resize: vertical; transition: border-color .2s, box-shadow .2s; }
         textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 12px rgba(0,255,242,0.25); }
@@ -150,6 +151,26 @@
         .wm-bad { color: #ff6666; font-weight: 700; margin-bottom: 6px; word-break: break-all; }
         #wm-result { margin-bottom: 0.6rem; }
 
+        /* ---------- BUYERS / ORDER LOCKS ---------- */
+        .orders-card { max-width: 620px; width: 100%; margin: 0 auto; border: 1px solid rgba(255,153,0,0.45); box-shadow: 0 0 50px rgba(255,153,0,0.15), 0 20px 60px rgba(0,0,0,0.8); }
+        .orders-card h2 { margin: 0 0 4px; font-size: 1.35rem; color: var(--orange); }
+        .om-stockline { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin: 0 0 1rem; font-size: 0.85rem; color: var(--dim); font-weight: 700; }
+        .om-pill { background: rgba(0,255,242,0.1); border: 1px solid rgba(0,255,242,0.35); color: var(--accent); padding: 4px 12px; border-radius: 30px; }
+        .om-pill.warn { background: rgba(255,153,0,0.12); border-color: rgba(255,153,0,0.45); color: var(--orange); }
+        .restore-row { display: flex; align-items: flex-start; gap: 10px; background: rgba(0,255,157,0.06); border: 1px solid rgba(0,255,157,0.3); border-radius: 10px; padding: 12px 14px; margin-bottom: 1rem; }
+        .restore-row input { width: 20px; height: 20px; margin: 2px 0 0; flex-shrink: 0; accent-color: var(--green); }
+        .restore-row label { margin: 0; color: #fff; font-weight: 700; font-size: 0.85rem; cursor: pointer; }
+        .restore-row label span { display: block; color: var(--dim); font-weight: 500; font-size: 0.78rem; margin-top: 3px; }
+        .order-row { display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 12px 14px; margin-bottom: 10px; }
+        .order-main { flex: 1; min-width: 0; }
+        .order-email { display: block; font-weight: 800; color: #fff; font-size: 0.95rem; word-break: break-all; }
+        .order-meta { display: block; color: var(--dim); font-size: 0.78rem; margin-top: 3px; }
+        .order-ref { color: var(--gold); font-weight: 800; }
+        .btn-reset { background: #ff0055; border: none; color: #fff; padding: 9px 16px; border-radius: 6px; font-weight: 800; font-size: 0.8rem; cursor: pointer; flex-shrink: 0; transition: .2s; text-transform: uppercase; }
+        .btn-reset:hover { background: #cc0044; }
+        .om-danger { width: 100%; margin-top: 4px; background: rgba(255,0,85,0.12); border: 1px solid rgba(255,0,85,0.45); color: #ff8ba7; padding: 11px; border-radius: 8px; cursor: pointer; font-weight: 800; font-size: 0.82rem; text-transform: uppercase; }
+        .om-danger:hover { background: rgba(255,0,85,0.25); color: #fff; }
+
         #login-section { display: block; } #admin-section { display: none; }
         .empty-state { color: #888; font-style: italic; font-size: 1rem; padding: 2rem 0; text-align: center; background: rgba(0,0,0,0.3); border-radius: 12px; border: 1px dashed #444; }
         .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(120%); background: rgba(10,10,20,0.95); border: 1px solid var(--accent); color: #fff; padding: 12px 22px; border-radius: 10px; font-weight: 700; box-shadow: 0 0 30px rgba(0,255,242,0.4); z-index: 9999; transition: transform .4s cubic-bezier(0.22,1,0.36,1); max-width: 90%; }
@@ -158,12 +179,12 @@
 
         a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, .tier-tile:focus-visible, .vis-pill:focus-visible, .chip:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 
-        @media(max-width: 600px) { .flex-row { flex-direction: column; gap: 0; } .flex-row > div { width: 100%; } .card { padding: 1.2rem; } h1 { font-size: 1.6rem; } .tier-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media(max-width: 600px) { .flex-row { flex-direction: column; gap: 0; } .flex-row > div { width: 100%; } .card { padding: 1.2rem; } h1 { font-size: 1.6rem; } .tier-grid { grid-template-columns: repeat(2, 1fr); } .email-modal { padding: 1.5rem 0.8rem 3rem; } .order-row { flex-wrap: wrap; } .btn-reset { width: 100%; } }
         @media(min-width: 600px) { li { flex-direction: row; align-items: center; justify-content: space-between; } .btn-group { width: auto; flex-shrink: 0; flex-direction: column; gap: 8px; } .btn-group button { padding: 8px 20px; width: 100%; } }
         @media (hover: none), (pointer: coarse) {
             body::before { animation: none; background-size: 100% 100%, 100% 100%, 100% 100%; }
             .grain { display: none; }
-            .card, .toast { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+            .card, .toast, .email-modal { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
             .card { background: rgba(18,18,34,0.97); }
         }
         @media (prefers-reduced-motion: reduce) { body::before { animation: none; } * { transition-duration: 0.001ms !important; animation-duration: 0.001ms !important; } }
@@ -238,7 +259,7 @@
                 </div>
 
                 <div id="pack-limits-container" style="display:none; margin-bottom:1rem;">
-                    <label style="color:var(--orange);">📦 Single Pack Quantity Limits</label>
+                    <label style="color:var(--orange);" id="pack-limits-label">📦 Quantity limits per buyer</label>
                     <div class="flex-row">
                         <div>
                             <label for="item-min-buy">Min Buy Qty</label>
@@ -254,8 +275,8 @@
                 <div class="open-note"><i class="ph-fill ph-broadcast"></i> Breaks are OPEN the moment you save them. They close when the timer below runs out (or stock hits 0).</div>
 
                 <div id="close-time-container">
-                    <label for="item-go-live-time" style="color:var(--accent-cyan);">🚀 Go Live Time (US Central - Optional)</label>
-                    <input type="datetime-local" id="item-go-live-time" style="border:1px solid var(--accent-cyan);">
+                    <label for="item-go-live-time" style="color:var(--accent);">🚀 Go Live Time (US Central - Optional)</label>
+                    <input type="datetime-local" id="item-go-live-time" style="border:1px solid var(--accent);">
 
                     <label for="item-schedule-end" style="color:#ff8ba7;">🔴 Close time (US Central)</label>
                     <input type="datetime-local" id="item-schedule-end">
@@ -288,7 +309,7 @@
                 <!-- STOCK LABEL TYPE SELECTOR -->
                 <div class="form-group" style="margin-bottom: 1rem;">
                     <label for="stock-label-type">Stock Text Display</label>
-                    <select id="stock-label-type">
+                    <select id="stock-label-type" onchange="applyTypeUI()">
                         <option value="packs">Packs in stock</option>
                         <option value="bundles">Bundles in stock</option>
                         <option value="spots">Break Spots</option>
@@ -358,6 +379,31 @@
         </div>
     </div>
 
+    <!-- ---------- BUYERS / ORDER LOCKS ---------- -->
+    <div id="orders-modal" class="email-modal">
+        <div class="orders-card card">
+            <h2>👥 Buyers &amp; order locks</h2>
+            <p class="wm-item-name" id="om-item-name"></p>
+
+            <div class="om-stockline">
+                <span class="om-pill" id="om-stock">Stock: …</span>
+                <span class="om-pill warn" id="om-count">…</span>
+            </div>
+
+            <div class="restore-row">
+                <input type="checkbox" id="om-restore" checked>
+                <label for="om-restore">Put their units back in stock when resetting
+                    <span>Leave ticked if the order fell through and you want the stock back. Untick if they keep the order and you only want to let them buy again.</span>
+                </label>
+            </div>
+
+            <div id="om-list"></div>
+
+            <button class="om-danger" id="om-clear-all" onclick="clearAllBuyers()">Reset every email on this item</button>
+            <button class="wm-cancel" onclick="closeOrdersModal()">Close</button>
+        </div>
+    </div>
+
     <div id="toast" class="toast"></div>
 
     <script>
@@ -372,6 +418,16 @@
         let currentTab = 'all';
         let selectedType = 'msrp';
         let selectedHidden = false;
+
+        // Matches the wording table on the storefront so the admin says the
+        // same words the buyer sees.
+        const UNIT_WORDS = {
+            packs: { one: 'pack', many: 'packs', stock: 'Packs in stock' },
+            bundles: { one: 'bundle', many: 'bundles', stock: 'Bundles in stock' },
+            spots: { one: 'spot', many: 'spots', stock: 'Break Spots' }
+        };
+        function unitsOf(kind) { return UNIT_WORDS[kind] || UNIT_WORDS.packs; }
+        function unitWord(kind, n) { const u = unitsOf(kind); return n === 1 ? u.one : u.many; }
 
         const wait = ms => new Promise(r => setTimeout(r, ms));
         function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
@@ -430,12 +486,18 @@
             document.querySelectorAll('.tier-tile').forEach(t => t.classList.toggle('selected', t.dataset.type === selectedType));
             document.getElementById('condition-container').style.display = selectedType === 'raw' ? 'block' : 'none';
             document.getElementById('grader-container').style.display = selectedType === 'slab' ? 'block' : 'none';
-            
-            document.getElementById('pack-limits-container').style.display = selectedType === 'pack' ? 'block' : 'none';
-            document.getElementById('payment-link-container').style.display = selectedType === 'pack' ? 'none' : 'block';
-            document.getElementById('stock-label').innerText = selectedType === 'pack' ? 'Packs in stock' : 'Spots / stock';
 
-            const isBreak = selectedType === 'msrp' || selectedType === 'bundle' || selectedType === 'baller' || selectedType === 'pack';
+            const isPack = selectedType === 'pack';
+            document.getElementById('pack-limits-container').style.display = isPack ? 'block' : 'none';
+            document.getElementById('payment-link-container').style.display = isPack ? 'none' : 'block';
+
+            // Stock wording follows the "Stock Text Display" dropdown
+            const kind = document.getElementById('stock-label-type').value;
+            const u = unitsOf(kind);
+            document.getElementById('stock-label').innerText = isPack ? u.stock : 'Spots / stock';
+            document.getElementById('pack-limits-label').innerText = `📦 How many ${u.many} per buyer`;
+
+            const isBreak = selectedType === 'msrp' || selectedType === 'bundle' || selectedType === 'baller' || isPack;
             document.getElementById('close-time-container').style.display = isBreak ? 'block' : 'none';
             document.querySelector('.open-note').style.display = isBreak ? 'flex' : 'none';
             if (!editingId) document.getElementById('submit-btn').innerText = isBreak ? '🚀 Publish break' : '💾 Save to Vault';
@@ -548,7 +610,7 @@
                 const price = Number(document.getElementById('item-price').value);
                 const stock = toInt(document.getElementById('item-stock').value, 1);
                 const stockLabelType = document.getElementById('stock-label-type').value;
-                
+
                 const minBuy = type === 'pack' ? toInt(document.getElementById('item-min-buy').value, 1) : null;
                 const maxBuy = type === 'pack' ? toInt(document.getElementById('item-max-buy').value, 10) : null;
                 const form = type === 'pack' ? '' : document.getElementById('item-google-form-link').value;
@@ -583,7 +645,7 @@
 
                 const wasEditing = !!editingId;
                 resetForm();
-                toast(wasEditing ? 'Item updated.' : (hidden ? 'Saved as hidden draft.' : '🔴 Break is LIVE on the site!'));
+                toast(wasEditing ? 'Item updated — stock synced.' : (hidden ? 'Saved as hidden draft.' : '🔴 Break is LIVE on the site!'));
                 loadItems();
             } catch (e) {
                 console.error('Save error:', e);
@@ -680,18 +742,19 @@
                     const goLiveMs = centralToMs(item.goLiveTime);
                     const closed = toInt(item.stock) <= 0 || (endMs && now >= endMs);
                     const upcoming = !closed && (goLiveMs && now < goLiveMs);
-                    
+
                     if (closed) statusBadge = '<span class="badge b-closed"><i class="ph-fill ph-lock"></i> CLOSED</span>';
                     else if (upcoming) statusBadge = '<span class="badge" style="background:#555; color:#fff;"><i class="ph-fill ph-clock-countdown"></i> UPCOMING</span>';
                     else statusBadge = '<span class="badge b-open"><i class="ph-fill ph-broadcast"></i> OPEN</span>';
                 }
 
                 let timeBadge = '';
-                if (item.goLiveTime) timeBadge += `<span class="badge b-time" style="background:rgba(0,255,242,0.1); border-color:var(--accent-cyan); color:var(--accent-cyan);"><i class="ph-fill ph-rocket"></i> Lives @ ${esc(formatLiteralDate(item.goLiveTime))}</span> `;
+                if (item.goLiveTime) timeBadge += `<span class="badge b-time" style="background:rgba(0,255,242,0.1); border-color:var(--accent); color:var(--accent);"><i class="ph-fill ph-rocket"></i> Lives @ ${esc(formatLiteralDate(item.goLiveTime))}</span> `;
                 if (item.scheduleEnd) timeBadge += `<span class="badge b-time"><i class="ph-fill ph-clock"></i> Closes ${esc(formatLiteralDate(item.scheduleEnd))}</span>`;
 
                 const isPack = item.type === 'pack';
-                const limitsBadge = isPack && item.minBuy ? `<span class="click-badge" style="margin-left:8px;">Min: ${item.minBuy} / Max: ${item.maxBuy}</span>` : '';
+                const u = unitsOf(item.stockLabelType);
+                const limitsBadge = isPack && item.minBuy ? `<span class="click-badge" style="margin-left:8px;">Min: ${item.minBuy} / Max: ${item.maxBuy} ${u.many}</span>` : '';
 
                 return `
                     <li style="${opacity}">
@@ -705,13 +768,14 @@
                             <div class="item-meta">${timeBadge}</div>
                             <div class="item-meta">
                                 <span><strong>$${money(item.price)}</strong></span>
-                                <span>• Stock: ${toInt(item.stock)} (${item.stockLabelType || 'packs'})</span>
+                                <span>• Stock: ${toInt(item.stock)} ${esc(u.many)}</span>
                                 ${limitsBadge}
                                 <span class="click-badge">🖱️ ${toInt(item.clickCount)}</span>
                             </div>
                         </div>
                         <div class="btn-group">
-                            ${isBreak ? `<button class="btn-mail" onclick="openWinnerModal('${id}')">📧 Winners</button>` : ''}
+                            ${isPack ? `<button class="btn-buyers" onclick="openOrdersModal('${id}')">👥 Buyers</button>` : ''}
+                            ${isBreak && !isPack ? `<button class="btn-mail" onclick="openWinnerModal('${id}')">📧 Winners</button>` : ''}
                             <button class="btn-edit" onclick="startEditing('${id}')">Edit</button>
                             <button class="btn-del" onclick="deleteItem('${id}')">Del</button>
                         </div>
@@ -742,10 +806,10 @@
             document.getElementById('item-image').value = '';
             document.getElementById('item-condition').value = item.condition || 'Mint (M)';
             document.getElementById('item-grader').value = item.grader || 'PSA';
-            
+
             document.getElementById('item-min-buy').value = item.minBuy || 1;
             document.getElementById('item-max-buy').value = item.maxBuy || 10;
-            
+
             applyTypeUI();
 
             const preview = document.getElementById('img-preview');
@@ -762,6 +826,122 @@
                 toast('Item deleted.');
                 loadItems();
             } catch (e) { toast('Delete failed — try again.', true); }
+        }
+
+        /* ---------- BUYERS / ORDER LOCKS ---------- */
+        let ordersItem = null;
+
+        function fmtWhen(ts) {
+            if (!ts) return '';
+            try {
+                const d = new Date(ts);
+                return d.toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+            } catch (e) { return ''; }
+        }
+
+        function openOrdersModal(id) {
+            const item = allItems.find(i => String(i.id) === String(id));
+            if (!item) return;
+            ordersItem = item;
+            document.getElementById('om-item-name').textContent = item.name || '';
+            document.getElementById('om-stock').textContent = 'Stock: …';
+            document.getElementById('om-count').textContent = 'Loading…';
+            document.getElementById('om-list').innerHTML = '<div class="empty-state">Loading buyers…</div>';
+            document.getElementById('om-restore').checked = true;
+            document.getElementById('orders-modal').style.display = 'flex';
+            loadOrders();
+        }
+
+        function closeOrdersModal() {
+            document.getElementById('orders-modal').style.display = 'none';
+            ordersItem = null;
+        }
+
+        async function loadOrders() {
+            if (!ordersItem) return;
+            const token = localStorage.getItem('adminToken') || '';
+            const listEl = document.getElementById('om-list');
+            const u = unitsOf(ordersItem.stockLabelType);
+            try {
+                const [ordersRes, deskRes] = await Promise.all([
+                    fetchWithRetry(`${API_URL}/purchases?token=${encodeURIComponent(token)}&itemId=${encodeURIComponent(ordersItem.id)}`),
+                    fetchWithRetry(`${API_URL}/desk?itemId=${encodeURIComponent(ordersItem.id)}`)
+                ]);
+                const orders = await ordersRes.json();
+                const desk = await deskRes.json();
+
+                const stock = desk && desk.desk && desk.desk.stock != null ? desk.desk.stock : null;
+                document.getElementById('om-stock').textContent = stock == null ? 'Stock: —' : `${stock} ${u.many} left`;
+
+                if (orders && orders.error) { listEl.innerHTML = `<div class="empty-state">${esc(orders.error)}</div>`; document.getElementById('om-count').textContent = ''; return; }
+                if (!Array.isArray(orders) || orders.length === 0) {
+                    document.getElementById('om-count').textContent = 'No emails used yet';
+                    listEl.innerHTML = '<div class="empty-state">Nobody has ordered this item yet.</div>';
+                    return;
+                }
+
+                document.getElementById('om-count').textContent = `${orders.length} email${orders.length === 1 ? '' : 's'} used`;
+                listEl.innerHTML = orders.map(o => {
+                    const qty = toInt(o.qty, 1);
+                    const bits = [];
+                    if (o.name) bits.push(esc(o.name));
+                    bits.push(`${qty} ${esc(unitWord(ordersItem.stockLabelType, qty))}`);
+                    if (o.orderRef) bits.push(`<span class="order-ref">${esc(o.orderRef)}</span>`);
+                    if (o.at) bits.push(esc(fmtWhen(o.at)));
+                    return `
+                        <div class="order-row">
+                            <div class="order-main">
+                                <span class="order-email">${esc(o.email)}</span>
+                                <span class="order-meta">${bits.join(' · ')}</span>
+                            </div>
+                            <button class="btn-reset" onclick="resetBuyer('${esc(o.email)}', ${qty})">Reset</button>
+                        </div>`;
+                }).join('');
+            } catch (e) {
+                console.error('Orders load failed:', e);
+                listEl.innerHTML = '<div class="empty-state">Couldn\'t load buyers. <button class="btn-edit" style="border:none;padding:6px 14px;border-radius:6px;cursor:pointer;color:#fff;font-weight:800;margin-left:8px;" onclick="loadOrders()">Retry</button></div>';
+            }
+        }
+
+        async function resetBuyer(email, qty) {
+            if (!ordersItem) return;
+            const restore = document.getElementById('om-restore').checked;
+            const u = unitsOf(ordersItem.stockLabelType);
+            const extra = restore ? `\n\nTheir ${qty} ${unitWord(ordersItem.stockLabelType, qty)} will also go back into stock.` : '\n\nStock will NOT change.';
+            if (!confirm(`Let ${email} order "${ordersItem.name}" again?${extra}`)) return;
+
+            try {
+                const res = await fetchWithRetry(`${API_URL}/purchases/clear`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        token: localStorage.getItem('adminToken') || '',
+                        itemId: ordersItem.id,
+                        email,
+                        restoreStock: restore
+                    })
+                }, 0);
+                const data = await res.json();
+                if (data.error) { toast(data.error, true); return; }
+                if (!data.cleared) { toast('That email was not locked.', true); }
+                else toast(restore && data.restored ? `${email} reset · ${data.restored} ${unitWord(ordersItem.stockLabelType, data.restored)} back in stock` : `${email} can order again`);
+                loadOrders();
+                loadItems();
+            } catch (e) { toast('Reset failed — try again.', true); }
+        }
+
+        async function clearAllBuyers() {
+            if (!ordersItem) return;
+            if (!confirm(`Reset EVERY email on "${ordersItem.name}"?\n\nAnyone who already ordered will be able to order again. Stock is NOT changed by this.`)) return;
+            try {
+                const res = await fetchWithRetry(`${API_URL}/purchases/clear`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token: localStorage.getItem('adminToken') || '', itemId: ordersItem.id })
+                }, 0);
+                const data = await res.json();
+                if (data.error) { toast(data.error, true); return; }
+                toast(`${data.cleared || 0} email lock${data.cleared === 1 ? '' : 's'} cleared.`);
+                loadOrders();
+            } catch (e) { toast('Clear failed — try again.', true); }
         }
 
         const PAYMENT_LINK = 'https://streamlabs.com/pokballer/tip';
@@ -791,7 +971,7 @@
             document.getElementById('winner-modal').style.display = 'flex';
         }
         function closeWinnerModal() { document.getElementById('winner-modal').style.display = 'none'; winnerItem = null; }
-        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeWinnerModal(); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeWinnerModal(); closeOrdersModal(); } });
 
         async function sendWinnerEmails() {
             if (!winnerItem) return;
