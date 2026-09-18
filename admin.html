@@ -391,7 +391,7 @@
             </div>
 
             <div class="restore-row">
-                <input type="checkbox" id="om-restore" checked>
+                <input type="checkbox" id="om-restore">
                 <label for="om-restore">Put their units back in stock when resetting
                     <span>Leave ticked if the order fell through and you want the stock back. Untick if they keep the order and you only want to let them buy again.</span>
                 </label>
@@ -847,7 +847,7 @@
             document.getElementById('om-stock').textContent = 'Stock: …';
             document.getElementById('om-count').textContent = 'Loading…';
             document.getElementById('om-list').innerHTML = '<div class="empty-state">Loading buyers…</div>';
-            document.getElementById('om-restore').checked = true;
+            document.getElementById('om-restore').checked = false;
             document.getElementById('orders-modal').style.display = 'flex';
             loadOrders();
         }
@@ -857,29 +857,63 @@
             ordersItem = null;
         }
 
+        // Plain fetch, not fetchWithRetry: that helper throws on any non-200 and
+        // swallows the body, which is how a plain "Unauthorized" turned into
+        // "Couldn't load buyers" with no clue what went wrong.
+        async function apiGet(path) {
+            const res = await fetch(`${API_URL}${path}`);
+            let body = null;
+            try { body = await res.json(); } catch (e) { body = null; }
+            return { ok: res.ok, status: res.status, body };
+        }
+
         async function loadOrders() {
             if (!ordersItem) return;
             const token = localStorage.getItem('adminToken') || '';
             const listEl = document.getElementById('om-list');
             const u = unitsOf(ordersItem.stockLabelType);
-            try {
-                const [ordersRes, deskRes] = await Promise.all([
-                    fetchWithRetry(`${API_URL}/purchases?token=${encodeURIComponent(token)}&itemId=${encodeURIComponent(ordersItem.id)}`),
-                    fetchWithRetry(`${API_URL}/desk?itemId=${encodeURIComponent(ordersItem.id)}`)
-                ]);
-                const orders = await ordersRes.json();
-                const desk = await deskRes.json();
 
-                const stock = desk && desk.desk && desk.desk.stock != null ? desk.desk.stock : null;
+            // Stock is public and loads on its own, so a login problem with the
+            // buyer list no longer leaves the stock pill spinning.
+            apiGet(`/desk?itemId=${encodeURIComponent(ordersItem.id)}`).then(r => {
+                const stock = r.ok && r.body && r.body.desk && r.body.desk.stock != null ? r.body.desk.stock : null;
                 document.getElementById('om-stock').textContent = stock == null ? 'Stock: —' : `${stock} ${u.many} left`;
+            }).catch(() => { document.getElementById('om-stock').textContent = 'Stock: —'; });
 
-                if (orders && orders.error) { listEl.innerHTML = `<div class="empty-state">${esc(orders.error)}</div>`; document.getElementById('om-count').textContent = ''; return; }
-                if (!Array.isArray(orders) || orders.length === 0) {
-                    document.getElementById('om-count').textContent = 'No emails used yet';
-                    listEl.innerHTML = '<div class="empty-state">Nobody has ordered this item yet.</div>';
-                    return;
-                }
+            let r;
+            try {
+                r = await apiGet(`/purchases?token=${encodeURIComponent(token)}&itemId=${encodeURIComponent(ordersItem.id)}`);
+            } catch (e) {
+                document.getElementById('om-count').textContent = '';
+                listEl.innerHTML = `<div class="empty-state">Could not reach the worker.${retryBtn()}</div>`;
+                return;
+            }
 
+            if (r.status === 401) {
+                document.getElementById('om-count').textContent = '';
+                listEl.innerHTML = '<div class="empty-state">Your admin session has expired.<br>Log out and log back in, then try again.</div>';
+                return;
+            }
+            if (r.status === 404) {
+                document.getElementById('om-count').textContent = '';
+                listEl.innerHTML = '<div class="empty-state">This worker has no /api/purchases route yet.<br>Make sure the latest worker.js is committed and deployed.</div>';
+                return;
+            }
+            if (!r.ok || (r.body && r.body.error)) {
+                document.getElementById('om-count').textContent = '';
+                const why = (r.body && r.body.error) ? esc(r.body.error) : `HTTP ${r.status}`;
+                listEl.innerHTML = `<div class="empty-state">Couldn't load buyers — ${why}.${retryBtn()}</div>`;
+                return;
+            }
+
+            const orders = r.body;
+            if (!Array.isArray(orders) || orders.length === 0) {
+                document.getElementById('om-count').textContent = 'No emails used yet';
+                listEl.innerHTML = '<div class="empty-state">Nobody has ordered this item yet.</div>';
+                return;
+            }
+
+            {
                 document.getElementById('om-count').textContent = `${orders.length} email${orders.length === 1 ? '' : 's'} used`;
                 listEl.innerHTML = orders.map(o => {
                     const qty = toInt(o.qty, 1);
@@ -897,10 +931,11 @@
                             <button class="btn-reset" onclick="resetBuyer('${esc(o.email)}', ${qty})">Reset</button>
                         </div>`;
                 }).join('');
-            } catch (e) {
-                console.error('Orders load failed:', e);
-                listEl.innerHTML = '<div class="empty-state">Couldn\'t load buyers. <button class="btn-edit" style="border:none;padding:6px 14px;border-radius:6px;cursor:pointer;color:#fff;font-weight:800;margin-left:8px;" onclick="loadOrders()">Retry</button></div>';
             }
+        }
+
+        function retryBtn() {
+            return ' <button class="btn-edit" style="border:none;padding:6px 14px;border-radius:6px;cursor:pointer;color:#fff;font-weight:800;margin-left:8px;" onclick="loadOrders()">Retry</button>';
         }
 
         async function resetBuyer(email, qty) {
