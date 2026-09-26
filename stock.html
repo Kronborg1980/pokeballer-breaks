@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Update Quantity · PBM Breaks</title>
+<link rel="icon" type="image/svg+xml" href="https://upload.wikimedia.org/wikipedia/commons/5/53/Pok%C3%A9_Ball_icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    color-scheme: dark;
+    --ink:#06070f; --card:#141733; --card2:#1c2043; --line:#2b2f55;
+    --text:#f2f3fb; --mute:#9aa0c4; --faint:#6b7098;
+    --cyan:#00e5da; --gold:#ffc93c; --good:#3ee79b; --bad:#ff5d7a;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0; padding:0;}
+  body{
+    background:var(--ink); color:var(--text);
+    font-family:Inter, system-ui, -apple-system, sans-serif;
+    font-size:17px; line-height:1.5; -webkit-font-smoothing:antialiased;
+    padding-bottom:40px;
+  }
+  .wrap{max-width:560px; margin:0 auto; padding-left:16px; padding-right:16px;}
+
+  /* ---------- header ---------- */
+  header{
+    padding-block:26px 18px; text-align:center;
+  }
+  h1{
+    font-size:1.65rem; font-weight:900; margin:0 0 6px; letter-spacing:-0.01em;
+    color:#fff;
+  }
+  .sub{margin:0; color:var(--mute); font-size:0.95rem;}
+  .toolbar{
+    display:flex; gap:10px; margin-top:18px;
+  }
+  .refresh{
+    flex:1; padding:14px; border-radius:12px; border:1px solid var(--line);
+    background:var(--card); color:var(--mute); font-family:inherit;
+    font-size:0.95rem; font-weight:800; cursor:pointer;
+  }
+  .refresh:active{background:var(--card2);}
+  .find{
+    flex:2; padding:14px 16px; border-radius:12px; border:1px solid var(--line);
+    background:var(--card); color:#fff; font-family:inherit; font-size:1rem;
+  }
+  .find::placeholder{color:var(--faint);}
+  .find:focus{outline:none; border-color:var(--cyan);}
+
+  /* ---------- item card ---------- */
+  .list{display:flex; flex-direction:column; gap:16px; margin-top:20px;}
+  .item{
+    background:var(--card); border:1px solid var(--line); border-radius:18px;
+    padding:16px; transition:border-color .2s;
+  }
+  .item.dirty{border-color:var(--gold);}
+  .item.saved{border-color:var(--good);}
+  .item.failed{border-color:var(--bad);}
+  .item.zero{opacity:.72;}
+
+  .top{display:flex; gap:14px; align-items:center; margin-bottom:14px;}
+  .thumb{
+    width:64px; height:64px; flex-shrink:0; border-radius:12px;
+    object-fit:cover; background:var(--card2); border:1px solid var(--line);
+  }
+  .name{flex:1; min-width:0;}
+  .name b{
+    display:block; font-size:1.06rem; font-weight:800; line-height:1.3;
+    color:#fff; word-break:break-word;
+  }
+  .chips{display:flex; gap:6px; flex-wrap:wrap; margin-top:6px;}
+  .chip{
+    font-size:0.68rem; font-weight:800; letter-spacing:.06em; text-transform:uppercase;
+    padding:3px 9px; border-radius:20px; border:1px solid var(--line); color:var(--faint);
+  }
+  .chip.live{color:var(--good); border-color:rgba(62,231,155,.45); background:rgba(62,231,155,.08);}
+  .chip.out{color:var(--bad); border-color:rgba(255,93,122,.45); background:rgba(255,93,122,.08);}
+  .chip.hidden{color:var(--gold); border-color:rgba(255,201,60,.45); background:rgba(255,201,60,.08);}
+
+  /* ---------- the big stepper ---------- */
+  .stepper{display:flex; align-items:stretch; gap:10px;}
+  .big{
+    flex:1; min-height:72px; border-radius:14px; border:none; cursor:pointer;
+    font-family:inherit; font-size:1rem; font-weight:900; letter-spacing:.02em;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;
+    line-height:1.1; transition:transform .08s, filter .15s;
+  }
+  .big .glyph{font-size:1.5rem; line-height:1;}
+  .big:active{transform:scale(0.96);}
+  .big:disabled{opacity:.3; cursor:not-allowed;}
+  .minus{background:linear-gradient(135deg,#ff7a3d,#ff9d2e); color:#2b1100;}
+  .plus{background:linear-gradient(135deg,#00c9b7,#00e5da); color:#00201f;}
+
+  .count{
+    width:104px; flex-shrink:0; border-radius:14px; border:2px solid var(--line);
+    background:var(--ink); color:#fff; font-family:inherit;
+    font-size:2.1rem; font-weight:900; text-align:center;
+    font-variant-numeric:tabular-nums; padding:0;
+    -moz-appearance:textfield;
+  }
+  .count::-webkit-outer-spin-button,.count::-webkit-inner-spin-button{-webkit-appearance:none; margin:0;}
+  .count:focus{outline:none; border-color:var(--cyan);}
+
+  .unit{
+    text-align:center; color:var(--mute); font-size:0.82rem; font-weight:700;
+    letter-spacing:.08em; text-transform:uppercase; margin-top:8px;
+  }
+
+  /* ---------- status line ---------- */
+  .status{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    margin-top:12px; min-height:26px; font-size:0.88rem; font-weight:700;
+  }
+  .msg{color:var(--faint);}
+  .msg.working{color:var(--gold);}
+  .msg.ok{color:var(--good);}
+  .msg.bad{color:var(--bad);}
+  .soldout-btn{
+    border:1px solid var(--line); background:transparent; color:var(--faint);
+    font-family:inherit; font-size:0.78rem; font-weight:800; letter-spacing:.04em;
+    text-transform:uppercase; padding:8px 13px; border-radius:20px; cursor:pointer;
+  }
+  .soldout-btn:active{background:var(--card2);}
+  .soldout-btn.arm{color:var(--bad); border-color:var(--bad); background:rgba(255,93,122,.1);}
+
+  /* ---------- states ---------- */
+  .banner{
+    border-radius:14px; padding:16px 18px; margin-top:20px; font-size:0.95rem;
+    border:1px solid var(--line); background:var(--card); color:var(--mute);
+    text-align:center;
+  }
+  .banner.bad{border-color:rgba(255,93,122,.5); background:rgba(255,93,122,.08); color:#ffc3ce;}
+  .banner b{color:#fff; display:block; margin-bottom:4px; font-size:1.02rem;}
+  .retry{
+    margin-top:12px; padding:12px 22px; border-radius:10px; border:none;
+    background:var(--cyan); color:#00201f; font-family:inherit; font-weight:900;
+    font-size:0.95rem; cursor:pointer;
+  }
+
+  .gate{max-width:320px; margin:16vh auto 0; text-align:center;}
+  .gate h2{font-size:1.25rem; margin:0 0 18px; color:#fff;}
+  .gate input{
+    width:100%; padding:18px; border-radius:14px; border:2px solid var(--line);
+    background:var(--card); color:#fff; font-family:inherit; font-size:1.6rem;
+    font-weight:900; text-align:center; letter-spacing:.3em;
+  }
+  .gate input:focus{outline:none; border-color:var(--cyan);}
+  .gate button{
+    width:100%; margin-top:12px; padding:16px; border-radius:14px; border:none;
+    background:var(--cyan); color:#00201f; font-family:inherit; font-size:1.05rem;
+    font-weight:900; cursor:pointer;
+  }
+  .gate .err{color:var(--bad); font-size:0.9rem; font-weight:700; min-height:22px; margin-top:10px;}
+
+  footer{
+    margin-top:30px; padding-top:18px; border-top:1px solid var(--line);
+    color:var(--faint); font-size:0.8rem; text-align:center; line-height:1.6;
+  }
+  footer a{color:var(--mute);}
+
+  @media(max-width:380px){
+    .big{font-size:0.86rem; min-height:66px;}
+    .count{width:84px; font-size:1.8rem;}
+  }
+  @media (prefers-reduced-motion: reduce){ *{transition:none !important;} }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <!-- Optional code screen. Hidden entirely when PIN is empty. -->
+  <div id="gate" class="gate" hidden>
+    <h2>Enter the code</h2>
+    <input id="gate-input" type="tel" inputmode="numeric" maxlength="8" placeholder="••••" autocomplete="off">
+    <button type="button" id="gate-go">Open</button>
+    <div class="err" id="gate-err"></div>
+  </div>
+
+  <div id="app" hidden>
+    <header>
+      <h1>Update Quantity</h1>
+      <p class="sub">Tap the buttons. It saves by itself.</p>
+      <div class="toolbar">
+        <input class="find" id="find" type="search" placeholder="Find an item…" autocomplete="off">
+        <button class="refresh" type="button" id="refresh">Reload</button>
+      </div>
+    </header>
+
+    <div id="list" class="list"></div>
+    <div id="state"></div>
+
+    <footer>
+      Only the number changes here. Names, prices and pictures stay exactly as they are.<br>
+      Everything else lives in the <a href="admin.html">full admin page</a>.
+    </footer>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   SETTINGS — the only two lines you may want to change
+   ============================================================ */
+
+// Your worker. Same address the rest of the site uses.
+const API_URL = 'https://pokeballer-worker.kronborgnielsen.workers.dev/api';
+
+// Optional code before the page opens. Leave it as '' for no code at all,
+// or put digits in the quotes, e.g. const PIN = '2580';
+const PIN = '';
+
+/* ============================================================
+   Everything below this line can be left alone.
+   ============================================================ */
+
+const listEl = document.getElementById('list');
+const stateEl = document.getElementById('state');
+const findEl = document.getElementById('find');
+
+let items = [];
+const pending = {};   // itemId -> timer
+const armed = {};     // itemId -> sold-out button waiting for a second tap
+
+function esc(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+function toInt(n, fallback) {
+  const v = parseInt(n, 10);
+  return Number.isFinite(v) ? v : (fallback || 0);
+}
+
+// Say "packs", "bundles", "spots" or "cards" the way the item itself is set up.
+function unitFor(item, n) {
+  let one = 'pack', many = 'packs';
+  if (item.type === 'slab' || item.type === 'raw') { one = 'card'; many = 'cards'; }
+  else if (item.type === 'msrp' || item.type === 'bundle' || item.type === 'baller') { one = 'spot'; many = 'spots'; }
+  else if (item.stockLabelType === 'bundles') { one = 'bundle'; many = 'bundles'; }
+  else if (item.stockLabelType === 'spots') { one = 'spot'; many = 'spots'; }
+  return n === 1 ? one : many;
+}
+
+function typeLabel(t) {
+  return { msrp: 'MSRP break', bundle: 'Bundle break', baller: 'Baller bundle',
+           pack: 'Packs', slab: 'Graded slab', raw: 'Raw card' }[t] || 'Item';
+}
+
+/* ---------- load ---------- */
+async function load() {
+  stateEl.innerHTML = '<div class="banner">Loading your items…</div>';
+  listEl.innerHTML = '';
+  try {
+    const res = await fetch(`${API_URL}/items`);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    if (!Array.isArray(data)) throw new Error('Unexpected answer');
+    data.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+    items = data;
+    render();
+  } catch (e) {
+    stateEl.innerHTML = `
+      <div class="banner bad">
+        <b>Could not reach the shop</b>
+        The internet or the server did not answer. Nothing was changed.
+        <div><button class="retry" type="button" onclick="load()">Try again</button></div>
+      </div>`;
+  }
+}
+
+/* ---------- draw ---------- */
+function render() {
+  const q = findEl.value.trim().toLowerCase();
+  const shown = items.filter(i => i && (!q || String(i.name || '').toLowerCase().includes(q)));
+
+  if (shown.length === 0) {
+    listEl.innerHTML = '';
+    stateEl.innerHTML = `<div class="banner">${q ? 'Nothing matches that name.' : 'There are no items yet.'}</div>`;
+    return;
+  }
+  stateEl.innerHTML = '';
+
+  listEl.innerHTML = shown.map(item => {
+    const id = esc(item.id);
+    const stock = toInt(item.stock);
+    const img = item.image || (item.images && item.images[0]) ||
+      'https://assets.pokemon.com/assets/cms2/img/misc/trading-card-games/cards/tcg_default_card.png';
+
+    const chips = [`<span class="chip">${esc(typeLabel(item.type))}</span>`];
+    if (item.hidden) chips.push('<span class="chip hidden">Hidden</span>');
+    else if (stock <= 0) chips.push('<span class="chip out">Sold out</span>');
+    else chips.push('<span class="chip live">On the site</span>');
+
+    return `
+      <div class="item ${stock <= 0 ? 'zero' : ''}" id="row-${id}">
+        <div class="top">
+          <img class="thumb" src="${esc(img)}" alt="" loading="lazy">
+          <div class="name">
+            <b>${esc(item.name || 'Untitled')}</b>
+            <div class="chips">${chips.join('')}</div>
+          </div>
+        </div>
+
+        <div class="stepper">
+          <button class="big minus" type="button" data-act="minus" data-id="${id}" ${stock <= 0 ? 'disabled' : ''}>
+            <span class="glyph">−</span><span>Sold one</span>
+          </button>
+          <input class="count" type="number" inputmode="numeric" min="0" step="1"
+                 value="${stock}" data-id="${id}" aria-label="Quantity for ${esc(item.name || 'item')}">
+          <button class="big plus" type="button" data-act="plus" data-id="${id}">
+            <span class="glyph">+</span><span>Add one</span>
+          </button>
+        </div>
+        <div class="unit" id="unit-${id}">${stock} ${esc(unitFor(item, stock))} left</div>
+
+        <div class="status">
+          <span class="msg" id="msg-${id}"></span>
+          <button class="soldout-btn" type="button" data-act="zero" data-id="${id}" id="zero-${id}">Set to sold out</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+/* ---------- change ---------- */
+function itemById(id) { return items.find(i => String(i.id) === String(id)); }
+
+function setCount(id, next) {
+  const item = itemById(id);
+  if (!item) return;
+  const val = Math.max(0, toInt(next));
+  item.stock = val;
+
+  const row = document.getElementById('row-' + id);
+  const input = row && row.querySelector('.count');
+  const unit = document.getElementById('unit-' + id);
+  const minus = row && row.querySelector('.minus');
+
+  if (input && input.value !== String(val)) input.value = val;
+  if (unit) unit.textContent = `${val} ${unitFor(item, val)} left`;
+  if (minus) minus.disabled = val <= 0;
+  if (row) {
+    row.classList.remove('saved', 'failed');
+    row.classList.add('dirty');
+    row.classList.toggle('zero', val <= 0);
+  }
+  setMsg(id, 'Saving…', 'working');
+  queueSave(id);
+}
+
+function setMsg(id, text, kind) {
+  const el = document.getElementById('msg-' + id);
+  if (!el) return;
+  el.textContent = text || '';
+  el.className = 'msg' + (kind ? ' ' + kind : '');
+}
+
+// Wait until the tapping stops, then send one update.
+function queueSave(id) {
+  if (pending[id]) clearTimeout(pending[id]);
+  pending[id] = setTimeout(() => { delete pending[id]; save(id); }, 800);
+}
+
+async function save(id) {
+  const item = itemById(id);
+  if (!item) return;
+  const row = document.getElementById('row-' + id);
+  const target = toInt(item.stock);
+
+  // The whole item goes back, with only the number different — that is what
+  // keeps the pictures, price and limits exactly as they were.
+  const body = Object.assign({}, item, { stock: target });
+
+  try {
+    const res = await fetch(`${API_URL}/items/${encodeURIComponent(id)}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    const data = await res.json().catch(() => null);
+    if (!res.ok || (data && data.error)) throw new Error((data && data.error) || 'HTTP ' + res.status);
+
+    if (row) { row.classList.remove('dirty', 'failed'); row.classList.add('saved'); }
+    setMsg(id, '✓ Saved — the site is updated', 'ok');
+    setTimeout(() => {
+      if (row) row.classList.remove('saved');
+      setMsg(id, '');
+    }, 2600);
+  } catch (e) {
+    if (row) { row.classList.remove('dirty', 'saved'); row.classList.add('failed'); }
+    setMsg(id, 'Not saved. Tap a button again to retry.', 'bad');
+  }
+}
+
+/* ---------- taps ---------- */
+listEl.addEventListener('click', ev => {
+  const btn = ev.target.closest('button[data-act]');
+  if (!btn) return;
+  const id = btn.dataset.id;
+  const item = itemById(id);
+  if (!item) return;
+
+  if (btn.dataset.act === 'plus') { clearArm(id); setCount(id, toInt(item.stock) + 1); return; }
+  if (btn.dataset.act === 'minus') { clearArm(id); setCount(id, toInt(item.stock) - 1); return; }
+
+  if (btn.dataset.act === 'zero') {
+    // Two taps, because this one takes the item off the site.
+    if (!armed[id]) {
+      armed[id] = setTimeout(() => clearArm(id), 4000);
+      btn.classList.add('arm');
+      btn.textContent = 'Tap again to confirm';
+      return;
+    }
+    clearArm(id);
+    setCount(id, 0);
+  }
+});
+
+function clearArm(id) {
+  if (armed[id]) { clearTimeout(armed[id]); delete armed[id]; }
+  const btn = document.getElementById('zero-' + id);
+  if (btn) { btn.classList.remove('arm'); btn.textContent = 'Set to sold out'; }
+}
+
+listEl.addEventListener('input', ev => {
+  const input = ev.target.closest('input.count');
+  if (!input) return;
+  const digits = input.value.replace(/[^\d]/g, '');
+  if (digits !== input.value) input.value = digits;
+  if (digits === '') return;               // let them finish typing
+  setCount(input.dataset.id, digits);
+});
+
+listEl.addEventListener('blur', ev => {
+  const input = ev.target.closest && ev.target.closest('input.count');
+  if (!input) return;
+  if (input.value.trim() === '') setCount(input.dataset.id, 0);
+}, true);
+
+document.getElementById('refresh').addEventListener('click', load);
+findEl.addEventListener('input', render);
+
+/* ---------- optional code ---------- */
+function openApp() {
+  document.getElementById('gate').hidden = true;
+  document.getElementById('app').hidden = false;
+  load();
+}
+
+(function boot() {
+  if (!PIN) { openApp(); return; }
+  try { if (sessionStorage.getItem('pbm-stock-ok') === '1') { openApp(); return; } } catch (e) {}
+
+  const gate = document.getElementById('gate');
+  const input = document.getElementById('gate-input');
+  const err = document.getElementById('gate-err');
+  gate.hidden = false;
+  input.focus();
+
+  const attempt = () => {
+    if (input.value.trim() === PIN) {
+      try { sessionStorage.setItem('pbm-stock-ok', '1'); } catch (e) {}
+      openApp();
+    } else {
+      err.textContent = 'That is not the code.';
+      input.value = '';
+      input.focus();
+    }
+  };
+  document.getElementById('gate-go').addEventListener('click', attempt);
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') attempt(); });
+})();
+</script>
+</body>
+</html>
