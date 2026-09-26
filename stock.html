@@ -16,6 +16,9 @@
     --cyan:#00e5da; --gold:#ffc93c; --good:#3ee79b; --bad:#ff5d7a;
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  /* A class that sets `display` beats the browser's own [hidden] rule, so
+     anything hidden by attribute needs this to actually stay hidden. */
+  [hidden]{display:none !important;}
   html,body{margin:0; padding:0;}
   body{
     background:var(--ink); color:var(--text);
@@ -757,15 +760,16 @@ async function purge(email, allOfThem) {
       return;
     }
 
+    let text, kind = 'ok';
     if (allOfThem) {
-      setPopMsg('Cleared ' + toInt(data.cleared) + ' emails. They can all order again.', 'ok');
+      text = 'Cleared ' + toInt(data.cleared) + ' emails. They can all order again.';
     } else if (!toInt(data.cleared)) {
-      setPopMsg('That email was not on the list any more.', 'info');
+      text = 'That email was not on the list any more.'; kind = 'info';
     } else {
       const back = toInt(data.restored);
-      setPopMsg(back
+      text = back
         ? email + ' can order again, and ' + back + ' ' + unitFor(popItem, back) + ' went back in stock.'
-        : email + ' can order again.', 'ok');
+        : email + ' can order again.';
     }
 
     await load();                  // stock on the cards may have moved
@@ -773,6 +777,7 @@ async function purge(email, allOfThem) {
       popItem = itemById(popItem.id) || popItem;
       await loadEmails();
     }
+    setPopMsg(text, kind);         // last, so the redraw cannot wipe it
   } catch (e) {
     setPopMsg('No internet, or the server did not answer.', 'bad');
   }
