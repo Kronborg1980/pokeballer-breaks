@@ -163,6 +163,103 @@
   }
   .gate .err{color:var(--bad); font-size:0.9rem; font-weight:700; min-height:22px; margin-top:10px;}
 
+
+  /* ---------- purge email ---------- */
+  .email-btn{
+    width:100%; margin-top:12px; padding:14px; border-radius:12px;
+    border:1px solid var(--line); background:var(--card2); color:var(--mute);
+    font-family:inherit; font-size:0.92rem; font-weight:800; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; gap:10px;
+  }
+  .email-btn:active{background:#252a52;}
+  .email-count{
+    font-size:0.72rem; font-weight:800; letter-spacing:.04em; padding:3px 9px;
+    border-radius:20px; background:rgba(0,229,218,.12); color:var(--cyan);
+  }
+  .email-count:empty{display:none;}
+
+  .pop{
+    position:fixed; inset:0; z-index:100; background:rgba(2,3,10,.88);
+    display:flex; align-items:flex-start; justify-content:center;
+    overflow-y:auto; padding:16px 12px 48px;
+    padding-top:calc(16px + env(safe-area-inset-top, 0px));
+  }
+  .pop-card{
+    width:100%; max-width:520px; margin:auto; background:var(--card);
+    border:1px solid var(--line); border-radius:18px; padding:18px;
+  }
+  .pop-head{display:flex; gap:12px; align-items:flex-start; margin-bottom:16px;}
+  .pop-head h2{margin:0; font-size:1.15rem; font-weight:900; color:#fff; line-height:1.3;}
+  .pop-head p{margin:4px 0 0; font-size:0.85rem; color:var(--mute);}
+  .pop-x{
+    flex-shrink:0; width:40px; height:40px; border-radius:10px; border:1px solid var(--line);
+    background:transparent; color:var(--mute); font-size:1.6rem; line-height:1; cursor:pointer;
+  }
+  .pop-x:active{background:var(--card2);}
+
+  .restore{
+    display:flex; gap:12px; align-items:flex-start; cursor:pointer;
+    background:var(--card2); border:1px solid var(--line); border-radius:12px;
+    padding:13px 15px; margin-bottom:16px;
+  }
+  .restore input{position:absolute; opacity:0; width:0; height:0;}
+  .restore .sw{
+    flex-shrink:0; width:46px; height:26px; border-radius:30px; margin-top:2px;
+    background:#2b2f55; border:1px solid var(--line); position:relative; transition:.2s;
+  }
+  .restore .sw::after{
+    content:''; position:absolute; top:3px; left:3px; width:18px; height:18px;
+    border-radius:50%; background:var(--faint); transition:.2s;
+  }
+  .restore input:checked + .sw{background:rgba(62,231,155,.25); border-color:var(--good);}
+  .restore input:checked + .sw::after{transform:translateX(20px); background:var(--good);}
+  .restore input:focus-visible + .sw{outline:2px solid var(--cyan); outline-offset:2px;}
+  .restore-txt b{display:block; color:#fff; font-size:0.9rem; font-weight:800;}
+  .restore-txt i{display:block; color:var(--faint); font-size:0.78rem; font-style:normal; line-height:1.5; margin-top:4px;}
+
+  .pop-list{display:flex; flex-direction:column; gap:10px;}
+  .erow{
+    background:var(--card2); border:1px solid var(--line); border-radius:12px; padding:13px 14px;
+  }
+  .erow.pending{border-color:rgba(255,201,60,.45);}
+  .erow.gone{opacity:.4;}
+  .emailtxt{font-weight:800; color:#fff; font-size:0.94rem; word-break:break-all; line-height:1.4;}
+  .emeta{color:var(--faint); font-size:0.78rem; margin-top:3px; line-height:1.5;}
+  .emeta .ref{color:var(--gold); font-weight:700;}
+  .estatus{
+    display:inline-block; font-size:0.64rem; font-weight:800; letter-spacing:.07em;
+    text-transform:uppercase; padding:2px 8px; border-radius:20px; margin-left:6px;
+    border:1px solid var(--line); color:var(--faint);
+  }
+  .estatus.paid{color:var(--good); border-color:rgba(62,231,155,.45);}
+  .estatus.waiting{color:var(--gold); border-color:rgba(255,201,60,.45);}
+  .purge-btn{
+    width:100%; margin-top:11px; padding:13px; border-radius:10px; border:none;
+    background:linear-gradient(135deg,#ff7a3d,#ff9d2e); color:#2b1100;
+    font-family:inherit; font-size:0.92rem; font-weight:900; cursor:pointer;
+  }
+  .purge-btn:active{transform:scale(.98);}
+  .purge-btn.arm{background:linear-gradient(135deg,#ff4d6d,#ff7a90); color:#33000c;}
+  .purge-btn:disabled{opacity:.5; cursor:default;}
+
+  .pop-msg{font-size:0.86rem; font-weight:700; margin-top:14px; min-height:20px;}
+  .pop-msg.ok{color:var(--good);}
+  .pop-msg.bad{color:var(--bad);}
+  .pop-msg.info{color:var(--mute);}
+
+  .purge-all{
+    width:100%; margin-top:16px; padding:13px; border-radius:10px;
+    border:1px solid rgba(255,93,122,.5); background:rgba(255,93,122,.08); color:var(--bad);
+    font-family:inherit; font-size:0.85rem; font-weight:800; cursor:pointer;
+    text-transform:uppercase; letter-spacing:.04em;
+  }
+  .purge-all.arm{background:var(--bad); color:#33000c;}
+  .pop-done{
+    width:100%; margin-top:10px; padding:15px; border-radius:12px; border:none;
+    background:var(--card2); color:var(--text); font-family:inherit;
+    font-size:1rem; font-weight:800; cursor:pointer;
+  }
+
   footer{
     margin-top:30px; padding-top:18px; border-top:1px solid var(--line);
     color:var(--faint); font-size:0.8rem; text-align:center; line-height:1.6;
@@ -201,6 +298,34 @@
 
     <div id="list" class="list"></div>
     <div id="state"></div>
+
+    <!-- Email popup -->
+    <div id="pop" class="pop" hidden>
+      <div class="pop-card">
+        <div class="pop-head">
+          <div>
+            <h2 id="pop-title">Emails</h2>
+            <p id="pop-sub">Loading…</p>
+          </div>
+          <button class="pop-x" type="button" id="pop-close" aria-label="Close">×</button>
+        </div>
+
+        <label class="restore" for="pop-restore">
+          <input type="checkbox" id="pop-restore">
+          <span class="sw"></span>
+          <span class="restore-txt">
+            <b id="restore-label">Also put their packs back in stock</b>
+            <i>Turn this on when the order fell through. Leave it off when they keep what they bought and you only want to let them order again.</i>
+          </span>
+        </label>
+
+        <div id="pop-list" class="pop-list"></div>
+        <div id="pop-msg" class="pop-msg"></div>
+
+        <button class="purge-all" type="button" id="purge-all" hidden>Purge every email on this item</button>
+        <button class="pop-done" type="button" id="pop-done">Done</button>
+      </div>
+    </div>
 
     <footer>
       Only the number changes here. Names, prices and pictures stay exactly as they are.<br>
@@ -271,6 +396,7 @@ async function load() {
     data.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
     items = data;
     render();
+    loadEmailCounts();
   } catch (e) {
     stateEl.innerHTML = `
       <div class="banner bad">
@@ -330,6 +456,12 @@ function render() {
           <span class="msg" id="msg-${id}"></span>
           <button class="soldout-btn" type="button" data-act="zero" data-id="${id}" id="zero-${id}">Set to sold out</button>
         </div>
+
+        ${item.type === 'pack' ? `
+        <button class="email-btn" type="button" data-act="emails" data-id="${id}">
+          <span>📧 Purge email</span>
+          <span class="email-count" id="cnt-${id}"></span>
+        </button>` : ''}
       </div>`;
   }).join('');
 }
@@ -436,6 +568,7 @@ listEl.addEventListener('click', ev => {
   const item = itemById(id);
   if (!item) return;
 
+  if (btn.dataset.act === 'emails') { openPop(id); return; }
   if (btn.dataset.act === 'plus') { clearArm(id); setCount(id, toInt(item.stock) + 1); return; }
   if (btn.dataset.act === 'minus') { clearArm(id); setCount(id, toInt(item.stock) - 1); return; }
 
@@ -473,8 +606,221 @@ listEl.addEventListener('blur', ev => {
   if (input.value.trim() === '') setCount(input.dataset.id, 0);
 }, true);
 
+// Fill the little "2 emails" badges in the background, so opening the popup
+// is never the first time he learns there is something there.
+async function loadEmailCounts() {
+  const packs = items.filter(i => i && i.type === 'pack');
+  await Promise.all(packs.map(async p => {
+    try {
+      const res = await fetch(`${API_URL}/purchases?token=${encodeURIComponent(getToken())}&itemId=${p.id}`);
+      if (!res.ok) return;
+      const rows = await res.json();
+      if (Array.isArray(rows)) setEmailCount(p.id, rows.length);
+    } catch (e) { /* the badge just stays empty */ }
+  }));
+}
+
 document.getElementById('refresh').addEventListener('click', load);
 findEl.addEventListener('input', render);
+
+
+/* ============================================================
+   PURGE EMAIL
+   An item remembers every email that ordered it, so nobody can order
+   twice. Purging an email forgets that, and they can order again.
+   ============================================================ */
+const popEl = document.getElementById('pop');
+let popItem = null;
+let armedPurge = {};   // email -> timer, waiting for a second tap
+
+function unitWordFor(item, n) { return unitFor(item, n); }
+
+function fmtWhen(ts) {
+  if (!ts) return '';
+  try {
+    return new Date(ts).toLocaleString([], { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
+  } catch (e) { return ''; }
+}
+
+function setPopMsg(text, kind) {
+  const el = document.getElementById('pop-msg');
+  el.textContent = text || '';
+  el.className = 'pop-msg' + (kind ? ' ' + kind : '');
+}
+
+function openPop(id) {
+  const item = itemById(id);
+  if (!item) return;
+  popItem = item;
+  armedPurge = {};
+
+  document.getElementById('pop-title').textContent = item.name || 'This item';
+  document.getElementById('pop-sub').textContent = 'Emails that have already ordered it';
+  document.getElementById('restore-label').textContent =
+    'Also put their ' + unitFor(item, 2) + ' back in stock';
+  document.getElementById('pop-restore').checked = false;
+  document.getElementById('purge-all').hidden = true;
+  document.getElementById('pop-list').innerHTML = '';
+  setPopMsg('Loading…', 'info');
+  popEl.hidden = false;
+  document.body.style.overflow = 'hidden';
+  loadEmails();
+}
+
+function closePop() {
+  popEl.hidden = true;
+  document.body.style.overflow = '';
+  popItem = null;
+}
+
+async function loadEmails() {
+  if (!popItem) return;
+  const listBox = document.getElementById('pop-list');
+  try {
+    const res = await fetch(
+      `${API_URL}/purchases?token=${encodeURIComponent(getToken())}&itemId=${popItem.id}`);
+
+    if (res.status === 401) { closePop(); logout('Your login ran out. Log in again.'); return; }
+    if (res.status === 404) {
+      listBox.innerHTML = '';
+      setPopMsg('This worker does not have the email list yet.', 'bad');
+      return;
+    }
+
+    const data = await res.json().catch(() => null);
+    if (!res.ok || (data && data.error)) {
+      listBox.innerHTML = '';
+      setPopMsg((data && data.error) || ('The server said HTTP ' + res.status), 'bad');
+      return;
+    }
+
+    const rows = Array.isArray(data) ? data : [];
+    setEmailCount(popItem.id, rows.length);
+
+    if (rows.length === 0) {
+      listBox.innerHTML = '';
+      document.getElementById('purge-all').hidden = true;
+      setPopMsg('Nobody has ordered this one yet. Nothing to purge.', 'info');
+      return;
+    }
+
+    setPopMsg('');
+    document.getElementById('purge-all').hidden = rows.length < 2;
+    listBox.innerHTML = rows.map(o => {
+      const qty = toInt(o.qty, 1);
+      const bits = [];
+      if (o.name) bits.push(esc(o.name));
+      bits.push(qty + ' ' + esc(unitFor(popItem, qty)));
+      if (o.orderRef) bits.push('<span class="ref">' + esc(o.orderRef) + '</span>');
+      if (o.at) bits.push(esc(fmtWhen(o.at)));
+
+      let chip = '';
+      if (o.status === 'paid') chip = '<span class="estatus paid">Paid</span>';
+      else if (o.status === 'pending') chip = '<span class="estatus waiting">Waiting to pay</span>';
+
+      const safe = esc(o.email || '');
+      return `
+        <div class="erow ${o.status === 'pending' ? 'pending' : ''}" data-row="${safe}">
+          <div class="emailtxt">${safe}${chip}</div>
+          <div class="emeta">${bits.join(' · ')}</div>
+          <button class="purge-btn" type="button" data-purge="${safe}">Purge this email</button>
+        </div>`;
+    }).join('');
+  } catch (e) {
+    listBox.innerHTML = '';
+    setPopMsg('No internet, or the server did not answer.', 'bad');
+  }
+}
+
+function setEmailCount(id, n) {
+  const el = document.getElementById('cnt-' + id);
+  if (el) el.textContent = n > 0 ? (n + (n === 1 ? ' email' : ' emails')) : '';
+}
+
+async function purge(email, allOfThem) {
+  if (!popItem) return;
+  const restore = document.getElementById('pop-restore').checked;
+  const body = { token: getToken(), itemId: popItem.id, restoreStock: restore };
+  if (!allOfThem) body.email = email;
+
+  setPopMsg('Working…', 'info');
+  try {
+    const res = await fetch(`${API_URL}/purchases/clear`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (res.status === 401) { closePop(); logout('Your login ran out. Log in again.'); return; }
+    const data = await res.json().catch(() => null);
+    if (!res.ok || (data && data.error)) {
+      setPopMsg((data && data.error) || ('The server said HTTP ' + res.status), 'bad');
+      return;
+    }
+
+    if (allOfThem) {
+      setPopMsg('Cleared ' + toInt(data.cleared) + ' emails. They can all order again.', 'ok');
+    } else if (!toInt(data.cleared)) {
+      setPopMsg('That email was not on the list any more.', 'info');
+    } else {
+      const back = toInt(data.restored);
+      setPopMsg(back
+        ? email + ' can order again, and ' + back + ' ' + unitFor(popItem, back) + ' went back in stock.'
+        : email + ' can order again.', 'ok');
+    }
+
+    await load();                  // stock on the cards may have moved
+    if (popItem) {
+      popItem = itemById(popItem.id) || popItem;
+      await loadEmails();
+    }
+  } catch (e) {
+    setPopMsg('No internet, or the server did not answer.', 'bad');
+  }
+}
+
+/* ---- popup taps ---- */
+document.getElementById('pop-close').addEventListener('click', closePop);
+document.getElementById('pop-done').addEventListener('click', closePop);
+popEl.addEventListener('click', ev => { if (ev.target === popEl) closePop(); });
+
+document.getElementById('pop-list').addEventListener('click', ev => {
+  const btn = ev.target.closest('button[data-purge]');
+  if (!btn) return;
+  const email = btn.dataset.purge;
+
+  // Two taps. Purging is not something to do by accident.
+  if (!armedPurge[email]) {
+    armedPurge[email] = setTimeout(() => {
+      delete armedPurge[email];
+      btn.classList.remove('arm');
+      btn.textContent = 'Purge this email';
+    }, 4000);
+    btn.classList.add('arm');
+    btn.textContent = 'Tap again to purge';
+    return;
+  }
+  clearTimeout(armedPurge[email]);
+  delete armedPurge[email];
+  btn.disabled = true;
+  btn.textContent = 'Purging…';
+  purge(email, false);
+});
+
+let allArm = null;
+document.getElementById('purge-all').addEventListener('click', function () {
+  if (!allArm) {
+    allArm = setTimeout(() => { allArm = null; this.classList.remove('arm'); this.textContent = 'Purge every email on this item'; }, 4000);
+    this.classList.add('arm');
+    this.textContent = 'Tap again — this clears everyone';
+    return;
+  }
+  clearTimeout(allArm); allArm = null;
+  this.classList.remove('arm');
+  this.textContent = 'Purge every email on this item';
+  purge(null, true);
+});
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !popEl.hidden) closePop(); });
 
 /* ---------- login ---------- */
 function getToken() {
