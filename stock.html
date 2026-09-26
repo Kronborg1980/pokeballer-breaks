@@ -143,9 +143,17 @@
   .gate{max-width:320px; margin:16vh auto 0; text-align:center;}
   .gate h2{font-size:1.25rem; margin:0 0 18px; color:#fff;}
   .gate input{
-    width:100%; padding:18px; border-radius:14px; border:2px solid var(--line);
-    background:var(--card); color:#fff; font-family:inherit; font-size:1.6rem;
-    font-weight:900; text-align:center; letter-spacing:.3em;
+    width:100%; padding:17px; margin-bottom:11px; border-radius:14px; border:2px solid var(--line);
+    background:var(--card); color:#fff; font-family:inherit; font-size:1.1rem;
+    font-weight:700; text-align:center;
+  }
+  .gate input::placeholder{color:var(--faint); font-weight:600; letter-spacing:0;}
+  .gate-note{color:var(--faint); font-size:0.82rem; line-height:1.55; margin:16px 0 0;}
+  .gate button:disabled{opacity:.55; cursor:progress;}
+  .logout{
+    margin-top:14px; background:none; border:none; color:var(--faint);
+    font-family:inherit; font-size:0.8rem; font-weight:700; text-decoration:underline;
+    cursor:pointer; padding:6px;
   }
   .gate input:focus{outline:none; border-color:var(--cyan);}
   .gate button{
@@ -171,12 +179,14 @@
 <body>
 
 <div class="wrap">
-  <!-- Optional code screen. Hidden entirely when PIN is empty. -->
+  <!-- Login. The password is never stored in this file — the worker checks it. -->
   <div id="gate" class="gate" hidden>
-    <h2>Enter the code</h2>
-    <input id="gate-input" type="tel" inputmode="numeric" maxlength="8" placeholder="••••" autocomplete="off">
-    <button type="button" id="gate-go">Open</button>
+    <h2>Log in to change quantities</h2>
+    <input id="gate-user" type="text" placeholder="Username" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false">
+    <input id="gate-pass" type="password" placeholder="Password" autocomplete="current-password">
+    <button type="button" id="gate-go">Log in</button>
     <div class="err" id="gate-err"></div>
+    <p class="gate-note">You stay logged in on this phone. Use the same username and password as the admin page.</p>
   </div>
 
   <div id="app" hidden>
@@ -195,6 +205,7 @@
     <footer>
       Only the number changes here. Names, prices and pictures stay exactly as they are.<br>
       Everything else lives in the <a href="admin.html">full admin page</a>.
+      <br><button class="logout" type="button" id="logout">Log out of this phone</button>
     </footer>
   </div>
 </div>
@@ -207,9 +218,10 @@
 // Your worker. Same address the rest of the site uses.
 const API_URL = 'https://pokeballer-worker.kronborgnielsen.workers.dev/api';
 
-// Optional code before the page opens. Leave it as '' for no code at all,
-// or put digits in the quotes, e.g. const PIN = '2580';
-const PIN = '';
+// There is no password in this file. The page asks for the same username and
+// password as the admin page, sends them to the worker, and keeps only the
+// token the worker hands back. Nobody can read the password out of the source.
+const TOKEN_KEY = 'adminToken';   // shared with admin.html, so one login covers both
 
 /* ============================================================
    Everything below this line can be left alone.
@@ -397,7 +409,9 @@ async function save(id) {
     });
     const data = await res.json().catch(() => null);
     if (!res.ok || (data && data.error)) {
-      throw new Error((data && data.error) || 'the server said HTTP ' + res.status);
+      const err = new Error((data && data.error) || 'the server said HTTP ' + res.status);
+      if (res.status === 401) err.unauthorized = true;
+      throw err;
     }
 
     if (row) { row.classList.remove('dirty', 'failed'); row.classList.add('saved'); }
@@ -409,6 +423,7 @@ async function save(id) {
   } catch (e) {
     if (row) { row.classList.remove('dirty', 'saved'); row.classList.add('failed'); }
     console.error('Save failed for', id, e);
+    if (e && e.unauthorized) { logout('Your login ran out. Log in again.'); return; }
     setMsg(id, 'Not saved — ' + (e.message || 'no answer') + '. Tap again to retry.', 'bad');
   }
 }
@@ -461,35 +476,81 @@ listEl.addEventListener('blur', ev => {
 document.getElementById('refresh').addEventListener('click', load);
 findEl.addEventListener('input', render);
 
-/* ---------- optional code ---------- */
+/* ---------- login ---------- */
+function getToken() {
+  try { return localStorage.getItem(TOKEN_KEY) || ''; } catch (e) { return ''; }
+}
+
+function showGate(message) {
+  document.getElementById('app').hidden = true;
+  const gate = document.getElementById('gate');
+  gate.hidden = false;
+  document.getElementById('gate-err').textContent = message || '';
+  document.getElementById('gate-pass').value = '';
+  const user = document.getElementById('gate-user');
+  if (!user.value) user.focus(); else document.getElementById('gate-pass').focus();
+}
+
 function openApp() {
   document.getElementById('gate').hidden = true;
   document.getElementById('app').hidden = false;
   load();
 }
 
-(function boot() {
-  if (!PIN) { openApp(); return; }
-  try { if (sessionStorage.getItem('pbm-stock-ok') === '1') { openApp(); return; } } catch (e) {}
+function logout(message) {
+  try { localStorage.removeItem(TOKEN_KEY); } catch (e) {}
+  showGate(message || '');
+}
 
-  const gate = document.getElementById('gate');
-  const input = document.getElementById('gate-input');
+async function attemptLogin() {
+  const btn = document.getElementById('gate-go');
   const err = document.getElementById('gate-err');
-  gate.hidden = false;
-  input.focus();
+  const username = document.getElementById('gate-user').value.trim();
+  const password = document.getElementById('gate-pass').value;
 
-  const attempt = () => {
-    if (input.value.trim() === PIN) {
-      try { sessionStorage.setItem('pbm-stock-ok', '1'); } catch (e) {}
+  if (!username || !password) { err.textContent = 'Fill in both boxes.'; return; }
+
+  btn.disabled = true;
+  btn.textContent = 'Checking…';
+  err.textContent = '';
+
+  try {
+    // The password goes straight to the worker and is never kept here.
+    const res = await fetch(`${API_URL}/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+    const data = await res.json().catch(() => null);
+
+    if (res.ok && data && data.success && data.token) {
+      try { localStorage.setItem(TOKEN_KEY, data.token); } catch (e) {}
+      document.getElementById('gate-pass').value = '';
       openApp();
-    } else {
-      err.textContent = 'That is not the code.';
-      input.value = '';
-      input.focus();
+      return;
     }
-  };
-  document.getElementById('gate-go').addEventListener('click', attempt);
-  input.addEventListener('keydown', e => { if (e.key === 'Enter') attempt(); });
+    err.textContent = res.status === 401
+      ? 'Wrong username or password.'
+      : ((data && data.error) || 'Could not log in right now.');
+  } catch (e) {
+    err.textContent = 'No internet, or the server did not answer.';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Log in';
+  }
+}
+
+document.getElementById('gate-go').addEventListener('click', attemptLogin);
+['gate-user', 'gate-pass'].forEach(id => {
+  document.getElementById(id).addEventListener('keydown', e => {
+    if (e.key === 'Enter') attemptLogin();
+  });
+});
+document.getElementById('logout').addEventListener('click', () => logout());
+
+(function boot() {
+  if (getToken()) openApp();
+  else showGate();
 })();
 </script>
 </body>
