@@ -344,8 +344,23 @@ function setCount(id, next) {
     row.classList.add('dirty');
     row.classList.toggle('zero', val <= 0);
   }
+  refreshChips(id);
   setMsg(id, 'Saving…', 'working');
   queueSave(id);
+}
+
+function refreshChips(id) {
+  const item = itemById(id);
+  const row = document.getElementById('row-' + id);
+  if (!item || !row) return;
+  const box = row.querySelector('.chips');
+  if (!box) return;
+  const stock = toInt(item.stock);
+  const chips = [`<span class="chip">${esc(typeLabel(item.type))}</span>`];
+  if (item.hidden) chips.push('<span class="chip hidden">Hidden</span>');
+  else if (stock <= 0) chips.push('<span class="chip out">Sold out</span>');
+  else chips.push('<span class="chip live">On the site</span>');
+  box.innerHTML = chips.join('');
 }
 
 function setMsg(id, text, kind) {
@@ -372,13 +387,18 @@ async function save(id) {
   const body = Object.assign({}, item, { stock: target });
 
   try {
-    const res = await fetch(`${API_URL}/items/${encodeURIComponent(id)}`, {
+    // No encodeURIComponent here: the id contains a colon ("item:1758…"), which
+    // is legal in a URL path. Encoding it to %3A makes the worker look up a key
+    // that does not exist, and every save comes back 404.
+    const res = await fetch(`${API_URL}/items/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
     });
     const data = await res.json().catch(() => null);
-    if (!res.ok || (data && data.error)) throw new Error((data && data.error) || 'HTTP ' + res.status);
+    if (!res.ok || (data && data.error)) {
+      throw new Error((data && data.error) || 'the server said HTTP ' + res.status);
+    }
 
     if (row) { row.classList.remove('dirty', 'failed'); row.classList.add('saved'); }
     setMsg(id, '✓ Saved — the site is updated', 'ok');
@@ -388,7 +408,8 @@ async function save(id) {
     }, 2600);
   } catch (e) {
     if (row) { row.classList.remove('dirty', 'saved'); row.classList.add('failed'); }
-    setMsg(id, 'Not saved. Tap a button again to retry.', 'bad');
+    console.error('Save failed for', id, e);
+    setMsg(id, 'Not saved — ' + (e.message || 'no answer') + '. Tap again to retry.', 'bad');
   }
 }
 
