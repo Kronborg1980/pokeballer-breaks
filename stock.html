@@ -319,6 +319,151 @@
     font-family:inherit; font-size:1.05rem; font-weight:900; cursor:pointer;
   }
 
+
+  /* ---------- mode switch ---------- */
+  .modebar{
+    display:flex; gap:6px; margin-top:18px; padding:5px;
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+  }
+  .modebtn{
+    flex:1; padding:11px 8px; border:none; border-radius:10px; background:transparent;
+    color:var(--faint); font-family:inherit; cursor:pointer; transition:.18s;
+  }
+  .modebtn .mb-name{display:block; font-size:0.95rem; font-weight:900;}
+  .modebtn .mb-sub{display:block; font-size:0.68rem; font-weight:600; margin-top:2px; opacity:.85;}
+  .modebtn.on{background:var(--cyan); color:#00201f;}
+  .modebtn.on .mb-sub{opacity:.72;}
+
+  .newitem{
+    width:100%; margin-top:12px; padding:16px; border-radius:14px; border:2px dashed var(--line);
+    background:transparent; color:var(--cyan); font-family:inherit;
+    font-size:1rem; font-weight:900; cursor:pointer;
+  }
+  .newitem:active{background:rgba(0,229,218,.08); border-color:var(--cyan);}
+
+  .edit-btn{
+    width:100%; margin-top:10px; padding:14px; border-radius:12px;
+    border:1px solid rgba(0,229,218,.4); background:rgba(0,229,218,.07); color:var(--cyan);
+    font-family:inherit; font-size:0.92rem; font-weight:800; cursor:pointer;
+  }
+  .edit-btn:active{background:rgba(0,229,218,.18);}
+  .chip.nolink{color:var(--bad); border-color:rgba(255,93,122,.5); background:rgba(255,93,122,.1);}
+
+  /* ---------- editor sheet ---------- */
+  .ed-card{
+    width:100%; max-width:560px; margin:auto; background:var(--card);
+    border:1px solid var(--line); border-radius:18px; overflow:hidden;
+    display:flex; flex-direction:column; max-height:calc(100vh - 56px);
+  }
+  .ed-head{
+    display:flex; align-items:center; gap:12px; padding:16px 18px;
+    border-bottom:1px solid var(--line); flex-shrink:0;
+  }
+  .ed-head h2{flex:1; margin:0; font-size:1.15rem; font-weight:900; color:#fff;}
+  .ed-scroll{overflow-y:auto; -webkit-overflow-scrolling:touch; padding:12px 14px;}
+
+  .sec{border:1px solid var(--line); border-radius:13px; background:var(--card2); margin-bottom:10px; overflow:hidden;}
+  .sec-head{
+    width:100%; display:flex; align-items:center; gap:10px; padding:15px 15px;
+    background:none; border:none; color:#fff; font-family:inherit; cursor:pointer; text-align:left;
+  }
+  .sec-t{font-size:0.97rem; font-weight:800; flex-shrink:0;}
+  .sec-v{
+    flex:1; min-width:0; text-align:right; color:var(--faint); font-size:0.8rem; font-weight:600;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .caret{color:var(--faint); font-size:0.9rem; transition:transform .2s; flex-shrink:0;}
+  .sec.open .caret{transform:rotate(180deg);}
+  .sec-body{display:none; padding:2px 15px 16px;}
+  .sec.open .sec-body{display:block;}
+  .sec.open{border-color:rgba(0,229,218,.35);}
+
+  .ed-card label{display:block; margin:12px 0 6px; color:var(--mute); font-size:0.82rem; font-weight:700;}
+  .ed-card input[type=text], .ed-card input[type=url], .ed-card input[type=number],
+  .ed-card input[type=datetime-local], .ed-card select, .ed-card textarea{
+    width:100%; padding:14px; border-radius:11px; border:1px solid var(--line);
+    background:var(--ink); color:#fff; font-family:inherit; font-size:1rem; font-weight:600;
+  }
+  .ed-card textarea{resize:vertical; line-height:1.5; font-weight:500;}
+  .ed-card input:focus, .ed-card select:focus, .ed-card textarea:focus{outline:none; border-color:var(--cyan);}
+  .ed-card input[type=datetime-local]{color-scheme:dark;}
+  .two{display:flex; gap:12px;}
+  .two > div{flex:1; min-width:0;}
+  .fieldnote{color:var(--faint); font-size:0.78rem; line-height:1.55; margin:9px 0 0;}
+  .tzwarn{
+    margin:4px 0 0; padding:10px 13px; border-radius:10px; font-size:0.8rem; line-height:1.5;
+    background:rgba(255,201,60,.08); border:1px solid rgba(255,201,60,.3); color:#ffdfa6;
+  }
+  .localhint{color:var(--cyan); font-size:0.78rem; font-weight:700; margin:7px 0 0; min-height:17px;}
+
+  .typegrid{display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-top:12px;}
+  .tt{
+    padding:13px 9px; border-radius:12px; border:2px solid var(--line); background:var(--ink);
+    color:var(--mute); font-family:inherit; cursor:pointer; text-align:center; transition:.15s;
+  }
+  .tt-i{display:block; font-size:1.4rem; line-height:1;}
+  .tt-n{display:block; font-size:0.84rem; font-weight:900; margin-top:5px; color:#fff;}
+  .tt-s{display:block; font-size:0.66rem; color:var(--faint); margin-top:2px;}
+  .tt.on{border-color:var(--cyan); background:rgba(0,229,218,.1);}
+  .tt.on .tt-n{color:var(--cyan);}
+
+  .chips-row{display:flex; gap:7px; flex-wrap:wrap; margin-top:10px;}
+  .chip-btn{
+    padding:9px 14px; border-radius:30px; border:1px solid rgba(0,229,218,.4);
+    background:rgba(0,229,218,.07); color:var(--cyan);
+    font-family:inherit; font-size:0.8rem; font-weight:800; cursor:pointer;
+  }
+  .chip-btn:active{background:rgba(0,229,218,.2);}
+  .chip-btn.clear{border-color:var(--line); color:var(--faint); background:transparent;}
+
+  .shots{display:flex; gap:9px; flex-wrap:wrap; margin-top:12px;}
+  .shot{position:relative; width:74px; height:74px; border-radius:11px; overflow:hidden; border:1px solid var(--line);}
+  .shot img{width:100%; height:100%; object-fit:cover; display:block;}
+  .shot .x{
+    position:absolute; top:3px; right:3px; width:24px; height:24px; border-radius:50%;
+    border:none; background:rgba(5,6,15,.85); color:#fff; font-size:15px; line-height:1;
+    cursor:pointer; font-weight:900;
+  }
+  .shot.first::after{
+    content:'MAIN'; position:absolute; left:0; right:0; bottom:0; text-align:center;
+    font-size:0.56rem; font-weight:900; letter-spacing:.08em; padding:2px 0;
+    background:rgba(0,229,218,.85); color:#00201f;
+  }
+  .shots-none{color:var(--faint); font-size:0.84rem; margin-top:12px;}
+  .filebtn{
+    display:block !important; margin-top:12px !important; padding:14px; border-radius:11px;
+    border:1px dashed var(--line); background:var(--ink); color:var(--cyan) !important;
+    text-align:center; font-size:0.9rem !important; font-weight:800 !important; cursor:pointer;
+  }
+
+  .vis2{display:flex; flex-direction:column; gap:9px; margin-top:12px;}
+  .visbtn{
+    padding:14px; border-radius:11px; border:2px solid var(--line); background:var(--ink);
+    color:var(--mute); font-family:inherit; font-size:0.92rem; font-weight:800; cursor:pointer;
+  }
+  .visbtn.on{border-color:var(--good); color:var(--good); background:rgba(62,231,155,.08);}
+  #vis-hidden.on{border-color:var(--gold); color:var(--gold); background:rgba(255,201,60,.08);}
+
+  .ed-foot{
+    flex-shrink:0; padding:14px 16px calc(14px + env(safe-area-inset-bottom, 0px));
+    border-top:1px solid var(--line); background:var(--card);
+  }
+  .ed-msg{font-size:0.85rem; font-weight:700; min-height:19px; margin-bottom:9px;}
+  .ed-msg.bad{color:var(--bad);}
+  .ed-msg.warn{color:var(--gold);}
+  .ed-msg.ok{color:var(--good);}
+  .ed-save{
+    width:100%; padding:17px; border-radius:13px; border:none;
+    background:linear-gradient(135deg,#00c9b7,#00e5da); color:#00201f;
+    font-family:inherit; font-size:1.05rem; font-weight:900; cursor:pointer;
+  }
+  .ed-save:disabled{opacity:.6; cursor:progress;}
+  .ed-cancel{
+    width:100%; margin-top:9px; padding:13px; border-radius:11px; border:none;
+    background:transparent; color:var(--faint); font-family:inherit; font-size:0.9rem; font-weight:700; cursor:pointer;
+  }
+  @media(max-width:380px){ .typegrid{grid-template-columns:1fr;} .two{flex-direction:column; gap:0;} }
+
   footer{
     margin-top:30px; padding-top:18px; border-top:1px solid var(--line);
     color:var(--faint); font-size:0.8rem; text-align:center; line-height:1.6;
@@ -348,11 +493,23 @@
   <div id="app" hidden>
     <header>
       <h1>Update Quantity</h1>
-      <p class="sub">Tap the buttons. It saves by itself.</p>
+      <p class="sub" id="mode-sub">Tap the buttons. It saves by itself.</p>
+
+      <div class="modebar" role="tablist" aria-label="How much do you want to see">
+        <button class="modebtn on" type="button" id="mode-basic" role="tab" aria-selected="true">
+          <span class="mb-name">Basic</span><span class="mb-sub">Just the numbers</span>
+        </button>
+        <button class="modebtn" type="button" id="mode-adv" role="tab" aria-selected="false">
+          <span class="mb-name">Advanced</span><span class="mb-sub">Change everything</span>
+        </button>
+      </div>
+
       <div class="toolbar">
         <input class="find" id="find" type="search" placeholder="Find an item…" autocomplete="off">
         <button class="refresh" type="button" id="refresh">Reload</button>
       </div>
+
+      <button class="newitem" type="button" id="new-item" hidden>+ Add a new item</button>
     </header>
 
     <div id="list" class="list"></div>
@@ -402,9 +559,190 @@
       </div>
     </div>
 
+    <!-- Full editor. Every field admin.html has, grouped so only one thing
+         is open at a time. -->
+    <div id="editor" class="pop" hidden>
+      <div class="ed-card">
+        <div class="ed-head">
+          <h2 id="ed-title">Edit item</h2>
+          <button class="pop-x" type="button" id="ed-x" aria-label="Close">×</button>
+        </div>
+
+        <div class="ed-scroll">
+
+          <!-- TYPE -->
+          <section class="sec" data-sec="type">
+            <button class="sec-head" type="button"><span class="sec-t">What is it?</span><span class="sec-v" id="v-type"></span><span class="caret">▾</span></button>
+            <div class="sec-body">
+              <div class="typegrid" id="ed-types">
+                <button class="tt" type="button" data-type="pack"><span class="tt-i">📦</span><span class="tt-n">Packs</span><span class="tt-s">Buy straight away</span></button>
+                <button class="tt" type="button" data-type="msrp"><span class="tt-i">🏷️</span><span class="tt-n">MSRP break</span><span class="tt-s">Spots at retail</span></button>
+                <button class="tt" type="button" data-type="bundle"><span class="tt-i">💎</span><span class="tt-n">Bundle break</span><span class="tt-s">Spots, big value</span></button>
+                <button class="tt" type="button" data-type="baller"><span class="tt-i">👑</span><span class="tt-n">Baller bundle</span><span class="tt-s">Premium spots</span></button>
+                <button class="tt" type="button" data-type="slab"><span class="tt-i">🔍</span><span class="tt-n">Graded slab</span><span class="tt-s">Vault</span></button>
+                <button class="tt" type="button" data-type="raw"><span class="tt-i">🃏</span><span class="tt-n">Raw card</span><span class="tt-s">Vault</span></button>
+              </div>
+            </div>
+          </section>
+
+          <!-- NAME & TEXT -->
+          <section class="sec open" data-sec="text">
+            <button class="sec-head" type="button"><span class="sec-t">Name &amp; text</span><span class="sec-v" id="v-text"></span><span class="caret">▾</span></button>
+            <div class="sec-body">
+              <label for="ed-name">Name</label>
+              <input type="text" id="ed-name" placeholder="e.g. Baller Bundle HYPE!! 🔥">
+              <label for="ed-desc">Description</label>
+              <textarea id="ed-desc" rows="5" placeholder="What is in it, what it costs, when it opens…"></textarea>
+            </div>
+          </section>
+
+          <!-- PRICE & STOCK -->
+          <section class="sec" data-sec="price">
+            <button class="sec-head" type="button"><span class="sec-t">Price &amp; how many</span><span class="sec-v" id="v-price"></span><span class="caret">▾</span></button>
+            <div class="sec-body">
+              <div class="two">
+                <div>
+                  <label for="ed-price">Price ($)</label>
+                  <input type="number" id="ed-price" inputmode="decimal" step="0.01" min="0" placeholder="0.00">
+                </div>
+                <div>
+                  <label for="ed-stock" id="ed-stock-label">How many</label>
+                  <input type="number" id="ed-stock" inputmode="numeric" step="1" min="0" placeholder="0">
+                </div>
+              </div>
+              <div id="row-label">
+                <label for="ed-labeltype">What to call them on the site</label>
+                <select id="ed-labeltype">
+                  <option value="packs">Packs</option>
+                  <option value="bundles">Bundles</option>
+                  <option value="spots">Break spots</option>
+                </select>
+              </div>
+            </div>
+          </section>
+
+          <!-- TIMING -->
+          <section class="sec" data-sec="time">
+            <button class="sec-head" type="button"><span class="sec-t">When it opens &amp; closes</span><span class="sec-v" id="v-time"></span><span class="caret">▾</span></button>
+            <div class="sec-body">
+              <p class="tzwarn">Both times are <b>US Central</b>, the same as the admin page.</p>
+
+              <label for="ed-golive">🚀 Goes live (leave empty to be live now)</label>
+              <input type="datetime-local" id="ed-golive">
+              <p class="localhint" id="hint-golive"></p>
+              <div class="chips-row">
+                <button class="chip-btn" type="button" data-golive="0">Live now</button>
+                <button class="chip-btn" type="button" data-golive="1">In 1 hour</button>
+                <button class="chip-btn" type="button" data-golive="24">Tomorrow</button>
+                <button class="chip-btn clear" type="button" data-golive="clear">Clear</button>
+              </div>
+
+              <label for="ed-close">🔴 Closes</label>
+              <input type="datetime-local" id="ed-close">
+              <p class="localhint" id="hint-close"></p>
+              <div class="chips-row">
+                <button class="chip-btn" type="button" data-close="24">+24 hours</button>
+                <button class="chip-btn" type="button" data-close="48">+48 hours</button>
+                <button class="chip-btn" type="button" data-close="72">+72 hours</button>
+                <button class="chip-btn" type="button" data-close="168">+1 week</button>
+                <button class="chip-btn clear" type="button" data-close="clear">No close time</button>
+              </div>
+            </div>
+          </section>
+
+          <!-- BUY LIMITS (packs) -->
+          <section class="sec" data-sec="limits">
+            <button class="sec-head" type="button"><span class="sec-t">How many per buyer</span><span class="sec-v" id="v-limits"></span><span class="caret">▾</span></button>
+            <div class="sec-body">
+              <div class="two">
+                <div>
+                  <label for="ed-min">Least they may buy</label>
+                  <input type="number" id="ed-min" inputmode="numeric" step="1" min="1" value="1">
+                </div>
+                <div>
+                  <label for="ed-max">Most they may buy</label>
+                  <input type="number" id="ed-max" inputmode="numeric" step="1" min="1" value="10">
+                </div>
+              </div>
+              <p class="fieldnote">One order per email either way. Leave the max at 10 if you do not want a tight limit.</p>
+            </div>
+          </section>
+
+          <!-- LINK (everything except packs) -->
+          <section class="sec" data-sec="link">
+            <button class="sec-head" type="button"><span class="sec-t">Where the button goes</span><span class="sec-v" id="v-link"></span><span class="caret">▾</span></button>
+            <div class="sec-body">
+              <label for="ed-link">Google Form or payment link</label>
+              <input type="url" id="ed-link" inputmode="url" placeholder="https://…" autocapitalize="off" spellcheck="false">
+              <p class="fieldnote">Without this the card on the site says <b>COMING SOON</b> and nobody can enter.</p>
+            </div>
+          </section>
+
+          <!-- CARD DETAILS -->
+          <section class="sec" data-sec="card">
+            <button class="sec-head" type="button"><span class="sec-t">Card details</span><span class="sec-v" id="v-card"></span><span class="caret">▾</span></button>
+            <div class="sec-body">
+              <div id="row-cond">
+                <label for="ed-cond">Condition</label>
+                <select id="ed-cond">
+                  <option value="Mint (M)">Mint (M)</option>
+                  <option value="Near Mint (NM)">Near Mint (NM)</option>
+                  <option value="Lightly Played (LP)">Lightly Played (LP)</option>
+                  <option value="Moderately Played (MP)">Moderately Played (MP)</option>
+                  <option value="Heavily Played (HP)">Heavily Played (HP)</option>
+                  <option value="Damaged (DMG)">Damaged (DMG)</option>
+                </select>
+              </div>
+              <div id="row-grader">
+                <label for="ed-grader">Graded by</label>
+                <select id="ed-grader">
+                  <option value="PSA">PSA</option>
+                  <option value="BGS">BGS</option>
+                  <option value="CGC">CGC</option>
+                  <option value="SGC">SGC</option>
+                  <option value="ACE">ACE</option>
+                  <option value="MANA">Mana</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+            </div>
+          </section>
+
+          <!-- PHOTOS -->
+          <section class="sec" data-sec="photos">
+            <button class="sec-head" type="button"><span class="sec-t">Photos</span><span class="sec-v" id="v-photos"></span><span class="caret">▾</span></button>
+            <div class="sec-body">
+              <div class="shots" id="ed-shots"></div>
+              <label class="filebtn" for="ed-files">📷 Add photos from this phone</label>
+              <input type="file" id="ed-files" accept="image/*" multiple hidden>
+              <p class="fieldnote">The first photo is the one the site shows big. Tap × on a photo to drop it.</p>
+            </div>
+          </section>
+
+          <!-- VISIBILITY -->
+          <section class="sec" data-sec="vis">
+            <button class="sec-head" type="button"><span class="sec-t">On the site?</span><span class="sec-v" id="v-vis"></span><span class="caret">▾</span></button>
+            <div class="sec-body">
+              <div class="vis2">
+                <button class="visbtn on" type="button" id="vis-public">👁️ Everyone can see it</button>
+                <button class="visbtn" type="button" id="vis-hidden">🚫 Hidden, only you</button>
+              </div>
+            </div>
+          </section>
+
+        </div>
+
+        <div class="ed-foot">
+          <div class="ed-msg" id="ed-msg"></div>
+          <button class="ed-save" type="button" id="ed-save">Save</button>
+          <button class="ed-cancel" type="button" id="ed-cancel">Cancel</button>
+        </div>
+      </div>
+    </div>
+
     <footer>
-      Only the number changes here. Names, prices and pictures stay exactly as they are.<br>
-      Everything else lives in the <a href="admin.html">full admin page</a>.
+      <span id="foot-note">Only the number changes here. Names, prices and pictures stay exactly as they are.</span><br>
+      The original <a href="admin.html">admin page</a> still works too.
       <br><button class="logout" type="button" id="logout">Log out of this phone</button>
     </footer>
   </div>
@@ -500,10 +838,7 @@ function render() {
     const img = item.image || (item.images && item.images[0]) ||
       'https://assets.pokemon.com/assets/cms2/img/misc/trading-card-games/cards/tcg_default_card.png';
 
-    const chips = [`<span class="chip">${esc(typeLabel(item.type))}</span>`];
-    if (item.hidden) chips.push('<span class="chip hidden">Hidden</span>');
-    else if (stock <= 0) chips.push('<span class="chip out">Sold out</span>');
-    else chips.push('<span class="chip live">On the site</span>');
+    const chips = [chipsFor(item)];
 
     return `
       <div class="item ${stock <= 0 ? 'zero' : ''}" id="row-${id}">
@@ -538,9 +873,13 @@ function render() {
           <span class="email-count" id="cnt-${id}"></span>
         </button>` : ''}
 
+        ${advanced ? `
+        <button class="edit-btn" type="button" data-act="edit" data-id="${id}">✏️ Change name, text, times, photos…</button>` : ''}
+
+        ${advanced ? `
         <div class="danger-row">
           <button class="del-btn" type="button" data-act="del" data-id="${id}">Delete this item</button>
-        </div>
+        </div>` : ''}
       </div>`;
   }).join('');
 }
@@ -572,18 +911,27 @@ function setCount(id, next) {
   queueSave(id);
 }
 
+// The one place that decides an item's chips, so the list and the stepper
+// can never disagree about whether something is live or missing a link.
+function chipsFor(item) {
+  const stock = toInt(item.stock);
+  const out = [`<span class="chip">${esc(typeLabel(item.type))}</span>`];
+  if (item.hidden) out.push('<span class="chip hidden">Hidden</span>');
+  else if (stock <= 0) out.push('<span class="chip out">Sold out</span>');
+  else out.push('<span class="chip live">On the site</span>');
+  // Everything except packs needs a link, or the site shows COMING SOON.
+  if (item.type !== 'pack' && !item.googleFormLink) {
+    out.push('<span class="chip nolink">No link</span>');
+  }
+  return out.join('');
+}
+
 function refreshChips(id) {
   const item = itemById(id);
   const row = document.getElementById('row-' + id);
   if (!item || !row) return;
   const box = row.querySelector('.chips');
-  if (!box) return;
-  const stock = toInt(item.stock);
-  const chips = [`<span class="chip">${esc(typeLabel(item.type))}</span>`];
-  if (item.hidden) chips.push('<span class="chip hidden">Hidden</span>');
-  else if (stock <= 0) chips.push('<span class="chip out">Sold out</span>');
-  else chips.push('<span class="chip live">On the site</span>');
-  box.innerHTML = chips.join('');
+  if (box) box.innerHTML = chipsFor(item);
 }
 
 function setMsg(id, text, kind) {
@@ -647,6 +995,7 @@ listEl.addEventListener('click', ev => {
   const item = itemById(id);
   if (!item) return;
 
+  if (btn.dataset.act === 'edit') { openEditor(id); return; }
   if (btn.dataset.act === 'del') { openConfirm(id); return; }
   if (btn.dataset.act === 'emails') { openPop(id); return; }
   if (btn.dataset.act === 'plus') { clearArm(id); setCount(id, toInt(item.stock) + 1); return; }
@@ -907,6 +1256,7 @@ document.getElementById('purge-all').addEventListener('click', function () {
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
   if (!confirmEl.hidden) closeConfirm();
+  else if (!edEl.hidden) closeEditor();
   else if (!popEl.hidden) closePop();
 });
 
@@ -1013,6 +1363,427 @@ document.getElementById('conf-no').addEventListener('click', closeConfirm);
 document.getElementById('conf-yes').addEventListener('click', doDelete);
 confirmEl.addEventListener('click', ev => { if (ev.target === confirmEl) closeConfirm(); });
 
+
+/* ============================================================
+   BASIC / ADVANCED
+   Basic is the stream tool: numbers only. Advanced adds a full
+   editor and lets him create items from scratch.
+   ============================================================ */
+const MODE_KEY = 'pbm-stock-mode';
+let advanced = false;
+
+function readMode() {
+  try { return localStorage.getItem(MODE_KEY) === 'advanced'; } catch (e) { return false; }
+}
+function setMode(on) {
+  advanced = !!on;
+  try { localStorage.setItem(MODE_KEY, advanced ? 'advanced' : 'basic'); } catch (e) {}
+  document.getElementById('mode-basic').classList.toggle('on', !advanced);
+  document.getElementById('mode-adv').classList.toggle('on', advanced);
+  document.getElementById('mode-basic').setAttribute('aria-selected', String(!advanced));
+  document.getElementById('mode-adv').setAttribute('aria-selected', String(advanced));
+  document.getElementById('mode-sub').textContent = advanced
+    ? 'Change anything, or add something new.'
+    : 'Tap the buttons. It saves by itself.';
+  document.getElementById('new-item').hidden = !advanced;
+  const foot = document.getElementById('foot-note');
+  if (foot) foot.textContent = advanced
+    ? 'Anything you change here goes straight to the website.'
+    : 'Only the number changes here. Names, prices and pictures stay exactly as they are.';
+  render();
+}
+document.getElementById('mode-basic').addEventListener('click', () => setMode(false));
+document.getElementById('mode-adv').addEventListener('click', () => setMode(true));
+
+/* ============================================================
+   US CENTRAL TIME
+   The site reads both times as US Central wall-clock, so the quick
+   buttons have to write Central, not whatever clock this phone is on.
+   ============================================================ */
+function msToCentralInput(ms) {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/Chicago', hour12: false,
+    year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit'
+  }).formatToParts(new Date(ms));
+  const m = {};
+  parts.forEach(x => m[x.type] = x.value);
+  const hh = m.hour === '24' ? '00' : m.hour;
+  return `${m.year}-${m.month}-${m.day}T${hh}:${m.minute}`;
+}
+
+function centralToMs(localStr) {
+  if (!localStr || String(localStr).indexOf('T') === -1) return null;
+  try {
+    const [d, tm] = String(localStr).split('T');
+    const [y, mo, da] = d.split('-').map(Number);
+    const [h, mi] = (tm || '00:00').split(':').map(Number);
+    const guess = Date.UTC(y, mo - 1, da, h, mi);
+    const parts = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/Chicago', hour12: false,
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', second: '2-digit'
+    }).formatToParts(new Date(guess));
+    const m = {};
+    parts.forEach(p => m[p.type] = p.value);
+    const hh = m.hour === '24' ? 0 : Number(m.hour);
+    const seen = Date.UTC(Number(m.year), Number(m.month) - 1, Number(m.day), hh, Number(m.minute), Number(m.second));
+    return guess - (seen - guess);
+  } catch (e) { return null; }
+}
+
+// Shows him the same moment on his own clock, so Central never has to be
+// worked out in his head.
+function localHint(centralStr) {
+  const ms = centralToMs(centralStr);
+  if (!ms) return '';
+  const when = new Date(ms).toLocaleString([], {
+    weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
+  });
+  const past = ms < Date.now();
+  return (past ? 'Already passed — ' : 'That is ') + when + ' where you are.';
+}
+
+function shortWhen(centralStr) {
+  if (!centralStr || centralStr.indexOf('T') === -1) return '';
+  const [d, t] = centralStr.split('T');
+  const [, mo, da] = d.split('-');
+  return `${da}/${mo} ${t}`;
+}
+
+/* ============================================================
+   PHOTOS
+   Shrunk on this phone before upload, same as the admin page, so a
+   12-megapixel snap does not have to travel.
+   ============================================================ */
+function compressImage(file) {
+  return new Promise(resolve => {
+    let settled = false;
+    const done = v => { if (!settled) { settled = true; resolve(v); } };
+    const guard = setTimeout(() => done(null), 15000);
+    const reader = new FileReader();
+    reader.onerror = () => { clearTimeout(guard); done(null); };
+    reader.onload = ev => {
+      const img = new Image();
+      img.onerror = () => { clearTimeout(guard); done(null); };
+      img.onload = () => {
+        try {
+          const canvas = document.createElement('canvas');
+          let scale = 800 / img.width;
+          if (!isFinite(scale) || scale > 1) scale = 1;
+          canvas.width = Math.max(1, Math.round(img.width * scale));
+          canvas.height = Math.max(1, Math.round(img.height * scale));
+          canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+          clearTimeout(guard);
+          done(canvas.toDataURL('image/jpeg', 0.8));
+        } catch (e) { clearTimeout(guard); done(null); }
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+/* ============================================================
+   THE EDITOR
+   ============================================================ */
+const edEl = document.getElementById('editor');
+let edItem = null;          // null means a brand new item
+let edType = 'pack';
+let edHidden = false;
+let edShots = [];
+
+const PACKY = t => t === 'pack';
+const VAULTY = t => t === 'slab' || t === 'raw';
+const BREAKY = t => t === 'msrp' || t === 'bundle' || t === 'baller';
+
+function $(id) { return document.getElementById(id); }
+
+function openEditor(id) {
+  edItem = id ? itemById(id) : null;
+  const it = edItem || {};
+  edType = it.type || 'pack';
+  edHidden = !!it.hidden;
+  edShots = Array.isArray(it.images) && it.images.length ? it.images.slice()
+          : (it.image ? [it.image] : []);
+
+  $('ed-title').textContent = edItem ? 'Edit item' : 'Add a new item';
+  $('ed-name').value = it.name || '';
+  $('ed-desc').value = it.description || '';
+  $('ed-price').value = it.price != null ? it.price : '';
+  $('ed-stock').value = it.stock != null ? toInt(it.stock) : 1;
+  $('ed-labeltype').value = it.stockLabelType || 'packs';
+  $('ed-golive').value = (it.goLiveTime && String(it.goLiveTime).indexOf('T') > -1) ? it.goLiveTime : '';
+  $('ed-close').value = (it.scheduleEnd && String(it.scheduleEnd).indexOf('T') > -1) ? it.scheduleEnd : '';
+  $('ed-min').value = it.minBuy || 1;
+  $('ed-max').value = it.maxBuy || 10;
+  $('ed-link').value = it.googleFormLink || '';
+  $('ed-cond').value = it.condition || 'Mint (M)';
+  $('ed-grader').value = it.grader || 'PSA';
+  $('ed-files').value = '';
+
+  setEdMsg('');
+  paintType();
+  paintVis();
+  paintShots();
+  paintHints();
+
+  // A new item starts on "what is it"; an edit starts on the name.
+  document.querySelectorAll('.sec').forEach(sec => {
+    const want = edItem ? sec.dataset.sec === 'text' : sec.dataset.sec === 'type';
+    sec.classList.toggle('open', want);
+  });
+  paintSummaries();
+
+  edEl.hidden = false;
+  document.body.style.overflow = 'hidden';
+  const scroller = edEl.querySelector('.ed-scroll');
+  if (scroller) scroller.scrollTop = 0;
+}
+
+function closeEditor() {
+  edEl.hidden = true;
+  edItem = null;
+  if (popEl.hidden && confirmEl.hidden) document.body.style.overflow = '';
+}
+
+function setEdMsg(text, kind) {
+  const el = $('ed-msg');
+  el.textContent = text || '';
+  el.className = 'ed-msg' + (kind ? ' ' + kind : '');
+}
+
+// Open the section that needs attention and scroll it into view, so a
+// complaint at the bottom of the sheet is never about something off-screen.
+function jumpTo(name) {
+  let target = null;
+  document.querySelectorAll('.sec').forEach(x => {
+    const on = x.dataset.sec === name;
+    x.classList.toggle('open', on);
+    if (on) target = x;
+  });
+  if (target) target.scrollIntoView({ block: 'start', behavior: 'smooth' });
+}
+
+/* ---- which sections apply to this type ---- */
+function paintType() {
+  document.querySelectorAll('#ed-types .tt').forEach(b => b.classList.toggle('on', b.dataset.type === edType));
+
+  const show = (sec, on) => {
+    const el = document.querySelector(`.sec[data-sec="${sec}"]`);
+    if (el) el.hidden = !on;
+  };
+  show('limits', PACKY(edType));
+  show('link', !PACKY(edType));
+  show('card', VAULTY(edType));
+
+  $('row-cond').hidden = edType !== 'raw';
+  $('row-grader').hidden = edType !== 'slab';
+  $('row-label').hidden = !PACKY(edType);
+
+  $('ed-stock-label').textContent = PACKY(edType) ? 'How many in stock'
+    : (VAULTY(edType) ? 'How many of this card' : 'How many break spots');
+  paintSummaries();
+}
+
+function paintVis() {
+  $('vis-public').classList.toggle('on', !edHidden);
+  $('vis-hidden').classList.toggle('on', edHidden);
+}
+
+function paintShots() {
+  const box = $('ed-shots');
+  if (edShots.length === 0) {
+    box.innerHTML = '<div class="shots-none">No photos yet.</div>';
+  } else {
+    box.innerHTML = edShots.map((src, i) =>
+      `<div class="shot ${i === 0 ? 'first' : ''}">
+         <img src="${esc(src)}" alt="">
+         <button class="x" type="button" data-shot="${i}" aria-label="Remove photo">×</button>
+       </div>`).join('');
+  }
+  paintSummaries();
+}
+
+function paintHints() {
+  $('hint-golive').textContent = localHint($('ed-golive').value);
+  $('hint-close').textContent = localHint($('ed-close').value);
+}
+
+// The closed header of each section shows what is inside, so he can see
+// everything at a glance without opening anything.
+function paintSummaries() {
+  const t = edType;
+  $('v-type').textContent = typeLabel(t);
+  $('v-text').textContent = ($('ed-name').value || '').slice(0, 30) || 'no name yet';
+  const price = $('ed-price').value;
+  $('v-price').textContent = (price !== '' ? '$' + price : 'no price') + ' · ' + toInt($('ed-stock').value) + ' left';
+
+  const gl = $('ed-golive').value, cl = $('ed-close').value;
+  $('v-time').textContent = (gl ? 'from ' + shortWhen(gl) : 'live now') + (cl ? ' · to ' + shortWhen(cl) : ' · no end');
+  $('v-limits').textContent = toInt($('ed-min').value, 1) + '–' + toInt($('ed-max').value, 10) + ' each';
+  $('v-link').textContent = $('ed-link').value ? 'link set' : 'MISSING';
+  $('v-link').style.color = $('ed-link').value ? '' : 'var(--bad)';
+  $('v-card').textContent = t === 'slab' ? $('ed-grader').value : (t === 'raw' ? $('ed-cond').value : '');
+  $('v-photos').textContent = edShots.length ? edShots.length + ' photo' + (edShots.length === 1 ? '' : 's') : 'none';
+  $('v-vis').textContent = edHidden ? 'hidden' : 'on the site';
+}
+
+/* ---- wiring inside the sheet ---- */
+document.querySelectorAll('.sec-head').forEach(head => {
+  head.addEventListener('click', () => {
+    const sec = head.closest('.sec');
+    const wasOpen = sec.classList.contains('open');
+    document.querySelectorAll('.sec').forEach(x => x.classList.remove('open'));
+    if (!wasOpen) sec.classList.add('open');
+  });
+});
+
+document.querySelectorAll('#ed-types .tt').forEach(b => {
+  b.addEventListener('click', () => {
+    edType = b.dataset.type;
+    paintType();
+    // On a new item, answering "what is it" should hand him the name next.
+    if (!edItem) jumpTo('text');
+  });
+});
+
+$('vis-public').addEventListener('click', () => { edHidden = false; paintVis(); paintSummaries(); });
+$('vis-hidden').addEventListener('click', () => { edHidden = true; paintVis(); paintSummaries(); });
+
+['ed-name', 'ed-price', 'ed-stock', 'ed-min', 'ed-max', 'ed-link', 'ed-cond', 'ed-grader', 'ed-labeltype']
+  .forEach(id => $(id).addEventListener('input', paintSummaries));
+['ed-golive', 'ed-close'].forEach(id =>
+  $(id).addEventListener('input', () => { paintHints(); paintSummaries(); }));
+
+document.querySelectorAll('[data-golive]').forEach(b => {
+  b.addEventListener('click', () => {
+    const v = b.dataset.golive;
+    $('ed-golive').value = (v === 'clear' || v === '0') ? '' : msToCentralInput(Date.now() + Number(v) * 3600000);
+    paintHints(); paintSummaries();
+  });
+});
+document.querySelectorAll('[data-close]').forEach(b => {
+  b.addEventListener('click', () => {
+    const v = b.dataset.close;
+    $('ed-close').value = v === 'clear' ? '' : msToCentralInput(Date.now() + Number(v) * 3600000);
+    paintHints(); paintSummaries();
+  });
+});
+
+$('ed-shots').addEventListener('click', ev => {
+  const btn = ev.target.closest('button[data-shot]');
+  if (!btn) return;
+  edShots.splice(toInt(btn.dataset.shot), 1);
+  paintShots();
+});
+
+$('ed-files').addEventListener('change', async function () {
+  const files = Array.from(this.files || []).slice(0, 8);
+  if (!files.length) return;
+  setEdMsg('Shrinking ' + files.length + ' photo' + (files.length === 1 ? '' : 's') + '…', 'warn');
+  for (const f of files) {
+    const data = await compressImage(f);
+    if (data) edShots.push(data);
+  }
+  this.value = '';
+  paintShots();
+  setEdMsg('');
+});
+
+/* ---- save ---- */
+async function saveEditor() {
+  const btn = $('ed-save');
+  const name = $('ed-name').value.trim();
+
+  if (!name) {
+    setEdMsg('Give it a name first.', 'bad');
+    jumpTo('text');
+    $('ed-name').focus();
+    return;
+  }
+
+  const price = Number($('ed-price').value);
+  const stock = toInt($('ed-stock').value, 0);
+  const link = $('ed-link').value.trim();
+  const golive = $('ed-golive').value;
+  const close = $('ed-close').value;
+
+  if (close && golive && centralToMs(close) <= centralToMs(golive)) {
+    setEdMsg('The close time is before it even opens.', 'bad');
+    jumpTo('time');
+    return;
+  }
+  if (link && !/^https?:\/\//i.test(link)) {
+    setEdMsg('The link has to start with https://', 'bad');
+    jumpTo('link');
+    return;
+  }
+
+  const body = {
+    type: edType,
+    name,
+    description: $('ed-desc').value.trim(),
+    price: isFinite(price) ? price : 0,
+    stock,
+    stockLabelType: PACKY(edType) ? $('ed-labeltype').value : (edItem ? edItem.stockLabelType || 'packs' : 'packs'),
+    googleFormLink: PACKY(edType) ? '' : link,
+    image: edShots[0] || '',
+    images: edShots,
+    hidden: edHidden,
+    scheduleDate: '',
+    scheduleEnd: close,
+    goLiveTime: golive,
+    condition: edType === 'raw' ? $('ed-cond').value : null,
+    grader: edType === 'slab' ? $('ed-grader').value : null,
+    minBuy: PACKY(edType) ? Math.max(1, toInt($('ed-min').value, 1)) : null,
+    maxBuy: PACKY(edType) ? Math.max(1, toInt($('ed-max').value, 10)) : null,
+    clickCount: edItem ? toInt(edItem.clickCount) : 0,
+    createdAt: edItem ? (edItem.createdAt || Date.now()) : Date.now()
+  };
+
+  btn.disabled = true;
+  btn.textContent = edShots.some(s => s.startsWith('data:')) ? 'Uploading photos…' : 'Saving…';
+  setEdMsg('');
+
+  try {
+    // Raw id, never encodeURIComponent: the colon in "item:1758…" is legal in
+    // a path, and the worker reads the path exactly as it arrives.
+    const url = edItem ? `${API_URL}/items/${edItem.id}` : `${API_URL}/items`;
+    const res = await fetch(url, {
+      method: edItem ? 'PUT' : 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (res.status === 401) { closeEditor(); logout('Your login ran out. Log in again.'); return; }
+    const data = await res.json().catch(() => null);
+    if (!res.ok || (data && data.error)) {
+      setEdMsg((data && data.error) || ('The server said HTTP ' + res.status), 'bad');
+      return;
+    }
+
+    const wasNew = !edItem;
+    const missingLink = !PACKY(edType) && !link;
+    closeEditor();
+    await load();
+    stateEl.insertAdjacentHTML('afterbegin',
+      `<div class="banner"><b>${wasNew ? 'Added' : 'Saved'}</b>${esc(name)} is ${edHidden ? 'saved but hidden' : 'live on the site'}.` +
+      (missingLink ? ' It has no link yet, so the card says COMING SOON.' : '') + '</div>');
+    setTimeout(() => { const b = stateEl.querySelector('.banner'); if (b) b.remove(); }, 6000);
+  } catch (e) {
+    setEdMsg('No internet, or the server did not answer. Nothing was saved.', 'bad');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Save';
+  }
+}
+
+$('ed-save').addEventListener('click', saveEditor);
+$('ed-cancel').addEventListener('click', closeEditor);
+$('ed-x').addEventListener('click', closeEditor);
+edEl.addEventListener('click', ev => { if (ev.target === edEl) closeEditor(); });
+$('new-item').addEventListener('click', () => openEditor(null));
+
 /* ---------- login ---------- */
 function getToken() {
   try { return localStorage.getItem(TOKEN_KEY) || ''; } catch (e) { return ''; }
@@ -1031,6 +1802,7 @@ function showGate(message) {
 function openApp() {
   document.getElementById('gate').hidden = true;
   document.getElementById('app').hidden = false;
+  setMode(readMode());   // also draws the list
   load();
 }
 
