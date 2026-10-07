@@ -380,13 +380,14 @@
 
   .ed-card label{display:block; margin:12px 0 6px; color:var(--mute); font-size:0.82rem; font-weight:700;}
   .ed-card input[type=text], .ed-card input[type=url], .ed-card input[type=number],
-  .ed-card input[type=datetime-local], .ed-card select, .ed-card textarea{
+  .ed-card input[type=date], .ed-card select, .ed-card textarea{
     width:100%; padding:14px; border-radius:11px; border:1px solid var(--line);
     background:var(--ink); color:#fff; font-family:inherit; font-size:1rem; font-weight:600;
   }
   .ed-card textarea{resize:vertical; line-height:1.5; font-weight:500;}
   .ed-card input:focus, .ed-card select:focus, .ed-card textarea:focus{outline:none; border-color:var(--cyan);}
-  .ed-card input[type=datetime-local]{color-scheme:dark;}
+  .ed-card input[type=date]{color-scheme:dark; cursor:pointer;}
+  .ed-card select{color-scheme:dark; cursor:pointer;}
   .two{display:flex; gap:12px;}
   .two > div{flex:1; min-width:0;}
   .fieldnote{color:var(--faint); font-size:0.78rem; line-height:1.55; margin:9px 0 0;}
@@ -463,6 +464,17 @@
     background:transparent; color:var(--faint); font-family:inherit; font-size:0.9rem; font-weight:700; cursor:pointer;
   }
   @media(max-width:380px){ .typegrid{grid-template-columns:1fr;} .two{flex-direction:column; gap:0;} }
+
+
+  /* ---------- AM/PM time picker ---------- */
+  .when{display:flex; flex-direction:column; gap:9px;}
+  .wtime{display:flex; align-items:center; gap:7px;}
+  .wtime select{
+    flex:1; min-width:0; padding:14px 8px; text-align:center;
+    font-size:1.05rem; font-weight:800;
+  }
+  .wcolon{color:var(--faint); font-weight:900; font-size:1.1rem;}
+  #golive-ap, #close-ap, .wtime select[id$="-ap"]{flex:1.1;}
 
   footer{
     margin-top:30px; padding-top:18px; border-top:1px solid var(--line);
@@ -625,10 +637,18 @@
           <section class="sec" data-sec="time">
             <button class="sec-head" type="button"><span class="sec-t">When it opens &amp; closes</span><span class="sec-v" id="v-time"></span><span class="caret">▾</span></button>
             <div class="sec-body">
-              <p class="tzwarn">Both times are <b>US Central</b>, the same as the admin page.</p>
+              <p class="tzwarn">Both times are <b>US Central</b> — the clock your viewers are on.</p>
 
-              <label for="ed-golive">🚀 Goes live (leave empty to be live now)</label>
-              <input type="datetime-local" id="ed-golive">
+              <label for="golive-date">🚀 Goes live (leave empty to be live now)</label>
+              <div class="when">
+                <input type="date" id="golive-date">
+                <div class="wtime">
+                  <select id="golive-h" aria-label="Hour"></select>
+                  <span class="wcolon">:</span>
+                  <select id="golive-m" aria-label="Minute"></select>
+                  <select id="golive-ap" aria-label="AM or PM"><option>AM</option><option>PM</option></select>
+                </div>
+              </div>
               <p class="localhint" id="hint-golive"></p>
               <div class="chips-row">
                 <button class="chip-btn" type="button" data-golive="0">Live now</button>
@@ -637,8 +657,16 @@
                 <button class="chip-btn clear" type="button" data-golive="clear">Clear</button>
               </div>
 
-              <label for="ed-close">🔴 Closes</label>
-              <input type="datetime-local" id="ed-close">
+              <label for="close-date">🔴 Closes</label>
+              <div class="when">
+                <input type="date" id="close-date">
+                <div class="wtime">
+                  <select id="close-h" aria-label="Hour"></select>
+                  <span class="wcolon">:</span>
+                  <select id="close-m" aria-label="Minute"></select>
+                  <select id="close-ap" aria-label="AM or PM"><option>AM</option><option>PM</option></select>
+                </div>
+              </div>
               <p class="localhint" id="hint-close"></p>
               <div class="chips-row">
                 <button class="chip-btn" type="button" data-close="24">+24 hours</button>
@@ -1432,23 +1460,79 @@ function centralToMs(localStr) {
   } catch (e) { return null; }
 }
 
-// Shows him the same moment on his own clock, so Central never has to be
-// worked out in his head.
-function localHint(centralStr) {
-  const ms = centralToMs(centralStr);
-  if (!ms) return '';
-  const when = new Date(ms).toLocaleString([], {
-    weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
-  });
-  const past = ms < Date.now();
-  return (past ? 'Already passed — ' : 'That is ') + when + ' where you are.';
-}
-
 function shortWhen(centralStr) {
   if (!centralStr || centralStr.indexOf('T') === -1) return '';
   const [d, t] = centralStr.split('T');
-  const [, mo, da] = d.split('-');
-  return `${da}/${mo} ${t}`;
+  const [, mo, da] = d.split('-').map(Number);
+  const [H, M] = t.split(':');
+  let hh = parseInt(H, 10);
+  const ap = hh >= 12 ? 'PM' : 'AM';
+  if (hh === 0) hh = 12; else if (hh > 12) hh -= 12;
+  return `${AMPM_MONTHS[mo - 1]} ${da}, ${hh}:${M}${ap}`;
+}
+
+
+/* ---------- AM/PM time controls ----------
+   Every time on this site is US Central, because that is the clock the
+   viewers are on. These controls only ever read and write Central. */
+const AMPM_DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const AMPM_MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+function buildTimeSelects(prefix) {
+  const h = $(prefix + '-h'), m = $(prefix + '-m');
+  h.innerHTML = Array.from({ length: 12 }, (_, i) => `<option value="${i + 1}">${i + 1}</option>`).join('');
+  m.innerHTML = Array.from({ length: 12 }, (_, i) => {
+    const v = String(i * 5).padStart(2, '0');
+    return `<option value="${v}">${v}</option>`;
+  }).join('');
+}
+
+// "2026-10-08T17:20" -> the three selects
+function setWhen(prefix, central) {
+  const d = $(prefix + '-date'), h = $(prefix + '-h'), m = $(prefix + '-m'), ap = $(prefix + '-ap');
+  if (!central || String(central).indexOf('T') === -1) {
+    d.value = ''; h.value = '12'; m.value = '00'; ap.value = 'PM';
+    return;
+  }
+  const [date, time] = String(central).split('T');
+  const [H, M] = time.split(':');
+  let hh = parseInt(H, 10);
+  const pm = hh >= 12;
+  if (hh === 0) hh = 12; else if (hh > 12) hh -= 12;
+  d.value = date;
+  h.value = String(hh);
+  // An existing odd minute (22:51) stays exactly as it is instead of being
+  // rounded to the nearest five.
+  if (!Array.from(m.options).some(o => o.value === M)) {
+    const opt = document.createElement('option');
+    opt.value = M; opt.textContent = M;
+    m.appendChild(opt);
+  }
+  m.value = M;
+  ap.value = pm ? 'PM' : 'AM';
+}
+
+function getWhen(prefix) {
+  const date = $(prefix + '-date').value;
+  if (!date) return '';
+  let hh = parseInt($(prefix + '-h').value, 10) % 12;
+  if ($(prefix + '-ap').value === 'PM') hh += 12;
+  return `${date}T${String(hh).padStart(2, '0')}:${$(prefix + '-m').value}`;
+}
+
+// Reads the chosen time back in plain words, so there is no doubt.
+function centralReadback(central) {
+  if (!central || String(central).indexOf('T') === -1) return '';
+  const [date, time] = String(central).split('T');
+  const [y, mo, da] = date.split('-').map(Number);
+  const [H, M] = time.split(':');
+  let hh = parseInt(H, 10);
+  const ap = hh >= 12 ? 'PM' : 'AM';
+  if (hh === 0) hh = 12; else if (hh > 12) hh -= 12;
+  const dow = AMPM_DAYS[new Date(y, mo - 1, da).getDay()];
+  const ms = centralToMs(central);
+  const past = ms && ms < Date.now();
+  return `${dow} ${AMPM_MONTHS[mo - 1]} ${da} at ${hh}:${M} ${ap} US Central` + (past ? ' — already passed' : '');
 }
 
 /* ============================================================
@@ -1488,6 +1572,8 @@ function compressImage(file) {
    THE EDITOR
    ============================================================ */
 const edEl = document.getElementById('editor');
+buildTimeSelects('golive');
+buildTimeSelects('close');
 let edItem = null;          // null means a brand new item
 let edType = 'pack';
 let edHidden = false;
@@ -1513,8 +1599,8 @@ function openEditor(id) {
   $('ed-price').value = it.price != null ? it.price : '';
   $('ed-stock').value = it.stock != null ? toInt(it.stock) : 1;
   $('ed-labeltype').value = it.stockLabelType || 'packs';
-  $('ed-golive').value = (it.goLiveTime && String(it.goLiveTime).indexOf('T') > -1) ? it.goLiveTime : '';
-  $('ed-close').value = (it.scheduleEnd && String(it.scheduleEnd).indexOf('T') > -1) ? it.scheduleEnd : '';
+  setWhen('golive', (it.goLiveTime && String(it.goLiveTime).indexOf('T') > -1) ? it.goLiveTime : '');
+  setWhen('close', (it.scheduleEnd && String(it.scheduleEnd).indexOf('T') > -1) ? it.scheduleEnd : '');
   $('ed-min').value = it.minBuy || 1;
   $('ed-max').value = it.maxBuy || 10;
   $('ed-link').value = it.googleFormLink || '';
@@ -1606,8 +1692,8 @@ function paintShots() {
 }
 
 function paintHints() {
-  $('hint-golive').textContent = localHint($('ed-golive').value);
-  $('hint-close').textContent = localHint($('ed-close').value);
+  $('hint-golive').textContent = centralReadback(getWhen('golive'));
+  $('hint-close').textContent = centralReadback(getWhen('close'));
 }
 
 // The closed header of each section shows what is inside, so he can see
@@ -1619,7 +1705,7 @@ function paintSummaries() {
   const price = $('ed-price').value;
   $('v-price').textContent = (price !== '' ? '$' + price : 'no price') + ' · ' + toInt($('ed-stock').value) + ' left';
 
-  const gl = $('ed-golive').value, cl = $('ed-close').value;
+  const gl = getWhen('golive'), cl = getWhen('close');
   $('v-time').textContent = (gl ? 'from ' + shortWhen(gl) : 'live now') + (cl ? ' · to ' + shortWhen(cl) : ' · no end');
   $('v-limits').textContent = toInt($('ed-min').value, 1) + '–' + toInt($('ed-max').value, 10) + ' each';
   $('v-link').textContent = $('ed-link').value ? 'link set' : 'MISSING';
@@ -1653,20 +1739,20 @@ $('vis-hidden').addEventListener('click', () => { edHidden = true; paintVis(); p
 
 ['ed-name', 'ed-price', 'ed-stock', 'ed-min', 'ed-max', 'ed-link', 'ed-cond', 'ed-grader', 'ed-labeltype']
   .forEach(id => $(id).addEventListener('input', paintSummaries));
-['ed-golive', 'ed-close'].forEach(id =>
-  $(id).addEventListener('input', () => { paintHints(); paintSummaries(); }));
+['golive-date','golive-h','golive-m','golive-ap','close-date','close-h','close-m','close-ap']
+  .forEach(id => $(id).addEventListener('change', () => { paintHints(); paintSummaries(); }));
 
 document.querySelectorAll('[data-golive]').forEach(b => {
   b.addEventListener('click', () => {
     const v = b.dataset.golive;
-    $('ed-golive').value = (v === 'clear' || v === '0') ? '' : msToCentralInput(Date.now() + Number(v) * 3600000);
+    setWhen('golive', (v === 'clear' || v === '0') ? '' : msToCentralInput(Date.now() + Number(v) * 3600000));
     paintHints(); paintSummaries();
   });
 });
 document.querySelectorAll('[data-close]').forEach(b => {
   b.addEventListener('click', () => {
     const v = b.dataset.close;
-    $('ed-close').value = v === 'clear' ? '' : msToCentralInput(Date.now() + Number(v) * 3600000);
+    setWhen('close', v === 'clear' ? '' : msToCentralInput(Date.now() + Number(v) * 3600000));
     paintHints(); paintSummaries();
   });
 });
@@ -1706,8 +1792,8 @@ async function saveEditor() {
   const price = Number($('ed-price').value);
   const stock = toInt($('ed-stock').value, 0);
   const link = $('ed-link').value.trim();
-  const golive = $('ed-golive').value;
-  const close = $('ed-close').value;
+  const golive = getWhen('golive');
+  const close = getWhen('close');
 
   if (close && golive && centralToMs(close) <= centralToMs(golive)) {
     setEdMsg('The close time is before it even opens.', 'bad');

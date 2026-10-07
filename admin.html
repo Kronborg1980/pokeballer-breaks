@@ -41,7 +41,7 @@
         label { display: block; margin-bottom: 0.4rem; color: var(--dim); font-weight: 600; font-size: 0.85rem; }
         input, select { width: 100%; padding: 12px; margin-bottom: 1rem; background: rgba(0,0,0,0.5); border: 1px solid #3a3a55; color: #fff; border-radius: 8px; font-size: 1rem; transition: border-color .2s, box-shadow .2s; }
         input:focus, select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 12px rgba(0,255,242,0.25); }
-        input[type="datetime-local"] { color-scheme: dark; cursor: pointer; border: 1px solid var(--live); margin-bottom: 0.6rem; }
+        input[type="date"] { color-scheme: dark; cursor: pointer; margin-bottom: 0.6rem; }
         input[type="file"] { background: rgba(255,255,255,0.05); padding: 10px; border: 1px dashed #555; cursor: pointer; font-size: 0.9rem; }
         input[type="file"]::file-selector-button { background: var(--accent); color: #000; font-weight: 800; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-right: 10px; transition: .3s; }
         input[type="file"]::file-selector-button:hover { background: #fff; }
@@ -171,6 +171,76 @@
         .om-danger { width: 100%; margin-top: 4px; background: rgba(255,0,85,0.12); border: 1px solid rgba(255,0,85,0.45); color: #ff8ba7; padding: 11px; border-radius: 8px; cursor: pointer; font-weight: 800; font-size: 0.82rem; text-transform: uppercase; }
         .om-danger:hover { background: rgba(255,0,85,0.25); color: #fff; }
 
+
+        /* ---------- PAYMENTS & ALERTS ---------- */
+        .pay-card { border-color: rgba(255,215,0,0.3); box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 30px rgba(255,215,0,0.03); }
+        .pay-h2 { margin: 0 0 4px; font-size: 1.4rem; color: var(--gold); }
+        .pay-sub { color: var(--dim); font-size: 0.85rem; margin: 0 0 1.4rem; }
+        .soft-rule { border: none; border-top: 1px solid #2a2a45; margin: 1.6rem 0 1.3rem; }
+
+        .mode-row { display: flex; gap: 10px; margin-bottom: 1.3rem; flex-wrap: wrap; }
+        .mode-pill { flex: 1; min-width: 210px; padding: 14px 16px; border-radius: 12px; border: 2px solid #3a3a55; background: rgba(0,0,0,0.45); cursor: pointer; transition: .2s; user-select: none; }
+        .mode-pill .m-name { display: block; font-weight: 900; font-size: 0.95rem; color: var(--dim); }
+        .mode-pill .m-sub { display: block; font-size: 0.72rem; color: #7b7fa3; margin-top: 4px; line-height: 1.45; }
+        .mode-pill:hover { border-color: #666; }
+        .mode-pill.selected.m-streamlabs { border-color: var(--accent); background: rgba(0,255,242,0.07); box-shadow: 0 0 18px rgba(0,255,242,0.28); }
+        .mode-pill.selected.m-streamlabs .m-name { color: var(--accent); }
+        .mode-pill.selected.m-stripe { border-color: #7b5cff; background: rgba(123,92,255,0.1); box-shadow: 0 0 18px rgba(123,92,255,0.35); }
+        .mode-pill.selected.m-stripe .m-name { color: #b9a6ff; }
+
+        .key-note { background: rgba(255,215,0,0.07); border: 1px solid rgba(255,215,0,0.32); border-radius: 10px; padding: 12px 15px; font-size: 0.82rem; line-height: 1.6; color: #e8dfc0; margin-bottom: 1.1rem; }
+        .key-note code { background: rgba(0,0,0,0.5); padding: 1px 6px; border-radius: 4px; color: var(--gold); }
+        .key-state { float: right; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.5px; padding: 2px 9px; border-radius: 20px; background: rgba(255,255,255,0.06); border: 1px solid #444; color: #8a8ab0; }
+        .key-state.ok { color: var(--green); border-color: rgba(0,255,157,0.5); background: rgba(0,255,157,0.08); }
+        .key-state.test { color: var(--orange); border-color: rgba(255,153,0,0.5); background: rgba(255,153,0,0.08); }
+
+        .copy-row { display: flex; gap: 8px; margin-bottom: 0.5rem; }
+        .copy-row input { margin-bottom: 0; font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 0.82rem; color: var(--accent); }
+        .copy-btn { flex-shrink: 0; padding: 0 18px; border-radius: 8px; border: 1px solid var(--accent); background: rgba(0,255,242,0.1); color: var(--accent); font-weight: 800; cursor: pointer; transition: .2s; }
+        .copy-btn:hover { background: var(--accent); color: #002a28; }
+
+        .hint { font-size: 0.78rem; color: #7b7fa3; line-height: 1.6; margin: 0 0 1.1rem; }
+        .hint code { background: rgba(0,0,0,0.5); padding: 1px 5px; border-radius: 4px; color: var(--dim); }
+
+        .toggle-row { display: flex; align-items: flex-start; gap: 14px; padding: 11px 0; }
+        .toggle-row div strong { display: block; font-size: 0.9rem; color: #fff; font-weight: 800; }
+        .toggle-row div span { display: block; font-size: 0.76rem; color: #7b7fa3; margin-top: 3px; line-height: 1.5; }
+        .switch { position: relative; flex-shrink: 0; width: 46px; height: 26px; margin: 2px 0 0; cursor: pointer; }
+        .switch input { position: absolute; opacity: 0; width: 0; height: 0; margin: 0; }
+        .switch span { position: absolute; inset: 0; border-radius: 30px; background: #2b2b44; border: 1px solid #45456a; transition: .25s; }
+        .switch span::after { content: ''; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #8a8ab0; transition: .25s; }
+        .switch input:checked + span { background: rgba(0,255,157,0.25); border-color: var(--green); }
+        .switch input:checked + span::after { transform: translateX(20px); background: var(--green); box-shadow: 0 0 12px rgba(0,255,157,0.7); }
+        .switch input:focus-visible + span { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+        .ghost-btn { width: 100%; padding: 12px; margin-bottom: 0.7rem; border-radius: 8px; border: 1px solid #45456a; background: rgba(255,255,255,0.04); color: var(--dim); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.85rem; cursor: pointer; transition: .2s; }
+        .ghost-btn:hover { background: rgba(255,255,255,0.1); color: #fff; border-color: #666; }
+        .check-result { font-size: 0.84rem; line-height: 1.6; margin-bottom: 1rem; word-break: break-word; }
+        .check-result.ok { color: var(--green); }
+        .check-result.bad { color: #ff6666; }
+        .check-result.info { color: var(--dim); }
+        .settings-status { font-size: 0.85rem; font-weight: 700; margin-bottom: 0.8rem; min-height: 20px; }
+        .settings-status.ok { color: var(--green); }
+        .settings-status.bad { color: #ff6666; }
+
+        /* ---------- PAID / PENDING BADGES ---------- */
+        .b-paid { background: rgba(0,255,157,0.14); color: var(--green); border: 1px solid var(--green); }
+        .b-pending { background: rgba(255,153,0,0.14); color: var(--orange); border: 1px solid var(--orange); }
+        .order-row.pending { border-color: rgba(255,153,0,0.4); background: rgba(255,153,0,0.05); }
+
+
+        /* ---------- AM/PM time picker ---------- */
+        .when{display:flex; flex-direction:column; gap:9px; margin-bottom:0.6rem;}
+        .when input[type="date"]{margin-bottom:0; color-scheme:dark; cursor:pointer;}
+        .wtime{display:flex; align-items:center; gap:7px;}
+        .wtime select{flex:1; min-width:0; margin-bottom:0; padding:12px 8px; text-align:center; font-weight:800; color-scheme:dark; cursor:pointer;}
+        .wtime select[id$="-ap"]{flex:1.1;}
+        .wcolon{color:var(--dim); font-weight:900;}
+        .readback{margin:0 0 0.9rem; font-size:0.8rem; font-weight:700; color:var(--accent); min-height:18px;}
+        .readback.past{color:var(--gold);}
+        .chip.go{background:rgba(0,255,242,0.08); border-color:rgba(0,255,242,0.4); color:var(--accent);}
+        .chip.go:hover{background:rgba(0,255,242,0.22); color:#fff; box-shadow:0 0 14px rgba(0,255,242,0.35);}
+
         #login-section { display: block; } #admin-section { display: none; }
         .empty-state { color: #888; font-style: italic; font-size: 1rem; padding: 2rem 0; text-align: center; background: rgba(0,0,0,0.3); border-radius: 12px; border: 1px dashed #444; }
         .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(120%); background: rgba(10,10,20,0.95); border: 1px solid var(--accent); color: #fff; padding: 12px 22px; border-radius: 10px; font-weight: 700; box-shadow: 0 0 30px rgba(0,255,242,0.4); z-index: 9999; transition: transform .4s cubic-bezier(0.22,1,0.36,1); max-width: 90%; }
@@ -204,6 +274,153 @@
         </div>
 
         <div id="admin-section">
+
+            <!-- ============ PAYMENTS & ALERTS ============ -->
+            <div class="card pay-card">
+                <h2 class="pay-h2">💳 Payments &amp; alerts</h2>
+                <p class="pay-sub">Everything here is live the moment you save. No redeploy, no code.</p>
+
+                <label>How buyers pay</label>
+                <div class="mode-row">
+                    <div class="mode-pill m-streamlabs selected" data-mode="streamlabs" tabindex="0" role="button">
+                        <span class="m-name">Streamlabs tip page</span>
+                        <span class="m-sub">Buyer pays a tip, you match it by order reference</span>
+                    </div>
+                    <div class="mode-pill m-stripe" data-mode="stripe" tabindex="0" role="button">
+                        <span class="m-name">Stripe checkout</span>
+                        <span class="m-sub">Real card checkout, payment confirmed automatically</span>
+                    </div>
+                </div>
+
+                <!-- Streamlabs-only fields -->
+                <div id="mode-streamlabs-fields">
+                    <label for="set-tip-url">Streamlabs tip page URL</label>
+                    <input type="url" id="set-tip-url" placeholder="https://streamlabs.com/…/tip">
+
+                    <label for="set-ref-instructions">What the buyer is told after reserving</label>
+                    <textarea id="set-ref-instructions" rows="2"></textarea>
+                </div>
+
+                <!-- Stripe-only fields -->
+                <div id="mode-stripe-fields" style="display:none;">
+                    <div class="key-note">
+                        <strong>Use a restricted key, not your full secret key.</strong>
+                        In Stripe go to Developers → API keys → Create restricted key, and allow only
+                        <em>Checkout Sessions: write</em> and <em>Balance: read</em>. It starts with
+                        <code>rk_live_</code>. If it ever leaked, nobody could move your money with it.
+                    </div>
+
+                    <label for="set-stripe-key">Stripe secret key <span class="key-state" id="state-stripe-key">not set</span></label>
+                    <input type="password" id="set-stripe-key" placeholder="rk_live_…  (leave blank to keep the saved one)" autocomplete="off" spellcheck="false">
+
+                    <label for="set-webhook-secret">Stripe webhook signing secret <span class="key-state" id="state-webhook-secret">not set</span></label>
+                    <input type="password" id="set-webhook-secret" placeholder="whsec_…  (leave blank to keep the saved one)" autocomplete="off" spellcheck="false">
+
+                    <label>Webhook URL — paste this into Stripe</label>
+                    <div class="copy-row">
+                        <input type="text" id="set-webhook-url" readonly>
+                        <button type="button" class="copy-btn" onclick="copyField('set-webhook-url', this)">Copy</button>
+                    </div>
+                    <p class="hint">In Stripe: Developers → Webhooks → Add endpoint. Send these events:
+                        <code>checkout.session.completed</code>, <code>checkout.session.expired</code>,
+                        <code>checkout.session.async_payment_succeeded</code>,
+                        <code>checkout.session.async_payment_failed</code>.
+                        Stripe then shows you the signing secret to paste above.</p>
+
+                    <div class="flex-row">
+                        <div>
+                            <label for="set-currency">Currency</label>
+                            <select id="set-currency">
+                                <option value="usd">USD — US dollars</option>
+                                <option value="eur">EUR — euros</option>
+                                <option value="dkk">DKK — Danish kroner</option>
+                                <option value="gbp">GBP — pounds</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="set-hold-minutes">Hold unpaid orders for</label>
+                            <select id="set-hold-minutes">
+                                <option value="30">30 minutes</option>
+                                <option value="60">1 hour</option>
+                                <option value="120">2 hours</option>
+                                <option value="360">6 hours</option>
+                                <option value="1440">24 hours</option>
+                            </select>
+                        </div>
+                    </div>
+                    <p class="hint">If a buyer never finishes paying, the hold expires and their stock
+                        goes straight back on the shelf. Stripe's own minimum is 30 minutes.</p>
+
+                    <label for="set-store-url">Where Stripe sends the buyer back</label>
+                    <input type="url" id="set-store-url" placeholder="https://pbmbreaks.com">
+
+                    <button type="button" class="ghost-btn" onclick="checkStripe()">Test the Stripe key</button>
+                    <div id="stripe-check-result" class="check-result"></div>
+                </div>
+
+                <hr class="soft-rule">
+
+                <label>Stream alerts</label>
+                <div class="toggle-row">
+                    <label class="switch"><input type="checkbox" id="set-alerts-enabled"><span></span></label>
+                    <div><strong>Fire an alert on every paid order</strong>
+                        <span>Off by default. Nothing is sent anywhere until you turn this on.</span></div>
+                </div>
+                <div class="toggle-row">
+                    <label class="switch"><input type="checkbox" id="set-alert-overlay"><span></span></label>
+                    <div><strong>Your own OBS overlay</strong>
+                        <span>A browser source in OBS. No tokens to expire, styled like the site.</span></div>
+                </div>
+                <div class="toggle-row">
+                    <label class="switch"><input type="checkbox" id="set-alert-streamlabs"><span></span></label>
+                    <div><strong>Streamlabs alert box</strong>
+                        <span>Reuses your existing alert styling. Needs a Streamlabs API token.</span></div>
+                </div>
+
+                <div id="overlay-block">
+                    <label>OBS browser source URL</label>
+                    <div class="copy-row">
+                        <input type="text" id="set-overlay-url" readonly>
+                        <button type="button" class="copy-btn" onclick="copyField('set-overlay-url', this)">Copy</button>
+                    </div>
+                    <p class="hint">In OBS: Sources → + → Browser, paste this, 1920×1080, tick
+                        "Shutdown source when not visible". Add <code>&amp;pos=bottom</code> to move it down,
+                        <code>&amp;secs=10</code> to hold it longer, or <code>&amp;bg=1</code> to preview it
+                        in a normal browser tab.</p>
+                </div>
+
+                <div id="streamlabs-token-block" style="display:none;">
+                    <label for="set-streamlabs-token">Streamlabs API token <span class="key-state" id="state-streamlabs-token">not set</span></label>
+                    <input type="password" id="set-streamlabs-token" placeholder="Leave blank to keep the saved one" autocomplete="off" spellcheck="false">
+                    <p class="hint">Streamlabs → Settings → API Settings → API Tokens. This one is
+                        experimental — use the test button below and read the exact response.</p>
+                </div>
+
+                <label for="set-alert-template">Alert wording</label>
+                <input type="text" id="set-alert-template" placeholder="{name} grabbed {qty} {unit} — {item}">
+                <p class="hint">Placeholders: <code>{name}</code> <code>{qty}</code> <code>{unit}</code>
+                    <code>{item}</code> <code>{amount}</code> <code>{ref}</code></p>
+
+                <button type="button" class="ghost-btn" onclick="sendTestAlert()">Send a test alert</button>
+                <div id="alert-test-result" class="check-result"></div>
+
+                <hr class="soft-rule">
+
+                <div class="flex-row">
+                    <div>
+                        <label for="set-notify-email">Where order emails go</label>
+                        <input type="email" id="set-notify-email" placeholder="you@example.com">
+                    </div>
+                    <div>
+                        <label for="set-public-contact">Public contact email (shown to buyers)</label>
+                        <input type="email" id="set-public-contact" placeholder="shown in winner emails">
+                    </div>
+                </div>
+
+                <div id="settings-status" class="settings-status"></div>
+                <button id="save-settings-btn" class="primary-btn" onclick="saveSettings()">💾 Save payment &amp; alert settings</button>
+            </div>
+
             <div class="card">
                 <h2 style="margin-top:0;margin-bottom:1.2rem;font-size:1.4rem;border-bottom:1px solid #333;padding-bottom:10px;">⚡ Quick add</h2>
 
@@ -275,17 +492,40 @@
                 <div class="open-note"><i class="ph-fill ph-broadcast"></i> Breaks are OPEN the moment you save them. They close when the timer below runs out (or stock hits 0).</div>
 
                 <div id="close-time-container">
-                    <label for="item-go-live-time" style="color:var(--accent);">🚀 Go Live Time (US Central - Optional)</label>
-                    <input type="datetime-local" id="item-go-live-time" style="border:1px solid var(--accent);">
-
-                    <label for="item-schedule-end" style="color:#ff8ba7;">🔴 Close time (US Central)</label>
-                    <input type="datetime-local" id="item-schedule-end">
+                    <label for="golive-date" style="color:var(--accent);">🚀 Go Live Time (US Central — optional)</label>
+                    <div class="when">
+                        <input type="date" id="golive-date" style="border:1px solid var(--accent);">
+                        <div class="wtime">
+                            <select id="golive-h" aria-label="Hour"></select>
+                            <span class="wcolon">:</span>
+                            <select id="golive-m" aria-label="Minute"></select>
+                            <select id="golive-ap" aria-label="AM or PM"><option>AM</option><option>PM</option></select>
+                        </div>
+                    </div>
+                    <p class="readback" id="rb-golive"></p>
                     <div class="chip-row">
-                        <button class="chip" onclick="setClose(24)">+24 hours</button>
-                        <button class="chip" onclick="setClose(48)">+48 hours</button>
-                        <button class="chip" onclick="setClose(72)">+72 hours</button>
-                        <button class="chip" onclick="setClose(168)">+1 week</button>
-                        <button class="chip clear" onclick="setClose(0)">No close time</button>
+                        <button class="chip go" type="button" onclick="setGoLive(0)">Live now</button>
+                        <button class="chip go" type="button" onclick="setGoLive(1)">In 1 hour</button>
+                        <button class="chip go" type="button" onclick="setGoLive(24)">Tomorrow</button>
+                    </div>
+
+                    <label for="close-date" style="color:#ff8ba7;">🔴 Close time (US Central)</label>
+                    <div class="when">
+                        <input type="date" id="close-date" style="border:1px solid var(--live);">
+                        <div class="wtime">
+                            <select id="close-h" aria-label="Hour"></select>
+                            <span class="wcolon">:</span>
+                            <select id="close-m" aria-label="Minute"></select>
+                            <select id="close-ap" aria-label="AM or PM"><option>AM</option><option>PM</option></select>
+                        </div>
+                    </div>
+                    <p class="readback" id="rb-close"></p>
+                    <div class="chip-row">
+                        <button class="chip" type="button" onclick="setClose(24)">+24 hours</button>
+                        <button class="chip" type="button" onclick="setClose(48)">+48 hours</button>
+                        <button class="chip" type="button" onclick="setClose(72)">+72 hours</button>
+                        <button class="chip" type="button" onclick="setClose(168)">+1 week</button>
+                        <button class="chip clear" type="button" onclick="setClose(0)">No close time</button>
                     </div>
                 </div>
 
@@ -478,6 +718,7 @@
             document.getElementById('login-section').style.display = 'none';
             document.getElementById('admin-section').style.display = 'block';
             loadItems();
+            loadSettings();
         }
 
         document.getElementById('login-password').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
@@ -518,13 +759,111 @@
             pill.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } });
         });
 
+
+        /* ---------- AM/PM time controls ----------
+           Every time on this site is US Central, the clock the viewers are on.
+           These controls only ever read and write Central, so the quick buttons
+           no longer write this computer's own clock into a Central field. */
+        const AMPM_DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+        const AMPM_MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+        function msToCentralInput(ms) {
+            const parts = new Intl.DateTimeFormat('en-US', {
+                timeZone: 'America/Chicago', hour12: false,
+                year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
+            }).formatToParts(new Date(ms));
+            const m = {};
+            parts.forEach(x => m[x.type] = x.value);
+            const hh = m.hour === '24' ? '00' : m.hour;
+            return `${m.year}-${m.month}-${m.day}T${hh}:${m.minute}`;
+        }
+
+        function buildTimeSelects(prefix) {
+            const h = document.getElementById(prefix + '-h');
+            const m = document.getElementById(prefix + '-m');
+            h.innerHTML = Array.from({ length: 12 }, (_, i) => `<option value="${i + 1}">${i + 1}</option>`).join('');
+            m.innerHTML = Array.from({ length: 12 }, (_, i) => {
+                const v = String(i * 5).padStart(2, '0');
+                return `<option value="${v}">${v}</option>`;
+            }).join('');
+        }
+
+        function setWhen(prefix, central) {
+            const d = document.getElementById(prefix + '-date');
+            const h = document.getElementById(prefix + '-h');
+            const m = document.getElementById(prefix + '-m');
+            const ap = document.getElementById(prefix + '-ap');
+            if (!central || String(central).indexOf('T') === -1) {
+                d.value = ''; h.value = '12'; m.value = '00'; ap.value = 'PM';
+                paintReadbacks();
+                return;
+            }
+            const [date, time] = String(central).split('T');
+            const [H, M] = time.split(':');
+            let hh = parseInt(H, 10);
+            const pm = hh >= 12;
+            if (hh === 0) hh = 12; else if (hh > 12) hh -= 12;
+            d.value = date;
+            h.value = String(hh);
+            // Keep an existing odd minute (22:51) instead of rounding it.
+            if (!Array.from(m.options).some(o => o.value === M)) {
+                const opt = document.createElement('option');
+                opt.value = M; opt.textContent = M;
+                m.appendChild(opt);
+            }
+            m.value = M;
+            ap.value = pm ? 'PM' : 'AM';
+            paintReadbacks();
+        }
+
+        function getWhen(prefix) {
+            const date = document.getElementById(prefix + '-date').value;
+            if (!date) return '';
+            let hh = parseInt(document.getElementById(prefix + '-h').value, 10) % 12;
+            if (document.getElementById(prefix + '-ap').value === 'PM') hh += 12;
+            return `${date}T${String(hh).padStart(2, '0')}:${document.getElementById(prefix + '-m').value}`;
+        }
+
+        function centralReadback(central) {
+            if (!central || String(central).indexOf('T') === -1) return '';
+            const [date, time] = String(central).split('T');
+            const [y, mo, da] = date.split('-').map(Number);
+            const [H, M] = time.split(':');
+            let hh = parseInt(H, 10);
+            const ap = hh >= 12 ? 'PM' : 'AM';
+            if (hh === 0) hh = 12; else if (hh > 12) hh -= 12;
+            const dow = AMPM_DAYS[new Date(y, mo - 1, da).getDay()];
+            const ms = centralToMs(central);
+            const past = ms && ms < Date.now();
+            return `${dow} ${AMPM_MONTHS[mo - 1]} ${da} at ${hh}:${M} ${ap} US Central` + (past ? ' — already passed' : '');
+        }
+
+        function paintReadbacks() {
+            [['golive', 'rb-golive'], ['close', 'rb-close']].forEach(([prefix, id]) => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                const v = getWhen(prefix);
+                el.textContent = centralReadback(v);
+                el.className = 'readback' + (/already passed/.test(el.textContent) ? ' past' : '');
+            });
+        }
+
+        buildTimeSelects('golive');
+        buildTimeSelects('close');
+        ['golive-date','golive-h','golive-m','golive-ap','close-date','close-h','close-m','close-ap']
+            .forEach(id => document.getElementById(id).addEventListener('change', paintReadbacks));
+
+        function setGoLive(hours) {
+            if (!hours) { setWhen('golive', ''); toast('Go live time cleared — it is live as soon as you save.'); return; }
+            setWhen('golive', msToCentralInput(Date.now() + hours * 3600000));
+            toast(hours === 24 ? 'Goes live this time tomorrow (US Central).' : `Goes live in ${hours} hour${hours === 1 ? '' : 's'}.`);
+        }
+
         function setClose(hours) {
-            const input = document.getElementById('item-schedule-end');
-            if (!hours) { input.value = ''; toast('Close time cleared — break stays open until stock runs out.'); return; }
-            const target = new Date(Date.now() + hours * 3600000);
-            const pad = n => String(n).padStart(2, '0');
-            input.value = `${target.getFullYear()}-${pad(target.getMonth() + 1)}-${pad(target.getDate())}T${pad(target.getHours())}:${pad(target.getMinutes())}`;
-            toast(`Close time set: +${hours >= 168 ? '1 week' : hours + ' hours'}.`);
+            if (!hours) { setWhen('close', ''); toast('Close time cleared — break stays open until stock runs out.'); return; }
+            // Computed in US Central, not in this computer's time zone.
+            setWhen('close', msToCentralInput(Date.now() + hours * 3600000));
+            toast(`Close time set: +${hours >= 168 ? '1 week' : hours + ' hours'} (US Central).`);
         }
 
         document.getElementById('item-image').addEventListener('change', function () {
@@ -604,8 +943,8 @@
                 const hidden = selectedHidden;
                 const condition = type === 'raw' ? document.getElementById('item-condition').value : null;
                 const grader = type === 'slab' ? document.getElementById('item-grader').value : null;
-                const goLiveTime = document.getElementById('item-go-live-time').value;
-                const scheduleEnd = document.getElementById('item-schedule-end').value;
+                const goLiveTime = getWhen('golive');
+                const scheduleEnd = getWhen('close');
                 const desc = document.getElementById('item-description').value;
                 const price = Number(document.getElementById('item-price').value);
                 const stock = toInt(document.getElementById('item-stock').value, 1);
@@ -658,7 +997,9 @@
 
         function resetForm() {
             editingId = null; currentImage = ''; currentImages = []; currentCreatedAt = null; currentClicks = 0;
-            ['item-name', 'item-description', 'item-price', 'item-google-form-link', 'item-schedule-end', 'item-go-live-time'].forEach(id => document.getElementById(id).value = '');
+            ['item-name', 'item-description', 'item-price', 'item-google-form-link'].forEach(id => document.getElementById(id).value = '');
+            setWhen('golive', '');
+            setWhen('close', '');
             document.getElementById('item-stock').value = '1';
             document.getElementById('stock-label-type').value = 'packs';
             document.getElementById('item-min-buy').value = '1';
@@ -795,8 +1136,8 @@
             selectedType = item.type || 'msrp';
             selectedHidden = !!item.hidden;
             document.querySelectorAll('.vis-pill').forEach(p => p.classList.toggle('selected', (p.dataset.vis === 'true') === selectedHidden));
-            document.getElementById('item-schedule-end').value = (item.scheduleEnd && item.scheduleEnd.indexOf('T') > -1) ? item.scheduleEnd : '';
-            document.getElementById('item-go-live-time').value = (item.goLiveTime && item.goLiveTime.indexOf('T') > -1) ? item.goLiveTime : '';
+            setWhen('close', (item.scheduleEnd && item.scheduleEnd.indexOf('T') > -1) ? item.scheduleEnd : '');
+            setWhen('golive', (item.goLiveTime && item.goLiveTime.indexOf('T') > -1) ? item.goLiveTime : '');
             document.getElementById('item-name').value = item.name || '';
             document.getElementById('item-description').value = item.description || '';
             document.getElementById('item-price').value = item.price != null ? item.price : '';
@@ -922,10 +1263,18 @@
                     bits.push(`${qty} ${esc(unitWord(ordersItem.stockLabelType, qty))}`);
                     if (o.orderRef) bits.push(`<span class="order-ref">${esc(o.orderRef)}</span>`);
                     if (o.at) bits.push(esc(fmtWhen(o.at)));
+
+                    // pending = card checkout opened but not paid yet; it frees
+                    // itself when the hold expires.
+                    let stateBadge = '';
+                    if (o.status === 'paid') stateBadge = '<span class="badge b-paid">PAID</span>';
+                    else if (o.status === 'pending') stateBadge = '<span class="badge b-pending">AWAITING PAYMENT</span>';
+                    if (o.status === 'pending' && o.expiresAt) bits.push('hold ends ' + esc(fmtWhen(o.expiresAt)));
+
                     return `
-                        <div class="order-row">
+                        <div class="order-row${o.status === 'pending' ? ' pending' : ''}">
                             <div class="order-main">
-                                <span class="order-email">${esc(o.email)}</span>
+                                <span class="order-email">${esc(o.email)} ${stateBadge}</span>
                                 <span class="order-meta">${bits.join(' · ')}</span>
                             </div>
                             <button class="btn-reset" onclick="resetBuyer('${esc(o.email)}', ${qty})">Reset</button>
@@ -1048,6 +1397,216 @@
             } finally {
                 btn.disabled = false;
                 btn.innerText = 'Send winner emails';
+            }
+        }
+
+
+        /* ============================================================
+           PAYMENTS & ALERTS
+           ============================================================ */
+        let siteSettings = null;
+        let selectedMode = 'streamlabs';
+
+        function applyModeUI() {
+            document.querySelectorAll('.mode-pill').forEach(p => p.classList.toggle('selected', p.dataset.mode === selectedMode));
+            document.getElementById('mode-streamlabs-fields').style.display = selectedMode === 'streamlabs' ? 'block' : 'none';
+            document.getElementById('mode-stripe-fields').style.display = selectedMode === 'stripe' ? 'block' : 'none';
+        }
+        document.querySelectorAll('.mode-pill').forEach(pill => {
+            const pick = () => { selectedMode = pill.dataset.mode; applyModeUI(); };
+            pill.addEventListener('click', pick);
+            pill.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } });
+        });
+        document.getElementById('set-alert-streamlabs').addEventListener('change', function () {
+            document.getElementById('streamlabs-token-block').style.display = this.checked ? 'block' : 'none';
+        });
+        document.getElementById('set-alert-overlay').addEventListener('change', function () {
+            document.getElementById('overlay-block').style.display = this.checked ? 'block' : 'none';
+        });
+
+        function copyField(id, btn) {
+            const el = document.getElementById(id);
+            el.select();
+            el.setSelectionRange(0, 99999);
+            const done = () => { const o = btn.textContent; btn.textContent = 'Copied'; setTimeout(() => { btn.textContent = o; }, 1400); };
+            if (navigator.clipboard) navigator.clipboard.writeText(el.value).then(done).catch(() => { document.execCommand('copy'); done(); });
+            else { document.execCommand('copy'); done(); }
+        }
+
+        function paintKeyState(elId, info) {
+            const el = document.getElementById(elId);
+            if (!el) return;
+            if (!info || !info.set) { el.textContent = 'not set'; el.className = 'key-state'; return; }
+            if (info.testMode) { el.textContent = 'TEST KEY · ' + info.hint; el.className = 'key-state test'; return; }
+            el.textContent = info.source === 'cloudflare' ? 'set in Cloudflare' : info.hint;
+            el.className = 'key-state ok';
+        }
+
+        // The overlay URL the worker reports points at the API. The browser
+        // source needs the overlay PAGE, with the api + token passed along.
+        function overlayPageUrl(apiWsUrl) {
+            try {
+                const u = new URL(apiWsUrl);
+                const token = u.searchParams.get('token') || '';
+                const page = new URL('overlay.html', location.href);
+                page.searchParams.set('api', API_URL);
+                page.searchParams.set('token', token);
+                return page.toString();
+            } catch (e) { return apiWsUrl; }
+        }
+
+        function fillSettingsForm(payload) {
+            const s = payload.settings || {};
+            siteSettings = s;
+            selectedMode = s.paymentMode === 'stripe' ? 'stripe' : 'streamlabs';
+            applyModeUI();
+
+            document.getElementById('set-tip-url').value = s.tipUrl || '';
+            document.getElementById('set-ref-instructions').value = s.refInstructions || '';
+            document.getElementById('set-currency').value = s.currency || 'usd';
+            document.getElementById('set-hold-minutes').value = String(s.holdMinutes || 30);
+            document.getElementById('set-store-url').value = s.storeUrl || '';
+            document.getElementById('set-notify-email').value = s.notifyEmail || '';
+            document.getElementById('set-public-contact').value = s.publicContactEmail || '';
+            document.getElementById('set-alert-template').value = s.alertTemplate || '';
+
+            document.getElementById('set-alerts-enabled').checked = !!s.alertsEnabled;
+            document.getElementById('set-alert-overlay').checked = !!s.alertToOverlay;
+            document.getElementById('set-alert-streamlabs').checked = !!s.alertToStreamlabs;
+            document.getElementById('streamlabs-token-block').style.display = s.alertToStreamlabs ? 'block' : 'none';
+            document.getElementById('overlay-block').style.display = s.alertToOverlay ? 'block' : 'none';
+
+            if (payload.webhookUrl) document.getElementById('set-webhook-url').value = payload.webhookUrl;
+            if (payload.overlayUrl) document.getElementById('set-overlay-url').value = overlayPageUrl(payload.overlayUrl);
+
+            const st = payload.status || {};
+            paintKeyState('state-stripe-key', st.stripeKey);
+            paintKeyState('state-webhook-secret', st.webhookSecret);
+            paintKeyState('state-streamlabs-token', st.streamlabsToken);
+
+            ['set-stripe-key', 'set-webhook-secret', 'set-streamlabs-token'].forEach(id => { document.getElementById(id).value = ''; });
+        }
+
+        async function loadSettings() {
+            const token = localStorage.getItem('adminToken') || '';
+            try {
+                const res = await fetch(`${API_URL}/admin/settings?token=${encodeURIComponent(token)}`);
+                const data = await res.json();
+                if (!res.ok || data.error) {
+                    setSettingsStatus(res.status === 404
+                        ? 'This worker does not have the payments update yet — commit the new worker.js and let it deploy.'
+                        : (data.error || 'Could not load settings.'), true);
+                    return;
+                }
+                fillSettingsForm(data);
+                setSettingsStatus('');
+            } catch (e) {
+                setSettingsStatus('Could not reach the worker.', true);
+            }
+        }
+
+        function setSettingsStatus(msg, isErr) {
+            const el = document.getElementById('settings-status');
+            el.textContent = msg || '';
+            el.className = 'settings-status' + (msg ? (isErr ? ' bad' : ' ok') : '');
+        }
+
+        async function saveSettings() {
+            const btn = document.getElementById('save-settings-btn');
+            btn.disabled = true;
+            btn.innerText = 'Saving…';
+            setSettingsStatus('');
+
+            const settings = {
+                paymentMode: selectedMode,
+                tipUrl: document.getElementById('set-tip-url').value.trim(),
+                refInstructions: document.getElementById('set-ref-instructions').value.trim(),
+                currency: document.getElementById('set-currency').value,
+                holdMinutes: parseInt(document.getElementById('set-hold-minutes').value, 10) || 30,
+                storeUrl: document.getElementById('set-store-url').value.trim(),
+                notifyEmail: document.getElementById('set-notify-email').value.trim(),
+                publicContactEmail: document.getElementById('set-public-contact').value.trim(),
+                alertTemplate: document.getElementById('set-alert-template').value.trim(),
+                alertsEnabled: document.getElementById('set-alerts-enabled').checked,
+                alertToOverlay: document.getElementById('set-alert-overlay').checked,
+                alertToStreamlabs: document.getElementById('set-alert-streamlabs').checked
+            };
+
+            // Blank means "keep whatever is already stored" — the worker never
+            // sends a saved key back, so there is nothing to retype.
+            const secrets = {};
+            const sk = document.getElementById('set-stripe-key').value.trim();
+            const wh = document.getElementById('set-webhook-secret').value.trim();
+            const sl = document.getElementById('set-streamlabs-token').value.trim();
+            if (sk) secrets.stripeSecretKey = sk;
+            if (wh) secrets.stripeWebhookSecret = wh;
+            if (sl) secrets.streamlabsToken = sl;
+
+            if (selectedMode === 'stripe' && sk && !/^(sk|rk)_(test|live)_/.test(sk)) {
+                setSettingsStatus('That does not look like a Stripe secret key — it should start with rk_ or sk_.', true);
+                btn.disabled = false; btn.innerText = '💾 Save payment & alert settings';
+                return;
+            }
+            if (wh && !/^whsec_/.test(wh)) {
+                setSettingsStatus('The webhook signing secret should start with whsec_.', true);
+                btn.disabled = false; btn.innerText = '💾 Save payment & alert settings';
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_URL}/admin/settings`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token: localStorage.getItem('adminToken') || '', settings, secrets })
+                });
+                const data = await res.json();
+                if (!res.ok || data.error) { setSettingsStatus(data.error || `Save failed (HTTP ${res.status}).`, true); return; }
+
+                fillSettingsForm({ settings: data.settings, status: data.status, overlayUrl: data.overlayUrl, webhookUrl: document.getElementById('set-webhook-url').value });
+                setSettingsStatus(selectedMode === 'stripe' ? 'Saved — the storefront is on Stripe checkout now.' : 'Saved — the storefront is on the Streamlabs tip page.');
+                toast('Payment settings saved.');
+            } catch (e) {
+                setSettingsStatus('Could not reach the worker.', true);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = '💾 Save payment & alert settings';
+            }
+        }
+
+        async function checkStripe() {
+            const el = document.getElementById('stripe-check-result');
+            el.className = 'check-result info';
+            el.textContent = 'Asking Stripe…';
+            try {
+                const res = await fetch(`${API_URL}/admin/stripe-check?token=${encodeURIComponent(localStorage.getItem('adminToken') || '')}`);
+                const data = await res.json();
+                if (!data.ok) { el.className = 'check-result bad'; el.textContent = '✗ ' + (data.reason || 'Stripe refused the key.'); return; }
+                el.className = 'check-result ok';
+                el.textContent = `✓ Key works. ${data.keyKind === 'restricted' ? 'Restricted key' : 'Full secret key'}, ${data.testMode ? 'TEST mode — no real money will move' : 'LIVE mode'}.`;
+            } catch (e) {
+                el.className = 'check-result bad';
+                el.textContent = '✗ Could not reach the worker.';
+            }
+        }
+
+        async function sendTestAlert() {
+            const el = document.getElementById('alert-test-result');
+            el.className = 'check-result info';
+            el.textContent = 'Firing…';
+            try {
+                const res = await fetch(`${API_URL}/admin/test-alert`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token: localStorage.getItem('adminToken') || '' })
+                });
+                const data = await res.json();
+                if (data.error) { el.className = 'check-result bad'; el.textContent = '✗ ' + data.error; return; }
+                const overlayOk = /queued/.test(data.overlay || '');
+                el.className = 'check-result ' + (overlayOk ? 'ok' : 'info');
+                el.innerHTML = `Overlay: <strong>${esc(data.overlay)}</strong><br>Streamlabs: <strong>${esc(data.streamlabs)}</strong>`;
+            } catch (e) {
+                el.className = 'check-result bad';
+                el.textContent = '✗ Could not reach the worker.';
             }
         }
 
