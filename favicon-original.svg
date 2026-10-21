@@ -1,10 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-<defs><linearGradient id="a" x2=".85" y2="1"><stop stop-color="#13fff4"/><stop offset="1" stop-color="#a855f7"/></linearGradient></defs>
-<rect width="64" height="64" rx="15" fill="#090c20"/>
-<circle cx="32" cy="32" r="25" fill="#0d1632" stroke="url(#a)" stroke-width="3"/>
-<path d="M8 32h48" stroke="#fff" stroke-width="5"/>
-<path d="M9 29A23 23 0 0 1 55 29" fill="#11d9d9"/>
-<path d="M9 35A23 23 0 0 0 55 35" fill="#7654c2"/>
-<circle cx="32" cy="32" r="10" fill="#fff" stroke="#0d1632" stroke-width="4"/>
-<circle cx="32" cy="32" r="4.5" fill="#14f7ec"/>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#0a1126"/><defs><linearGradient id="mane" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#6be7f6"/><stop offset="1" stop-color="#c087ff"/></linearGradient></defs><path d="M13 41c2-12 12-22 25-22 8 0 14 3 18 8-6 1-10 3-14 8-5 7-12 12-23 12-3 0-5-3-6-6Z" fill="url(#mane)"/><path d="M33 12c10-1 17 4 19 11l-11 2-6-7Z" fill="#b36fff"/><path d="M15 39c3-10 12-17 22-17 8 0 15 5 18 12-2 0-5 0-8 1-3 6-9 12-20 14-8 1-13-3-12-10Z" fill="#f3fbff"/><circle cx="39" cy="31" r="2.2" fill="#0a1126"/><path d="M28 34c4-3 7-4 11-4" stroke="#0a1126" stroke-width="2.2" stroke-linecap="round"/><path d="M23 41c4 4 9 6 15 6" stroke="#79ebff" stroke-width="2.6" stroke-linecap="round"/></svg>
