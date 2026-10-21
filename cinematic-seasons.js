@@ -19,6 +19,23 @@ const artwork={
 };
 function init(){
   if(!document.querySelector('header'))return;
+  // The internal theme name "crystal" is the site's original non-holiday look.
+  // Favicons are actual small SVG files, not scaled down page illustrations.
+  const faviconPaths={
+    crystal:'favicon-original.svg',
+    halloween:'favicon-halloween.svg',
+    christmas:'favicon-christmas.svg',
+    birthday:'favicon-birthday.svg'
+  };
+  function changeFavicon(theme){
+    const link=document.querySelector('link[rel="icon"]');
+    if (!link) return;
+    const asset=faviconPaths[theme]||faviconPaths.crystal;
+    if(link.getAttribute('href')!==asset){
+      link.setAttribute('type','image/svg+xml');
+      link.setAttribute('href',asset);
+    }
+  }
   const scene=document.createElement('div');
   scene.id='pbm-scene';scene.setAttribute('aria-hidden','true');
   scene.innerHTML='<div class="pbm-sky"></div><div class="pbm-mist"></div><div class="pbm-stars"></div><div class="pbm-art pbm-left"></div><div class="pbm-art pbm-right"></div>';
@@ -38,6 +55,7 @@ function init(){
     const theme=Object.prototype.hasOwnProperty.call(artwork,key)?key:'crystal';
     if(theme===last)return;
     last=theme;
+    changeFavicon(theme);
     const art=artwork[theme];
     scene.querySelector('.pbm-left').innerHTML=art.left;
     scene.querySelector('.pbm-right').innerHTML=art.right;
