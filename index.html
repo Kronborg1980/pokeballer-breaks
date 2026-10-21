@@ -10,36 +10,92 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Tilt+Neon&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script>
+        /* Dress the page before the first pixel. The season a visitor last
+           saw is cached locally, so a returning visitor never sees the
+           wrong season flash while /api/settings is still in the air. */
+        (function () {
+            var t = 'crystal';
+            try { t = localStorage.getItem('pbm-theme') || 'crystal'; } catch (e) {}
+            if (['crystal', 'birthday', 'halloween', 'christmas'].indexOf(t) === -1) t = 'crystal';
+            document.documentElement.setAttribute('data-theme', t);
+        })();
+    </script>
     <style>
+        /* ============================================================
+           SEASONS
+           Four dressings for one shop. The admin panel writes data-theme
+           on <html>; everything visual hangs off the tokens below, so the
+           whole page changes clothes from these few lines.
+           ============================================================ */
         :root {
-            --bg-dark: #02030c;
-            --accent-cyan: #00fff2;
-            --accent-purple: #d500ff;
-            --accent-gold: #ffd700;
+            --ground: #02030c;
+            --ground-2: #07041c;
+            --glow: #00fff2;   --glow-rgb: 0,255,242;
+            --spark: #d500ff;  --spark-rgb: 213,0,255;
+            --coin: #ffd700;   --coin-rgb: 255,215,0;
+            --ink: #ffffff;
+            --ink-dim: #aab0d8;
+            --wash-1: rgba(0,255,242,0.16);
+            --wash-2: rgba(213,0,255,0.18);
+            --wash-3: rgba(157,78,221,0.18);
+
+            /* The rest of the sheet still speaks the old names. */
+            --bg-dark: var(--ground);
+            --accent-cyan: var(--glow);
+            --accent-purple: var(--spark);
+            --accent-gold: var(--coin);
             --accent-live: #ff0040;
             --msrp-green: #00ff9d;
-            --text-bright: #ffffff;
-            --text-dim: #aab0d8;
+            --text-bright: var(--ink);
+            --text-dim: var(--ink-dim);
             --guardian-size: clamp(120px, 14vw, 200px);
             --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg-dark); color: var(--text-bright); min-height: 100vh; overflow-x: hidden; position: relative; -webkit-font-smoothing: antialiased; }
+        html[data-theme="birthday"] {
+            --ground: #140a1e; --ground-2: #2c1038;
+            --glow: #ff5ca8;  --glow-rgb: 255,92,168;
+            --spark: #ffd166; --spark-rgb: 255,209,102;
+            --coin: #ffd166;  --coin-rgb: 255,209,102;
+            --ink: #fff3fa;   --ink-dim: #dcb3c9;
+            --wash-1: rgba(255,92,168,0.20); --wash-2: rgba(255,209,102,0.13); --wash-3: rgba(150,60,200,0.20);
+        }
+        html[data-theme="halloween"] {
+            --ground: #0d0608; --ground-2: #2a0f06;
+            --glow: #ff7518;  --glow-rgb: 255,117,24;
+            --spark: #8f4fff; --spark-rgb: 143,79,255;
+            --coin: #ffb039;  --coin-rgb: 255,176,57;
+            --ink: #ffeede;   --ink-dim: #c9a893;
+            --wash-1: rgba(255,117,24,0.18); --wash-2: rgba(143,79,255,0.18); --wash-3: rgba(120,30,10,0.24);
+        }
+        html[data-theme="christmas"] {
+            --ground: #060f12; --ground-2: #0b2420;
+            --glow: #ff3b47;  --glow-rgb: 255,59,71;
+            --spark: #2ee6a8; --spark-rgb: 46,230,168;
+            --coin: #ffcf6b;  --coin-rgb: 255,207,107;
+            --ink: #f2fbf6;   --ink-dim: #a3c6b7;
+            --wash-1: rgba(255,59,71,0.16); --wash-2: rgba(46,230,168,0.16); --wash-3: rgba(20,70,60,0.24);
+        }
 
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        [hidden] { display: none !important; }
+        body { font-family: 'Inter', sans-serif; background: var(--ground); color: var(--ink); min-height: 100vh; overflow-x: hidden; position: relative; -webkit-font-smoothing: antialiased; }
+
+        /* One still wash. The old version slid three 200%-wide gradients
+           across a fixed layer forever, which is what made phones blink. */
         body::before {
             content: ''; position: fixed; inset: 0; z-index: -10; pointer-events: none;
             background:
-                radial-gradient(60% 50% at 20% 0%, rgba(0,255,242,0.18), transparent 70%),
-                radial-gradient(55% 50% at 85% 12%, rgba(213,0,255,0.20), transparent 70%),
-                radial-gradient(60% 60% at 50% 110%, rgba(157,78,221,0.20), transparent 70%),
-                linear-gradient(to bottom, #02030c, #06031a 60%, #02030c);
-            background-size: 200% 200%, 200% 200%, 200% 200%, 100% 100%;
-            animation: aurora 26s ease-in-out infinite;
+                radial-gradient(58% 46% at 18% -4%, var(--wash-1), transparent 68%),
+                radial-gradient(52% 44% at 86% 10%, var(--wash-2), transparent 70%),
+                radial-gradient(62% 56% at 50% 108%, var(--wash-3), transparent 72%),
+                linear-gradient(to bottom, var(--ground) 0%, var(--ground-2) 58%, var(--ground) 100%);
         }
-        @keyframes aurora { 0%, 100% { background-position: 0% 0%, 100% 0%, 50% 100%, 0 0; } 50% { background-position: 30% 20%, 70% 30%, 40% 80%, 0 0; } }
 
-        .grain { position: fixed; inset: 0; z-index: -9; pointer-events: none; background-image: var(--grain); background-size: 140px; opacity: 0.04; mix-blend-mode: overlay; }
-        .particles { position: fixed; inset: 0; pointer-events: none; z-index: -7; background-image: radial-gradient(circle at 20% 30%, var(--accent-cyan) 1px, transparent 3px), radial-gradient(circle at 80% 70%, var(--accent-purple) 1px, transparent 3px); background-size: 120px 120px; opacity: 0.4; }
+        .grain { position: fixed; inset: 0; z-index: -9; pointer-events: none; background-image: var(--grain); background-size: 140px; opacity: 0.045; mix-blend-mode: overlay; }
+        /* Seasonal weather: confetti, leaves, snow. One canvas, drawn only
+           while the tab is visible, off entirely for reduced motion. */
+        #weather { position: fixed; inset: 0; z-index: -6; pointer-events: none; }
 
         .parallax-layer { position: fixed; inset: 0; z-index: -8; pointer-events: none; will-change: transform; }
         .poke-bg { position: fixed; pointer-events: none; opacity: 0.3; will-change: transform; backface-visibility: hidden; }
@@ -61,43 +117,24 @@
         @keyframes hop { 0%,100% { transform: translateY(0) scale(1,1); } 20% { transform: translateY(-26px) scale(0.97,1.03); } 45% { transform: translateY(0) scale(1.04,0.96); } 60% { transform: translateY(0) scale(1,1); } }
         @keyframes flop { 0%,100% { transform: rotate(-11deg) translateY(0); } 50% { transform: rotate(11deg) translateY(-12px); } }
 
+        /* ---------- NEON, SWITCHED ON ----------
+           Each letter is still its own glass tube with a white-hot core, but
+           the tubes are healthy now: no sputter, no dying-tube steps. The
+           sign reads cleanly at a glance, which is the whole point of a sign. */
         .neon-sign { font-family: 'Tilt Neon', 'Inter', sans-serif; font-weight: 400; }
         .neon-word { white-space: nowrap; }
         .nl {
             color: #fff; display: inline-block;
             text-shadow:
-                0 0 4px rgba(255,255,255,0.95),
-                0 0 10px var(--tube, var(--accent-cyan)),
-                0 0 21px var(--tube, var(--accent-cyan)),
-                0 0 44px var(--tube, var(--accent-cyan)),
-                0 0 80px var(--tube, var(--accent-cyan));
-            animation: tubeFlicker var(--fd, 6s) linear infinite;
-        }
-        @keyframes tubeFlicker {
-            0%, 6.9%, 8.6%, 41.9%, 43.4%, 78.9%, 80.4%, 100% { opacity: 1; }
-            7.2% { opacity: 0.55; }
-            7.9% { opacity: 0.9; }
-            42.3% { opacity: 0.45; }
-            42.9% { opacity: 1; }
-            79.3% { opacity: 0.65; }
+                0 0 3px rgba(255,255,255,0.95),
+                0 0 9px var(--tube, var(--glow)),
+                0 0 22px var(--tube, var(--glow));
         }
         .neon-sm .nl {
             text-shadow:
-                0 0 3px rgba(255,255,255,0.9),
-                0 0 8px var(--tube, var(--accent-cyan)),
-                0 0 16px var(--tube, var(--accent-cyan)),
-                0 0 30px var(--tube, var(--accent-cyan));
-        }
-        .nl-dying { animation-name: tubeDying; animation-timing-function: steps(1, end); }
-        @keyframes tubeDying {
-            0%, 5.9%, 8.1%, 27.9%, 32.1%, 55.9%, 60.1%, 100% { opacity: 1; }
-            6% { opacity: 0.25; text-shadow: none; }
-            7% { opacity: 0.8; }
-            28% { opacity: 0.15; text-shadow: none; }
-            29.5% { opacity: 0.85; }
-            30.6% { opacity: 0.25; text-shadow: none; }
-            56% { opacity: 0.2; text-shadow: none; }
-            57.8% { opacity: 0.9; }
+                0 0 2px rgba(255,255,255,0.9),
+                0 0 7px var(--tube, var(--glow)),
+                0 0 15px var(--tube, var(--glow));
         }
 
         .top-nav { display: flex; justify-content: center; gap: 20px; padding: 26px 16px 22px; position: relative; z-index: 10; flex-wrap: wrap; }
@@ -105,17 +142,52 @@
         .nav-link:hover { background: rgba(255,255,255,0.08); border-color: var(--accent-purple); box-shadow: 0 0 22px rgba(213,0,255,0.4); transform: translateY(-2px); }
         .nav-active { border-color: var(--accent-cyan); box-shadow: 0 0 22px rgba(0,255,242,0.4); background: linear-gradient(90deg, rgba(0,255,242,0.2), transparent); pointer-events: none; }
 
-        header { display: flex; flex-direction: column; align-items: center; padding: 1rem; position: relative; z-index: 2; }
+        /* ---------- THE MARQUEE ----------
+           A shop sign: the lit name on a dark fascia, and under it an enamel
+           plate that says what is actually happening in the shop right now.
+           The plate is the first useful thing a visitor reads. */
+        header { display: flex; flex-direction: column; align-items: center; padding: 0.5rem 1rem 0; position: relative; z-index: 2; }
+        .marquee { display: flex; flex-direction: column; align-items: center; gap: 18px; }
         .header-wrapper { display: flex; align-items: center; gap: 2rem; }
-        .header-logo { width: 160px; display: block; filter: drop-shadow(0 0 35px var(--accent-cyan)); }
+        .header-logo { width: 150px; display: block; filter: drop-shadow(0 0 28px rgba(var(--glow-rgb),0.55)); }
         .logo-left .header-logo { transform: scaleX(-1); }
-        .logo-animator { animation: float 6s infinite ease-in-out; will-change: transform; }
+        .logo-animator { animation: float 9s infinite ease-in-out; will-change: transform; }
 
         h1 {
             font-family: 'Tilt Neon', 'Inter', sans-serif; font-weight: 400;
             font-size: clamp(3.2rem, 8.5vw, 6.2rem); letter-spacing: 3px; text-transform: uppercase;
             margin: 0; line-height: 1.05; text-align: center; position: relative; display: inline-block; z-index: 1;
         }
+
+        .marquee-plate {
+            display: inline-flex; align-items: center; gap: 12px;
+            max-width: min(92vw, 640px); padding: 11px 22px 11px 18px;
+            border-radius: 999px; background: rgba(0,0,0,0.55);
+            border: 1px solid rgba(var(--glow-rgb),0.30);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.10);
+            color: var(--ink); font-size: 0.95rem; font-weight: 600; line-height: 1.35;
+        }
+        .marquee-plate b { font-weight: 800; }
+        .plate-led { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; background: var(--ink-dim); box-shadow: 0 0 10px currentColor; }
+        .plate-on .plate-led { background: var(--glow); box-shadow: 0 0 10px var(--glow), 0 0 22px var(--glow); animation: plateBeat 2.4s ease-in-out infinite; }
+        @keyframes plateBeat { 0%,100% { opacity: 1; } 50% { opacity: 0.45; } }
+
+        /* ---------- PINNED CLIP ---------- */
+        .clip-card { padding: 0; overflow: hidden; }
+        .clip-frame { position: relative; width: 100%; aspect-ratio: 16/9; background: #000; }
+        .clip-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+        .clip-poster {
+            position: absolute; inset: 0; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; gap: 14px; text-align: center; padding: 1.5rem;
+            background: radial-gradient(60% 70% at 50% 40%, rgba(var(--glow-rgb),0.18), transparent 70%), #07070f;
+        }
+        .clip-poster .ph-fill { font-size: 3rem; color: var(--glow); }
+        .clip-poster p { color: var(--ink-dim); font-size: 0.95rem; max-width: 38ch; line-height: 1.6; }
+        .clip-foot { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; padding: 16px 20px; }
+        .clip-title { font-weight: 800; font-size: 1.05rem; }
+        .clip-sub { color: var(--ink-dim); font-size: 0.82rem; font-weight: 600; margin-top: 2px; }
+        .clip-btn { background: rgba(24,119,242,0.18) !important; border-color: rgba(24,119,242,0.65) !important; box-shadow: 0 0 15px rgba(24,119,242,0.25) !important; }
+        .clip-btn:hover { background: rgba(24,119,242,0.85) !important; }
 
         main {
             position: relative; z-index: 2; max-width: 1250px; margin: 1rem auto 4rem; padding: 2.5rem;
@@ -354,6 +426,96 @@
         /* The gold/purple button shine was referenced but never defined. */
         @keyframes goldShine { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
 
+        /* ============================================================
+           SEASON SKIN
+           The rules above were written in fixed cyan and magenta. These
+           re-state the structural ones in tokens, so one data-theme change
+           re-dresses the whole page. Later in the sheet wins, so nothing
+           above needs touching.
+
+           It also enforces one rule the old page broke everywhere: ONE
+           THING GLOWS AT A TIME. Every card used to spin a conic rainbow
+           and pulse its own shadow, so nothing stood out. Now the quiet
+           cards are quiet and only the open break is lit.
+           ============================================================ */
+        main {
+            background: rgba(6,6,16,0.70);
+            border: 1px solid rgba(var(--glow-rgb),0.26);
+            box-shadow: 0 34px 90px rgba(0,0,0,0.70), inset 0 1px 0 rgba(255,255,255,0.08);
+        }
+        .top-nav .nav-link { border-color: rgba(255,255,255,0.14); }
+        .nav-link:hover { border-color: rgba(var(--spark-rgb),0.7); box-shadow: 0 0 18px rgba(var(--spark-rgb),0.30); }
+        .nav-active { border-color: rgba(var(--glow-rgb),0.8); box-shadow: 0 0 18px rgba(var(--glow-rgb),0.30); background: linear-gradient(90deg, rgba(var(--glow-rgb),0.18), transparent); }
+
+        .section-header {
+            background: linear-gradient(90deg, rgba(var(--glow-rgb),0.09), rgba(var(--spark-rgb),0.09));
+            border-color: rgba(var(--glow-rgb),0.32);
+            box-shadow: 0 0 26px rgba(var(--glow-rgb),0.10), inset 0 1px 0 rgba(255,255,255,0.12);
+        }
+        .section-line { background: linear-gradient(90deg, transparent, var(--glow), transparent); box-shadow: none; opacity: 0.5; height: 2px; }
+
+        /* Quiet by default: a hairline and a real drop shadow, no spinning ring. */
+        .neon-card-wrapper {
+            background: rgba(255,255,255,0.055);
+            box-shadow: 0 18px 44px rgba(0,0,0,0.55);
+        }
+        .neon-card-wrapper::before { content: none; }
+        .neon-card-wrapper:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 26px 60px rgba(0,0,0,0.62), 0 0 0 1px rgba(var(--glow-rgb),0.40);
+        }
+        .glass-panel {
+            background: linear-gradient(165deg, rgba(22,22,40,0.60), rgba(8,8,18,0.80));
+            border: 1px solid rgba(var(--glow-rgb),0.10);
+            border-top: 1px solid rgba(255,255,255,0.22);
+        }
+
+        /* The open break is the one lit thing: a slow ring of light on the
+           edge, and a steady glow rather than a pulse. */
+        .card-live-now { animation: none; box-shadow: 0 18px 44px rgba(0,0,0,0.55), 0 0 34px rgba(var(--lg),0.40); }
+        .card-live-now::before {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; z-index: 0;
+            background: conic-gradient(transparent 0deg, transparent 150deg, rgba(var(--lg),0.9) 196deg, #fff 210deg, rgba(var(--lg),0.9) 224deg, transparent 270deg);
+            animation: spinBorder 7s linear infinite;
+        }
+        .card-live-now:hover { box-shadow: 0 26px 60px rgba(0,0,0,0.62), 0 0 44px rgba(var(--lg),0.55); }
+
+        /* Closed means closed: desaturated, flat, no invitation. */
+        .card-closed { filter: saturate(0.2) brightness(0.62); box-shadow: 0 10px 24px rgba(0,0,0,0.5); }
+        .card-closed:hover { transform: none; box-shadow: 0 10px 24px rgba(0,0,0,0.5); }
+        .card-upcoming { box-shadow: 0 18px 44px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.10); }
+
+        .live-ribbon { animation: none; background-size: 100% 100%; box-shadow: 0 4px 18px rgba(var(--lg,0,255,242),0.45), inset 0 1px 0 rgba(255,255,255,0.35); }
+        .live-dot { animation: dotBlink 2.2s ease-in-out infinite; }
+        .tier-header::after { animation: ledOpacity 3.6s ease-in-out infinite; box-shadow: 0 0 16px currentColor; }
+        .time-tag-bottom { border-color: rgba(var(--glow-rgb),0.6); box-shadow: 0 0 12px rgba(var(--glow-rgb),0.25); }
+        .time-tag-bottom.closing-soon { animation: none; border-color: var(--accent-live); box-shadow: 0 0 20px rgba(255,0,64,0.65); }
+        .lbl-universal { animation: none; }
+        .baller-btn, .bundle-btn { animation: none; background-size: 100% 100%; }
+        .item-img-box { border-bottom-color: rgba(var(--glow-rgb),0.18); }
+        .price-row { border-top-color: rgba(var(--glow-rgb),0.18); }
+        .stock { background: rgba(var(--glow-rgb),0.08); border-color: rgba(var(--glow-rgb),0.22); }
+        .perk-ship { background: rgba(var(--glow-rgb),0.10); border-color: rgba(var(--glow-rgb),0.45); color: var(--glow); box-shadow: none; }
+        .price { color: var(--coin); text-shadow: 0 0 22px rgba(var(--coin-rgb),0.45); }
+        .buy-btn { background: linear-gradient(90deg, var(--glow), var(--spark)); box-shadow: 0 10px 26px rgba(var(--glow-rgb),0.26), inset 0 1px 0 rgba(255,255,255,0.35); }
+        .buy-btn:hover { transform: translateY(-3px); box-shadow: 0 0 34px rgba(var(--spark-rgb),0.65); }
+        .skeleton { border-color: rgba(var(--glow-rgb),0.14); box-shadow: none; }
+        .skeleton::after { background: linear-gradient(90deg, transparent, rgba(var(--glow-rgb),0.08), transparent); }
+        .epic-empty-wrapper { box-shadow: 0 24px 60px rgba(0,0,0,0.6); }
+        .epic-empty-wrapper::before { animation-duration: 12s; opacity: 0.45; }
+        .modal-content { border-color: var(--glow); box-shadow: 0 0 70px rgba(var(--glow-rgb),0.55); }
+        .close-modal { color: var(--glow); text-shadow: 0 0 16px var(--glow); }
+        .ref-box { background: rgba(var(--glow-rgb),0.08); border-color: rgba(var(--glow-rgb),0.6); }
+        .ref-code { color: var(--glow); text-shadow: 0 0 16px rgba(var(--glow-rgb),0.5); }
+        a:focus-visible, button:focus-visible { outline-color: var(--glow); }
+
+        /* A single card used to stretch the full 1200px of the shell, which
+           made one break look emptier than three. Cards now keep a card's
+           proportions and the row centres itself. */
+        .store-grid { grid-template-columns: repeat(auto-fit, minmax(300px, 400px)); justify-content: center; }
+        #clip-section { max-width: 860px; margin: 0 auto; }
+        .marquee-plate { font-size: 1.02rem; padding: 13px 26px 13px 20px; }
+
         /* ---------- PHONE LAYOUT ----------
            The desktop title is 51px at its smallest, which collided with the two
            160px Suicune logos and pushed the header out of alignment. */
@@ -407,8 +569,7 @@
            Solid glass + opacity-only motion fixes it. The per-letter neon
            flicker stays on: it is opacity-only, GPU-cheap, and intentional. */
         @media (hover: none), (pointer: coarse) {
-            body::before { animation: none; background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%; }
-            .grain, .particles { display: none; }
+            .grain { display: none; }
 
             .top-nav .nav-link, main, .glass-panel, .tier-header, .type-tag,
             .time-tag-bottom, .perk, .image-modal, .stock, .yt-label {
@@ -431,11 +592,9 @@
             .neon-card-wrapper:hover { transform: none; }
             .neon-card-wrapper:hover .item-img { transform: none; }
             .buy-btn:hover, .sub-btn:hover, .bell-btn:hover, .nav-link:hover { transform: none; }
-            .glass-panel::after {
-                opacity: 1; mix-blend-mode: normal;
-                background: linear-gradient(115deg, transparent 42%, rgba(255,255,255,0.05) 50%, transparent 58%);
-                background-size: 250% 100%; animation: sheenFlow 7s linear infinite;
-            }
+            /* The travelling sheen on every card was the last moving thing
+               left on a phone, and it bought nothing. Off. */
+            .glass-panel::after { display: none; }
 
             /* Lighter glow on card titles — five shadow layers per letter is a lot
                of work on a phone when there are a dozen cards. */
@@ -449,13 +608,13 @@
                 animation-duration: 0.001ms !important; animation-iteration-count: 1 !important;
                 transition-duration: 0.001ms !important;
             }
-            body::before { animation: none; }
+            #weather { display: none; }
         }
     </style>
 </head>
 <body>
     <div class="grain"></div>
-    <div class="particles"></div>
+    <canvas id="weather" aria-hidden="true"></canvas>
     <div class="parallax-layer">
         <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="poke-bg p-suicune" alt="" loading="lazy">
         <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/384.png" class="poke-bg p-rayquaza" alt="" loading="lazy">
@@ -474,14 +633,36 @@
     </nav>
 
     <header>
-        <div class="header-wrapper">
-            <div class="logo-animator logo-left"><img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="header-logo" alt="Suicune"></div>
-            <h1 id="site-title">PBM BREAKS</h1>
-            <div class="logo-animator logo-right"><img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="header-logo" alt="Suicune"></div>
+        <div class="marquee">
+            <div class="header-wrapper">
+                <div class="logo-animator logo-left"><img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="header-logo guardian" alt=""></div>
+                <h1 id="site-title">PBM BREAKS</h1>
+                <div class="logo-animator logo-right"><img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="header-logo guardian" alt=""></div>
+            </div>
+            <div class="marquee-plate" id="hero-plate">
+                <span class="plate-led" id="hero-led"></span>
+                <span id="hero-line">Checking the board…</span>
+            </div>
         </div>
     </header>
 
     <main>
+        <section id="clip-section" hidden>
+            <div class="section-header" style="margin-top:0;"><span class="section-line"></span><span class="section-title">PINNED CLIP</span><span class="section-line"></span></div>
+            <div class="neon-card-wrapper" style="margin-bottom:10px;">
+                <div class="glass-panel clip-card">
+                    <div class="clip-frame" id="clip-frame"></div>
+                    <div class="clip-foot">
+                        <div>
+                            <div class="clip-title" id="clip-title">Mike's pinned clip</div>
+                            <div class="clip-sub">Posted on Facebook</div>
+                        </div>
+                        <a id="clip-link" class="yt-open-btn clip-btn" target="_blank" rel="noopener"><i class="ph-fill ph-facebook-logo"></i> WATCH ON FACEBOOK</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <div class="section-header"><span class="section-line"></span><span class="section-title">CHANNEL FEED</span><span class="section-line"></span></div>
         <div id="yt-container" class="yt-container"></div>
 
@@ -506,6 +687,23 @@
     <div id="myModal" class="image-modal" onclick="if(event.target===this) closeModal()">
         <button class="close-modal" aria-label="Close image">&times;</button>
         <img class="modal-content" id="img01" alt="Expanded item image">
+    </div>
+
+    <!-- Shown when Stripe sends the buyer back to the site -->
+    <div id="returnModal" class="image-modal">
+        <div class="glass-panel" style="background:rgba(12,12,24,0.97); padding:2rem; width:100%; max-width:480px; border-radius:20px; border:2px solid var(--msrp-green); position:relative; box-shadow:0 0 60px rgba(0,255,157,0.3); text-align:center;">
+            <div id="rt-icon" style="font-size:3rem;line-height:1;margin-bottom:0.6rem;">✅</div>
+            <h2 id="rt-title" style="color:var(--msrp-green); margin-bottom:0.8rem; font-family:'Tilt Neon', sans-serif;">Payment received</h2>
+            <p id="rt-body" style="color:var(--text-dim);font-size:0.98rem;line-height:1.6;margin-bottom:1.2rem;">Confirming with the payment provider…</p>
+            <div class="ref-box" id="rt-refbox" style="display:none;">
+                <span style="font-size:0.8rem;font-weight:800;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;">Your order reference</span>
+                <span class="ref-code" id="rt-ref">—</span>
+                <span style="font-size:0.85rem;color:#fff;">Keep this if you need to ask about your order.</span>
+            </div>
+            <button onclick="closeReturn()" class="buy-btn pack-btn" style="width:100%;border:none;">
+                <span>BACK TO THE BREAKS</span>
+            </button>
+        </div>
     </div>
 
     <div id="checkoutModal" class="image-modal" onclick="if(event.target===this) closeCheckout()">
@@ -548,7 +746,7 @@
                 <div class="ref-box">
                     <span style="font-size:0.8rem;font-weight:800;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;">Your order reference</span>
                     <span class="ref-code" id="co-ref">PBM-XXXXXX</span>
-                    <span style="font-size:0.85rem;color:#fff;">Put this code in the Streamlabs tip message so Mike can match your payment to your order.</span>
+                    <span style="font-size:0.85rem;color:#fff;" id="co-ref-note">Put this code <strong>and your YouTube username</strong> in the Streamlabs tip message so Mike can match your payment to your order.</span>
                 </div>
                 <p style="color:var(--text-dim);font-size:0.95rem;line-height:1.6;margin-bottom:1rem;text-align:center;">
                     Reserved: <strong id="co-ref-qty" style="color:#fff;"></strong> · Amount to pay: <strong id="co-ref-total" style="color:#ffd700;"></strong>
@@ -563,7 +761,219 @@
 
     <script>
         const API_URL = 'https://pokeballer-worker.kronborgnielsen.workers.dev/api';
-        const TIP_URL = 'https://streamlabs.com/pokballer/tip';
+
+        // Payment mode is decided in the admin panel, not in this file. Until
+        // the settings land we assume the Streamlabs flow, which is what the
+        // site has always done.
+        let SITE = {
+            paymentMode: 'streamlabs',
+            tipUrl: 'https://streamlabs.com/pokballer/tip',
+            stripeReady: false,
+            refInstructions: 'Put this code and your YouTube username in the Streamlabs tip message so Mike can match your payment to your order.',
+            theme: 'crystal',
+            featuredVideoUrl: '',
+            featuredVideoTitle: ''
+        };
+
+        async function loadSiteSettings() {
+            try {
+                const res = await fetch(`${API_URL}/settings`);
+                if (!res.ok) return;
+                const data = await res.json();
+                if (data && data.paymentMode) SITE = Object.assign(SITE, data);
+            } catch (e) { /* keep the defaults; the page must still work */ }
+            applyPayModeUI();
+            applyTheme(SITE.theme);
+            renderClip();
+        }
+
+        /* ============================================================
+           SEASONS
+           Four dressings, chosen once in the admin panel. A season is a
+           palette (CSS tokens), a cast of Pokémon in the background, and
+           its own weather.
+           ============================================================ */
+        const THEMES = ['crystal', 'birthday', 'halloween', 'christmas'];
+        const dex = n => `https://assets.pokemon.com/assets/cms2/img/pokedex/full/${n}.png`;
+
+        // Suicune stays on the sign in every season — that is the brand.
+        // The ambient cast behind the glass is what changes.
+        const CAST = {
+            crystal:   { suicune:'245', rayquaza:'384', charizard:'006', gengar:'094', gardevoir:'282', vaporeon:'134', cubone:'104', pichu:'172', magikarp:'129' },
+            birthday:  { suicune:'035', rayquaza:'039', charizard:'113', gengar:'300', gardevoir:'175', vaporeon:'183', cubone:'209', pichu:'172', magikarp:'025' },
+            halloween: { suicune:'094', rayquaza:'092', charizard:'354', gengar:'356', gardevoir:'442', vaporeon:'778', cubone:'104', pichu:'479', magikarp:'353' },
+            christmas: { suicune:'471', rayquaza:'225', charizard:'361', gengar:'215', gardevoir:'478', vaporeon:'131', cubone:'087', pichu:'459', magikarp:'363' }
+        };
+
+        function dressCast(theme) {
+            const cast = CAST[theme] || CAST.crystal;
+            Object.keys(cast).forEach(slot => {
+                const img = document.querySelector('.p-' + slot);
+                if (img) img.src = dex(cast[slot]);
+            });
+        }
+
+        function applyTheme(name) {
+            const theme = THEMES.indexOf(name) === -1 ? 'crystal' : name;
+            document.documentElement.setAttribute('data-theme', theme);
+            try { localStorage.setItem('pbm-theme', theme); } catch (e) {}
+            dressCast(theme);
+            startWeather(theme);
+        }
+
+        /* ---------- WEATHER ----------
+           Confetti, falling leaves, snow. One canvas, a few dozen shapes,
+           stopped dead when the tab is hidden and never started at all if
+           the visitor asked for less motion. */
+        const WEATHER = {
+            crystal:   { n: 26, colors: ['#9ef7ff', '#d8a8ff', '#ffffff'], kind: 'mote' },
+            birthday:  { n: 46, colors: ['#ff5ca8', '#ffd166', '#ffffff', '#b05cff'], kind: 'confetti' },
+            halloween: { n: 30, colors: ['#ff7518', '#8f4fff', '#b13b12'], kind: 'leaf' },
+            christmas: { n: 52, colors: ['#ffffff', '#dff5ec'], kind: 'snow' }
+        };
+        let wxRaf = null, wxParts = [], wxSpec = null, wxCanvas = null, wxCtx = null, wxDpr = 1;
+
+        function wxResize() {
+            if (!wxCanvas) return;
+            wxDpr = Math.min(window.devicePixelRatio || 1, 2);
+            wxCanvas.width = Math.floor(window.innerWidth * wxDpr);
+            wxCanvas.height = Math.floor(window.innerHeight * wxDpr);
+            wxCanvas.style.width = '100%';
+            wxCanvas.style.height = '100%';
+        }
+
+        function wxSeed() {
+            const w = window.innerWidth, h = window.innerHeight;
+            const count = window.innerWidth < 700 ? Math.round(wxSpec.n * 0.55) : wxSpec.n;
+            wxParts = [];
+            for (let i = 0; i < count; i++) {
+                wxParts.push({
+                    x: Math.random() * w,
+                    y: Math.random() * h,
+                    r: wxSpec.kind === 'confetti' ? 3 + Math.random() * 4
+                       : wxSpec.kind === 'leaf' ? 4 + Math.random() * 5
+                       : 1 + Math.random() * 2.2,
+                    vy: wxSpec.kind === 'mote' ? -(0.08 + Math.random() * 0.22) : 0.25 + Math.random() * 0.75,
+                    drift: 0.25 + Math.random() * 0.7,
+                    phase: Math.random() * Math.PI * 2,
+                    spin: (Math.random() - 0.5) * 0.06,
+                    rot: Math.random() * Math.PI,
+                    alpha: 0.35 + Math.random() * 0.45,
+                    color: wxSpec.colors[i % wxSpec.colors.length]
+                });
+            }
+        }
+
+        function wxDraw(ts) {
+            if (!wxCtx) return;
+            const w = window.innerWidth, h = window.innerHeight;
+            wxCtx.setTransform(wxDpr, 0, 0, wxDpr, 0, 0);
+            wxCtx.clearRect(0, 0, w, h);
+            const t = ts * 0.001;
+
+            for (const p of wxParts) {
+                p.y += p.vy;
+                p.x += Math.sin(t * p.drift + p.phase) * 0.55;
+                p.rot += p.spin;
+
+                if (p.vy < 0 && p.y < -12) { p.y = h + 10; p.x = Math.random() * w; }
+                if (p.vy > 0 && p.y > h + 12) { p.y = -10; p.x = Math.random() * w; }
+
+                wxCtx.globalAlpha = p.alpha;
+                wxCtx.fillStyle = p.color;
+                if (wxSpec.kind === 'confetti') {
+                    wxCtx.save();
+                    wxCtx.translate(p.x, p.y);
+                    wxCtx.rotate(p.rot);
+                    wxCtx.fillRect(-p.r / 2, -p.r, p.r, p.r * 2);
+                    wxCtx.restore();
+                } else if (wxSpec.kind === 'leaf') {
+                    wxCtx.save();
+                    wxCtx.translate(p.x, p.y);
+                    wxCtx.rotate(p.rot);
+                    wxCtx.beginPath();
+                    wxCtx.ellipse(0, 0, p.r, p.r * 0.45, 0, 0, Math.PI * 2);
+                    wxCtx.fill();
+                    wxCtx.restore();
+                } else {
+                    wxCtx.beginPath();
+                    wxCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                    wxCtx.fill();
+                }
+            }
+            wxCtx.globalAlpha = 1;
+            wxRaf = requestAnimationFrame(wxDraw);
+        }
+
+        function wxStop() { if (wxRaf) { cancelAnimationFrame(wxRaf); wxRaf = null; } }
+
+        function startWeather(theme) {
+            wxCanvas = document.getElementById('weather');
+            if (!wxCanvas) return;
+            wxStop();
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                wxCanvas.style.display = 'none';
+                return;
+            }
+            wxCanvas.style.display = '';
+            wxSpec = WEATHER[theme] || WEATHER.crystal;
+            wxCtx = wxCanvas.getContext('2d');
+            wxResize();
+            wxSeed();
+            wxRaf = requestAnimationFrame(wxDraw);
+        }
+
+        let wxResizeTimer = null;
+        window.addEventListener('resize', () => {
+            clearTimeout(wxResizeTimer);
+            wxResizeTimer = setTimeout(() => { if (wxCtx) { wxResize(); wxSeed(); } }, 200);
+        }, { passive: true });
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) wxStop();
+            else if (wxCtx && !wxRaf) wxRaf = requestAnimationFrame(wxDraw);
+        });
+
+        /* ---------- PINNED CLIP ----------
+           Facebook's player only accepts a full post address. A short
+           facebook.com/share/... link cannot be embedded by anyone, so when
+           that is all we have the card becomes a handsome doorway instead. */
+        const FB_FALLBACK = 'https://www.facebook.com/share/r/1BtQt7gGjs/';
+        function fbEmbedSrc(url) {
+            const u = String(url || '').trim();
+            if (!/^https?:\/\/([a-z]+\.)?facebook\.com\//i.test(u)) return null;
+            if (/\/share\//i.test(u)) return null;
+            return 'https://www.facebook.com/plugins/video.php?href=' + encodeURIComponent(u)
+                 + '&show_text=false&autoplay=false&width=800';
+        }
+        function renderClip() {
+            const sec = document.getElementById('clip-section');
+            const frame = document.getElementById('clip-frame');
+            const link = document.getElementById('clip-link');
+            const title = document.getElementById('clip-title');
+            if (!sec || !frame || !link) return;
+
+            const raw = String(SITE.featuredVideoUrl || '').trim();
+            link.href = raw || FB_FALLBACK;
+            if (SITE.featuredVideoTitle) title.textContent = SITE.featuredVideoTitle;
+
+            const embed = fbEmbedSrc(raw);
+            if (embed) {
+                frame.innerHTML = `<iframe src="${esc(embed)}" title="${esc(SITE.featuredVideoTitle || 'Pinned clip')}" scrolling="no" allowfullscreen allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>`;
+            } else {
+                frame.innerHTML = `<div class="clip-poster"><i class="ph-fill ph-facebook-logo"></i><p>This one lives over on Facebook — open it there to watch.</p></div>`;
+            }
+            sec.hidden = false;
+        }
+
+        function stripeLive() { return SITE.paymentMode === 'stripe' && SITE.stripeReady; }
+
+        function applyPayModeUI() {
+            const sub = document.querySelector('#co-pay-btn .btn-subtext');
+            if (sub) sub.textContent = stripeLive() ? 'Secure card checkout' : 'Streamlabs tip checkout';
+            const note = document.getElementById('co-ref-note');
+            if (note && SITE.refInstructions) note.textContent = SITE.refInstructions;
+        }
         const DEFAULT_MAX_BUY = 10;
         let timerInterval = null;
         window.storeItems = [];
@@ -591,9 +1001,7 @@
                     if (palette && palette.length) word.style.setProperty('--tube', palette[w++ % palette.length]);
                     for (const ch of part) {
                         const s = document.createElement('span');
-                        s.className = 'nl' + (Math.random() < 0.12 ? ' nl-dying' : '');
-                        s.style.setProperty('--fd', (3.5 + Math.random() * 6).toFixed(2) + 's');
-                        s.style.animationDelay = (-Math.random() * 9).toFixed(2) + 's';
+                        s.className = 'nl';
                         s.textContent = ch;
                         word.appendChild(s);
                     }
@@ -602,7 +1010,8 @@
                 el.replaceChild(frag, node);
             });
         }
-        const SIGN_PALETTE = ['#00f7ff', '#ff2d95'];
+        // The wordmark alternates between the season's two lit colours.
+        const SIGN_PALETTE = ['var(--glow)', 'var(--spark)'];
         function applyNeon() {
             neonize(document.getElementById('site-title'), SIGN_PALETTE);
             document.querySelectorAll('.section-title').forEach(t => neonize(t, SIGN_PALETTE));
@@ -668,6 +1077,60 @@
                 const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
                 return `${days[dt.getDay()]}, ${months[m - 1]} ${d}`;
             } catch (e) { return ''; }
+        }
+
+        /* ---------- THE PLATE UNDER THE SIGN ----------
+           A sentence, not a dashboard: what is open right now, or when the
+           next thing opens, named after the actual break. */
+        function centralClock(s) {
+            if (!s || s.indexOf('T') === -1) return '';
+            const tm = s.split('T')[1] || '00:00';
+            let [h, mi] = tm.split(':').map(Number);
+            const ap = h >= 12 ? 'PM' : 'AM';
+            h = h % 12; if (h === 0) h = 12;
+            return `${h}:${String(mi || 0).padStart(2, '0')} ${ap}`;
+        }
+
+        function setPlate(html, lit) {
+            const line = document.getElementById('hero-line');
+            const plate = document.getElementById('hero-plate');
+            if (line) line.innerHTML = html;
+            if (plate) plate.classList.toggle('plate-on', !!lit);
+        }
+
+        function updateHeroPlate() {
+            const items = (window.storeItems || []).filter(i => i && !i.hidden);
+            if (!items.length) {
+                setPlate('Shelves are being restocked — new breaks land here first.', false);
+                return;
+            }
+            const now = Date.now();
+            const open = [], soon = [];
+            items.forEach(i => {
+                const end = centralToMs(i.scheduleEnd);
+                const live = centralToMs(i.goLiveTime);
+                const stock = toInt(i.stock);
+                if (live && now < live) { soon.push({ i, live }); return; }
+                if (stock > 0 && (!end || now < end)) open.push(i);
+            });
+
+            if (open.length) {
+                const lead = open[0];
+                const left = toInt(lead.stock);
+                const unit = lead.type === 'pack' ? unitWord(lead, left) : (left === 1 ? 'spot' : 'spots');
+                const more = open.length > 1 ? ` · +${open.length - 1} open` : '';
+                setPlate(`<b>On air now</b> — ${esc(lead.name)}, ${left} ${unit} left${more}`, true);
+                return;
+            }
+            if (soon.length) {
+                soon.sort((a, b) => a.live - b.live);
+                const next = soon[0];
+                const when = formatCloseDate(next.i.goLiveTime);
+                const at = centralClock(next.i.goLiveTime);
+                setPlate(`<b>Next up</b> — ${esc(next.i.name)}, ${when} at ${at} Central`, false);
+                return;
+            }
+            setPlate('Every break is closed for now — the next one gets posted here first.', false);
         }
 
         function renderSkeletons(container, count) {
@@ -906,6 +1369,7 @@
                         </div>
                         </div>`;
                     applyNeon();
+                    updateHeroPlate();
                     return;
                 }
 
@@ -939,8 +1403,10 @@
                 sections.innerHTML = html;
                 applyNeon();
                 startCountdownTimer();
+                updateHeroPlate();
             } catch (e) {
                 console.error('Store error:', e);
+                setPlate('The board is offline for a moment — try again in a second.', false);
                 sections.innerHTML = `<div class="store-grid"><div class="error-card"><h2>Couldn't load items</h2><p>Connection timed out.</p><button class="retry-btn" onclick="loadStore()">Try again</button></div></div>`;
             }
         }
@@ -972,6 +1438,7 @@
                         if (ribbon) ribbon.remove();
                     }
                     w.classList.remove('close-watch');
+                    updateHeroPlate();
                     // If the buyer has this item open in the checkout, shut it down.
                     if (activeCheckoutItem && String(activeCheckoutItem.id) === String(itemId)) {
                         showCheckoutError('This drop just closed.');
@@ -1095,7 +1562,7 @@
 
             const btn = document.getElementById('co-pay-btn');
             btn.disabled = false;
-            btn.innerHTML = `<span>RESERVE &amp; PAY</span><span class="btn-subtext">Streamlabs tip checkout</span>`;
+            btn.innerHTML = `<span>RESERVE &amp; PAY</span><span class="btn-subtext">${stripeLive() ? 'Secure card checkout' : 'Streamlabs tip checkout'}</span>`;
 
             refreshQtyUI();
             document.getElementById('checkoutModal').style.display = 'flex';
@@ -1108,7 +1575,7 @@
             checkoutBusy = false;
             const btn = document.getElementById('co-pay-btn');
             btn.disabled = false;
-            btn.innerHTML = `<span>RESERVE &amp; PAY</span><span class="btn-subtext">Streamlabs tip checkout</span>`;
+            btn.innerHTML = `<span>RESERVE &amp; PAY</span><span class="btn-subtext">${stripeLive() ? 'Secure card checkout' : 'Streamlabs tip checkout'}</span>`;
         }
 
         function stepQty(delta) {
@@ -1144,7 +1611,63 @@
         }
 
         function goToPayment() {
-            window.location.href = TIP_URL;
+            window.location.href = SITE.tipUrl || 'https://streamlabs.com/pokballer/tip';
+        }
+
+        /* ---------- COMING BACK FROM STRIPE ---------- */
+        function closeReturn() {
+            document.getElementById('returnModal').style.display = 'none';
+            const clean = location.origin + location.pathname;
+            history.replaceState({}, '', clean);
+        }
+
+        async function handlePaymentReturn() {
+            const q = new URLSearchParams(location.search);
+            const ref = q.get('ref');
+            const item = q.get('item');
+            if (!ref || !item) return;
+
+            const modal = document.getElementById('returnModal');
+            const icon = document.getElementById('rt-icon');
+            const title = document.getElementById('rt-title');
+            const body = document.getElementById('rt-body');
+            const refBox = document.getElementById('rt-refbox');
+            modal.style.display = 'flex';
+
+            if (q.get('canceled')) {
+                icon.textContent = '↩️';
+                title.textContent = 'Payment cancelled';
+                title.style.color = 'var(--accent-gold)';
+                body.textContent = 'Nothing was charged. Your spot is held for a short while, so you can start the checkout again from the card.';
+                refBox.style.display = 'none';
+                return;
+            }
+
+            document.getElementById('rt-ref').textContent = ref;
+            refBox.style.display = 'block';
+
+            // The webhook usually beats the buyer back here, but not always —
+            // poll until the order desk says it is paid.
+            for (let attempt = 0; attempt < 10; attempt++) {
+                try {
+                    const res = await fetch(`${API_URL}/order-status?ref=${encodeURIComponent(ref)}&item=${encodeURIComponent(item)}`);
+                    const data = await res.json();
+                    if (data && data.found && data.status === 'paid') {
+                        icon.textContent = '✅';
+                        title.textContent = 'Payment received';
+                        body.innerHTML = `Your order is confirmed — <strong style="color:#fff;">${esc(data.qty)} ${esc(data.unit || 'packs')}</strong>${data.itemName ? ' of ' + esc(data.itemName) : ''}. A confirmation is on its way to your email.`;
+                        loadStore();
+                        return;
+                    }
+                    if (data && !data.found && attempt > 2) break;
+                } catch (e) { /* keep trying */ }
+                await wait(1500);
+            }
+
+            icon.textContent = '⏳';
+            title.textContent = 'Almost there';
+            title.style.color = 'var(--accent-cyan)';
+            body.textContent = 'Your payment went through and is still being confirmed. Nothing more to do — you will get an email shortly. Quote the reference below if you need to ask about it.';
         }
 
         async function submitCheckout() {
@@ -1181,24 +1704,60 @@
             const resetBtn = () => {
                 checkoutBusy = false;
                 btn.disabled = false;
-                btn.innerHTML = `<span>RESERVE &amp; PAY</span><span class="btn-subtext">Streamlabs tip checkout</span>`;
+                btn.innerHTML = `<span>RESERVE &amp; PAY</span><span class="btn-subtext">${stripeLive() ? 'Secure card checkout' : 'Streamlabs tip checkout'}</span>`;
             };
+
+            const payload = {
+                itemId: item.id,
+                itemName: item.name,
+                qty: qty,
+                totalPrice: total,
+                buyerName: name,
+                buyerEmail: email,
+                buyerAddress: address
+            };
+
+            /* ---------- STRIPE CHECKOUT ----------
+               The desk holds the stock, Stripe takes the money, and Stripe's
+               webhook confirms the order. An unpaid hold frees itself. */
+            if (stripeLive()) {
+                btn.innerHTML = `<span>OPENING CHECKOUT...</span><span class="btn-subtext">Holding your ${unitsOf(item).many}</span>`;
+                let cres, cdata;
+                try {
+                    cres = await fetch(`${API_URL}/checkout`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    cdata = await cres.json();
+                } catch (e) {
+                    console.error('Checkout request failed:', e);
+                    showCheckoutError('Could not reach the store. Nothing was charged — please try again.');
+                    resetBtn();
+                    return;
+                }
+
+                if (!cres.ok || !cdata || !cdata.url) {
+                    showCheckoutError((cdata && cdata.error) || 'Could not start the card checkout.');
+                    if (cdata && cdata.maxBuy != null) {
+                        item.maxBuy = cdata.maxBuy;
+                        if (cdata.stock != null) item.stock = cdata.stock;
+                        refreshQtyUI();
+                    }
+                    resetBtn();
+                    return;
+                }
+
+                window.location.href = cdata.url;
+                return;
+            }
 
             let res, result;
             try {
                 res = await fetch(`${API_URL}/purchase-notification`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        itemId: item.id,
-                        itemName: item.name,
-                        qty: qty,
-                        totalPrice: total,
-                        buyerName: name,
-                        buyerEmail: email,
-                        buyerAddress: address,
-                        notifyEmail: 'michael.lorenz.10@gmail.com'
-                    })
+                    body: JSON.stringify(payload)
                 });
                 result = await res.json();
             } catch (e) {
@@ -1256,8 +1815,16 @@
             if (e.key === 'Escape') { closeModal(); closeCheckout(); }
         });
 
+        // Dress the page and show the clip straight away from the cached
+        // season, so the site is complete even if /api/settings is older
+        // than the theme picker and answers 404.
+        applyTheme(document.documentElement.getAttribute('data-theme'));
+        renderClip();
+
+        loadSiteSettings();
         loadVideos();
         loadStore();
+        handlePaymentReturn();
     </script>
 </body>
 </html>
