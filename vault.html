@@ -673,7 +673,8 @@
 .pbm-filter-hidden{display:none!important}
 .pbm-empty-filter{color:#bcb9d4;text-align:center;padding:20px;font:600 14px Inter,system-ui}
 @media(prefers-reduced-motion:reduce){.pbm-reveal-card,.pbm-reveal-card.revealed{animation:none!important;transition:none!important}}
-</style></head>
+</style>    <link rel="stylesheet" href="cinematic-seasons.css">
+</head>
 <body>
     <div class="grain"></div>
     <canvas id="weather" aria-hidden="true"></canvas>
@@ -1485,5 +1486,6 @@ let scheduled=false;
 new MutationObserver(()=>{if(scheduled)return;scheduled=true;requestAnimationFrame(()=>{scheduled=false;apply()})}).observe(container,{childList:true,subtree:false});
 apply();
 })();
-</script></body>
+</script>    <script src="cinematic-seasons.js" defer></script>
+</body>
 </html>
