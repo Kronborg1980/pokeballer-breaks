@@ -890,6 +890,29 @@
             }
             #weather { display: none; }
         }
+        /* Product-type badge is anchored to the IMAGE, never to the full
+           card. The UPCOMING BREAK ribbon and bundle badge cannot overlap. */
+        .item-img-box > .type-tag,
+        .store-grid.solo .item-img-box > .type-tag {
+            position: absolute;
+            top: auto !important;
+            bottom: 14px;
+            right: 14px;
+            left: auto;
+            z-index: 9;
+            max-width: calc(100% - 28px);
+            box-sizing: border-box;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        @media (max-width: 480px) {
+            .item-img-box > .type-tag,
+            .store-grid.solo .item-img-box > .type-tag {
+                bottom: 10px;
+                right: 10px;
+                max-width: calc(100% - 20px);
+            }
+        }
     </style>
     <link rel="stylesheet" href="cinematic-seasons.css">
 </head>
@@ -1881,9 +1904,9 @@
                 <div class="neon-card-wrapper ${wrapperClass}" id="card-${id}">
                     <div class="item-card glass-panel">
                         ${ribbonHTML}
-                        <div class="type-tag ${t.tag}${tagPosClass}">${tagHTML}</div>
                         <div class="item-img-box" onclick="openModal('${esc(img)}')">
                             <img src="${esc(img)}" class="item-img" alt="${esc(item.name)}" loading="lazy">
+                            <div class="type-tag ${t.tag}">${tagHTML}</div>
                             <div id="badge-container-${id}">${timeBadgeHTML}</div>
                         </div>
                         <div class="item-content">
