@@ -175,6 +175,36 @@
         /* ---------- PAYMENTS & ALERTS ---------- */
         .pay-card { border-color: rgba(255,215,0,0.3); box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 30px rgba(255,215,0,0.03); }
         .pay-h2 { margin: 0 0 4px; font-size: 1.4rem; color: var(--gold); }
+
+        /* ---------- A CARD THAT FOLDS AWAY ----------
+           Payments and alerts are built but not switched on, so the panel
+           stays shut until it is wanted. <details> gives the open/close
+           behaviour for free, including on a phone. */
+        .fold { padding: 0; overflow: hidden; }
+        .fold > summary {
+            list-style: none; cursor: pointer; display: flex; align-items: center; gap: 12px;
+            padding: 1.25rem 1.5rem; user-select: none;
+        }
+        .fold > summary::-webkit-details-marker { display: none; }
+        .fold > summary::marker { content: ''; }
+        .fold > summary:hover .fold-title { filter: brightness(1.15); }
+        .fold > summary:focus-visible { outline: 3px solid var(--gold); outline-offset: -3px; border-radius: 16px; }
+        .fold-title { font-size: 1.4rem; font-weight: 800; color: var(--gold); }
+        .fold-note {
+            margin-left: auto; font-size: 0.72rem; font-weight: 800; letter-spacing: 1px;
+            text-transform: uppercase; color: var(--dim);
+            border: 1px solid rgba(255,255,255,0.14); border-radius: 30px; padding: 5px 11px;
+        }
+        .fold-chev { font-size: 1.1rem; color: var(--dim); transition: transform .25s ease; }
+        .fold[open] > summary .fold-chev { transform: rotate(180deg); }
+        .fold[open] > summary .fold-note { display: none; }
+        .fold-body { padding: 1.3rem 1.5rem 1.5rem; border-top: 1px solid rgba(255,255,255,0.10); }
+        @media(max-width: 600px) {
+            .fold > summary { padding: 1.1rem 1.2rem; gap: 8px; }
+            .fold-title { font-size: 1.2rem; }
+            .fold-note { display: none; }
+            .fold-body { padding: 1.1rem 1.2rem 1.3rem; }
+        }
         .pay-sub { color: var(--dim); font-size: 0.85rem; margin: 0 0 1.4rem; }
         .soft-rule { border: none; border-top: 1px solid #2a2a45; margin: 1.6rem 0 1.3rem; }
 
@@ -282,6 +312,54 @@
             .card { background: rgba(18,18,34,0.97); }
         }
         @media (prefers-reduced-motion: reduce) { body::before { animation: none; } * { transition-duration: 0.001ms !important; animation-duration: 0.001ms !important; } }
+
+        /* ============================================================
+           THE LIT EDGE
+           The same travelling ring of light the storefront wears, so the
+           back office looks like it belongs to the same shop. Because
+           --edge-a is registered as a real <angle>, the browser can
+           interpolate it and the gradient itself turns: one background
+           repaint on a small box, no rotating element hidden behind it.
+           ============================================================ */
+        @property --edge-a {
+            syntax: '<angle>';
+            initial-value: 0deg;
+            inherits: false;
+        }
+        @keyframes edgeSpin { to { --edge-a: 360deg; } }
+
+        .card, .primary-btn {
+            --edge-a: 0deg;
+            --e1: 0,255,242;
+            --e2: 213,0,255;
+        }
+        .card {
+            border: 1px solid transparent !important;
+            background:
+                linear-gradient(var(--card), var(--card)) padding-box,
+                conic-gradient(from var(--edge-a),
+                    rgba(var(--e1),0.16) 0deg, rgba(var(--e1),0.16) 132deg,
+                    rgba(var(--e1),0.9) 184deg, #ffffff 200deg, rgba(var(--e2),0.9) 216deg,
+                    rgba(var(--e1),0.16) 268deg, rgba(var(--e1),0.16) 360deg) border-box;
+            animation: edgeSpin 14s linear infinite;
+        }
+        .look-card { --e1: 213,0,255; --e2: 255,106,213; animation-duration: 12s; }
+        .pay-card  { --e1: 255,201,60; --e2: 255,248,220; animation-duration: 16s; }
+        .fold:not([open]) { animation-duration: 26s; }
+
+        .primary-btn {
+            border: 2px solid transparent;
+            background:
+                linear-gradient(90deg, #00fff2, #d500ff) padding-box,
+                conic-gradient(from var(--edge-a),
+                    rgba(255,255,255,0.18) 0deg, rgba(255,255,255,0.18) 140deg,
+                    #ffffff 196deg, rgba(255,255,255,0.18) 250deg, rgba(255,255,255,0.18) 360deg) border-box;
+            animation: edgeSpin 7s linear infinite;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .card, .primary-btn { animation: none; }
+        }
     </style>
 </head>
 <body>
@@ -313,39 +391,32 @@
                     <button class="th th-birthday" type="button" data-theme="birthday">
                         <span class="th-sky"></span>
                         <span class="th-n">Birthday</span>
-                        <span class="th-s">Confetti and party pink</span>
+                        <span class="th-s">Confetti, pink and gold</span>
                     </button>
                     <button class="th th-halloween" type="button" data-theme="halloween">
                         <span class="th-sky"></span>
                         <span class="th-n">Halloween</span>
-                        <span class="th-s">Pumpkin glow, drifting bats</span>
+                        <span class="th-s">Pumpkin glow, falling leaves</span>
                     </button>
                     <button class="th th-christmas" type="button" data-theme="christmas">
                         <span class="th-sky"></span>
                         <span class="th-n">Christmas</span>
-                        <span class="th-s">Snow and warm lights</span>
+                        <span class="th-s">Snow, red and mint</span>
                     </button>
                 </div>
-
-                <hr class="soft-rule">
-
-                <label for="set-fb-url">Clip pinned under the stream</label>
-                <input type="url" id="set-fb-url" placeholder="https://www.facebook.com/…/videos/123456…" autocapitalize="off" spellcheck="false">
-                <p class="hint">Any Facebook link works here. For the clip to <b>play on the page</b> it has to be the full address of a
-                    <b>public</b> video — open the video on Facebook and copy what sits in the address bar. A short
-                    <code>share/r/…</code> link still works, it just shows as a "Watch on Facebook" button instead.
-                    Leave it empty to take the clip off the page.</p>
-
-                <label for="set-fb-title">What to call it</label>
-                <input type="text" id="set-fb-title" placeholder="e.g. Best pull of the month">
 
                 <div id="look-status" class="settings-status"></div>
                 <button id="save-look-btn" class="primary-btn" onclick="saveLook()">🎨 Save the look</button>
             </div>
 
-            <!-- ============ PAYMENTS & ALERTS ============ -->
-            <div class="card pay-card">
-                <h2 class="pay-h2">💳 Payments &amp; alerts</h2>
+            <!-- ============ PAYMENTS & ALERTS (folded: not in use yet) ============ -->
+            <details class="card pay-card fold" id="pay-fold">
+                <summary>
+                    <span class="fold-title">💳 Payments &amp; alerts</span>
+                    <span class="fold-note">Not switched on yet</span>
+                    <span class="fold-chev" aria-hidden="true">▾</span>
+                </summary>
+                <div class="fold-body">
                 <p class="pay-sub">Everything here is live the moment you save. No redeploy, no code.</p>
 
                 <label>How buyers pay</label>
@@ -487,7 +558,8 @@
 
                 <div id="settings-status" class="settings-status"></div>
                 <button id="save-settings-btn" class="primary-btn" onclick="saveSettings()">💾 Save payment &amp; alert settings</button>
-            </div>
+                </div>
+            </details>
 
             <div class="card">
                 <h2 style="margin-top:0;margin-bottom:1.2rem;font-size:1.4rem;border-bottom:1px solid #333;padding-bottom:10px;">⚡ Quick add</h2>
@@ -1540,8 +1612,6 @@
 
             chosenTheme = s.theme || 'crystal';
             paintTheme();
-            document.getElementById('set-fb-url').value = s.featuredVideoUrl || '';
-            document.getElementById('set-fb-title').value = s.featuredVideoTitle || '';
 
             document.getElementById('set-alerts-enabled').checked = !!s.alertsEnabled;
             document.getElementById('set-alert-overlay').checked = !!s.alertToOverlay;
@@ -1703,16 +1773,6 @@
 
         async function saveLook() {
             const btn = document.getElementById('save-look-btn');
-            const url = document.getElementById('set-fb-url').value.trim();
-
-            // A short share/r/… link is perfectly fine to save — Facebook just
-            // refuses to play it inside another site, so the clip shows as a
-            // button instead of a player. Say so, don't block it.
-            const isShare = url && /\/share\//.test(url);
-            if (url && !/^https:\/\/(www\.|web\.|m\.)?facebook\.com\//i.test(url)) {
-                setLookStatus('That does not look like a facebook.com video address.', true);
-                return;
-            }
 
             btn.disabled = true;
             btn.innerText = 'Saving…';
@@ -1725,8 +1785,8 @@
                         token: localStorage.getItem('adminToken') || '',
                         settings: {
                             theme: chosenTheme,
-                            featuredVideoUrl: url,
-                            featuredVideoTitle: document.getElementById('set-fb-title').value.trim()
+                            featuredVideoUrl: '',
+                            featuredVideoTitle: ''
                         }
                     })
                 });
@@ -1742,8 +1802,7 @@
                     paintTheme();
                 }
                 const names = { crystal: 'Crystal League', birthday: 'Birthday', halloween: 'Halloween', christmas: 'Christmas' };
-                setLookStatus(`Saved. The site is wearing ${names[chosenTheme]} now.`
-                    + (isShare ? ' The clip is a short share link, so it shows as a "Watch on Facebook" button rather than playing on the page.' : ''));
+                setLookStatus(`Saved. The site is wearing ${names[chosenTheme]} now.`);
                 toast('The look is live.');
             } catch (e) {
                 setLookStatus('Could not reach the worker.', true);
