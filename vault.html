@@ -10,36 +10,88 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Tilt+Neon&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script>
+        /* Dress the page before the first pixel, from the season this
+           visitor last saw, so there is no wrong-season flash. */
+        (function () {
+            var t = 'crystal';
+            try { t = localStorage.getItem('pbm-theme') || 'crystal'; } catch (e) {}
+            if (['crystal', 'birthday', 'halloween', 'christmas'].indexOf(t) === -1) t = 'crystal';
+            document.documentElement.setAttribute('data-theme', t);
+        })();
+    </script>
     <style>
+        /* ============================================================
+           SEASONS
+           Same four dressings as the storefront, same tokens, so the two
+           pages always wear the same season. The admin panel sets it.
+           ============================================================ */
         :root {
-            --bg-dark: #02030c;
-            --accent-cyan: #00fff2;
-            --accent-purple: #d500ff;
-            --accent-gold: #ffd700;
+            --ground: #02030c;
+            --ground-2: #07041c;
+            --glow: #d500ff;   --glow-rgb: 213,0,255;
+            --spark: #00fff2;  --spark-rgb: 0,255,242;
+            --coin: #ffd700;   --coin-rgb: 255,215,0;
+            --ink: #ffffff;
+            --ink-dim: #aab0d8;
+            --wash-1: rgba(213,0,255,0.18);
+            --wash-2: rgba(0,255,242,0.16);
+            --wash-3: rgba(157,78,221,0.18);
+
+            /* The rest of the sheet still speaks the old names. */
+            --bg-dark: var(--ground);
+            --accent-cyan: var(--spark);
+            --accent-purple: var(--glow);
+            --accent-gold: var(--coin);
             --accent-live: #ff0040;
             --raw-green: #00ff9d;
-            --text-bright: #ffffff;
-            --text-dim: #aab0d8;
+            --text-bright: var(--ink);
+            --text-dim: var(--ink-dim);
             --guardian-size: clamp(120px, 14vw, 200px);
             --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg-dark); color: var(--text-bright); min-height: 100vh; overflow-x: hidden; position: relative; -webkit-font-smoothing: antialiased; }
+        html[data-theme="birthday"] {
+            --ground: #140a1e; --ground-2: #2c1038;
+            --glow: #ff5ca8;  --glow-rgb: 255,92,168;
+            --spark: #ffd166; --spark-rgb: 255,209,102;
+            --coin: #ffd166;  --coin-rgb: 255,209,102;
+            --ink: #fff3fa;   --ink-dim: #dcb3c9;
+            --wash-1: rgba(255,92,168,0.20); --wash-2: rgba(255,209,102,0.13); --wash-3: rgba(150,60,200,0.20);
+        }
+        html[data-theme="halloween"] {
+            --ground: #0d0608; --ground-2: #2a0f06;
+            --glow: #ff7518;  --glow-rgb: 255,117,24;
+            --spark: #8f4fff; --spark-rgb: 143,79,255;
+            --coin: #ffb039;  --coin-rgb: 255,176,57;
+            --ink: #ffeede;   --ink-dim: #c9a893;
+            --wash-1: rgba(255,117,24,0.18); --wash-2: rgba(143,79,255,0.18); --wash-3: rgba(120,30,10,0.24);
+        }
+        html[data-theme="christmas"] {
+            --ground: #060f12; --ground-2: #0b2420;
+            --glow: #ff3b47;  --glow-rgb: 255,59,71;
+            --spark: #2ee6a8; --spark-rgb: 46,230,168;
+            --coin: #ffcf6b;  --coin-rgb: 255,207,107;
+            --ink: #f2fbf6;   --ink-dim: #a3c6b7;
+            --wash-1: rgba(255,59,71,0.16); --wash-2: rgba(46,230,168,0.16); --wash-3: rgba(20,70,60,0.24);
+        }
 
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        [hidden] { display: none !important; }
+        body { font-family: 'Inter', sans-serif; background: var(--ground); color: var(--ink); min-height: 100vh; overflow-x: hidden; position: relative; -webkit-font-smoothing: antialiased; }
+
+        /* One still wash — the sliding three-gradient version was the main
+           cause of the blinking on phones. */
         body::before {
             content: ''; position: fixed; inset: 0; z-index: -10; pointer-events: none;
             background:
-                radial-gradient(60% 50% at 20% 0%, rgba(213,0,255,0.20), transparent 70%),
-                radial-gradient(55% 50% at 85% 12%, rgba(0,255,242,0.18), transparent 70%),
-                radial-gradient(60% 60% at 50% 110%, rgba(157,78,221,0.20), transparent 70%),
-                linear-gradient(to bottom, #02030c, #06031a 60%, #02030c);
-            background-size: 200% 200%, 200% 200%, 200% 200%, 100% 100%;
-            animation: aurora 26s ease-in-out infinite;
+                radial-gradient(58% 46% at 18% -4%, var(--wash-1), transparent 68%),
+                radial-gradient(52% 44% at 86% 10%, var(--wash-2), transparent 70%),
+                radial-gradient(62% 56% at 50% 108%, var(--wash-3), transparent 72%),
+                linear-gradient(to bottom, var(--ground) 0%, var(--ground-2) 58%, var(--ground) 100%);
         }
-        @keyframes aurora { 0%,100% { background-position: 0% 0%, 100% 0%, 50% 100%, 0 0; } 50% { background-position: 30% 20%, 70% 30%, 40% 80%, 0 0; } }
 
-        .grain { position: fixed; inset: 0; z-index: -9; pointer-events: none; background-image: var(--grain); background-size: 140px; opacity: 0.04; mix-blend-mode: overlay; }
-        .particles { position: fixed; inset: 0; pointer-events: none; z-index: -7; background-image: radial-gradient(circle at 20% 30%, var(--accent-cyan) 1px, transparent 3px), radial-gradient(circle at 80% 70%, var(--accent-purple) 1px, transparent 3px); background-size: 120px 120px; opacity: 0.4; }
+        .grain { position: fixed; inset: 0; z-index: -9; pointer-events: none; background-image: var(--grain); background-size: 140px; opacity: 0.045; mix-blend-mode: overlay; }
+        #weather { position: fixed; inset: 0; z-index: -6; pointer-events: none; }
 
         .parallax-layer { position: fixed; inset: 0; z-index: -8; pointer-events: none; will-change: transform; }
         .poke-bg { position: fixed; pointer-events: none; opacity: 0.3; will-change: transform; backface-visibility: hidden; }
@@ -55,49 +107,24 @@
         @keyframes hop { 0%,100% { transform: translateY(0) scale(1,1); } 20% { transform: translateY(-26px) scale(0.97,1.03); } 45% { transform: translateY(0) scale(1.04,0.96); } 60% { transform: translateY(0) scale(1,1); } }
         @keyframes flop { 0%,100% { transform: rotate(-11deg) translateY(0); } 50% { transform: rotate(11deg) translateY(-12px); } }
 
-        /* ---------- VEGAS NEON SIGN SYSTEM ----------
-           Every letter is its own glass tube: white-hot core + colored glow
-           (--tube). JS wraps each letter in a span with a randomized flicker
-           duration/delay, so the sign twinkles letter by letter — and a few
-           random tubes get the harsh dying-tube sputter. */
+        /* ---------- NEON, SWITCHED ON ----------
+           Each letter is still its own glass tube with a white-hot core, but
+           the tubes are healthy now: no sputter, no dying-tube steps. */
         .neon-sign { font-family: 'Tilt Neon', 'Inter', sans-serif; font-weight: 400; }
         .neon-word { white-space: nowrap; }
         .nl {
             color: #fff; display: inline-block;
             text-shadow:
-                0 0 4px rgba(255,255,255,0.95),
-                0 0 10px var(--tube, var(--accent-purple)),
-                0 0 21px var(--tube, var(--accent-purple)),
-                0 0 44px var(--tube, var(--accent-purple)),
-                0 0 80px var(--tube, var(--accent-purple));
-            animation: tubeFlicker var(--fd, 6s) linear infinite;
-        }
-        @keyframes tubeFlicker {
-            0%, 6.9%, 8.6%, 41.9%, 43.4%, 78.9%, 80.4%, 100% { opacity: 1; }
-            7.2% { opacity: 0.55; }
-            7.9% { opacity: 0.9; }
-            42.3% { opacity: 0.45; }
-            42.9% { opacity: 1; }
-            79.3% { opacity: 0.65; }
+                0 0 3px rgba(255,255,255,0.95),
+                0 0 9px var(--tube, var(--glow)),
+                0 0 22px var(--tube, var(--glow));
         }
         /* Smaller signs (nav, subtitle, card names) get a tighter glow */
         .neon-sm .nl {
             text-shadow:
-                0 0 3px rgba(255,255,255,0.9),
-                0 0 8px var(--tube, var(--accent-purple)),
-                0 0 16px var(--tube, var(--accent-purple)),
-                0 0 30px var(--tube, var(--accent-purple));
-        }
-        .nl-dying { animation-name: tubeDying; animation-timing-function: steps(1, end); }
-        @keyframes tubeDying {
-            0%, 5.9%, 8.1%, 27.9%, 32.1%, 55.9%, 60.1%, 100% { opacity: 1; }
-            6% { opacity: 0.25; text-shadow: none; }
-            7% { opacity: 0.8; }
-            28% { opacity: 0.15; text-shadow: none; }
-            29.5% { opacity: 0.85; }
-            30.6% { opacity: 0.25; text-shadow: none; }
-            56% { opacity: 0.2; text-shadow: none; }
-            57.8% { opacity: 0.9; }
+                0 0 2px rgba(255,255,255,0.9),
+                0 0 7px var(--tube, var(--glow)),
+                0 0 15px var(--tube, var(--glow));
         }
 
         .top-nav { display: flex; justify-content: center; gap: 20px; padding: 26px 16px 22px; position: relative; z-index: 10; flex-wrap: wrap; }
@@ -253,6 +280,177 @@
         footer { text-align: center; padding: 3rem 0 4rem; color: var(--text-dim); font-size: 0.9rem; position: relative; z-index: 2; letter-spacing: 1px; }
         a:focus-visible, button:focus-visible { outline: 3px solid var(--accent-cyan); outline-offset: 3px; border-radius: 8px; }
 
+        /* ============================================================
+           THE LIT EDGE
+           Every frame is a ring of light travelling around it. One
+           registered custom property does it: because --edge-a is a real
+           <angle>, the browser interpolates it and the conic gradient
+           itself turns — no giant rotating box behind each card. A slab
+           keeps its grader's colour; everything else takes the season's.
+           ============================================================ */
+        @property --edge-a {
+            syntax: '<angle>';
+            initial-value: 0deg;
+            inherits: false;
+        }
+        @keyframes edgeSpin { to { --edge-a: 360deg; } }
+
+        .neon-card-wrapper, main, .tier-header, .buy-btn {
+            --edge-a: 0deg;
+            --e1: var(--glow-rgb);
+            --e2: var(--spark-rgb);
+            --edge-dur: 8s;
+        }
+
+        .neon-card-wrapper {
+            padding: 2px;
+            background: conic-gradient(from var(--edge-a),
+                rgba(var(--e1),0.10) 0deg,
+                rgba(var(--e1),0.10) 128deg,
+                rgba(var(--e1),0.95) 182deg,
+                #ffffff 200deg,
+                rgba(var(--e2),0.95) 218deg,
+                rgba(var(--e1),0.10) 272deg,
+                rgba(var(--e1),0.10) 360deg);
+            animation: edgeSpin var(--edge-dur) linear infinite;
+            box-shadow: 0 20px 46px rgba(0,0,0,0.55), 0 0 28px rgba(var(--e1),0.14);
+        }
+        .neon-card-wrapper::before { content: none; }
+        .neon-card-wrapper:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 30px 64px rgba(0,0,0,0.62), 0 0 44px rgba(var(--e1),0.34);
+        }
+
+        /* The graders are real brands with real colours — the light keeps them. */
+        .card-psa      { --e1: 255,51,51;    --e2: 255,150,150; --edge-dur: 7.5s; border: none !important; box-shadow: 0 20px 46px rgba(0,0,0,0.55), 0 0 28px rgba(255,51,51,0.16) !important; }
+        .card-bgs      { --e1: 230,194,122;  --e2: 255,242,204; --edge-dur: 8.5s; border: none !important; box-shadow: 0 20px 46px rgba(0,0,0,0.55), 0 0 28px rgba(230,194,122,0.16) !important; }
+        .card-cgc      { --e1: 0,210,255;    --e2: 180,240,255; --edge-dur: 9s;   border: none !important; box-shadow: 0 20px 46px rgba(0,0,0,0.55), 0 0 28px rgba(0,210,255,0.16) !important; }
+        .card-sgc      { --e1: 235,235,235;  --e2: 255,255,255; --edge-dur: 10s;  border: none !important; box-shadow: 0 20px 46px rgba(0,0,0,0.55), 0 0 26px rgba(255,255,255,0.12) !important; }
+        .card-ace      { --e1: 0,255,136;    --e2: 180,255,220; --edge-dur: 8s;   border: none !important; box-shadow: 0 20px 46px rgba(0,0,0,0.55), 0 0 28px rgba(0,255,136,0.16) !important; }
+        .card-raw-tier { --e1: 0,255,157;    --e2: 0,201,255;   --edge-dur: 9.5s; }
+        .card-psa::before, .card-bgs::before, .card-cgc::before,
+        .card-sgc::before, .card-ace::before, .card-raw-tier::before { content: none !important; }
+
+        .card-avail { animation: edgeSpin 5.5s linear infinite; }
+        .card-closed { filter: saturate(0.18) brightness(0.6); animation-play-state: paused; box-shadow: 0 10px 24px rgba(0,0,0,0.5) !important; }
+        .card-closed:hover { transform: none; box-shadow: 0 10px 24px rgba(0,0,0,0.5) !important; }
+
+        /* The shell and the section headers carry the same light: a
+           transparent border, the fill painted to the padding box and the
+           moving gradient to the border box. */
+        main {
+            border: 2px solid transparent;
+            border-radius: 34px;
+            background:
+                linear-gradient(rgba(6,6,16,0.82), rgba(6,6,16,0.82)) padding-box,
+                conic-gradient(from var(--edge-a),
+                    rgba(var(--e1),0.14) 0deg, rgba(var(--e1),0.14) 120deg,
+                    rgba(var(--e1),0.75) 176deg, #ffffff 196deg, rgba(var(--e2),0.75) 216deg,
+                    rgba(var(--e1),0.14) 272deg, rgba(var(--e1),0.14) 360deg) border-box;
+            animation: edgeSpin 22s linear infinite;
+            box-shadow: 0 40px 110px rgba(0,0,0,0.75);
+        }
+        .tier-header {
+            border: 1px solid transparent !important;
+            background:
+                linear-gradient(var(--tier-fill, rgba(12,12,24,0.80)), var(--tier-fill, rgba(12,12,24,0.80))) padding-box,
+                conic-gradient(from var(--edge-a),
+                    rgba(var(--e1),0.16) 0deg, rgba(var(--e1),0.16) 132deg,
+                    rgba(var(--e1),0.95) 184deg, #ffffff 200deg, rgba(var(--e2),0.95) 216deg,
+                    rgba(var(--e1),0.16) 268deg, rgba(var(--e1),0.16) 360deg) border-box;
+            animation: edgeSpin 10s linear infinite;
+        }
+        .th-slab { --e1: 213,0,255; --e2: 255,106,213; --tier-fill: rgba(28,4,38,0.86); }
+        .th-raw  { --e1: 0,255,157; --e2: 0,201,255;   --tier-fill: rgba(3,28,20,0.86); }
+
+        .buy-btn {
+            border: 2px solid transparent;
+            border-radius: 18px;
+            background:
+                linear-gradient(90deg, var(--glow), var(--spark)) padding-box,
+                conic-gradient(from var(--edge-a),
+                    rgba(255,255,255,0.18) 0deg, rgba(255,255,255,0.18) 140deg,
+                    #ffffff 196deg, rgba(255,255,255,0.18) 250deg, rgba(255,255,255,0.18) 360deg) border-box;
+            animation: edgeSpin 6s linear infinite;
+            box-shadow: 0 12px 30px rgba(var(--glow-rgb),0.28);
+        }
+        .buy-btn:hover { transform: translateY(-3px); box-shadow: 0 0 40px rgba(var(--spark-rgb),0.7); }
+        .raw-btn {
+            border: 2px solid transparent !important;
+            background:
+                linear-gradient(90deg, #00c98a, #00fff2) padding-box,
+                conic-gradient(from var(--edge-a), rgba(255,255,255,0.18) 0deg, rgba(255,255,255,0.18) 140deg, #ffffff 196deg, rgba(255,255,255,0.18) 250deg, rgba(255,255,255,0.18) 360deg) border-box !important;
+        }
+        .sold-out { animation: none !important; border: 2px solid rgba(255,255,255,0.08) !important; background: rgba(12,12,22,0.9) !important; box-shadow: none !important; }
+
+        /* ---------- THE REST OF THE SEASON ---------- */
+        .nav-link:hover { border-color: rgba(var(--spark-rgb),0.7); box-shadow: 0 0 18px rgba(var(--spark-rgb),0.30); }
+        .nav-active { border-color: rgba(var(--glow-rgb),0.8); box-shadow: 0 0 18px rgba(var(--glow-rgb),0.30); background: linear-gradient(90deg, rgba(var(--glow-rgb),0.18), transparent); }
+        .glass-panel {
+            background: linear-gradient(165deg, rgba(20,20,38,0.78), rgba(7,7,16,0.90));
+            border: none; border-top: 1px solid rgba(255,255,255,0.18);
+            border-radius: 24px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.10);
+        }
+        .avail-ribbon { animation: none; background-size: 100% 100%; box-shadow: 0 4px 18px rgba(var(--e1),0.45), inset 0 1px 0 rgba(255,255,255,0.35); }
+        .avail-dot { animation: dotBlink 2.2s ease-in-out infinite; }
+        .tier-header::after { animation: ledOpacity 3.6s ease-in-out infinite; box-shadow: 0 0 16px currentColor; }
+
+        /* A slab is a photographed object — the glass carries the season,
+           the card itself stays honest. */
+        .item-img-box { border-bottom: 1px solid rgba(var(--e1),0.22); background: rgba(0,0,0,0.42); }
+        .item-content { padding: 1.6rem 1.6rem 1.7rem; }
+        .item-content h3 { font-size: 1.32rem; margin-bottom: 0.7rem; }
+        .item-content p { font-size: 0.95rem; line-height: 1.62; color: var(--ink-dim); }
+
+        .price-row { position: relative; border-top: none; padding-top: 1.3rem; margin-bottom: 1.2rem; align-items: baseline; }
+        .price-row::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, rgba(var(--e1),0.65), rgba(var(--e1),0.06) 60%, transparent);
+        }
+        .price, .card-raw-tier .price { font-size: 2.3rem; font-weight: 900; letter-spacing: -1px; font-variant-numeric: tabular-nums; color: var(--coin); text-shadow: 0 0 26px rgba(var(--coin-rgb),0.40); }
+        .stock { font-size: 0.78rem; font-weight: 800; letter-spacing: 0.4px; color: var(--ink); background: rgba(0,0,0,0.45); border: 1px solid rgba(var(--e1),0.45); padding: 7px 13px; box-shadow: inset 0 0 14px rgba(var(--e1),0.12); }
+        .perk-row { gap: 7px; margin-bottom: 1.1rem; }
+        .perk {
+            font-size: 0.66rem; letter-spacing: 0.9px; padding: 5px 10px;
+            background: rgba(var(--e1),0.10) !important;
+            border: 1px solid rgba(var(--e1),0.42) !important;
+            color: var(--ink) !important; box-shadow: none !important; backdrop-filter: none;
+        }
+        .perk i { color: rgb(var(--e1)); }
+
+        .skeleton { border-color: rgba(var(--glow-rgb),0.14); }
+        .skeleton::after { background: linear-gradient(90deg, transparent, rgba(var(--glow-rgb),0.08), transparent); }
+        .modal-content { border-color: var(--glow); box-shadow: 0 0 70px rgba(var(--glow-rgb),0.55); }
+        .close-modal { color: var(--glow); text-shadow: 0 0 16px var(--glow); }
+        .carousel-btn:hover { background: var(--glow); border-color: var(--spark); box-shadow: 0 0 15px var(--glow); }
+        .dot.active { background: var(--glow); box-shadow: 0 0 10px var(--glow); }
+        a:focus-visible, button:focus-visible { outline-color: var(--glow); }
+
+        /* ---------- HOW MANY CARDS ARE IN THE ROW ----------
+           Three or more fill the row, two sit as a pair, and a single slab
+           lies down and uses the width instead of standing alone in the middle. */
+        .store-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .store-grid.pair { max-width: 820px; margin-inline: auto; }
+        .store-grid.solo { max-width: 980px; margin-inline: auto; grid-template-columns: minmax(0, 1fr); }
+
+        @media (min-width: 780px) {
+            .store-grid.solo .item-card { flex-direction: row; align-items: stretch; }
+            .store-grid.solo .item-img-box {
+                width: 46%; flex: 0 0 46%; height: auto; min-height: 380px;
+                border-bottom: none; border-right: 1px solid rgba(var(--e1),0.22);
+            }
+            .store-grid.solo .item-content { width: 54%; padding: 2.1rem 2.2rem 2rem; }
+            .store-grid.solo .item-content h3 { font-size: 1.7rem; }
+            .store-grid.solo .type-tag { right: auto; left: 20px; }
+            .store-grid.solo .cond-badge { left: auto; right: 20px; }
+            .store-grid.solo .price { font-size: 2.6rem; }
+            .store-grid.solo .buy-btn { max-width: 420px; }
+            /* Short copy in a tall landscape card left a hole above the
+               price. Centre the column instead of pinning it to the floor. */
+            .store-grid.solo .item-content { justify-content: center; }
+            .store-grid.solo .perk-row { margin: 0 0 1.1rem; }
+        }
+
         @media (max-width: 768px) {
             .p-rayquaza, .p-charizard { display: none; }
             .p-suicune { width: 120vw; opacity: 0.08; top: 40%; }
@@ -263,39 +461,46 @@
             .tier-title { letter-spacing: 3px; }
             .store-grid { grid-template-columns: 1fr; gap: 30px; }
         }
-        /* ---------- MOBILE ANTI-FLICKER ----------
-           Same fix as the storefront: near-solid glass + frozen conic borders on
-           touch devices to stop Android Chrome flicker. Desktop unchanged.
-           The Vegas neon flicker is opacity-only (GPU-cheap) so it stays ON —
-           that flicker is intentional, not a bug. */
+        /* ---------- TOUCH ----------
+           Solid glass instead of backdrop-filter stops the old Android
+           repaint flicker. The travelling edge stays — it is the look —
+           just turning more slowly. */
         @media (hover: none), (pointer: coarse) {
-            body::before { animation: none; background-size: 100% 100%, 100% 100%, 100% 100%; }
-            .grain, .particles { display: none; }
+            .grain { display: none; }
             .top-nav .nav-link, main, .glass-panel, .tier-header, .type-tag, .cond-badge,
             .perk, .carousel-btn, .image-modal {
                 backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
             }
-            main { background: rgba(6,6,16,0.94); }
-            .glass-panel { background: linear-gradient(160deg, rgba(24,24,42,0.97), rgba(10,10,20,0.98)); }
-            /* Keep the LED motion — solid glass makes these animations flicker-safe */
-            .neon-card-wrapper::before { animation-duration: 7s; opacity: 0.55 !important; filter: none !important; }
+            main {
+                background:
+                    linear-gradient(rgba(6,6,16,0.96), rgba(6,6,16,0.96)) padding-box,
+                    conic-gradient(from var(--edge-a),
+                        rgba(var(--e1),0.14) 0deg, rgba(var(--e1),0.14) 120deg,
+                        rgba(var(--e1),0.75) 176deg, #ffffff 196deg, rgba(var(--e2),0.75) 216deg,
+                        rgba(var(--e1),0.14) 272deg, rgba(var(--e1),0.14) 360deg) border-box;
+                animation-duration: 30s;
+            }
+            .glass-panel { background: linear-gradient(160deg, rgba(22,22,40,0.98), rgba(9,9,18,0.99)); }
+            .neon-card-wrapper { animation-duration: 13s; }
+            .card-avail { animation-duration: 9s; }
+            .buy-btn { animation-duration: 10s; }
+            .tier-header { animation-duration: 16s; }
             .neon-card-wrapper, .glass-panel, .item-img { will-change: auto !important; }
             .neon-card-wrapper:hover { transform: none; }
-            .glass-panel::after { opacity: 1; mix-blend-mode: normal; background: linear-gradient(115deg, transparent 42%, rgba(255,255,255,0.05) 50%, transparent 58%); background-size: 250% 100%; animation: sheenFlow 7s linear infinite; }
+            .glass-panel::after { display: none; }
             .item-img-box::before { display: none; }
-            .card-avail { animation: none; box-shadow: 0 0 32px rgba(var(--lg),0.55), 0 0 60px rgba(var(--lg),0.22); }
-            .tier-header::after { animation: ledOpacity 2.4s ease-in-out infinite; box-shadow: 0 0 18px currentColor; }
+            .tier-header::after { animation: ledOpacity 3.6s ease-in-out infinite; box-shadow: 0 0 18px currentColor; }
         }
 
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
-            body::before { animation: none; }
+            #weather { display: none; }
         }
     </style>
 </head>
 <body>
     <div class="grain"></div>
-    <div class="particles"></div>
+    <canvas id="weather" aria-hidden="true"></canvas>
     <div class="parallax-layer">
         <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="poke-bg p-suicune" alt="" loading="lazy">
         <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/384.png" class="poke-bg p-rayquaza" alt="" loading="lazy">
@@ -335,7 +540,135 @@
         const wait = ms => new Promise(r => setTimeout(r, ms));
         function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
         function money(n) { const v = Number(n); return isFinite(v) ? v.toFixed(2) : '0.00'; }
+        // On the card face a round number reads as a price, not a receipt.
+        function priceTag(n) { const v = Number(n); if (!isFinite(v)) return '0'; return v % 1 === 0 ? String(v) : v.toFixed(2); }
         function toInt(n) { const v = parseInt(n, 10); return isFinite(v) ? v : 0; }
+
+        /* ============================================================
+           SEASONS
+           The admin panel picks one season for the whole site. A season is
+           a palette, a cast of Pokémon in the background, and its weather.
+           ============================================================ */
+        const THEMES = ['crystal', 'birthday', 'halloween', 'christmas'];
+        const dex = n => `https://assets.pokemon.com/assets/cms2/img/pokedex/full/${n}.png`;
+        const CAST = {
+            crystal:   { suicune:'245', rayquaza:'384', charizard:'006', pichu:'172', magikarp:'129' },
+            birthday:  { suicune:'035', rayquaza:'039', charizard:'113', pichu:'172', magikarp:'025' },
+            halloween: { suicune:'094', rayquaza:'092', charizard:'354', pichu:'479', magikarp:'353' },
+            christmas: { suicune:'471', rayquaza:'225', charizard:'361', pichu:'459', magikarp:'363' }
+        };
+        function dressCast(theme) {
+            const cast = CAST[theme] || CAST.crystal;
+            Object.keys(cast).forEach(slot => {
+                const img = document.querySelector('.p-' + slot);
+                if (img) img.src = dex(cast[slot]);
+            });
+        }
+        function applyTheme(name) {
+            const theme = THEMES.indexOf(name) === -1 ? 'crystal' : name;
+            document.documentElement.setAttribute('data-theme', theme);
+            try { localStorage.setItem('pbm-theme', theme); } catch (e) {}
+            dressCast(theme);
+            startWeather(theme);
+        }
+        async function loadSeason() {
+            try {
+                const res = await fetch(`${API_URL}/settings`);
+                if (!res.ok) return;
+                const data = await res.json();
+                if (data && data.theme) applyTheme(data.theme);
+            } catch (e) { /* the cached season stands */ }
+        }
+
+        /* ---------- WEATHER ----------
+           Confetti, falling leaves, snow. One canvas, a few dozen shapes,
+           stopped dead when the tab is hidden, never started at all if the
+           visitor asked for less motion. */
+        const WEATHER = {
+            crystal:   { n: 26, colors: ['#d8a8ff', '#9ef7ff', '#ffffff'], kind: 'mote' },
+            birthday:  { n: 46, colors: ['#ff5ca8', '#ffd166', '#ffffff', '#b05cff'], kind: 'confetti' },
+            halloween: { n: 30, colors: ['#ff7518', '#8f4fff', '#b13b12'], kind: 'leaf' },
+            christmas: { n: 52, colors: ['#ffffff', '#dff5ec'], kind: 'snow' }
+        };
+        let wxRaf = null, wxParts = [], wxSpec = null, wxCanvas = null, wxCtx = null, wxDpr = 1;
+
+        function wxResize() {
+            if (!wxCanvas) return;
+            wxDpr = Math.min(window.devicePixelRatio || 1, 2);
+            wxCanvas.width = Math.floor(window.innerWidth * wxDpr);
+            wxCanvas.height = Math.floor(window.innerHeight * wxDpr);
+            wxCanvas.style.width = '100%';
+            wxCanvas.style.height = '100%';
+        }
+        function wxSeed() {
+            const w = window.innerWidth, h = window.innerHeight;
+            const count = window.innerWidth < 700 ? Math.round(wxSpec.n * 0.55) : wxSpec.n;
+            wxParts = [];
+            for (let i = 0; i < count; i++) {
+                wxParts.push({
+                    x: Math.random() * w, y: Math.random() * h,
+                    r: wxSpec.kind === 'confetti' ? 3 + Math.random() * 4
+                       : wxSpec.kind === 'leaf' ? 4 + Math.random() * 5
+                       : 1 + Math.random() * 2.2,
+                    vy: wxSpec.kind === 'mote' ? -(0.08 + Math.random() * 0.22) : 0.25 + Math.random() * 0.75,
+                    drift: 0.25 + Math.random() * 0.7,
+                    phase: Math.random() * Math.PI * 2,
+                    spin: (Math.random() - 0.5) * 0.06,
+                    rot: Math.random() * Math.PI,
+                    alpha: 0.35 + Math.random() * 0.45,
+                    color: wxSpec.colors[i % wxSpec.colors.length]
+                });
+            }
+        }
+        function wxDraw(ts) {
+            if (!wxCtx) return;
+            const w = window.innerWidth, h = window.innerHeight;
+            wxCtx.setTransform(wxDpr, 0, 0, wxDpr, 0, 0);
+            wxCtx.clearRect(0, 0, w, h);
+            const t = ts * 0.001;
+            for (const p of wxParts) {
+                p.y += p.vy;
+                p.x += Math.sin(t * p.drift + p.phase) * 0.55;
+                p.rot += p.spin;
+                if (p.vy < 0 && p.y < -12) { p.y = h + 10; p.x = Math.random() * w; }
+                if (p.vy > 0 && p.y > h + 12) { p.y = -10; p.x = Math.random() * w; }
+                wxCtx.globalAlpha = p.alpha;
+                wxCtx.fillStyle = p.color;
+                if (wxSpec.kind === 'confetti') {
+                    wxCtx.save(); wxCtx.translate(p.x, p.y); wxCtx.rotate(p.rot);
+                    wxCtx.fillRect(-p.r / 2, -p.r, p.r, p.r * 2); wxCtx.restore();
+                } else if (wxSpec.kind === 'leaf') {
+                    wxCtx.save(); wxCtx.translate(p.x, p.y); wxCtx.rotate(p.rot);
+                    wxCtx.beginPath(); wxCtx.ellipse(0, 0, p.r, p.r * 0.45, 0, 0, Math.PI * 2);
+                    wxCtx.fill(); wxCtx.restore();
+                } else {
+                    wxCtx.beginPath(); wxCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2); wxCtx.fill();
+                }
+            }
+            wxCtx.globalAlpha = 1;
+            wxRaf = requestAnimationFrame(wxDraw);
+        }
+        function wxStop() { if (wxRaf) { cancelAnimationFrame(wxRaf); wxRaf = null; } }
+        function startWeather(theme) {
+            wxCanvas = document.getElementById('weather');
+            if (!wxCanvas) return;
+            wxStop();
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { wxCanvas.style.display = 'none'; return; }
+            wxCanvas.style.display = '';
+            wxSpec = WEATHER[theme] || WEATHER.crystal;
+            wxCtx = wxCanvas.getContext('2d');
+            wxResize(); wxSeed();
+            wxRaf = requestAnimationFrame(wxDraw);
+        }
+        let wxResizeTimer = null;
+        window.addEventListener('resize', () => {
+            clearTimeout(wxResizeTimer);
+            wxResizeTimer = setTimeout(() => { if (wxCtx) { wxResize(); wxSeed(); } }, 200);
+        }, { passive: true });
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) wxStop();
+            else if (wxCtx && !wxRaf) wxRaf = requestAnimationFrame(wxDraw);
+        });
 
         /* ---------- VEGAS NEON: per-letter tube wrapping ---------- */
         function neonize(el, palette, small) {
@@ -355,9 +688,7 @@
                     if (palette && palette.length) word.style.setProperty('--tube', palette[w++ % palette.length]);
                     for (const ch of part) {
                         const s = document.createElement('span');
-                        s.className = 'nl' + (Math.random() < 0.12 ? ' nl-dying' : '');
-                        s.style.setProperty('--fd', (3.5 + Math.random() * 6).toFixed(2) + 's');
-                        s.style.animationDelay = (-Math.random() * 9).toFixed(2) + 's';
+                        s.className = 'nl';
                         s.textContent = ch;
                         word.appendChild(s);
                     }
@@ -366,7 +697,8 @@
                 el.replaceChild(frag, node);
             });
         }
-        const SIGN_PALETTE = ['#d24bff', '#ff2d95'];
+        // The wordmark alternates between the season's two lit colours.
+        const SIGN_PALETTE = ['var(--glow)', 'var(--spark)'];
         function applyNeon() {
             neonize(document.getElementById('site-title'), SIGN_PALETTE);
             document.querySelectorAll('.tier-title').forEach(t => neonize(t));
@@ -494,7 +826,7 @@
                             <h3>${esc(item.name)}</h3>
                             <p>${esc(item.description)}</p>
                             <div class="perk-row">${perks}</div>
-                            <div class="price-row"><span class="price">$${money(item.price)}</span><span class="stock">${toInt(item.stock) > 1 ? toInt(item.stock) + ' Available' : '1 of 1'}</span></div>
+                            <div class="price-row"><span class="price">$${priceTag(item.price)}</span><span class="stock">${toInt(item.stock) > 1 ? toInt(item.stock) + ' Available' : '1 of 1'}</span></div>
                             <div id="btn-container-${id}">${btnHTML}</div>
                         </div>
                     </div>
@@ -524,6 +856,10 @@
                     return;
                 }
 
+                // One slab on its own gets a wide landscape card rather than
+                // a lonely column stranded in the middle of the shell.
+                const gridClass = list => 'store-grid' + (list.length === 1 ? ' solo' : list.length === 2 ? ' pair' : '');
+
                 let html = '';
                 if (slabs.length > 0) {
                     html += `
@@ -531,7 +867,7 @@
                             <div class="tier-title"><i class="ph-fill ph-certificate"></i> GRADED SLABS <i class="ph-fill ph-certificate"></i></div>
                             <div class="tier-tagline">Authenticated hits · PSA / BGS / CGC &amp; more</div>
                         </div>
-                        <div class="store-grid">${slabs.map(buildVaultCard).join('')}</div>`;
+                        <div class="${gridClass(slabs)}">${slabs.map(buildVaultCard).join('')}</div>`;
                 }
                 if (raws.length > 0) {
                     html += `
@@ -539,7 +875,7 @@
                             <div class="tier-title"><i class="ph-fill ph-cards"></i> RAW SINGLES <i class="ph-fill ph-cards"></i></div>
                             <div class="tier-tagline">Fresh pulls straight from the breaks</div>
                         </div>
-                        <div class="store-grid">${raws.map(buildVaultCard).join('')}</div>`;
+                        <div class="${gridClass(raws)}">${raws.map(buildVaultCard).join('')}</div>`;
                 }
 
                 sections.innerHTML = html;
@@ -584,6 +920,8 @@
             }, { passive: true });
         }
 
+        applyTheme(document.documentElement.getAttribute('data-theme'));
+        loadSeason();
         initParallax();
         applyNeon();
         loadVault();
