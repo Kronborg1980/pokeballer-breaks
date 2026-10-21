@@ -1,0 +1,43 @@
+# IMPORTANT: "name" must exactly match the Worker's name in the Cloudflare
+# dashboard, or the build will fail.
+name = "pokeballer-worker"
+main = "worker.js"
+compatibility_date = "2026-05-01"
+
+# Keeps the *.workers.dev URL your site already calls.
+workers_dev = true
+
+# Your KV namespace. This is an identifier, not a secret — it belongs in this
+# file and is meant to be committed alongside the worker.
+kv_namespaces = [
+  { binding = "POKEBALLER_KV", id = "42f6e4e934ba4c2e857f5428613e866f" }
+]
+
+# One order desk per item: the true stock and the emails that already ordered.
+[[durable_objects.bindings]]
+name = "ORDER_DESK"
+class_name = "OrderDesk"
+
+# One site hub: settings, the Stripe keys, and the live alert feed.
+[[durable_objects.bindings]]
+name = "SITE_HUB"
+class_name = "SiteHub"
+
+# new_sqlite_classes (not new_classes) — required on the Workers Free plan.
+# NEVER edit or delete a migration block that has already deployed. Each new
+# Durable Object class gets its own new tag, and the old tags stay exactly
+# as they are.
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["OrderDesk"]
+
+[[migrations]]
+tag = "v2"
+new_sqlite_classes = ["SiteHub"]
+
+# RESEND_API_KEY is a secret and is NOT set here. It stays where it already is
+# in the dashboard (Settings > Variables and Secrets) and survives deploys.
+#
+# STRIPE_SECRET_KEY and STRIPE_WEBHOOK_SECRET are optional here too: paste them
+# into the admin panel, or add them as Cloudflare secrets with those exact
+# names. A Cloudflare secret always wins over the admin-panel copy.
