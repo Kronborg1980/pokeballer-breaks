@@ -241,6 +241,30 @@
         .chip.go{background:rgba(0,255,242,0.08); border-color:rgba(0,255,242,0.4); color:var(--accent);}
         .chip.go:hover{background:rgba(0,255,242,0.22); color:#fff; box-shadow:0 0 14px rgba(0,255,242,0.35);}
 
+
+        /* ---------- look of the site ---------- */
+        .look-card { border-color: rgba(213,0,255,0.3); }
+        .look-h2 { margin: 0 0 4px; font-size: 1.4rem; color: #e883ff; }
+        .themegrid { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; margin: 1.2rem 0 0.4rem; }
+        .th {
+            border: 2px solid #3a3a55; border-radius: 14px; padding: 0 0 13px; overflow: hidden;
+            background: rgba(0,0,0,0.45); cursor: pointer; text-align: center; transition: .2s;
+            font-family: inherit;
+        }
+        .th:hover { transform: translateY(-2px); }
+        .th-sky { display: block; height: 54px; }
+        .th-n { display: block; font-weight: 900; font-size: 0.86rem; color: #fff; margin-top: 11px; }
+        .th-s { display: block; font-size: 0.66rem; color: var(--dim); margin-top: 3px; padding: 0 6px; line-height: 1.4; }
+        .th-crystal   .th-sky { background: linear-gradient(135deg, #04050e 0%, #0b1030 45%, #00e5da 100%); }
+        .th-birthday  .th-sky { background: linear-gradient(135deg, #140a1e 0%, #3a1140 45%, #ff5ca8 100%); }
+        .th-halloween .th-sky { background: linear-gradient(135deg, #0d0608 0%, #3a1405 45%, #ff7518 100%); }
+        .th-christmas .th-sky { background: linear-gradient(135deg, #060f12 0%, #0d3028 45%, #ff3b47 100%); }
+        .th.on.th-crystal   { border-color: #00e5da; box-shadow: 0 0 22px rgba(0,229,218,0.45); }
+        .th.on.th-birthday  { border-color: #ff5ca8; box-shadow: 0 0 22px rgba(255,92,168,0.45); }
+        .th.on.th-halloween { border-color: #ff7518; box-shadow: 0 0 22px rgba(255,117,24,0.45); }
+        .th.on.th-christmas { border-color: #ff3b47; box-shadow: 0 0 22px rgba(255,59,71,0.45); }
+        @media(max-width: 420px) { .themegrid { grid-template-columns: 1fr; } }
+
         #login-section { display: block; } #admin-section { display: none; }
         .empty-state { color: #888; font-style: italic; font-size: 1rem; padding: 2rem 0; text-align: center; background: rgba(0,0,0,0.3); border-radius: 12px; border: 1px dashed #444; }
         .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(120%); background: rgba(10,10,20,0.95); border: 1px solid var(--accent); color: #fff; padding: 12px 22px; border-radius: 10px; font-weight: 700; box-shadow: 0 0 30px rgba(0,255,242,0.4); z-index: 9999; transition: transform .4s cubic-bezier(0.22,1,0.36,1); max-width: 90%; }
@@ -274,6 +298,50 @@
         </div>
 
         <div id="admin-section">
+
+            <!-- ============ LOOK OF THE SITE ============ -->
+            <div class="card look-card">
+                <h2 class="look-h2">🎨 How the site looks</h2>
+                <p class="pay-sub">Pick a season. Everyone who visits pbmbreaks.com sees it, on both the front page and the Vault.</p>
+
+                <div class="themegrid" id="theme-grid">
+                    <button class="th th-crystal" type="button" data-theme="crystal">
+                        <span class="th-sky"></span>
+                        <span class="th-n">Crystal League</span>
+                        <span class="th-s">Your normal look</span>
+                    </button>
+                    <button class="th th-birthday" type="button" data-theme="birthday">
+                        <span class="th-sky"></span>
+                        <span class="th-n">Birthday</span>
+                        <span class="th-s">Confetti and party pink</span>
+                    </button>
+                    <button class="th th-halloween" type="button" data-theme="halloween">
+                        <span class="th-sky"></span>
+                        <span class="th-n">Halloween</span>
+                        <span class="th-s">Pumpkin glow, drifting bats</span>
+                    </button>
+                    <button class="th th-christmas" type="button" data-theme="christmas">
+                        <span class="th-sky"></span>
+                        <span class="th-n">Christmas</span>
+                        <span class="th-s">Snow and warm lights</span>
+                    </button>
+                </div>
+
+                <hr class="soft-rule">
+
+                <label for="set-fb-url">Clip pinned under the stream</label>
+                <input type="url" id="set-fb-url" placeholder="https://www.facebook.com/…/videos/123456…" autocapitalize="off" spellcheck="false">
+                <p class="hint">Any Facebook link works here. For the clip to <b>play on the page</b> it has to be the full address of a
+                    <b>public</b> video — open the video on Facebook and copy what sits in the address bar. A short
+                    <code>share/r/…</code> link still works, it just shows as a "Watch on Facebook" button instead.
+                    Leave it empty to take the clip off the page.</p>
+
+                <label for="set-fb-title">What to call it</label>
+                <input type="text" id="set-fb-title" placeholder="e.g. Best pull of the month">
+
+                <div id="look-status" class="settings-status"></div>
+                <button id="save-look-btn" class="primary-btn" onclick="saveLook()">🎨 Save the look</button>
+            </div>
 
             <!-- ============ PAYMENTS & ALERTS ============ -->
             <div class="card pay-card">
@@ -1470,6 +1538,11 @@
             document.getElementById('set-public-contact').value = s.publicContactEmail || '';
             document.getElementById('set-alert-template').value = s.alertTemplate || '';
 
+            chosenTheme = s.theme || 'crystal';
+            paintTheme();
+            document.getElementById('set-fb-url').value = s.featuredVideoUrl || '';
+            document.getElementById('set-fb-title').value = s.featuredVideoTitle || '';
+
             document.getElementById('set-alerts-enabled').checked = !!s.alertsEnabled;
             document.getElementById('set-alert-overlay').checked = !!s.alertToOverlay;
             document.getElementById('set-alert-streamlabs').checked = !!s.alertToStreamlabs;
@@ -1607,6 +1680,76 @@
             } catch (e) {
                 el.className = 'check-result bad';
                 el.textContent = '✗ Could not reach the worker.';
+            }
+        }
+
+
+        /* ---------- look of the site ---------- */
+        let chosenTheme = 'crystal';
+
+        function paintTheme() {
+            document.querySelectorAll('#theme-grid .th')
+                .forEach(b => b.classList.toggle('on', b.dataset.theme === chosenTheme));
+        }
+        document.querySelectorAll('#theme-grid .th').forEach(b => {
+            b.addEventListener('click', () => { chosenTheme = b.dataset.theme; paintTheme(); });
+        });
+
+        function setLookStatus(msg, isErr) {
+            const el = document.getElementById('look-status');
+            el.textContent = msg || '';
+            el.className = 'settings-status' + (msg ? (isErr ? ' bad' : ' ok') : '');
+        }
+
+        async function saveLook() {
+            const btn = document.getElementById('save-look-btn');
+            const url = document.getElementById('set-fb-url').value.trim();
+
+            // A short share/r/… link is perfectly fine to save — Facebook just
+            // refuses to play it inside another site, so the clip shows as a
+            // button instead of a player. Say so, don't block it.
+            const isShare = url && /\/share\//.test(url);
+            if (url && !/^https:\/\/(www\.|web\.|m\.)?facebook\.com\//i.test(url)) {
+                setLookStatus('That does not look like a facebook.com video address.', true);
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerText = 'Saving…';
+            setLookStatus('');
+            try {
+                const res = await fetch(`${API_URL}/admin/settings`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        token: localStorage.getItem('adminToken') || '',
+                        settings: {
+                            theme: chosenTheme,
+                            featuredVideoUrl: url,
+                            featuredVideoTitle: document.getElementById('set-fb-title').value.trim()
+                        }
+                    })
+                });
+                const data = await res.json();
+                if (!res.ok || data.error) {
+                    setLookStatus(res.status === 404
+                        ? 'This worker does not have the look settings yet — commit the new worker.js and let it deploy.'
+                        : (data.error || `Save failed (HTTP ${res.status}).`), true);
+                    return;
+                }
+                if (data.settings) {
+                    chosenTheme = data.settings.theme || 'crystal';
+                    paintTheme();
+                }
+                const names = { crystal: 'Crystal League', birthday: 'Birthday', halloween: 'Halloween', christmas: 'Christmas' };
+                setLookStatus(`Saved. The site is wearing ${names[chosenTheme]} now.`
+                    + (isShare ? ' The clip is a short share link, so it shows as a "Watch on Facebook" button rather than playing on the page.' : ''));
+                toast('The look is live.');
+            } catch (e) {
+                setLookStatus('Could not reach the worker.', true);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = '🎨 Save the look';
             }
         }
 
