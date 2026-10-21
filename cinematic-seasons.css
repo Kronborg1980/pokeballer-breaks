@@ -1,0 +1,66 @@
+/* PBM CINEMATIC SEASONS — designed for the existing Crystal League */
+:root{--pbm-flare:#00fff2;--pbm-flare2:#a56dff;--pbm-starlight:#e2ffff;--pbm-scene-shadow:rgba(0,255,242,.17)}
+html[data-theme="halloween"]{--pbm-flare:#ff9a3d;--pbm-flare2:#a865ff;--pbm-starlight:#ffd29a;--pbm-scene-shadow:rgba(255,112,30,.24)}
+html[data-theme="christmas"]{--pbm-flare:#6effbf;--pbm-flare2:#ff7783;--pbm-starlight:#fff4d2;--pbm-scene-shadow:rgba(80,231,181,.22)}
+html[data-theme="birthday"]{--pbm-flare:#ff79ca;--pbm-flare2:#ffc96d;--pbm-starlight:#fff3ba;--pbm-scene-shadow:rgba(255,115,194,.25)}
+#pbm-scene{position:absolute;z:0;inset:0 0 auto;height:min(780px,92vh);overflow:hidden;pointer-events:none;isolation:isolate}
+#pbm-scene .pbm-sky{position:absolute;inset:0;background:radial-gradient(ellipse 45% 48% at 50% 27%,var(--pbm-scene-shadow),transparent 80%),radial-gradient(ellipse 25% 35% at 10% 11%,rgba(var(--glow-rgb),.08),transparent 90%);opacity:.95}
+#pbm-scene .pbm-sky:before,#pbm-scene .pbm-sky:after{content:"";position:absolute;width:65vw;height:38vw;min-height:250px;border:1px solid rgba(var(--glow-rgb),.09);border-radius:50%;left:50%;top:3%;transform:translateX(-50%) rotate(-16deg);box-shadow:0 0 52px rgba(var(--glow-rgb),.05),inset 0 0 52px rgba(var(--glow-rgb),.03)}
+#pbm-scene .pbm-sky:after{width:50vw;height:30vw;top:8%;transform:translateX(-50%) rotate(28deg);border-color:rgba(var(--spark-rgb),.1)}
+#pbm-scene .pbm-sides{position:absolute;inset:0;overflow:hidden}
+#pbm-scene .pbm-art{position:absolute;display:block;filter:drop-shadow(0 0 30px var(--pbm-scene-shadow));will-change:transform}
+#pbm-scene .pbm-left{width:clamp(110px,22vw,300px);left:-3%;top:190px;animation:pbm-idle-left 9s ease-in-out infinite}
+#pbm-scene .pbm-right{width:clamp(110px,22vw,300px);right:-3%;top:220px;animation:pbm-idle-right 11s ease-in-out infinite}
+#pbm-scene .pbm-crown{width:clamp(140px,30vw,340px);top:45px;left:50%;transform:translateX(-50%);opacity:.65;animation:pbm-crown-float 10s ease-in-out infinite}
+#pbm-scene svg{width:100%;height:auto;display:block;overflow:visible}
+#pbm-scene .pbm-ray{position:absolute;top:9%;left:50%;width:1px;height:450px;background:linear-gradient(transparent,var(--pbm-flare),transparent);opacity:.17;transform-origin:top;animation:pbm-ray-flare 8s ease-in-out infinite}
+#pbm-scene .pbm-ray:nth-of-type(2){transform:rotate(44deg);animation-delay:-2s}
+#pbm-scene .pbm-ray:nth-of-type(3){transform:rotate(-44deg);animation-delay:-4s}
+#pbm-scene .pbm-ray:nth-of-type(4){transform:rotate(90deg);animation-delay:-6s}
+#pbm-scene .pbm-stars{position:absolute;inset:0}
+#pbm-scene .pbm-star{position:absolute;width:3px;height:3px;background:var(--pbm-starlight);border-radius:50%;opacity:.55;box-shadow:0 0 12px 2px var(--pbm-flare);animation:pbm-twinkle var(--dur,4s) ease-in-out infinite;animation-delay:var(--delay,0s)}
+#pbm-scene .pbm-star:nth-child(4n){width:2px;height:2px}
+#pbm-scene .pbm-star:nth-child(9n){width:5px;height:5px;clip-path:polygon(50% 0,60% 40%,100% 50%,60% 60%,50% 100%,40% 60%,0 50%,40% 40%)}
+#pbm-scene .pbm-mist{position:absolute;left:-20%;width:140%;height:150px;top:390px;background:radial-gradient(ellipse 44% 50%,var(--pbm-scene-shadow),transparent 80%);filter:blur(25px);animation:pbm-mist-drift 14s ease-in-out infinite}
+.pbm-season-seal{position:relative;z-index:2;text-align:center;max-width:650px;margin:14px auto 5px;padding:12px 22px;color:var(--ink,#fff);pointer-events:none}
+.pbm-season-eyebrow{display:flex;align-items:center;justify-content:center;gap:12px;color:var(--pbm-flare);font:800 10px/1.4 Inter,system-ui,sans-serif;letter-spacing:.32em;text-transform:uppercase}
+.pbm-season-eyebrow:before,.pbm-season-eyebrow:after{content:"";height:1px;max-width:54px;flex:1;background:linear-gradient(90deg,transparent,var(--pbm-flare));opacity:.68}
+.pbm-season-eyebrow:after{transform:rotate(180deg)}
+.pbm-season-title{display:block;margin-top:8px;font:400 clamp(21px,3vw,32px)/1.12 'Tilt Neon',Inter,system-ui,sans-serif;letter-spacing:.055em;text-shadow:0 0 19px var(--pbm-scene-shadow),0 2px 15px #000}
+.pbm-season-desc{display:block;color:var(--ink-dim,#aab0d8);font:500 clamp(12px,1.4vw,14px)/1.65 Inter,system-ui,sans-serif;margin-top:7px;letter-spacing:.02em}
+#pbm-scene ~ header,#pbm-scene ~ .top-nav{position:relative;z-index:2}
+header .header-wrapper,header h1#site-title{filter:drop-shadow(0 0 18px var(--pbm-scene-shadow))}
+header h1#site-title{animation:pbm-brand-entrance .95s cubic-bezier(.2,.8,.2,1) both}
+header .marquee-plate{box-shadow:0 0 28px var(--pbm-scene-shadow),0 14px 38px #0007}
+html[data-theme="halloween"] .pbm-season-seal{background:radial-gradient(ellipse at center,rgba(59,22,34,.42),transparent 68%)}
+html[data-theme="christmas"] .pbm-season-seal{background:radial-gradient(ellipse at center,rgba(16,73,57,.30),transparent 68%)}
+html[data-theme="birthday"] .pbm-season-seal{background:radial-gradient(ellipse at center,rgba(104,33,89,.28),transparent 68%)}
+html[data-theme="halloween"] #pbm-scene .pbm-sky{background:radial-gradient(ellipse 27% 36% at 50% 28%,rgba(247,126,51,.13),transparent 90%),radial-gradient(ellipse 50% 50% at 52% 0%,rgba(87,34,120,.18),transparent)}
+html[data-theme="christmas"] #pbm-scene .pbm-sky{background:radial-gradient(ellipse 60% 32% at 50% 10%,rgba(74,237,171,.17),transparent),radial-gradient(ellipse 45% 39% at 65% 15%,rgba(255,89,111,.09),transparent)}
+html[data-theme="birthday"] #pbm-scene .pbm-sky{background:radial-gradient(ellipse 53% 40% at 50% 12%,rgba(255,91,174,.18),transparent),radial-gradient(ellipse 33% 33% at 20% 20%,rgba(253,192,80,.11),transparent)}
+@keyframes pbm-brand-entrance{from{opacity:.1;transform:translateY(14px);filter:blur(10px)}to{opacity:1;transform:translateY(0);filter:blur(0)}}
+@keyframes pbm-idle-left{0%,100%{transform:translate3d(0,0,0) rotate(-3deg)}50%{transform:translate3d(8px,-18px,0) rotate(2deg)}}
+@keyframes pbm-idle-right{0%,100%{transform:translate3d(0,0,0) rotate(3deg)}50%{transform:translate3d(-10px,-19px,0) rotate(-2deg)}}
+@keyframes pbm-crown-float{0%,100%{transform:translateX(-50%) translateY(0) rotate(-1deg)}50%{transform:translateX(-50%) translateY(-9px) rotate(1deg)}}
+@keyframes pbm-twinkle{0%,100%{opacity:.15;transform:scale(.7)}50%{opacity:.95;transform:scale(1.7)}}
+@keyframes pbm-ray-flare{0%,100%{opacity:.06}50%{opacity:.2}}
+@keyframes pbm-mist-drift{0%,100%{transform:translateX(-7%);opacity:.6}50%{transform:translateX(7%);opacity:1}}
+@media(max-width:850px){
+ #pbm-scene{height:550px}
+ #pbm-scene .pbm-left{width:clamp(85px,22vw,160px);top:200px;left:-5%}
+ #pbm-scene .pbm-right{width:clamp(85px,22vw,160px);top:210px;right:-5%}
+ #pbm-scene .pbm-crown{width:clamp(145px,34vw,230px);top:85px;opacity:.38}
+ .pbm-season-seal{max-width:340px;margin-top:8px;padding:8px 12px}
+ .pbm-season-eyebrow{font-size:9px;letter-spacing:.17em}
+ .pbm-season-title{font-size:22px}
+ .pbm-season-desc{font-size:12px}
+}
+@media(max-width:500px){
+ #pbm-scene .pbm-left,#pbm-scene .pbm-right{top:260px;width:112px;opacity:.5}
+ #pbm-scene .pbm-mist{top:300px;opacity:.3}
+ .pbm-season-desc{max-width:275px;margin:7px auto 0}
+}
+@media(prefers-reduced-motion:reduce){
+ #pbm-scene *,header h1#site-title{animation:none!important;transition:none!important;will-change:auto!important}
+ #pbm-scene .pbm-ray{opacity:.08!important}
+}
