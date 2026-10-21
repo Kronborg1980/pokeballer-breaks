@@ -697,7 +697,7 @@
            The palette sets the mood and the weather sets the air; these
            set the scene. Hand-drawn props parked in a fixed layer behind
            the shop — pumpkins and ghosts at Halloween, a tree and a sleigh
-           at Christmas, cake and balloons for a birthday. Crystal League
+           at Christmas, cake and balloons for a birthday. Original theme
            stays bare on purpose: that is the everyday look.
            ============================================================ */
         /* Two layers. #decor is pinned to the window: ghosts drift, bats
@@ -1203,7 +1203,7 @@
         /* ============================================================
            SEASON DRESSING
            Props drawn as SVG and parked in a fixed layer behind the shop.
-           Each season gets a scene; Crystal League gets none, because the
+           Each season gets a scene; the default theme gets none, because the
            everyday look should stay clean.
            ============================================================ */
         // Single quotes: this lands inside a double-quoted style attribute,
@@ -1424,7 +1424,9 @@
             const sub = document.querySelector('#co-pay-btn .btn-subtext');
             if (sub) sub.textContent = stripeLive() ? 'Secure card checkout' : 'Streamlabs tip checkout';
             const note = document.getElementById('co-ref-note');
-            if (note && SITE.refInstructions) note.textContent = SITE.refInstructions;
+            if (note) note.textContent = stripeLive()
+                ? 'Your unique order reference is preserved for payment matching.'
+                : 'Copy your order code and break name above, and paste both with your YouTube username in the Streamlabs tip message.';
         }
         const DEFAULT_MAX_BUY = 10;
         let timerInterval = null;
@@ -1583,7 +1585,7 @@
                 const unit = lead.type === 'pack' ? unitWord(lead,left) : (left === 1 ? 'spot' : 'spots');
                 const more = open.length > 1 ? ' · +' + (open.length - 1) + ' more available' : '';
                 cards += '<button type="button" class="hero-status-card hero-live" data-target="card-' + esc(lead.id) + '" aria-label="View available break ' + esc(lead.name) + '">'
-                   + '<span class="hero-status-label"><span class="hero-status-dot"></span> AVAILABLE NOW</span>'
+                   + '<span class="hero-status-label"><span class="hero-status-dot"></span> ON AIR NOW</span>'
                    + '<span class="hero-status-title">' + esc(lead.name) + '</span>'
                    + '<span class="hero-status-sub">' + left + ' ' + esc(unit) + ' remaining' + more + ' · View break ↗</span>'
                    + '</button>';
