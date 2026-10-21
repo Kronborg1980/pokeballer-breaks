@@ -1588,7 +1588,7 @@
             const countdown = slide.querySelector('.hero-countdown');
             if (countdown) countdown.textContent = heroDuration(entry.live - Date.now());
             const indicator = board.querySelector('#hero-upcoming-position');
-            if (indicator) indicator.textContent = (heroUpcomingIndex + 1) + ' / ' + heroUpcoming.length;
+            if (indicator) indicator.textContent = (heroUpcomingIndex + 1) + ' of ' + heroUpcoming.length;
             board.querySelectorAll('.hero-carousel-dot').forEach((dot,i) => {
                 dot.classList.toggle('selected',i === heroUpcomingIndex);
                 dot.setAttribute('aria-pressed',String(i === heroUpcomingIndex));
@@ -1648,20 +1648,20 @@
             }
             if (soon.length) {
                 cards += '<div class="hero-upcoming-carousel" aria-label="Upcoming breaks carousel">'
-                    + '<button type="button" class="hero-status-card hero-upcoming" id="hero-upcoming-slide">'
+                    + '<div class="hero-upcoming-frame">'
+                    + '<button type="button" class="hero-status-card hero-upcoming hero-upcoming-shell" id="hero-upcoming-slide">'
                     + '<span class="hero-status-label"><span class="hero-status-dot"></span> UP NEXT <span class="hero-countdown"></span></span>'
                     + '<span class="hero-status-title"></span><span class="hero-status-sub"></span></button>';
                 if (soon.length > 1) {
-                    cards += '<div class="hero-carousel-controls">'
-                        + '<button type="button" class="hero-carousel-arrow" data-carousel-step="-1" aria-label="Previous upcoming break">‹</button>'
-                        + '<span class="hero-carousel-position" id="hero-upcoming-position"></span>'
-                        + '<span class="hero-carousel-dots" aria-label="Select upcoming break">'
+                    cards += '<button type="button" class="hero-upcoming-arrow left" data-carousel-step="-1" aria-label="Previous upcoming break">‹</button>'
+                        + '<button type="button" class="hero-upcoming-arrow right" data-carousel-step="1" aria-label="Next upcoming break">›</button>'
+                        + '<div class="hero-upcoming-meta">'
+                        + '<span class="hero-upcoming-count" id="hero-upcoming-position"></span>'
+                        + '<div class="hero-carousel-dots" aria-label="Select upcoming break">'
                         + soon.map((_,i)=>'<button type="button" class="hero-carousel-dot" data-carousel-index="'+i+'" aria-label="Show upcoming break '+(i+1)+'"></button>').join('')
-                        + '</span>'
-                        + '<button type="button" class="hero-carousel-arrow" data-carousel-step="1" aria-label="Next upcoming break">›</button>'
-                        + '</div>';
+                        + '</div></div>';
                 }
-                cards += '</div>';
+                cards += '</div></div>';
             }
             setPlate(cards ? '<div class="hero-status-row">' + cards + '</div>' :
                 '<div class="hero-status-empty">All breaks are closed right now — watch for the next drop from Pokeballer Mike.</div>');
