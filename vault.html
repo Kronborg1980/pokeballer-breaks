@@ -461,6 +461,103 @@
             .tier-title { letter-spacing: 3px; }
             .store-grid { grid-template-columns: 1fr; gap: 30px; }
         }
+
+        /* ============================================================
+           SEASON DRESSING
+           The palette sets the mood and the weather sets the air; these
+           set the scene. Hand-drawn props parked in a fixed layer behind
+           the shop — pumpkins and ghosts at Halloween, a tree and a sleigh
+           at Christmas, cake and balloons for a birthday. Crystal League
+           stays bare on purpose: that is the everyday look.
+           ============================================================ */
+        /* Two layers. #decor is pinned to the window: ghosts drift, bats
+           cross, the snow banks along the sill. #decor-top is pinned to the
+           top of the PAGE, so the garland and the cobwebs scroll away
+           instead of hanging over the content forever. */
+        #decor { position: fixed; inset: 0; z-index: 3; pointer-events: none; overflow: hidden; }
+        #decor-top { position: absolute; top: 0; left: 0; right: 0; height: 190px; z-index: 3; pointer-events: none; overflow: hidden; }
+        #decor svg, #decor-top svg { display: block; width: 100%; height: auto; }
+        .prop { position: absolute; }
+
+        .garland {
+            position: absolute; top: 0; left: -20px; right: -20px; height: 90px;
+            background-repeat: repeat-x; background-position: top left;
+        }
+        [data-theme="christmas"] .garland { filter: drop-shadow(0 4px 16px rgba(255,180,90,0.55)); animation: lightsBreathe 4s ease-in-out infinite; }
+        @keyframes lightsBreathe { 0%,100% { opacity: 1; } 50% { opacity: 0.72; } }
+
+        /* Things standing on the floor of the window. They hug the very
+           edges and are mostly outside the shop shell, so they frame the
+           page instead of covering it. */
+        .p-pumpkin-big   { left: -1%;   bottom: -8px; width: clamp(96px, 11vw, 186px); filter: drop-shadow(0 0 34px rgba(255,117,24,0.55)); }
+        .p-pumpkin-small { left: 6.5%;  bottom: -6px; width: clamp(54px, 6vw, 104px); filter: drop-shadow(0 0 22px rgba(255,117,24,0.4)); }
+        .p-pumpkin-right { right: -1%;  bottom: -10px; width: clamp(80px, 9.5vw, 150px); filter: drop-shadow(0 0 28px rgba(255,117,24,0.45)); }
+        .p-tree          { left: -1.5%; bottom: -6px; width: clamp(104px, 12.5vw, 200px); filter: drop-shadow(0 0 26px rgba(46,230,168,0.32)); }
+        .p-gifts         { left: 7.5%;  bottom: -2px; width: clamp(56px, 6.5vw, 112px); }
+        .p-gift-right    { right: 0.5%; bottom: -2px; width: clamp(54px, 6vw, 104px); }
+        .p-cake          { left: -0.5%; bottom: -6px; width: clamp(100px, 12vw, 188px); filter: drop-shadow(0 0 30px rgba(255,92,168,0.45)); }
+        .p-presents-bday { right: -1%;  bottom: -2px; width: clamp(60px, 7vw, 116px); }
+
+        /* A low bank of snow along the sill of the window. Squashed to a
+           fixed height so it never climbs over the cards. */
+        .snowdrift { position: absolute; left: -2%; right: -2%; bottom: -10px; width: 104%; opacity: 0.85; }
+        .snowdrift svg { height: 58px; }
+
+        [data-theme="halloween"] .top-nav,
+        [data-theme="christmas"] .top-nav,
+        [data-theme="birthday"] .top-nav { padding-top: 78px; }
+
+        /* Things in the air. */
+        .p-ghost { right: 4%; top: 24%; width: clamp(56px, 7vw, 120px); opacity: 0.55; animation: ghostDrift 11s ease-in-out infinite; }
+        .p-ghost-2 { left: 3%; top: 48%; width: clamp(44px, 5vw, 86px); opacity: 0.4; animation: ghostDrift 14s ease-in-out infinite reverse; }
+        @keyframes ghostDrift {
+            0%,100% { transform: translate3d(0,0,0) rotate(-3deg); }
+            50%     { transform: translate3d(-14px,-28px,0) rotate(4deg); }
+        }
+        .p-spider { left: 76%; top: 0; width: clamp(34px, 4vw, 58px); transform-origin: top center; animation: spiderDrop 13s ease-in-out infinite; }
+        @keyframes spiderDrop {
+            0%, 100% { transform: translateY(-40px); }
+            45%, 62% { transform: translateY(26px); }
+        }
+        .p-web { position: absolute; width: clamp(92px, 11vw, 168px); opacity: 0.3; }
+        .p-web-l { left: 0; top: 0; }
+        .p-web-r { right: 0; top: 0; transform: scaleX(-1); }
+
+        .p-balloon { position: absolute; bottom: -22%; width: clamp(40px, 5vw, 76px); animation: balloonRise linear infinite; }
+        @keyframes balloonRise {
+            0%   { transform: translate3d(0, 0, 0) rotate(-4deg); opacity: 0; }
+            8%   { opacity: 0.85; }
+            90%  { opacity: 0.85; }
+            100% { transform: translate3d(26px, -135vh, 0) rotate(5deg); opacity: 0; }
+        }
+
+        /* One pass across the sky, then a long wait. Not a merry-go-round. */
+        .flyer { position: absolute; left: -260px; width: clamp(110px, 13vw, 210px); }
+        .f-sleigh { top: 12%; animation: crossSky 54s linear infinite; }
+        .f-bats   { top: 18%; width: clamp(80px, 9vw, 150px); animation: crossSky 38s linear infinite; }
+        .f-bats-2 { top: 34%; width: clamp(54px, 6vw, 100px); animation: crossSky 46s linear infinite; animation-delay: -16s; opacity: 0.75; }
+        @keyframes crossSky {
+            0%   { transform: translate3d(0, 0, 0); }
+            38%  { transform: translate3d(calc(100vw + 520px), -70px, 0); }
+            100% { transform: translate3d(calc(100vw + 520px), -70px, 0); }
+        }
+        .bat-wing { animation: batFlap 0.42s ease-in-out infinite alternate; transform-origin: center; }
+        @keyframes batFlap { from { transform: scaleY(1); } to { transform: scaleY(0.55); } }
+
+        @media (max-width: 768px) {
+            .garland { height: 62px; background-size: 112px auto; }
+            .p-pumpkin-small, .p-gifts, .p-gift-right, .p-presents-bday,
+            .p-ghost-2, .p-spider, .p-web-r, .f-bats-2 { display: none; }
+            .p-pumpkin-big, .p-tree, .p-cake { width: 92px; }
+            .p-pumpkin-right { width: 70px; }
+            .p-ghost { width: 54px; right: 2%; }
+            .snowdrift svg { height: 38px; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .flyer, .p-balloon, .p-spider { display: none; }
+            .p-ghost, .p-ghost-2 { animation: none; }
+        }
+
         /* ---------- TOUCH ----------
            Solid glass instead of backdrop-filter stops the old Android
            repaint flicker. The travelling edge stays — it is the look —
@@ -569,6 +666,7 @@
             document.documentElement.setAttribute('data-theme', theme);
             try { localStorage.setItem('pbm-theme', theme); } catch (e) {}
             dressCast(theme);
+            renderDecor(theme);
             startWeather(theme);
         }
         async function loadSeason() {
@@ -669,6 +767,225 @@
             if (document.hidden) wxStop();
             else if (wxCtx && !wxRaf) wxRaf = requestAnimationFrame(wxDraw);
         });
+
+
+        /* ============================================================
+           SEASON DRESSING
+           Props drawn as SVG and parked in a fixed layer behind the shop.
+           Each season gets a scene; Crystal League gets none, because the
+           everyday look should stay clean.
+           ============================================================ */
+        // Single quotes: this lands inside a double-quoted style attribute,
+        // and a double quote here would close it and break the whole tag.
+        const svgUrl = svg => `url('data:image/svg+xml,${encodeURIComponent(svg.replace(/\s+/g, ' '))}')`;
+
+        // A garland tile. The wire leaves each edge at the same height, so
+        // repeating it horizontally draws one unbroken drooping string.
+        const GARLAND = {
+            birthday: `<svg xmlns="http://www.w3.org/2000/svg" width="160" height="90" viewBox="0 0 160 90">
+                <path d="M0 8 Q80 44 160 8" stroke="#ffd166" stroke-width="3" fill="none"/>
+                <path d="M28 19 L52 22 L40 54z" fill="#ff5ca8"/>
+                <path d="M68 24 L92 24 L80 58z" fill="#ffd166"/>
+                <path d="M108 22 L132 19 L120 54z" fill="#b05cff"/></svg>`,
+            halloween: `<svg xmlns="http://www.w3.org/2000/svg" width="160" height="90" viewBox="0 0 160 90">
+                <path d="M0 8 Q80 44 160 8" stroke="#5a3a18" stroke-width="3" fill="none"/>
+                <path d="M28 19 L52 22 L40 54z" fill="#ff7518"/>
+                <path d="M68 24 L92 24 L80 58z" fill="#8f4fff"/>
+                <path d="M108 22 L132 19 L120 54z" fill="#ff7518"/></svg>`,
+            christmas: `<svg xmlns="http://www.w3.org/2000/svg" width="160" height="90" viewBox="0 0 160 90">
+                <path d="M0 8 Q80 40 160 8" stroke="#2f4a3f" stroke-width="3" fill="none"/>
+                <rect x="37" y="19" width="6" height="8" fill="#2f4a3f"/><ellipse cx="40" cy="36" rx="8" ry="11" fill="#ff3b47"/>
+                <rect x="77" y="23" width="6" height="8" fill="#2f4a3f"/><ellipse cx="80" cy="40" rx="8" ry="11" fill="#2ee6a8"/>
+                <rect x="117" y="19" width="6" height="8" fill="#2f4a3f"/><ellipse cx="120" cy="36" rx="8" ry="11" fill="#ffcf6b"/></svg>`
+        };
+
+        const PROPS = {
+            pumpkin: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 182">
+                <path d="M104 52 q-4-30 20-42 q-6 24 8 36z" fill="#3f7d2e"/>
+                <rect x="93" y="30" width="13" height="28" rx="5" fill="#5a3b1a"/>
+                <ellipse cx="100" cy="112" rx="80" ry="64" fill="#d9571a"/>
+                <ellipse cx="66" cy="112" rx="40" ry="62" fill="#f4791f"/>
+                <ellipse cx="134" cy="112" rx="40" ry="62" fill="#f4791f"/>
+                <ellipse cx="100" cy="112" rx="32" ry="64" fill="#ff8c2b"/>
+                <path d="M70 94 L96 110 L70 120z" fill="#2a0b02"/>
+                <path d="M130 94 L104 110 L130 120z" fill="#2a0b02"/>
+                <path d="M100 114 L113 132 L87 132z" fill="#2a0b02"/>
+                <path d="M58 138 q42 28 84 0 q-12 16 -24 11 q-7 9 -18 0 q-13 7 -22-5 q-11 5 -20-6z" fill="#2a0b02"/></svg>`,
+
+            ghost: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 200">
+                <path d="M80 12 C38 12 24 48 24 86 L24 176 q10 12 20 0 q10-12 20 0 q10 12 20 0 q10-12 20 0 q10 12 20 0 L144 86 C144 48 122 12 80 12z" fill="#eaf2ff"/>
+                <ellipse cx="58" cy="84" rx="11" ry="15" fill="#1a1024"/>
+                <ellipse cx="102" cy="84" rx="11" ry="15" fill="#1a1024"/>
+                <ellipse cx="80" cy="120" rx="13" ry="18" fill="#1a1024"/></svg>`,
+
+            web: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160">
+                <g stroke="#ffffff" stroke-width="2" fill="none" stroke-linecap="round">
+                <path d="M0 0 L160 4 M0 0 L4 160 M0 0 L118 118 M0 0 L152 62 M0 0 L62 152"/>
+                <path d="M42 2 Q36 36 2 42 M82 2 Q70 70 2 82 M122 2 Q104 104 2 122 M158 4 Q136 136 4 158"/>
+                </g></svg>`,
+
+            spider: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 150">
+                <path d="M40 0 L40 86" stroke="#ffffff" stroke-width="1.6" opacity="0.5"/>
+                <g stroke="#15101c" stroke-width="5" fill="none" stroke-linecap="round">
+                <path d="M26 104 L4 90 M26 112 L2 112 M26 120 L6 136 M54 104 L76 90 M54 112 L78 112 M54 120 L74 136"/></g>
+                <ellipse cx="40" cy="112" rx="17" ry="20" fill="#15101c"/>
+                <circle cx="40" cy="92" r="10" fill="#15101c"/>
+                <circle cx="35" cy="90" r="3" fill="#ff7518"/><circle cx="45" cy="90" r="3" fill="#ff7518"/></svg>`,
+
+            bats: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 70">
+                <g fill="#15101c">
+                <g class="bat-wing"><path d="M6 24 q14-14 26-2 q8-10 16 0 q8-10 16 0 q12-12 26 2 q-16 4 -24 14 q-9-8 -17 0 q-8-8 -17 0 q-9-10 -26-14z"/></g>
+                <g class="bat-wing" style="animation-delay:-0.2s"><path d="M86 48 q10-10 19-1 q6-8 12 0 q6-8 12 0 q9-9 19 1 q-12 3 -18 10 q-7-6 -13 0 q-6-6 -13 0 q-6-7 -18-10z"/></g>
+                </g></svg>`,
+
+            tree: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 250">
+                <rect x="86" y="212" width="28" height="34" rx="4" fill="#5a3a1c"/>
+                <path d="M100 118 L184 220 L16 220z" fill="#1d6b3c"/>
+                <path d="M100 64 L166 158 L34 158z" fill="#237a45"/>
+                <path d="M100 18 L148 98 L52 98z" fill="#1d6b3c"/>
+                <path d="M100 118 q28 30 52 46 q-30 6 -52 -6 q-22 12 -52 6 q24-16 52-46z" fill="#eaf4ff" opacity="0.65"/>
+                <path d="M100 64 q22 24 40 36 q-24 5 -40 -5 q-16 10 -40 -5 q18-12 40-36z" fill="#eaf4ff" opacity="0.6"/>
+                <circle cx="76" cy="188" r="9" fill="#ff3b47"/><circle cx="124" cy="196" r="8" fill="#ffcf6b"/>
+                <circle cx="100" cy="166" r="7" fill="#2ee6a8"/><circle cx="68" cy="140" r="7" fill="#ffcf6b"/>
+                <circle cx="130" cy="146" r="7" fill="#ff3b47"/><circle cx="100" cy="92" r="6" fill="#ff3b47"/>
+                <path d="M100 0 L108 22 L131 22 L112 36 L120 58 L100 44 L80 58 L88 36 L69 22 L92 22z" fill="#ffcf6b"/></svg>`,
+
+            gift: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 112">
+                <rect x="8" y="40" width="104" height="68" rx="6" fill="#c62833"/>
+                <rect x="8" y="40" width="104" height="15" rx="5" fill="#a81f29"/>
+                <rect x="52" y="40" width="16" height="68" fill="#ffcf6b"/>
+                <rect x="8" y="62" width="104" height="13" fill="#ffcf6b"/>
+                <path d="M60 40 C40 40 26 24 38 14 C52 4 60 26 60 40z" fill="#ffcf6b"/>
+                <path d="M60 40 C80 40 94 24 82 14 C68 4 60 26 60 40z" fill="#ffcf6b"/></svg>`,
+
+            gift2: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 112">
+                <rect x="10" y="46" width="100" height="62" rx="6" fill="#2ee6a8"/>
+                <rect x="10" y="46" width="100" height="14" rx="5" fill="#1fbf8a"/>
+                <rect x="50" y="46" width="16" height="62" fill="#ff3b47"/>
+                <rect x="10" y="66" width="100" height="12" fill="#ff3b47"/>
+                <path d="M58 46 C40 46 28 30 39 21 C52 12 58 33 58 46z" fill="#ff3b47"/>
+                <path d="M58 46 C76 46 88 30 77 21 C64 12 58 33 58 46z" fill="#ff3b47"/></svg>`,
+
+            drift: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 130" preserveAspectRatio="none">
+                <path d="M0 70 q80-34 160-8 q70 22 140-4 q80-30 160 2 q70 28 140 0 q80-32 160 4 q70 26 140-6 q80-28 160 12 L1200 130 L0 130z" fill="#eaf4ff" opacity="0.88"/>
+                <path d="M0 96 q110-22 210 2 q90 22 180-2 q100-24 200 2 q95 24 190-2 q110-26 220 6 L1200 130 L0 130z" fill="#ffffff" opacity="0.7"/></svg>`,
+
+            sleigh: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 110">
+                <g fill="#0d0d18">
+                <ellipse cx="196" cy="60" rx="28" ry="14"/>
+                <rect x="170" y="66" width="5" height="26" rx="2.5"/><rect x="185" y="68" width="5" height="24" rx="2.5"/>
+                <rect x="206" y="68" width="5" height="24" rx="2.5"/><rect x="219" y="66" width="5" height="26" rx="2.5"/>
+                <path d="M218 52 L234 36 L243 42 L230 58z"/>
+                <ellipse cx="241" cy="34" rx="12" ry="8" transform="rotate(-20 241 34)"/>
+                <ellipse cx="166" cy="54" rx="10" ry="5" transform="rotate(25 166 54)"/>
+                </g>
+                <g stroke="#0d0d18" stroke-width="3.5" fill="none" stroke-linecap="round">
+                <path d="M238 24 L232 8 M238 24 L250 10 M232 20 L218 14"/>
+                <path d="M168 62 L108 66"/></g>
+                <g fill="#0d0d18">
+                <path d="M14 48 q4-24 30-24 l56 0 q-6 24 -30 26 z"/>
+                <circle cx="56" cy="30" r="11"/>
+                <path d="M46 24 q10-16 24-4" fill="none" stroke="#0d0d18" stroke-width="5" stroke-linecap="round"/>
+                </g>
+                <path d="M6 54 q22 10 50 8 q24-2 34-10" stroke="#0d0d18" stroke-width="5" fill="none" stroke-linecap="round"/></svg>`,
+
+            cake: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 196">
+                <g>
+                <path d="M66.5 46 q9-13 0-22 q-9 9 0 22z" fill="#ffd166"/>
+                <path d="M99.5 38 q9-13 0-22 q-9 9 0 22z" fill="#ffd166"/>
+                <path d="M132.5 46 q9-13 0-22 q-9 9 0 22z" fill="#ffd166"/>
+                <rect x="62" y="46" width="9" height="36" rx="4" fill="#ff8ec4"/>
+                <rect x="95" y="38" width="9" height="44" rx="4" fill="#8ad8ff"/>
+                <rect x="128" y="46" width="9" height="36" rx="4" fill="#b05cff"/>
+                </g>
+                <rect x="36" y="80" width="128" height="44" rx="8" fill="#ffe3f1"/>
+                <path d="M36 92 q12 14 24 0 q12 14 24 0 q12 14 24 0 q12 14 24 0 q12 14 24 0 L164 80 L36 80z" fill="#fff6fb"/>
+                <rect x="22" y="122" width="156" height="52" rx="9" fill="#ff8ec4"/>
+                <path d="M22 134 q14 16 28 0 q14 16 28 0 q14 16 28 0 q14 16 28 0 q14 16 28 0 L178 122 L22 122z" fill="#ffd166"/>
+                <circle cx="52" cy="152" r="5" fill="#fff6fb"/><circle cx="86" cy="158" r="5" fill="#fff6fb"/>
+                <circle cx="120" cy="150" r="5" fill="#fff6fb"/><circle cx="150" cy="158" r="5" fill="#fff6fb"/>
+                <rect x="12" y="172" width="176" height="14" rx="7" fill="#dfe6ff"/></svg>`,
+
+            balloon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 130">
+                <path d="M40 72 q-14 24 -2 56" stroke="#ffffff" stroke-width="1.6" fill="none" opacity="0.5"/>
+                <ellipse cx="40" cy="42" rx="33" ry="40" fill="currentColor"/>
+                <ellipse cx="28" cy="28" rx="9" ry="13" fill="#ffffff" opacity="0.35"/>
+                <path d="M34 80 L46 80 L40 92z" fill="currentColor"/></svg>`,
+
+            presents: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130 120">
+                <rect x="6" y="52" width="62" height="64" rx="5" fill="#b05cff"/>
+                <rect x="30" y="52" width="14" height="64" fill="#ffd166"/>
+                <rect x="6" y="72" width="62" height="11" fill="#ffd166"/>
+                <rect x="70" y="72" width="54" height="44" rx="5" fill="#ff5ca8"/>
+                <rect x="90" y="72" width="13" height="44" fill="#fff6fb"/>
+                <rect x="70" y="88" width="54" height="10" fill="#fff6fb"/>
+                <path d="M37 52 C22 52 12 38 21 30 C32 22 37 40 37 52z" fill="#ffd166"/>
+                <path d="M37 52 C52 52 62 38 53 30 C42 22 37 40 37 52z" fill="#ffd166"/></svg>`
+        };
+
+        const BALLOON_COLORS = ['#ff5ca8', '#ffd166', '#b05cff', '#8ad8ff', '#ff8ec4'];
+
+        function decorLayer(id) {
+            let el = document.getElementById(id);
+            if (!el) {
+                el = document.createElement('div');
+                el.id = id;
+                el.setAttribute('aria-hidden', 'true');
+                document.body.appendChild(el);
+            }
+            return el;
+        }
+
+        function renderDecor(theme) {
+            const layer = decorLayer('decor');      // travels with the window
+            const top = decorLayer('decor-top');    // stays at the top of the page
+            layer.innerHTML = '';
+            top.innerHTML = '';
+            if (theme === 'crystal') return;
+
+            const parts = [];
+            const ground = [];
+            const hanging = [];
+            const garland = GARLAND[theme];
+            if (garland) hanging.push(`<div class="garland" style="background-image:${svgUrl(garland)};background-size:160px auto;"></div>`);
+
+            if (theme === 'halloween') {
+                hanging.push(`<div class="prop p-web p-web-l">${PROPS.web}</div>`);
+                hanging.push(`<div class="prop p-web p-web-r">${PROPS.web}</div>`);
+                ground.push(`<div class="prop p-pumpkin-big">${PROPS.pumpkin}</div>`);
+                ground.push(`<div class="prop p-pumpkin-small">${PROPS.pumpkin}</div>`);
+                ground.push(`<div class="prop p-pumpkin-right">${PROPS.pumpkin}</div>`);
+                parts.push(`<div class="prop p-ghost">${PROPS.ghost}</div>`);
+                parts.push(`<div class="prop p-ghost-2">${PROPS.ghost}</div>`);
+                hanging.push(`<div class="prop p-spider">${PROPS.spider}</div>`);
+                parts.push(`<div class="flyer f-bats">${PROPS.bats}</div>`);
+                parts.push(`<div class="flyer f-bats-2">${PROPS.bats}</div>`);
+            }
+
+            if (theme === 'christmas') {
+                ground.push(`<div class="snowdrift">${PROPS.drift}</div>`);
+                ground.push(`<div class="prop p-tree">${PROPS.tree}</div>`);
+                ground.push(`<div class="prop p-gifts">${PROPS.gift}</div>`);
+                ground.push(`<div class="prop p-gift-right">${PROPS.gift2}</div>`);
+                parts.push(`<div class="flyer f-sleigh">${PROPS.sleigh}</div>`);
+            }
+
+            if (theme === 'birthday') {
+                ground.push(`<div class="prop p-cake">${PROPS.cake}</div>`);
+                ground.push(`<div class="prop p-presents-bday">${PROPS.presents}</div>`);
+                for (let i = 0; i < 6; i++) {
+                    const left = 8 + i * 15 + Math.random() * 6;
+                    const dur = 17 + Math.random() * 13;
+                    const delay = -Math.random() * dur;
+                    const color = BALLOON_COLORS[i % BALLOON_COLORS.length];
+                    parts.push(`<div class="prop p-balloon" style="left:${left.toFixed(1)}%;color:${color};animation-duration:${dur.toFixed(1)}s;animation-delay:${delay.toFixed(1)}s;">${PROPS.balloon}</div>`);
+                }
+            }
+
+            // Ground props last so they sit in front of the sky ones.
+            layer.innerHTML = parts.join('') + ground.join('');
+            top.innerHTML = hanging.join('');
+        }
 
         /* ---------- VEGAS NEON: per-letter tube wrapping ---------- */
         function neonize(el, palette, small) {
