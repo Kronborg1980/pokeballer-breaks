@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PBM Breaks · The Crystal League</title>
+    <title>PBM Breaks · Pokeballer Mike</title>
 
     <link rel="icon" type="image/svg+xml" href="https://upload.wikimedia.org/wikipedia/commons/5/53/Pok%C3%A9_Ball_icon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -920,9 +920,8 @@
                 <h1 id="site-title">PBM BREAKS</h1>
                 <div class="logo-animator logo-right"><img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="header-logo guardian" alt=""></div>
             </div>
-            <div class="marquee-plate" id="hero-plate">
-                <span class="plate-led" id="hero-led"></span>
-                <span id="hero-line">Checking the board…</span>
+            <div class="hero-status-board" id="hero-plate" aria-live="polite" aria-atomic="true">
+                <div class="hero-status-empty" id="hero-line">Checking upcoming breaks…</div>
             </div>
         </div>
     </header>
@@ -948,7 +947,7 @@
         <div id="store-sections"></div>
     </main>
 
-    <footer><p>© 2025 PBM Breaks · The Crystal League v3.0 · Not affiliated with Nintendo</p></footer>
+    <footer><p>© 2026 PBM Breaks · Pokeballer Mike · Not affiliated with Nintendo</p></footer>
 
     <div id="myModal" class="image-modal" onclick="if(event.target===this) closeModal()">
         <button class="close-modal" aria-label="Close image">&times;</button>
@@ -1012,7 +1011,9 @@
                 <div class="ref-box">
                     <span style="font-size:0.8rem;font-weight:800;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;">Your order reference</span>
                     <span class="ref-code" id="co-ref">PBM-XXXXXX</span>
-                    <span style="font-size:0.85rem;color:#fff;" id="co-ref-note">Put this code <strong>and your YouTube username</strong> in the Streamlabs tip message so Mike can match your payment to your order.</span>
+                    <div id="co-break-name" style="font-size:1rem;font-weight:800;color:#fff;margin:7px auto;overflow-wrap:anywhere;"></div>
+                    <button type="button" id="co-copy-reference" onclick="copyOrderMessage()" style="margin:8px auto 10px;display:block;padding:10px 16px;border:1px solid var(--accent-cyan);border-radius:10px;background:rgba(0,255,242,.10);color:#fff;font:800 13px Inter,sans-serif;cursor:pointer;">COPY REFERENCE + BREAK NAME</button>
+                    <span style="font-size:0.85rem;color:#fff;" id="co-ref-note">Copy the reference and break name above, then paste them with your YouTube username into the Streamlabs tip message so Mike knows exactly what you purchased.</span>
                 </div>
                 <p style="color:var(--text-dim);font-size:0.95rem;line-height:1.6;margin-bottom:1rem;text-align:center;">
                     Reserved: <strong id="co-ref-qty" style="color:#fff;"></strong> · Amount to pay: <strong id="co-ref-total" style="color:#ffd700;"></strong>
@@ -1035,7 +1036,7 @@
             paymentMode: 'streamlabs',
             tipUrl: 'https://streamlabs.com/pokballer/tip',
             stripeReady: false,
-            refInstructions: 'Put this code and your YouTube username in the Streamlabs tip message so Mike can match your payment to your order.',
+            refInstructions: 'Paste the reference and break name, plus your YouTube username, in the Streamlabs tip message.',
             theme: 'crystal'
         };
 
@@ -1544,47 +1545,69 @@
             return `${h}:${String(mi || 0).padStart(2, '0')} ${ap}`;
         }
 
-        function setPlate(html, lit) {
-            const line = document.getElementById('hero-line');
-            const plate = document.getElementById('hero-plate');
-            if (line) line.innerHTML = html;
-            if (plate) plate.classList.toggle('plate-on', !!lit);
+        // Two independently sourced status cards: open and upcoming can coexist.
+        // "On air" follows the site's existing open-now logic; it is NOT a claim
+        // that the YouTube stream was independently verified as currently live.
+        function heroDuration(ms) {
+            const sec = Math.max(0, Math.floor(ms / 1000));
+            const days = Math.floor(sec / 86400);
+            const hrs = Math.floor((sec % 86400) / 3600);
+            const mins = Math.floor((sec % 3600) / 60);
+            if (days) return days + 'd ' + hrs + 'h';
+            if (hrs) return hrs + 'h ' + mins + 'm';
+            return mins + 'm ' + (sec % 60) + 's';
         }
-
+        function setPlate(html) {
+            const board = document.getElementById('hero-plate');
+            if (board) board.innerHTML = html;
+        }
         function updateHeroPlate() {
             const items = (window.storeItems || []).filter(i => i && !i.hidden);
             if (!items.length) {
-                setPlate('Shelves are being restocked — new breaks land here first.', false);
+                setPlate('<div class="hero-status-empty">Fresh breaks from Pokeballer Mike are coming soon.</div>');
                 return;
             }
-            const now = Date.now();
-            const open = [], soon = [];
+            const now = Date.now(), open = [], soon = [];
             items.forEach(i => {
                 const end = centralToMs(i.scheduleEnd);
                 const live = centralToMs(i.goLiveTime);
                 const stock = toInt(i.stock);
-                if (live && now < live) { soon.push({ i, live }); return; }
-                if (stock > 0 && (!end || now < end)) open.push(i);
+                if (stock <= 0 || (end && now >= end)) return;
+                if (live && now < live) soon.push({i,live});
+                else open.push(i);
             });
-
+            soon.sort((a,b) => a.live - b.live);
+            let cards = '';
             if (open.length) {
-                const lead = open[0];
-                const left = toInt(lead.stock);
-                const unit = lead.type === 'pack' ? unitWord(lead, left) : (left === 1 ? 'spot' : 'spots');
-                const more = open.length > 1 ? ` · +${open.length - 1} open` : '';
-                setPlate(`<b>On air now</b> — ${esc(lead.name)}, ${left} ${unit} left${more}`, true);
-                return;
+                const lead = open[0], left = toInt(lead.stock);
+                const unit = lead.type === 'pack' ? unitWord(lead,left) : (left === 1 ? 'spot' : 'spots');
+                const more = open.length > 1 ? ' · +' + (open.length - 1) + ' more available' : '';
+                cards += '<button type="button" class="hero-status-card hero-live" data-target="card-' + esc(lead.id) + '" aria-label="View available break ' + esc(lead.name) + '">'
+                   + '<span class="hero-status-label"><span class="hero-status-dot"></span> AVAILABLE NOW</span>'
+                   + '<span class="hero-status-title">' + esc(lead.name) + '</span>'
+                   + '<span class="hero-status-sub">' + left + ' ' + esc(unit) + ' remaining' + more + ' · View break ↗</span>'
+                   + '</button>';
             }
             if (soon.length) {
-                soon.sort((a, b) => a.live - b.live);
                 const next = soon[0];
                 const when = formatCloseDate(next.i.goLiveTime);
                 const at = centralClock(next.i.goLiveTime);
-                setPlate(`<b>Next up</b> — ${esc(next.i.name)}, ${when} at ${at} Central`, false);
-                return;
+                const more = soon.length > 1 ? ' · +' + (soon.length - 1) + ' scheduled' : '';
+                cards += '<button type="button" class="hero-status-card hero-upcoming" data-target="card-' + esc(next.i.id) + '" aria-label="View upcoming break ' + esc(next.i.name) + '">'
+                   + '<span class="hero-status-label"><span class="hero-status-dot"></span> UP NEXT <span class="hero-countdown">' + heroDuration(next.live-now) + '</span></span>'
+                   + '<span class="hero-status-title">' + esc(next.i.name) + '</span>'
+                   + '<span class="hero-status-sub">' + esc(when) + ' · ' + esc(at) + ' Central' + more + ' · View break ↗</span>'
+                   + '</button>';
             }
-            setPlate('Every break is closed for now — the next one gets posted here first.', false);
+            setPlate(cards ? '<div class="hero-status-row">' + cards + '</div>' :
+                '<div class="hero-status-empty">All breaks are closed right now — watch for the next drop from Pokeballer Mike.</div>');
         }
+        document.getElementById('hero-plate').addEventListener('click', e => {
+            const button = e.target.closest('button[data-target]');
+            if (!button) return;
+            const target = document.getElementById(button.dataset.target);
+            if (target) target.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',block:'center'});
+        });
 
         function renderSkeletons(container, count) {
             let html = '';
@@ -1866,7 +1889,7 @@
                 updateHeroPlate();
             } catch (e) {
                 console.error('Store error:', e);
-                setPlate('The board is offline for a moment — try again in a second.', false);
+                setPlate('<div class="hero-status-empty">The board is temporarily offline. Please try again.</div>');
                 sections.innerHTML = `<div class="store-grid"><div class="error-card"><h2>Couldn't load items</h2><p>Connection timed out.</p><button class="retry-btn" onclick="loadStore()">Try again</button></div></div>`;
             }
         }
@@ -1941,7 +1964,7 @@
         function startCountdownTimer() {
             if (timerInterval) clearInterval(timerInterval);
             updateTimers();
-            timerInterval = setInterval(updateTimers, 1000);
+            timerInterval = setInterval(() => { updateTimers(); updateHeroPlate(); }, 1000);
         }
         /* ---------- LONG DESCRIPTIONS ----------
            Mike writes proper sell copy, and a paragraph of it turns a card
@@ -2086,6 +2109,23 @@
             const qty = readQty(true);
             const price = parseFloat(activeCheckoutItem.price || 0);
             document.getElementById('co-total').innerText = (qty * price).toFixed(2);
+        }
+
+        async function copyOrderMessage() {
+            const ref = document.getElementById('co-ref').textContent.trim();
+            const breakName = document.getElementById('co-break-name').textContent.trim();
+            const message = ref + ' — ' + breakName;
+            const button = document.getElementById('co-copy-reference');
+            try {
+                await navigator.clipboard.writeText(message);
+                button.textContent = 'COPIED — PASTE INTO STREAMLABS ✓';
+            } catch (e) {
+                const temp = document.createElement('textarea');
+                temp.value = message; temp.style.position = 'fixed'; temp.style.opacity = '0';
+                document.body.appendChild(temp); temp.select();
+                const copied = document.execCommand('copy'); temp.remove();
+                button.textContent = copied ? 'COPIED — PASTE INTO STREAMLABS ✓' : 'SELECT THE REFERENCE AND BREAK NAME ABOVE';
+            }
         }
 
         function goToPayment() {
@@ -2282,6 +2322,9 @@
             }
 
             document.getElementById('co-ref').textContent = result.orderRef || '—';
+            document.getElementById('co-break-name').textContent = item.name || '';
+            const copyButton = document.getElementById('co-copy-reference');
+            copyButton.textContent = 'COPY REFERENCE + BREAK NAME';
             document.getElementById('co-ref-qty').textContent = `${confirmedQty} ${unitWord(item, confirmedQty)}`;
             document.getElementById('co-ref-total').textContent = `$${confirmedTotal}`;
             document.getElementById('co-form').style.display = 'none';
