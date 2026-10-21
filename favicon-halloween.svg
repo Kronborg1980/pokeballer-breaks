@@ -1,7 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-<rect width="64" height="64" rx="15" fill="#1c0c24"/>
-<path d="M32 14q-3-10 7-12l4 5q-7 1-6 9" fill="#5ed768"/>
-<path d="M32 17c-7-5-19-4-25 7C1 36 8 53 20 57q8 4 12 0 7 4 13 0c14-6 20-24 11-35-6-8-16-9-24-5Z" fill="#ff8a21" stroke="#ffbe53" stroke-width="2.5"/>
-<path d="M13 31 25 26 23 38 11 37ZM51 31 39 26 41 38 53 37ZM16 44l9 3 7-6 7 6 9-3-3 8H19Z" fill="#261327"/>
-<path d="M32 20v33" stroke="#c6521c" stroke-width="2" opacity=".55"/>
+<rect width="64" height="64" rx="14" fill="#16091f"/>
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#b667ff"/><stop offset="1" stop-color="#7d34d1"/></linearGradient></defs>
+<path d="M18 23 8 18l6 12-7 11 12-4 3 12 7-8 8 8 3-12 12 4-7-11 6-12-10 5-7-8-7 8Z" fill="url(#g)"/>
+<path d="M19 30c2-10 11-17 23-17 4 0 9 1 13 3-1 11-10 19-23 19-5 0-9-2-13-5Z" fill="#d39cff" opacity=".15"/>
+<path d="M20 40c1-10 10-17 21-17 7 0 13 3 17 8-2 10-11 17-23 17-6 0-11-3-15-8Z" fill="#b462ff"/>
+<path d="M22 31c5-4 15-5 20 0-4 1-7 2-10 5-4-3-6-4-10-5Zm0 0" fill="#7a2bc0"/>
+<ellipse cx="25" cy="39" rx="4" ry="5" fill="#17061f"/><ellipse cx="39" cy="39" rx="4" ry="5" fill="#17061f"/>
+<path d="M24 49c5-3 11-3 16 0-2 4-6 6-8 6s-6-2-8-6Z" fill="#17061f"/>
 </svg>

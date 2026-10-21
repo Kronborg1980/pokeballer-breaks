@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PBM Breaks · Pokeballer Mike</title>
+    <title>PBM Breaks · The Crystal League</title>
 
-    <link rel="icon" type="image/svg+xml" href="favicon-original.svg">
+    <link id="site-favicon" rel="icon" type="image/svg+xml" href="favicon-original.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Tilt+Neon&display=swap" rel="stylesheet">
@@ -18,7 +18,18 @@
             var t = 'crystal';
             try { t = localStorage.getItem('pbm-theme') || 'crystal'; } catch (e) {}
             if (['crystal', 'birthday', 'halloween', 'christmas'].indexOf(t) === -1) t = 'crystal';
+            var favicons = {
+                crystal: 'favicon-original.svg',
+                halloween: 'favicon-halloween.svg',
+                christmas: 'favicon-christmas.svg',
+                birthday: 'favicon-birthday.svg'
+            };
             document.documentElement.setAttribute('data-theme', t);
+            var link = document.getElementById('site-favicon') || document.querySelector('link[rel="icon"]');
+            if (link) {
+                link.setAttribute('type', 'image/svg+xml');
+                link.setAttribute('href', favicons[t] || favicons.crystal);
+            }
         })();
     </script>
     <style>
@@ -246,7 +257,7 @@
 
         .store-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 35px; }
         .item-card { display: flex; flex-direction: column; height: 100%; }
-        .type-tag { position: absolute; top: 64px; right: 20px; padding: 8px 14px; border-radius: 10px; font-weight: 800; font-size: 0.75rem; z-index: 7; letter-spacing: 1px; text-transform: uppercase; backdrop-filter: blur(10px); display: flex; align-items: center; gap: 6px; }
+        .type-tag { position: absolute; top: 48px; right: 20px; padding: 8px 14px; border-radius: 10px; font-weight: 800; font-size: 0.75rem; z-index: 7; letter-spacing: 1px; text-transform: uppercase; backdrop-filter: blur(10px); display: flex; align-items: center; gap: 6px; }
         .type-tag.no-ribbon { top: 20px; }
         .tag-msrp   { background: rgba(0,40,40,0.85); border: 1px solid var(--msrp-green); color: #fff; text-shadow: 0 1px 3px #000; box-shadow: 0 0 15px rgba(0,255,157,0.35); }
         .tag-bundle { background: rgba(40,0,60,0.85); border: 1px solid #bd00ff; color: #fff; text-shadow: 0 1px 3px #000; box-shadow: 0 0 20px rgba(213,0,255,0.45); }
@@ -697,7 +708,7 @@
            The palette sets the mood and the weather sets the air; these
            set the scene. Hand-drawn props parked in a fixed layer behind
            the shop — pumpkins and ghosts at Halloween, a tree and a sleigh
-           at Christmas, cake and balloons for a birthday. Original theme
+           at Christmas, cake and balloons for a birthday. Crystal League
            stays bare on purpose: that is the everyday look.
            ============================================================ */
         /* Two layers. #decor is pinned to the window: ghosts drift, bats
@@ -819,7 +830,7 @@
             .item-img-box { height: 210px; }
             .item-content { padding: 1.3rem; }
             .item-content h3 { font-size: 1.25rem; }
-            .type-tag { font-size: 0.62rem; padding: 6px 9px; right: 12px; top: 60px; letter-spacing: 0.5px; }
+            .type-tag { font-size: 0.62rem; padding: 6px 9px; right: 12px; top: 44px; letter-spacing: 0.5px; }
             .type-tag.no-ribbon { top: 14px; }
             .price { font-size: 1.75rem; }
             .stock { font-size: 0.8rem; padding: 5px 11px; }
@@ -890,31 +901,28 @@
             }
             #weather { display: none; }
         }
-        /* Product-type badge is anchored to the IMAGE, never to the full
-           card. The UPCOMING BREAK ribbon and bundle badge cannot overlap. */
-        .item-img-box > .type-tag,
-        .store-grid.solo .item-img-box > .type-tag {
-            position: absolute;
-            top: auto !important;
-            bottom: 14px;
-            right: 14px;
-            left: auto;
-            z-index: 9;
-            max-width: calc(100% - 28px);
-            box-sizing: border-box;
-            pointer-events: none;
-            white-space: nowrap;
-        }
-        @media (max-width: 480px) {
-            .item-img-box > .type-tag,
-            .store-grid.solo .item-img-box > .type-tag {
-                bottom: 10px;
-                right: 10px;
-                max-width: calc(100% - 20px);
-            }
-        }
     </style>
-    <link rel="stylesheet" href="cinematic-seasons.css">
+<style>
+
+/* PBM Motion System — progressive enhancement; no layout or data changes */
+@keyframes pbm-arrive {from {opacity:.35;transform:translate3d(0,14px,0)} to {opacity:1;transform:translate3d(0,0,0)}}
+@keyframes pbm-sheen {from {transform:translateX(-150%) skewX(-20deg)} to {transform:translateX(350%) skewX(-20deg)}}
+@supports (animation-delay: calc(sibling-index() * 1ms)) {
+  .pbm-motion-list > * { animation:pbm-arrive .48s cubic-bezier(.2,.8,.2,1) both; animation-delay:calc((sibling-index() - 1) * 65ms); }
+}
+@supports not (animation-delay: calc(sibling-index() * 1ms)) {
+  .pbm-motion-list > * {animation:pbm-arrive .48s cubic-bezier(.2,.8,.2,1) both}
+  .pbm-motion-list > :nth-child(2) {animation-delay:65ms}
+  .pbm-motion-list > :nth-child(3) {animation-delay:130ms}
+  .pbm-motion-list > :nth-child(4) {animation-delay:195ms}
+  .pbm-motion-list > :nth-child(5) {animation-delay:260ms}
+  .pbm-motion-list > :nth-child(6) {animation-delay:325ms}
+}
+.pbm-spotlight {--pbm-x:50%;--pbm-y:50%;position:relative;isolation:isolate}
+.pbm-spotlight::after {content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:1;background:radial-gradient(320px circle at var(--pbm-x) var(--pbm-y),rgba(255,255,255,.075),transparent 70%);opacity:0;transition:opacity .25s}
+@media(hover:hover) and (pointer:fine){.pbm-spotlight:hover::after{opacity:1}}
+@media(prefers-reduced-motion:reduce){.pbm-motion-list > *{animation:none!important}.pbm-spotlight::after{transition:none!important}}
+</style>
 </head>
 <body>
     <div class="grain"></div>
@@ -943,8 +951,9 @@
                 <h1 id="site-title">PBM BREAKS</h1>
                 <div class="logo-animator logo-right"><img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="header-logo guardian" alt=""></div>
             </div>
-            <div class="hero-status-board" id="hero-plate" aria-live="polite" aria-atomic="true">
-                <div class="hero-status-empty" id="hero-line">Checking upcoming breaks…</div>
+            <div class="marquee-plate" id="hero-plate">
+                <span class="plate-led" id="hero-led"></span>
+                <span id="hero-line">Checking the board…</span>
             </div>
         </div>
     </header>
@@ -970,7 +979,7 @@
         <div id="store-sections"></div>
     </main>
 
-    <footer><p>© 2026 PBM Breaks · Pokeballer Mike · Not affiliated with Nintendo</p></footer>
+    <footer><p>© 2025 PBM Breaks · The Crystal League v3.0 · Not affiliated with Nintendo</p></footer>
 
     <div id="myModal" class="image-modal" onclick="if(event.target===this) closeModal()">
         <button class="close-modal" aria-label="Close image">&times;</button>
@@ -1034,9 +1043,7 @@
                 <div class="ref-box">
                     <span style="font-size:0.8rem;font-weight:800;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;">Your order reference</span>
                     <span class="ref-code" id="co-ref">PBM-XXXXXX</span>
-                    <div id="co-break-name" style="font-size:1rem;font-weight:800;color:#fff;margin:7px auto;overflow-wrap:anywhere;"></div>
-                    <button type="button" id="co-copy-reference" onclick="copyOrderMessage()" style="margin:8px auto 10px;display:block;padding:10px 16px;border:1px solid var(--accent-cyan);border-radius:10px;background:rgba(0,255,242,.10);color:#fff;font:800 13px Inter,sans-serif;cursor:pointer;">COPY REFERENCE + BREAK NAME</button>
-                    <span style="font-size:0.85rem;color:#fff;" id="co-ref-note">Copy the reference and break name above, then paste them with your YouTube username into the Streamlabs tip message so Mike knows exactly what you purchased.</span>
+                    <span style="font-size:0.85rem;color:#fff;" id="co-ref-note">Put this code <strong>and your YouTube username</strong> in the Streamlabs tip message so Mike can match your payment to your order.</span>
                 </div>
                 <p style="color:var(--text-dim);font-size:0.95rem;line-height:1.6;margin-bottom:1rem;text-align:center;">
                     Reserved: <strong id="co-ref-qty" style="color:#fff;"></strong> · Amount to pay: <strong id="co-ref-total" style="color:#ffd700;"></strong>
@@ -1059,7 +1066,7 @@
             paymentMode: 'streamlabs',
             tipUrl: 'https://streamlabs.com/pokballer/tip',
             stripeReady: false,
-            refInstructions: 'Paste the reference and break name, plus your YouTube username, in the Streamlabs tip message.',
+            refInstructions: 'Put this code and your YouTube username in the Streamlabs tip message so Mike can match your payment to your order.',
             theme: 'crystal'
         };
 
@@ -1100,10 +1107,25 @@
             });
         }
 
+        function updateThemeFavicon(theme) {
+            const favicons = {
+                crystal: 'favicon-original.svg',
+                halloween: 'favicon-halloween.svg',
+                christmas: 'favicon-christmas.svg',
+                birthday: 'favicon-birthday.svg'
+            };
+            const link = document.getElementById('site-favicon') || document.querySelector('link[rel="icon"]');
+            if (!link) return;
+            link.setAttribute('type', 'image/svg+xml');
+            link.setAttribute('href', favicons[theme] || favicons.crystal);
+        }
+
         function applyTheme(name) {
+
             const theme = THEMES.indexOf(name) === -1 ? 'crystal' : name;
             document.documentElement.setAttribute('data-theme', theme);
             try { localStorage.setItem('pbm-theme', theme); } catch (e) {}
+            updateThemeFavicon(theme);
             dressCast(theme);
             renderDecor(theme);
             startWeather(theme);
@@ -1226,7 +1248,7 @@
         /* ============================================================
            SEASON DRESSING
            Props drawn as SVG and parked in a fixed layer behind the shop.
-           Each season gets a scene; the default theme gets none, because the
+           Each season gets a scene; Crystal League gets none, because the
            everyday look should stay clean.
            ============================================================ */
         // Single quotes: this lands inside a double-quoted style attribute,
@@ -1447,9 +1469,7 @@
             const sub = document.querySelector('#co-pay-btn .btn-subtext');
             if (sub) sub.textContent = stripeLive() ? 'Secure card checkout' : 'Streamlabs tip checkout';
             const note = document.getElementById('co-ref-note');
-            if (note) note.textContent = stripeLive()
-                ? 'Your unique order reference is preserved for payment matching.'
-                : 'Copy your order code and break name above, and paste both with your YouTube username in the Streamlabs tip message.';
+            if (note && SITE.refInstructions) note.textContent = SITE.refInstructions;
         }
         const DEFAULT_MAX_BUY = 10;
         let timerInterval = null;
@@ -1570,163 +1590,47 @@
             return `${h}:${String(mi || 0).padStart(2, '0')} ${ap}`;
         }
 
-        // Two independently sourced status cards: open and upcoming can coexist.
-        // "On air" follows the site's existing open-now logic; it is NOT a claim
-        // that the YouTube stream was independently verified as currently live.
-        function heroDuration(ms) {
-            const sec = Math.max(0, Math.floor(ms / 1000));
-            const days = Math.floor(sec / 86400);
-            const hrs = Math.floor((sec % 86400) / 3600);
-            const mins = Math.floor((sec % 3600) / 60);
-            if (days) return days + 'd ' + hrs + 'h';
-            if (hrs) return hrs + 'h ' + mins + 'm';
-            return mins + 'm ' + (sec % 60) + 's';
+        function setPlate(html, lit) {
+            const line = document.getElementById('hero-line');
+            const plate = document.getElementById('hero-plate');
+            if (line) line.innerHTML = html;
+            if (plate) plate.classList.toggle('plate-on', !!lit);
         }
-        function setPlate(html) {
-            const board = document.getElementById('hero-plate');
-            if (board) board.innerHTML = html;
-        }
-        // Upcoming breaks carousel: rotate through every scheduled break.
-        // Keep one visible, preserve the user's selection across countdown updates,
-        // and never change the fixed live-break card.
-        let heroUpcoming = [];
-        let heroUpcomingIndex = 0;
-        let heroUpcomingSignature = '';
-        let heroUpcomingTimer = null;
-        let heroUpcomingPauseUntil = 0;
-        const heroReduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-        function heroUpcomingSlide() {
-            const board = document.getElementById('hero-plate');
-            const slide = board && board.querySelector('#hero-upcoming-slide');
-            if (!slide || !heroUpcoming.length) return;
-            heroUpcomingIndex = (heroUpcomingIndex + heroUpcoming.length) % heroUpcoming.length;
-            const entry = heroUpcoming[heroUpcomingIndex];
-            const name = esc(entry.i.name);
-            const at = centralClock(entry.i.goLiveTime);
-            const date = formatCloseDate(entry.i.goLiveTime);
-            slide.dataset.target = 'card-' + entry.i.id;
-            slide.setAttribute('aria-label', 'View upcoming break ' + entry.i.name);
-            slide.querySelector('.hero-status-title').textContent = entry.i.name;
-            slide.querySelector('.hero-status-sub').textContent = date + ' · ' + at + ' Central · View break ↗';
-            const countdown = slide.querySelector('.hero-countdown');
-            if (countdown) countdown.textContent = heroDuration(entry.live - Date.now());
-            const indicator = board.querySelector('#hero-upcoming-position');
-            if (indicator) indicator.textContent = (heroUpcomingIndex + 1) + ' of ' + heroUpcoming.length;
-            board.querySelectorAll('.hero-carousel-dot').forEach((dot,i) => {
-                dot.classList.toggle('selected',i === heroUpcomingIndex);
-                dot.setAttribute('aria-pressed',String(i === heroUpcomingIndex));
-            });
-        }
-        function heroUpcomingStep(delta, manual) {
-            if (heroUpcoming.length < 2) return;
-            heroUpcomingIndex = (heroUpcomingIndex + delta + heroUpcoming.length) % heroUpcoming.length;
-            if (manual) heroUpcomingPauseUntil = Date.now() + 14000;
-            heroUpcomingSlide();
-        }
+
         function updateHeroPlate() {
             const items = (window.storeItems || []).filter(i => i && !i.hidden);
             if (!items.length) {
-                heroUpcoming = [];
-                heroUpcomingSignature = '';
-                setPlate('<div class="hero-status-empty">Fresh breaks from Pokeballer Mike are coming soon.</div>');
+                setPlate('Shelves are being restocked — new breaks land here first.', false);
                 return;
             }
-            const now = Date.now(), open = [], soon = [];
+            const now = Date.now();
+            const open = [], soon = [];
             items.forEach(i => {
                 const end = centralToMs(i.scheduleEnd);
                 const live = centralToMs(i.goLiveTime);
                 const stock = toInt(i.stock);
-                if (stock <= 0 || (end && now >= end)) return;
-                if (live && now < live) soon.push({i,live});
-                else open.push(i);
+                if (live && now < live) { soon.push({ i, live }); return; }
+                if (stock > 0 && (!end || now < end)) open.push(i);
             });
-            soon.sort((a,b) => a.live - b.live);
-            // Re-render only when the set of live/upcoming breaks changes.
-            // Countdown updates every second without restarting the carousel.
-            const signature = JSON.stringify({
-                live:open.map(i=>[i.id,i.name,i.stock]),
-                upcoming:soon.map(e=>[e.i.id,e.i.name,e.i.goLiveTime])
-            });
-            const board = document.getElementById('hero-plate');
-            if (signature === heroUpcomingSignature && board &&
-                (board.querySelector('#hero-upcoming-slide') || !soon.length)) {
-                heroUpcoming = soon;
-                heroUpcomingSlide();
-                return;
-            }
-            const previousId = heroUpcoming[heroUpcomingIndex]?.i.id;
-            heroUpcoming = soon;
-            heroUpcomingIndex = Math.max(0,soon.findIndex(e=>e.i.id===previousId));
-            heroUpcomingSignature = signature;
-            let cards = '';
+
             if (open.length) {
-                const lead = open[0], left = toInt(lead.stock);
-                const unit = lead.type === 'pack' ? unitWord(lead,left) : (left === 1 ? 'spot' : 'spots');
-                const more = open.length > 1 ? ' · +' + (open.length - 1) + ' more available' : '';
-                cards += '<button type="button" class="hero-status-card hero-live" data-target="card-' + esc(lead.id) + '" aria-label="View available break ' + esc(lead.name) + '">'
-                   + '<span class="hero-status-label"><span class="hero-status-dot"></span> ON AIR NOW</span>'
-                   + '<span class="hero-status-title">' + esc(lead.name) + '</span>'
-                   + '<span class="hero-status-sub">' + left + ' ' + esc(unit) + ' remaining' + more + ' · View break ↗</span>'
-                   + '</button>';
+                const lead = open[0];
+                const left = toInt(lead.stock);
+                const unit = lead.type === 'pack' ? unitWord(lead, left) : (left === 1 ? 'spot' : 'spots');
+                const more = open.length > 1 ? ` · +${open.length - 1} open` : '';
+                setPlate(`<b>On air now</b> — ${esc(lead.name)}, ${left} ${unit} left${more}`, true);
+                return;
             }
             if (soon.length) {
-                cards += '<div class="hero-upcoming-carousel" aria-label="Upcoming breaks carousel">'
-                    + '<div class="hero-upcoming-frame">'
-                    + '<button type="button" class="hero-status-card hero-upcoming hero-upcoming-shell" id="hero-upcoming-slide">'
-                    + '<span class="hero-status-label"><span class="hero-status-dot"></span> UP NEXT <span class="hero-countdown"></span></span>'
-                    + '<span class="hero-status-title"></span><span class="hero-status-sub"></span></button>';
-                if (soon.length > 1) {
-                    cards += '<button type="button" class="hero-upcoming-arrow left" data-carousel-step="-1" aria-label="Previous upcoming break">‹</button>'
-                        + '<button type="button" class="hero-upcoming-arrow right" data-carousel-step="1" aria-label="Next upcoming break">›</button>'
-                        + '<div class="hero-upcoming-meta">'
-                        + '<span class="hero-upcoming-count" id="hero-upcoming-position"></span>'
-                        + '<div class="hero-carousel-dots" aria-label="Select upcoming break">'
-                        + soon.map((_,i)=>'<button type="button" class="hero-carousel-dot" data-carousel-index="'+i+'" aria-label="Show upcoming break '+(i+1)+'"></button>').join('')
-                        + '</div></div>';
-                }
-                cards += '</div></div>';
-            }
-            setPlate(cards ? '<div class="hero-status-row">' + cards + '</div>' :
-                '<div class="hero-status-empty">All breaks are closed right now — watch for the next drop from Pokeballer Mike.</div>');
-            heroUpcomingSlide();
-        }
-        document.getElementById('hero-plate').addEventListener('click', e => {
-            const arrow = e.target.closest('[data-carousel-step]');
-            if (arrow) { heroUpcomingStep(Number(arrow.dataset.carouselStep),true); return; }
-            const dot = e.target.closest('[data-carousel-index]');
-            if (dot) {
-                heroUpcomingIndex = Number(dot.dataset.carouselIndex);
-                heroUpcomingPauseUntil = Date.now() + 14000;
-                heroUpcomingSlide();
+                soon.sort((a, b) => a.live - b.live);
+                const next = soon[0];
+                const when = formatCloseDate(next.i.goLiveTime);
+                const at = centralClock(next.i.goLiveTime);
+                setPlate(`<b>Next up</b> — ${esc(next.i.name)}, ${when} at ${at} Central`, false);
                 return;
             }
-            const button = e.target.closest('button[data-target]');
-            if (!button) return;
-            const target = document.getElementById(button.dataset.target);
-            if (target) target.scrollIntoView({behavior:heroReduceMotion.matches?'auto':'smooth',block:'center'});
-        });
-        const carouselBoard = document.getElementById('hero-plate');
-        carouselBoard.addEventListener('pointerenter',()=>{heroUpcomingPauseUntil=Date.now()+7000});
-        carouselBoard.addEventListener('focusin',()=>{heroUpcomingPauseUntil=Date.now()+14000});
-        // Native-feeling swipe navigation on touchscreens.
-        let heroTouchStart = null;
-        carouselBoard.addEventListener('touchstart',e=>{
-            if (e.touches.length!==1 || !e.target.closest('.hero-upcoming-carousel')) return;
-            heroTouchStart={x:e.touches[0].clientX,y:e.touches[0].clientY};
-        },{passive:true});
-        carouselBoard.addEventListener('touchend',e=>{
-            if (!heroTouchStart || !e.changedTouches.length) return;
-            const dx=e.changedTouches[0].clientX-heroTouchStart.x;
-            const dy=e.changedTouches[0].clientY-heroTouchStart.y;
-            heroTouchStart=null;
-            if (Math.abs(dx)>45 && Math.abs(dx)>Math.abs(dy)*1.3) {
-                heroUpcomingStep(dx<0?1:-1,true);
-            }
-        },{passive:true});
-        heroUpcomingTimer=setInterval(()=>{
-            if (document.hidden || heroReduceMotion.matches || Date.now()<heroUpcomingPauseUntil) return;
-            heroUpcomingStep(1,false);
-        },6500);
+            setPlate('Every break is closed for now — the next one gets posted here first.', false);
+        }
 
         function renderSkeletons(container, count) {
             let html = '';
@@ -1829,8 +1733,8 @@
             },
             bundles: {
                 one: 'bundle', many: 'bundles', stock: 'Bundles in stock',
-                icon: 'ph-gift', title: 'BUNDLES', tagline: 'Packs opened LIVE · Cards shipped to you',
-                tag: 'BUNDLES', perk: 'Opened LIVE', btnText: 'BUY BUNDLES', btnSub: 'Choose how many bundles'
+                icon: 'ph-gift', title: 'BUNDLES', tagline: 'Sealed bundles · shipping included',
+                tag: 'BUNDLES', perk: 'Bundles', btnText: 'BUY BUNDLES', btnSub: 'Choose how many bundles'
             },
             spots: {
                 one: 'spot', many: 'spots', stock: 'Break Spots',
@@ -1904,9 +1808,9 @@
                 <div class="neon-card-wrapper ${wrapperClass}" id="card-${id}">
                     <div class="item-card glass-panel">
                         ${ribbonHTML}
+                        <div class="type-tag ${t.tag}${tagPosClass}">${tagHTML}</div>
                         <div class="item-img-box" onclick="openModal('${esc(img)}')">
                             <img src="${esc(img)}" class="item-img" alt="${esc(item.name)}" loading="lazy">
-                            <div class="type-tag ${t.tag}">${tagHTML}</div>
                             <div id="badge-container-${id}">${timeBadgeHTML}</div>
                         </div>
                         <div class="item-content">
@@ -2008,7 +1912,7 @@
                 updateHeroPlate();
             } catch (e) {
                 console.error('Store error:', e);
-                setPlate('<div class="hero-status-empty">The board is temporarily offline. Please try again.</div>');
+                setPlate('The board is offline for a moment — try again in a second.', false);
                 sections.innerHTML = `<div class="store-grid"><div class="error-card"><h2>Couldn't load items</h2><p>Connection timed out.</p><button class="retry-btn" onclick="loadStore()">Try again</button></div></div>`;
             }
         }
@@ -2083,7 +1987,7 @@
         function startCountdownTimer() {
             if (timerInterval) clearInterval(timerInterval);
             updateTimers();
-            timerInterval = setInterval(() => { updateTimers(); updateHeroPlate(); }, 1000);
+            timerInterval = setInterval(updateTimers, 1000);
         }
         /* ---------- LONG DESCRIPTIONS ----------
            Mike writes proper sell copy, and a paragraph of it turns a card
@@ -2228,23 +2132,6 @@
             const qty = readQty(true);
             const price = parseFloat(activeCheckoutItem.price || 0);
             document.getElementById('co-total').innerText = (qty * price).toFixed(2);
-        }
-
-        async function copyOrderMessage() {
-            const ref = document.getElementById('co-ref').textContent.trim();
-            const breakName = document.getElementById('co-break-name').textContent.trim();
-            const message = ref + ' — ' + breakName;
-            const button = document.getElementById('co-copy-reference');
-            try {
-                await navigator.clipboard.writeText(message);
-                button.textContent = 'COPIED — PASTE INTO STREAMLABS ✓';
-            } catch (e) {
-                const temp = document.createElement('textarea');
-                temp.value = message; temp.style.position = 'fixed'; temp.style.opacity = '0';
-                document.body.appendChild(temp); temp.select();
-                const copied = document.execCommand('copy'); temp.remove();
-                button.textContent = copied ? 'COPIED — PASTE INTO STREAMLABS ✓' : 'SELECT THE REFERENCE AND BREAK NAME ABOVE';
-            }
         }
 
         function goToPayment() {
@@ -2441,9 +2328,6 @@
             }
 
             document.getElementById('co-ref').textContent = result.orderRef || '—';
-            document.getElementById('co-break-name').textContent = item.name || '';
-            const copyButton = document.getElementById('co-copy-reference');
-            copyButton.textContent = 'COPY REFERENCE + BREAK NAME';
             document.getElementById('co-ref-qty').textContent = `${confirmedQty} ${unitWord(item, confirmedQty)}`;
             document.getElementById('co-ref-total').textContent = `$${confirmedTotal}`;
             document.getElementById('co-form').style.display = 'none';
@@ -2465,6 +2349,40 @@
         loadStore();
         handlePaymentReturn();
     </script>
-    <script src="cinematic-seasons.js" defer></script>
+<script>
+
+/* Enhanced micro-interactions, safely layered over existing application logic. */
+(()=>{
+  const selectors=['.product-grid','.products-grid','.tier-grid','.tier-grid-store','.tab-container','.list','.pop-list','.top-nav','.inventory-grid','.card-grid','.items-grid'];
+  const enhance=()=>{
+    for(const selector of selectors){
+      document.querySelectorAll(selector).forEach(el=>{
+        if(el.dataset.pbmMotion)return;
+        el.dataset.pbmMotion='1';el.classList.add('pbm-motion-list');
+      });
+    }
+    if(matchMedia('(hover:hover) and (pointer:fine)').matches){
+      document.querySelectorAll('.product-card,.item,.tier-tile,.glass-panel,.card').forEach(el=>{
+        if(el.dataset.pbmSpotlight)return;
+        el.dataset.pbmSpotlight='1';el.classList.add('pbm-spotlight');
+      });
+    }
+  };
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',enhance,{once:true});else enhance();
+  let raf=0,target=null;
+  document.addEventListener('pointermove',e=>{
+    if(e.pointerType!=='mouse')return;
+    const card=e.target.closest('.pbm-spotlight');if(!card)return;
+    target={card,x:e.clientX,y:e.clientY};
+    if(raf)return;
+    raf=requestAnimationFrame(()=>{raf=0;if(!target)return;const {card,x,y}=target;const r=card.getBoundingClientRect();card.style.setProperty('--pbm-x',(x-r.left)+'px');card.style.setProperty('--pbm-y',(y-r.top)+'px');});
+  },{passive:true});
+  // New inventory items are animated without reinitializing the original app.
+  let queued=false;
+  const observer=new MutationObserver(()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;enhance()})});
+  const start=()=>observer.observe(document.body,{childList:true,subtree:true});
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+})();
+</script>
 </body>
 </html>
