@@ -1590,6 +1590,7 @@
         // Keep one visible, preserve the user's selection across countdown updates,
         // and never change the fixed live-break card.
         let heroUpcoming = [];
+        let heroCarouselMode = 'upcoming';
         let heroUpcomingIndex = 0;
         let heroUpcomingSignature = '';
         let heroUpcomingTimer = null;
@@ -1601,15 +1602,15 @@
             if (!slide || !heroUpcoming.length) return;
             heroUpcomingIndex = (heroUpcomingIndex + heroUpcoming.length) % heroUpcoming.length;
             const entry = heroUpcoming[heroUpcomingIndex];
-            const name = esc(entry.i.name);
-            const at = centralClock(entry.i.goLiveTime);
-            const date = formatCloseDate(entry.i.goLiveTime);
+            const isUpcoming = heroCarouselMode === 'upcoming';
             slide.dataset.target = 'card-' + entry.i.id;
-            slide.setAttribute('aria-label', 'View upcoming break ' + entry.i.name);
+            slide.setAttribute('aria-label', (isUpcoming ? 'View upcoming break ' : 'View available break ') + entry.i.name);
             slide.querySelector('.hero-status-title').textContent = entry.i.name;
-            slide.querySelector('.hero-status-sub').textContent = date + ' · ' + at + ' Central · View break ↗';
+            slide.querySelector('.hero-status-sub').textContent = isUpcoming
+                ? formatCloseDate(entry.i.goLiveTime) + ' · ' + centralClock(entry.i.goLiveTime) + ' Central · View break ↗'
+                : toInt(entry.i.stock) + ' ' + (entry.i.type === 'pack' ? unitWord(entry.i,toInt(entry.i.stock)) : (toInt(entry.i.stock) === 1 ? 'spot' : 'spots')) + ' remaining · View break ↗';
             const countdown = slide.querySelector('.hero-countdown');
-            if (countdown) countdown.textContent = heroDuration(entry.live - Date.now());
+            if (countdown) countdown.textContent = isUpcoming ? heroDuration(entry.live - Date.now()) : '';
             const indicator = board.querySelector('#hero-upcoming-position');
             if (indicator) indicator.textContent = (heroUpcomingIndex + 1) + ' of ' + heroUpcoming.length;
             board.querySelectorAll('.hero-carousel-dot').forEach((dot,i) => {
@@ -1643,45 +1644,52 @@
             soon.sort((a,b) => a.live - b.live);
             // Re-render only when the set of live/upcoming breaks changes.
             // Countdown updates every second without restarting the carousel.
+            // If nothing is scheduled for the future, keep the carousel
+            // alive with all other purchasable breaks instead of showing one.
+            const carouselMode = soon.length ? 'upcoming' : 'available';
+            const slides = soon.length ? soon : open.slice(1).map(i => ({i,live:null}));
             const signature = JSON.stringify({
                 live:open.map(i=>[i.id,i.name,i.stock]),
-                upcoming:soon.map(e=>[e.i.id,e.i.name,e.i.goLiveTime])
+                upcoming:soon.map(e=>[e.i.id,e.i.name,e.i.goLiveTime]),
+                mode:carouselMode
             });
             const board = document.getElementById('hero-plate');
             if (signature === heroUpcomingSignature && board &&
-                (board.querySelector('#hero-upcoming-slide') || !soon.length)) {
-                heroUpcoming = soon;
+                (board.querySelector('#hero-upcoming-slide') || !slides.length)) {
+                heroUpcoming = slides;
+                heroCarouselMode = carouselMode;
                 heroUpcomingSlide();
                 return;
             }
             const previousId = heroUpcoming[heroUpcomingIndex]?.i.id;
-            heroUpcoming = soon;
-            heroUpcomingIndex = Math.max(0,soon.findIndex(e=>e.i.id===previousId));
+            heroUpcoming = slides;
+            heroCarouselMode = carouselMode;
+            heroUpcomingIndex = Math.max(0,slides.findIndex(e=>e.i.id===previousId));
             heroUpcomingSignature = signature;
             let cards = '';
             if (open.length) {
                 const lead = open[0], left = toInt(lead.stock);
                 const unit = lead.type === 'pack' ? unitWord(lead,left) : (left === 1 ? 'spot' : 'spots');
-                const more = open.length > 1 ? ' · +' + (open.length - 1) + ' more available' : '';
+                const more = open.length > 1 ? ' · ' + (open.length - 1) + ' other breaks available' : '';
                 cards += '<button type="button" class="hero-status-card hero-live" data-target="card-' + esc(lead.id) + '" aria-label="View available break ' + esc(lead.name) + '">'
-                   + '<span class="hero-status-label"><span class="hero-status-dot"></span> ON AIR NOW</span>'
+                   + '<span class="hero-status-label"><span class="hero-status-dot"></span> AVAILABLE NOW</span>'
                    + '<span class="hero-status-title">' + esc(lead.name) + '</span>'
                    + '<span class="hero-status-sub">' + left + ' ' + esc(unit) + ' remaining' + more + ' · View break ↗</span>'
                    + '</button>';
             }
-            if (soon.length) {
-                cards += '<div class="hero-upcoming-carousel" aria-label="Upcoming breaks carousel">'
+            if (slides.length) {
+                cards += '<div class="hero-upcoming-carousel" aria-label="Browse more breaks carousel">'
                     + '<div class="hero-upcoming-frame">'
                     + '<button type="button" class="hero-status-card hero-upcoming hero-upcoming-shell" id="hero-upcoming-slide">'
-                    + '<span class="hero-status-label"><span class="hero-status-dot"></span> UP NEXT <span class="hero-countdown"></span></span>'
+                    + '<span class="hero-status-label"><span class="hero-status-dot"></span> ' + (carouselMode === 'upcoming' ? 'UP NEXT' : 'MORE BREAKS') + ' <span class="hero-countdown"></span></span>'
                     + '<span class="hero-status-title"></span><span class="hero-status-sub"></span></button>';
-                if (soon.length > 1) {
+                if (slides.length > 1) {
                     cards += '<button type="button" class="hero-upcoming-arrow left" data-carousel-step="-1" aria-label="Previous upcoming break">‹</button>'
                         + '<button type="button" class="hero-upcoming-arrow right" data-carousel-step="1" aria-label="Next upcoming break">›</button>'
                         + '<div class="hero-upcoming-meta">'
                         + '<span class="hero-upcoming-count" id="hero-upcoming-position"></span>'
                         + '<div class="hero-carousel-dots" aria-label="Select upcoming break">'
-                        + soon.map((_,i)=>'<button type="button" class="hero-carousel-dot" data-carousel-index="'+i+'" aria-label="Show upcoming break '+(i+1)+'"></button>').join('')
+                        + slides.map((_,i)=>'<button type="button" class="hero-carousel-dot" data-carousel-index="'+i+'" aria-label="Show upcoming break '+(i+1)+'"></button>').join('')
                         + '</div></div>';
                 }
                 cards += '</div></div>';
