@@ -1935,6 +1935,64 @@
                 </div>`;
         }
 
+        // Refresh stock while visitors remain on the page: a different customer
+        // may buy the last bundle without triggering any local checkout event.
+        // Use /api/items, which reads the authoritative OrderDesk stock for packs.
+        let stockRefreshBusy = false;
+        async function refreshHeroStock() {
+            if (stockRefreshBusy || document.hidden || !window.storeItems.length) return;
+            stockRefreshBusy = true;
+            try {
+                const response = await fetch(API_URL + '/items?stockRefresh=' + Date.now(), {
+                    cache: 'no-store'
+                });
+                if (!response.ok) return;
+                const fresh = await response.json();
+                if (!Array.isArray(fresh)) return;
+                const byId = new Map(fresh.map(item => [String(item.id), item]));
+                let mustReloadCards = false;
+                window.storeItems.forEach(item => {
+                    const latest = byId.get(String(item.id));
+                    if (!latest) return;
+                    const priorStock = toInt(item.stock);
+                    const stock = Math.max(0, toInt(latest.stock));
+                    item.stock = stock;
+                    item.hidden = latest.hidden;
+                    item.scheduleEnd = latest.scheduleEnd;
+                    item.goLiveTime = latest.goLiveTime;
+                    const badge = document.getElementById('stock-badge-' + item.id);
+                    if (badge && priorStock !== stock) badge.textContent = stock + ' ' + unitsOf(item).stock;
+                    if (stock <= 0 && priorStock > 0) {
+                        const card = document.getElementById('card-' + item.id);
+                        if (card) {
+                            card.classList.remove('card-live-now');
+                            card.classList.add('card-closed');
+                        }
+                        const btnBox = document.getElementById('btn-container-' + item.id);
+                        if (btnBox) btnBox.innerHTML = '<div class="buy-btn sold-out">SOLD OUT</div>';
+                        if (activeCheckoutItem && String(activeCheckoutItem.id) === String(item.id)) {
+                            showCheckoutError('This break has just sold out.');
+                            const payButton = document.getElementById('co-pay-btn');
+                            if (payButton) payButton.disabled = true;
+                        }
+                    }
+                    if (stock > 0 && priorStock <= 0) mustReloadCards = true;
+                });
+                // React immediately to sold-out stock and schedule changes.
+                updateHeroPlate();
+                // Newly restocked products require their original purchase controls.
+                // Only refresh the card markup for that less common transition.
+                if (mustReloadCards) await loadStore();
+            } catch (e) {
+                // A temporary network issue must not erase existing break cards.
+                console.warn('Stock refresh failed:', e);
+            } finally {
+                stockRefreshBusy = false;
+            }
+        }
+        setInterval(refreshHeroStock, 20000);
+        window.addEventListener('focus', refreshHeroStock);
+
         async function loadStore() {
             const sections = document.getElementById('store-sections');
             sections.innerHTML = '<div class="section-header"><span class="section-line"></span><span class="section-title">AVAILABLE BREAKS</span><span class="section-line"></span></div><div class="store-grid" id="store-loading"></div>';
@@ -2446,6 +2504,7 @@
                     const card = document.getElementById(`card-${item.id}`);
                     if (card) { card.classList.remove('card-live-now'); card.classList.add('card-closed'); }
                 }
+                updateHeroPlate();
             }
 
             document.getElementById('co-ref').textContent = result.orderRef || '—';
