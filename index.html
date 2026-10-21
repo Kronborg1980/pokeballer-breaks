@@ -172,22 +172,6 @@
         .plate-on .plate-led { background: var(--glow); box-shadow: 0 0 10px var(--glow), 0 0 22px var(--glow); animation: plateBeat 2.4s ease-in-out infinite; }
         @keyframes plateBeat { 0%,100% { opacity: 1; } 50% { opacity: 0.45; } }
 
-        /* ---------- PINNED CLIP ---------- */
-        .clip-card { padding: 0; overflow: hidden; }
-        .clip-frame { position: relative; width: 100%; aspect-ratio: 16/9; background: #000; }
-        .clip-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
-        .clip-poster {
-            position: absolute; inset: 0; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; gap: 14px; text-align: center; padding: 1.5rem;
-            background: radial-gradient(60% 70% at 50% 40%, rgba(var(--glow-rgb),0.18), transparent 70%), #07070f;
-        }
-        .clip-poster .ph-fill { font-size: 3rem; color: var(--glow); }
-        .clip-poster p { color: var(--ink-dim); font-size: 0.95rem; max-width: 38ch; line-height: 1.6; }
-        .clip-foot { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; padding: 16px 20px; }
-        .clip-title { font-weight: 800; font-size: 1.05rem; }
-        .clip-sub { color: var(--ink-dim); font-size: 0.82rem; font-weight: 600; margin-top: 2px; }
-        .clip-btn { background: rgba(24,119,242,0.18) !important; border-color: rgba(24,119,242,0.65) !important; box-shadow: 0 0 15px rgba(24,119,242,0.25) !important; }
-        .clip-btn:hover { background: rgba(24,119,242,0.85) !important; }
 
         main {
             position: relative; z-index: 2; max-width: 1250px; margin: 1rem auto 4rem; padding: 2.5rem;
@@ -427,94 +411,238 @@
         @keyframes goldShine { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
 
         /* ============================================================
-           SEASON SKIN
-           The rules above were written in fixed cyan and magenta. These
-           re-state the structural ones in tokens, so one data-theme change
-           re-dresses the whole page. Later in the sheet wins, so nothing
-           above needs touching.
-
-           It also enforces one rule the old page broke everywhere: ONE
-           THING GLOWS AT A TIME. Every card used to spin a conic rainbow
-           and pulse its own shadow, so nothing stood out. Now the quiet
-           cards are quiet and only the open break is lit.
+           THE LIT EDGE
+           Every frame on the page is a ring of light that travels around
+           it. One registered custom property does the whole job: because
+           --edge-a is declared as a real <angle>, the browser can
+           interpolate it, so the conic gradient itself turns. No giant
+           rotating box hidden behind each card, no clipping, no flicker —
+           and the colours come from the season, or from the tier when a
+           tier has a colour of its own.
            ============================================================ */
-        main {
-            background: rgba(6,6,16,0.70);
-            border: 1px solid rgba(var(--glow-rgb),0.26);
-            box-shadow: 0 34px 90px rgba(0,0,0,0.70), inset 0 1px 0 rgba(255,255,255,0.08);
+        @property --edge-a {
+            syntax: '<angle>';
+            initial-value: 0deg;
+            inherits: false;
         }
-        .top-nav .nav-link { border-color: rgba(255,255,255,0.14); }
-        .nav-link:hover { border-color: rgba(var(--spark-rgb),0.7); box-shadow: 0 0 18px rgba(var(--spark-rgb),0.30); }
-        .nav-active { border-color: rgba(var(--glow-rgb),0.8); box-shadow: 0 0 18px rgba(var(--glow-rgb),0.30); background: linear-gradient(90deg, rgba(var(--glow-rgb),0.18), transparent); }
+        @keyframes edgeSpin { to { --edge-a: 360deg; } }
 
-        .section-header {
-            background: linear-gradient(90deg, rgba(var(--glow-rgb),0.09), rgba(var(--spark-rgb),0.09));
-            border-color: rgba(var(--glow-rgb),0.32);
-            box-shadow: 0 0 26px rgba(var(--glow-rgb),0.10), inset 0 1px 0 rgba(255,255,255,0.12);
+        /* The sweep: mostly a dim hairline, with one bright arc that has a
+           white-hot centre. Written out in full on each surface because a
+           gradient stored in a variable does not animate reliably. */
+        .neon-card-wrapper,
+        main, .tier-header, .section-header, .marquee-plate, .sub-info-panel-wrap,
+        .yt-card-wrap, .buy-btn, .epic-empty-wrapper {
+            --edge-a: 0deg;
+            --e1: var(--glow-rgb);
+            --e2: var(--spark-rgb);
+            --edge-dur: 8s;
         }
-        .section-line { background: linear-gradient(90deg, transparent, var(--glow), transparent); box-shadow: none; opacity: 0.5; height: 2px; }
 
-        /* Quiet by default: a hairline and a real drop shadow, no spinning ring. */
         .neon-card-wrapper {
-            background: rgba(255,255,255,0.055);
-            box-shadow: 0 18px 44px rgba(0,0,0,0.55);
+            padding: 2px;
+            background: conic-gradient(from var(--edge-a),
+                rgba(var(--e1),0.10) 0deg,
+                rgba(var(--e1),0.10) 128deg,
+                rgba(var(--e1),0.95) 182deg,
+                #ffffff 200deg,
+                rgba(var(--e2),0.95) 218deg,
+                rgba(var(--e1),0.10) 272deg,
+                rgba(var(--e1),0.10) 360deg);
+            animation: edgeSpin var(--edge-dur) linear infinite;
+            box-shadow: 0 20px 46px rgba(0,0,0,0.55), 0 0 28px rgba(var(--e1),0.14);
         }
         .neon-card-wrapper::before { content: none; }
         .neon-card-wrapper:hover {
             transform: translateY(-6px);
-            box-shadow: 0 26px 60px rgba(0,0,0,0.62), 0 0 0 1px rgba(var(--glow-rgb),0.40);
-        }
-        .glass-panel {
-            background: linear-gradient(165deg, rgba(22,22,40,0.60), rgba(8,8,18,0.80));
-            border: 1px solid rgba(var(--glow-rgb),0.10);
-            border-top: 1px solid rgba(255,255,255,0.22);
+            box-shadow: 0 30px 64px rgba(0,0,0,0.62), 0 0 44px rgba(var(--e1),0.34);
         }
 
-        /* The open break is the one lit thing: a slow ring of light on the
-           edge, and a steady glow rather than a pulse. */
-        .card-live-now { animation: none; box-shadow: 0 18px 44px rgba(0,0,0,0.55), 0 0 34px rgba(var(--lg),0.40); }
-        .card-live-now::before {
-            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; z-index: 0;
-            background: conic-gradient(transparent 0deg, transparent 150deg, rgba(var(--lg),0.9) 196deg, #fff 210deg, rgba(var(--lg),0.9) 224deg, transparent 270deg);
-            animation: spinBorder 7s linear infinite;
-        }
-        .card-live-now:hover { box-shadow: 0 26px 60px rgba(0,0,0,0.62), 0 0 44px rgba(var(--lg),0.55); }
+        /* Tiers keep their own identity in the light that runs round them. */
+        .card-msrp          { --e1: 0,255,157;  --e2: 0,201,255;   --edge-dur: 9s; }
+        .card-bundle-tier   { --e1: 213,0,255;  --e2: 255,106,213; --edge-dur: 7.5s; }
+        .card-baller-bundle { --e1: 255,201,60; --e2: 255,248,220; --edge-dur: 6.5s; border: none !important; }
+        .card-pack-tier     { --e1: 255,153,0;  --e2: 255,215,0;   --edge-dur: 8.5s; }
 
-        /* Closed means closed: desaturated, flat, no invitation. */
-        .card-closed { filter: saturate(0.2) brightness(0.62); box-shadow: 0 10px 24px rgba(0,0,0,0.5); }
+        /* The open break burns brighter and turns a little faster. */
+        .card-live-now {
+            animation: edgeSpin 5s linear infinite;
+            box-shadow: 0 20px 46px rgba(0,0,0,0.55), 0 0 46px rgba(var(--e1),0.45);
+        }
+        .card-live-now:hover { box-shadow: 0 30px 64px rgba(0,0,0,0.62), 0 0 60px rgba(var(--e1),0.6); }
+
+        /* Closed means closed: the light stops where it is and goes grey. */
+        .card-closed { filter: saturate(0.18) brightness(0.6); animation-play-state: paused; box-shadow: 0 10px 24px rgba(0,0,0,0.5); }
         .card-closed:hover { transform: none; box-shadow: 0 10px 24px rgba(0,0,0,0.5); }
-        .card-upcoming { box-shadow: 0 18px 44px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.10); }
+        .card-upcoming { --e1: 120,170,210; --e2: 200,230,255; --edge-dur: 14s; }
 
-        .live-ribbon { animation: none; background-size: 100% 100%; box-shadow: 0 4px 18px rgba(var(--lg,0,255,242),0.45), inset 0 1px 0 rgba(255,255,255,0.35); }
+        /* ---------- THE SAME LIGHT ON EVERY OTHER FRAME ----------
+           A transparent border plus two backgrounds: the fill paints to the
+           padding box, the moving light paints to the border box. */
+        main {
+            border: 2px solid transparent;
+            border-radius: 34px;
+            background:
+                linear-gradient(rgba(6,6,16,0.82), rgba(6,6,16,0.82)) padding-box,
+                conic-gradient(from var(--edge-a),
+                    rgba(var(--e1),0.14) 0deg, rgba(var(--e1),0.14) 120deg,
+                    rgba(var(--e1),0.75) 176deg, #ffffff 196deg, rgba(var(--e2),0.75) 216deg,
+                    rgba(var(--e1),0.14) 272deg, rgba(var(--e1),0.14) 360deg) border-box;
+            animation: edgeSpin 22s linear infinite;
+            box-shadow: 0 40px 110px rgba(0,0,0,0.75);
+        }
+
+        .section-header {
+            border: 1px solid transparent;
+            background:
+                linear-gradient(rgba(10,10,22,0.72), rgba(10,10,22,0.72)) padding-box,
+                conic-gradient(from var(--edge-a),
+                    rgba(var(--e1),0.14) 0deg, rgba(var(--e1),0.14) 140deg,
+                    rgba(var(--e1),0.9) 186deg, #ffffff 200deg, rgba(var(--e2),0.9) 214deg,
+                    rgba(var(--e1),0.14) 262deg, rgba(var(--e1),0.14) 360deg) border-box;
+            animation: edgeSpin 11s linear infinite;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+        }
+        .section-line { background: linear-gradient(90deg, transparent, var(--glow), transparent); box-shadow: none; opacity: 0.5; height: 2px; }
+        .section-title { letter-spacing: 5px; font-size: 1.5rem; }
+
+        .tier-header {
+            border: 1px solid transparent !important;
+            background:
+                linear-gradient(var(--tier-fill, rgba(12,12,24,0.80)), var(--tier-fill, rgba(12,12,24,0.80))) padding-box,
+                conic-gradient(from var(--edge-a),
+                    rgba(var(--e1),0.16) 0deg, rgba(var(--e1),0.16) 132deg,
+                    rgba(var(--e1),0.95) 184deg, #ffffff 200deg, rgba(var(--e2),0.95) 216deg,
+                    rgba(var(--e1),0.16) 268deg, rgba(var(--e1),0.16) 360deg) border-box;
+            animation: edgeSpin 10s linear infinite;
+        }
+        .th-baller { --e1: 255,201,60;  --e2: 255,248,220; --tier-fill: rgba(34,26,4,0.86); }
+        .th-bundle { --e1: 213,0,255;   --e2: 255,106,213; --tier-fill: rgba(28,4,38,0.86); }
+        .th-msrp   { --e1: 0,255,157;   --e2: 0,201,255;   --tier-fill: rgba(3,28,20,0.86); }
+        .th-pack   { --e1: 255,153,0;   --e2: 255,215,0;   --tier-fill: rgba(32,18,2,0.86); }
+
+        .marquee-plate {
+            border: 1px solid transparent;
+            background:
+                linear-gradient(rgba(0,0,0,0.62), rgba(0,0,0,0.62)) padding-box,
+                conic-gradient(from var(--edge-a),
+                    rgba(var(--e1),0.18) 0deg, rgba(var(--e1),0.18) 140deg,
+                    rgba(var(--e1),0.95) 184deg, #ffffff 198deg, rgba(var(--e2),0.95) 212deg,
+                    rgba(var(--e1),0.18) 260deg, rgba(var(--e1),0.18) 360deg) border-box;
+            animation: edgeSpin 9s linear infinite;
+        }
+
+        /* The call to action carries the light too — it is the thing we
+           most want a thumb to land on. */
+        .buy-btn {
+            border: 2px solid transparent;
+            border-radius: 18px;
+            background:
+                linear-gradient(90deg, var(--glow), var(--spark)) padding-box,
+                conic-gradient(from var(--edge-a),
+                    rgba(255,255,255,0.15) 0deg, rgba(255,255,255,0.15) 140deg,
+                    #ffffff 196deg, rgba(255,255,255,0.15) 250deg, rgba(255,255,255,0.15) 360deg) border-box;
+            animation: edgeSpin 6s linear infinite;
+            box-shadow: 0 12px 30px rgba(var(--e1),0.28);
+        }
+        .buy-btn:hover { transform: translateY(-3px); box-shadow: 0 0 40px rgba(var(--e2),0.7); }
+        /* Each tier's button keeps its own fill but gets the same ring of
+           light, so every frame on the page is lit the same way. */
+        .msrp-btn, .pack-btn, .bundle-btn, .baller-btn { border: 2px solid transparent !important; }
+        .msrp-btn {
+            background:
+                linear-gradient(90deg, #00c98a, #00fff2) padding-box,
+                conic-gradient(from var(--edge-a), rgba(255,255,255,0.18) 0deg, rgba(255,255,255,0.18) 140deg, #ffffff 196deg, rgba(255,255,255,0.18) 250deg, rgba(255,255,255,0.18) 360deg) border-box !important;
+        }
+        .pack-btn {
+            background:
+                linear-gradient(90deg, #ff7700, #ffaa00) padding-box,
+                conic-gradient(from var(--edge-a), rgba(255,255,255,0.18) 0deg, rgba(255,255,255,0.18) 140deg, #ffffff 196deg, rgba(255,255,255,0.18) 250deg, rgba(255,255,255,0.18) 360deg) border-box !important;
+        }
+        .bundle-btn {
+            background:
+                linear-gradient(90deg, #7b2bff, #d500ff, #ff6ad5) padding-box,
+                conic-gradient(from var(--edge-a), rgba(255,255,255,0.18) 0deg, rgba(255,255,255,0.18) 140deg, #ffffff 196deg, rgba(255,255,255,0.18) 250deg, rgba(255,255,255,0.18) 360deg) border-box !important;
+        }
+        .baller-btn {
+            background:
+                linear-gradient(135deg, #bf953f 0%, #fcf6ba 25%, #b38728 50%, #fcf6ba 75%, #aa771c 100%) padding-box,
+                conic-gradient(from var(--edge-a), rgba(255,255,255,0.22) 0deg, rgba(255,255,255,0.22) 140deg, #ffffff 196deg, rgba(255,255,255,0.22) 250deg, rgba(255,255,255,0.22) 360deg) border-box !important;
+        }
+        .sold-out, .upcoming-btn { animation: none !important; border: 2px solid rgba(255,255,255,0.08) !important; background: rgba(12,12,22,0.9) !important; box-shadow: none !important; }
+
+        /* ---------- THE REST OF THE SEASON ----------
+           The sheet above was written in fixed cyan and magenta; these
+           re-state it in tokens so one data-theme change re-dresses the page. */
+        .top-nav .nav-link { border-color: rgba(255,255,255,0.14); }
+        .nav-link:hover { border-color: rgba(var(--spark-rgb),0.7); box-shadow: 0 0 18px rgba(var(--spark-rgb),0.30); }
+        .nav-active { border-color: rgba(var(--glow-rgb),0.8); box-shadow: 0 0 18px rgba(var(--glow-rgb),0.30); background: linear-gradient(90deg, rgba(var(--glow-rgb),0.18), transparent); }
+
+        .glass-panel {
+            background: linear-gradient(165deg, rgba(20,20,38,0.78), rgba(7,7,16,0.90));
+            border: none;
+            border-top: 1px solid rgba(255,255,255,0.18);
+            border-radius: 24px;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.10);
+        }
+        /* The gold tier used to tint its whole panel brown, which killed the
+           contrast on the description. A hint at the top is plenty. */
+        .card-baller-bundle .glass-panel { background: linear-gradient(170deg, rgba(48,38,10,0.55) 0%, rgba(10,8,14,0.93) 42%, rgba(7,6,12,0.95) 100%); }
+        .card-baller-bundle { box-shadow: 0 20px 46px rgba(0,0,0,0.6), 0 0 30px rgba(255,201,60,0.16) !important; }
+        .card-baller-bundle:hover { box-shadow: 0 30px 64px rgba(0,0,0,0.66), 0 0 48px rgba(255,201,60,0.34) !important; }
+
+        .live-ribbon { animation: none; background-size: 100% 100%; box-shadow: 0 4px 18px rgba(var(--e1),0.45), inset 0 1px 0 rgba(255,255,255,0.35); }
         .live-dot { animation: dotBlink 2.2s ease-in-out infinite; }
         .tier-header::after { animation: ledOpacity 3.6s ease-in-out infinite; box-shadow: 0 0 16px currentColor; }
-        .time-tag-bottom { border-color: rgba(var(--glow-rgb),0.6); box-shadow: 0 0 12px rgba(var(--glow-rgb),0.25); }
+        .time-tag-bottom { border-color: rgba(var(--e1),0.6); box-shadow: 0 0 12px rgba(var(--e1),0.25); }
         .time-tag-bottom.closing-soon { animation: none; border-color: var(--accent-live); box-shadow: 0 0 20px rgba(255,0,64,0.65); }
         .lbl-universal { animation: none; }
-        .baller-btn, .bundle-btn { animation: none; background-size: 100% 100%; }
-        .item-img-box { border-bottom-color: rgba(var(--glow-rgb),0.18); }
-        .price-row { border-top-color: rgba(var(--glow-rgb),0.18); }
-        .stock { background: rgba(var(--glow-rgb),0.08); border-color: rgba(var(--glow-rgb),0.22); }
-        .perk-ship { background: rgba(var(--glow-rgb),0.10); border-color: rgba(var(--glow-rgb),0.45); color: var(--glow); box-shadow: none; }
-        .price { color: var(--coin); text-shadow: 0 0 22px rgba(var(--coin-rgb),0.45); }
-        .buy-btn { background: linear-gradient(90deg, var(--glow), var(--spark)); box-shadow: 0 10px 26px rgba(var(--glow-rgb),0.26), inset 0 1px 0 rgba(255,255,255,0.35); }
-        .buy-btn:hover { transform: translateY(-3px); box-shadow: 0 0 34px rgba(var(--spark-rgb),0.65); }
+        .baller-btn, .bundle-btn { background-size: 100% 100%; }
+
+        /* ---------- THE CARD, READ TOP TO BOTTOM ----------
+           Picture, name, what you get, then the two numbers that decide it. */
+        .item-img-box { height: 250px; border-bottom: 1px solid rgba(var(--e1),0.22); }
+        .item-img-box::after { background: linear-gradient(to top, rgba(6,6,14,0.96) 2%, rgba(6,6,14,0.35) 38%, transparent 68%); }
+        .item-content { padding: 1.6rem 1.6rem 1.7rem; }
+        .item-content h3 { font-size: 1.32rem; letter-spacing: 0.2px; margin-bottom: 0.7rem; }
+        .item-content p { font-size: 0.95rem; line-height: 1.62; color: var(--ink-dim); }
+        .date-row { color: var(--coin); text-shadow: none; font-size: 0.78rem; letter-spacing: 1.2px; border-bottom-color: rgba(255,255,255,0.08); }
+
+        .price-row { position: relative; border-top: none; padding-top: 1.3rem; margin-bottom: 1.2rem; align-items: baseline; }
+        .price-row::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, rgba(var(--e1),0.65), rgba(var(--e1),0.06) 60%, transparent);
+        }
+        .price { font-size: 2.3rem; font-weight: 900; letter-spacing: -1px; font-variant-numeric: tabular-nums; color: var(--coin); text-shadow: 0 0 26px rgba(var(--coin-rgb),0.40); }
+        .card-msrp .price, .card-bundle-tier .price, .card-pack-tier .price, .card-baller-bundle .price { color: var(--coin); text-shadow: 0 0 26px rgba(var(--coin-rgb),0.40); }
+        .stock { font-size: 0.78rem; font-weight: 800; letter-spacing: 0.4px; color: var(--ink); background: rgba(0,0,0,0.45); border: 1px solid rgba(var(--e1),0.45); padding: 7px 13px; box-shadow: inset 0 0 14px rgba(var(--e1),0.12); }
+
+        /* Perks take the card's own colour, so a green break never ends up
+           wearing the season's red next to its green ribbon. */
+        .perk-row { gap: 7px; margin-bottom: 1.1rem; }
+        .perk {
+            font-size: 0.66rem; letter-spacing: 0.9px; padding: 5px 10px;
+            background: rgba(var(--e1),0.10) !important;
+            border: 1px solid rgba(var(--e1),0.42) !important;
+            color: var(--ink) !important;
+            box-shadow: none !important;
+            backdrop-filter: none;
+        }
+        .perk i { color: rgb(var(--e1)); }
+        .limit-note { color: var(--ink-dim); opacity: 0.85; font-weight: 700; }
+
         .skeleton { border-color: rgba(var(--glow-rgb),0.14); box-shadow: none; }
         .skeleton::after { background: linear-gradient(90deg, transparent, rgba(var(--glow-rgb),0.08), transparent); }
         .epic-empty-wrapper { box-shadow: 0 24px 60px rgba(0,0,0,0.6); }
-        .epic-empty-wrapper::before { animation-duration: 12s; opacity: 0.45; }
+        .epic-empty-wrapper::before { animation-duration: 14s; opacity: 0.4; }
         .modal-content { border-color: var(--glow); box-shadow: 0 0 70px rgba(var(--glow-rgb),0.55); }
         .close-modal { color: var(--glow); text-shadow: 0 0 16px var(--glow); }
         .ref-box { background: rgba(var(--glow-rgb),0.08); border-color: rgba(var(--glow-rgb),0.6); }
         .ref-code { color: var(--glow); text-shadow: 0 0 16px rgba(var(--glow-rgb),0.5); }
         a:focus-visible, button:focus-visible { outline-color: var(--glow); }
 
-        /* A single card used to stretch the full 1200px of the shell, which
-           made one break look emptier than three. Cards now keep a card's
-           proportions and the row centres itself. */
-        .store-grid { grid-template-columns: repeat(auto-fit, minmax(300px, 400px)); justify-content: center; }
-        #clip-section { max-width: 860px; margin: 0 auto; }
-        .marquee-plate { font-size: 1.02rem; padding: 13px 26px 13px 20px; }
+        /* A single card used to stretch the full width of the shell. */
+        .store-grid { grid-template-columns: repeat(auto-fit, minmax(280px, 360px)); justify-content: center; gap: 30px; }
 
         /* ---------- PHONE LAYOUT ----------
            The desktop title is 51px at its smallest, which collided with the two
@@ -562,44 +690,52 @@
             .p-magikarp { width: 112px; opacity: 0.32; right: 3%; }
         }
 
-        /* ---------- TOUCH ANTI-FLICKER ----------
-           Same treatment the Vault already uses. Android Chrome repaints the
-           whole stacking context when backdrop-filter sits under moving
-           gradients and animated box-shadows, which is the blinking you see.
-           Solid glass + opacity-only motion fixes it. The per-letter neon
-           flicker stays on: it is opacity-only, GPU-cheap, and intentional. */
+        /* ---------- TOUCH ----------
+           Android Chrome repaints the whole stacking context when
+           backdrop-filter sits under moving gradients, which was the old
+           blinking. Solid glass fixes that. The travelling edge stays —
+           it is one background repaint on a small box, and it is the whole
+           look — but it turns more slowly to keep phones cool. */
         @media (hover: none), (pointer: coarse) {
             .grain { display: none; }
 
             .top-nav .nav-link, main, .glass-panel, .tier-header, .type-tag,
-            .time-tag-bottom, .perk, .image-modal, .stock, .yt-label {
+            .time-tag-bottom, .perk, .image-modal, .stock, .yt-label, .marquee-plate {
                 backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
             }
-            main { background: rgba(6,6,16,0.94); }
-            .glass-panel { background: linear-gradient(160deg, rgba(24,24,42,0.97), rgba(10,10,20,0.98)); }
-            .card-baller-bundle .glass-panel { background: linear-gradient(160deg, rgba(46,36,8,0.97), rgba(14,10,0,0.98)); }
+            main {
+                background:
+                    linear-gradient(rgba(6,6,16,0.96), rgba(6,6,16,0.96)) padding-box,
+                    conic-gradient(from var(--edge-a),
+                        rgba(var(--e1),0.14) 0deg, rgba(var(--e1),0.14) 120deg,
+                        rgba(var(--e1),0.75) 176deg, #ffffff 196deg, rgba(var(--e2),0.75) 216deg,
+                        rgba(var(--e1),0.14) 272deg, rgba(var(--e1),0.14) 360deg) border-box;
+                animation-duration: 30s;
+            }
+            .glass-panel { background: linear-gradient(160deg, rgba(22,22,40,0.98), rgba(9,9,18,0.99)); }
+            .card-baller-bundle .glass-panel { background: linear-gradient(160deg, rgba(44,34,8,0.98), rgba(13,9,0,0.99)); }
 
-            /* Animated box-shadows are the most expensive thing here — freeze them. */
-            .card-live-now { animation: none; box-shadow: 0 0 32px rgba(var(--lg),0.55), 0 0 60px rgba(var(--lg),0.22); }
-            .tier-header::after { animation: ledOpacity 2.4s ease-in-out infinite; box-shadow: 0 0 18px currentColor; }
+            .neon-card-wrapper { animation-duration: 13s; }
+            .card-live-now { animation-duration: 9s; }
+            .buy-btn { animation-duration: 10s; }
+            .section-header, .tier-header, .marquee-plate { animation-duration: 16s; }
+
+            .tier-header::after { animation: ledOpacity 3.6s ease-in-out infinite; box-shadow: 0 0 18px currentColor; }
             .live-ribbon { animation: none; background-size: 100% 100%; }
             .time-tag-bottom.closing-soon, .lbl-universal { animation: none; }
-            .baller-btn, .bundle-btn { animation: none !important; background-size: 100% 100% !important; }
+            .baller-btn, .bundle-btn { background-size: 100% 100% !important; }
 
-            .neon-card-wrapper::before { animation-duration: 7s; opacity: 0.55 !important; filter: none !important; }
             .neon-card-wrapper, .glass-panel, .item-img, .logo-animator,
             .buy-btn, .sub-btn, .bell-btn { will-change: auto !important; }
             .neon-card-wrapper:hover { transform: none; }
             .neon-card-wrapper:hover .item-img { transform: none; }
             .buy-btn:hover, .sub-btn:hover, .bell-btn:hover, .nav-link:hover { transform: none; }
-            /* The travelling sheen on every card was the last moving thing
-               left on a phone, and it bought nothing. Off. */
             .glass-panel::after { display: none; }
 
-            /* Lighter glow on card titles — five shadow layers per letter is a lot
-               of work on a phone when there are a dozen cards. */
+            /* Lighter glow on card titles — a dozen cards of multi-layer text
+               shadow is real work on a phone. */
             .item-content h3 .nl {
-                text-shadow: 0 0 3px rgba(255,255,255,0.9), 0 0 10px var(--tube, var(--accent-cyan));
+                text-shadow: 0 0 3px rgba(255,255,255,0.9), 0 0 10px var(--tube, var(--glow));
             }
         }
 
@@ -647,21 +783,6 @@
     </header>
 
     <main>
-        <section id="clip-section" hidden>
-            <div class="section-header" style="margin-top:0;"><span class="section-line"></span><span class="section-title">PINNED CLIP</span><span class="section-line"></span></div>
-            <div class="neon-card-wrapper" style="margin-bottom:10px;">
-                <div class="glass-panel clip-card">
-                    <div class="clip-frame" id="clip-frame"></div>
-                    <div class="clip-foot">
-                        <div>
-                            <div class="clip-title" id="clip-title">Mike's pinned clip</div>
-                            <div class="clip-sub">Posted on Facebook</div>
-                        </div>
-                        <a id="clip-link" class="yt-open-btn clip-btn" target="_blank" rel="noopener"><i class="ph-fill ph-facebook-logo"></i> WATCH ON FACEBOOK</a>
-                    </div>
-                </div>
-            </div>
-        </section>
 
         <div class="section-header"><span class="section-line"></span><span class="section-title">CHANNEL FEED</span><span class="section-line"></span></div>
         <div id="yt-container" class="yt-container"></div>
@@ -770,9 +891,7 @@
             tipUrl: 'https://streamlabs.com/pokballer/tip',
             stripeReady: false,
             refInstructions: 'Put this code and your YouTube username in the Streamlabs tip message so Mike can match your payment to your order.',
-            theme: 'crystal',
-            featuredVideoUrl: '',
-            featuredVideoTitle: ''
+            theme: 'crystal'
         };
 
         async function loadSiteSettings() {
@@ -784,7 +903,6 @@
             } catch (e) { /* keep the defaults; the page must still work */ }
             applyPayModeUI();
             applyTheme(SITE.theme);
-            renderClip();
         }
 
         /* ============================================================
@@ -934,38 +1052,6 @@
             else if (wxCtx && !wxRaf) wxRaf = requestAnimationFrame(wxDraw);
         });
 
-        /* ---------- PINNED CLIP ----------
-           Facebook's player only accepts a full post address. A short
-           facebook.com/share/... link cannot be embedded by anyone, so when
-           that is all we have the card becomes a handsome doorway instead. */
-        const FB_FALLBACK = 'https://www.facebook.com/share/r/1BtQt7gGjs/';
-        function fbEmbedSrc(url) {
-            const u = String(url || '').trim();
-            if (!/^https?:\/\/([a-z]+\.)?facebook\.com\//i.test(u)) return null;
-            if (/\/share\//i.test(u)) return null;
-            return 'https://www.facebook.com/plugins/video.php?href=' + encodeURIComponent(u)
-                 + '&show_text=false&autoplay=false&width=800';
-        }
-        function renderClip() {
-            const sec = document.getElementById('clip-section');
-            const frame = document.getElementById('clip-frame');
-            const link = document.getElementById('clip-link');
-            const title = document.getElementById('clip-title');
-            if (!sec || !frame || !link) return;
-
-            const raw = String(SITE.featuredVideoUrl || '').trim();
-            link.href = raw || FB_FALLBACK;
-            if (SITE.featuredVideoTitle) title.textContent = SITE.featuredVideoTitle;
-
-            const embed = fbEmbedSrc(raw);
-            if (embed) {
-                frame.innerHTML = `<iframe src="${esc(embed)}" title="${esc(SITE.featuredVideoTitle || 'Pinned clip')}" scrolling="no" allowfullscreen allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>`;
-            } else {
-                frame.innerHTML = `<div class="clip-poster"><i class="ph-fill ph-facebook-logo"></i><p>This one lives over on Facebook — open it there to watch.</p></div>`;
-            }
-            sec.hidden = false;
-        }
-
         function stripeLive() { return SITE.paymentMode === 'stripe' && SITE.stripeReady; }
 
         function applyPayModeUI() {
@@ -981,6 +1067,8 @@
         const wait = ms => new Promise(r => setTimeout(r, ms));
         function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
         function money(n) { const v = Number(n); return isFinite(v) ? v.toFixed(2) : '0.00'; }
+        // On the card face a round number reads as a price, not a receipt.
+        function priceTag(n) { const v = Number(n); if (!isFinite(v)) return '0'; return v % 1 === 0 ? String(v) : v.toFixed(2); }
         function toInt(n) { const v = parseInt(n, 10); return isFinite(v) ? v : 0; }
         function isEmail(s) { return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(s || '').trim()); }
 
@@ -1275,7 +1363,9 @@
                 wrapperClass += ' card-closed';
             }
 
-            if (item.scheduleEnd) dateRowHTML = `<div class="date-row"><i class="ph-fill ph-calendar-x"></i> Closes ${formatCloseDate(item.scheduleEnd)}</div>`;
+            // The badge on the picture already carries the closing date, so
+            // only spell it out in the body when there is no badge.
+            if (item.scheduleEnd && !timeBadgeHTML) dateRowHTML = `<div class="date-row"><i class="ph-fill ph-calendar-x"></i> Closes ${formatCloseDate(item.scheduleEnd)}</div>`;
 
             let btnHTML;
             if (isEnded) {
@@ -1320,7 +1410,7 @@
                                 ? `<span class="perk perk-orange"><i class="ph-fill ${unitsOf(item).icon}"></i> ${unitsOf(item).perk}</span><span class="perk perk-ship"><i class="ph-fill ph-truck"></i> Shipping included</span>`
                                 : t.perks}</div>
                             <div class="price-row">
-                                <span class="price">$${money(item.price)}</span>
+                                <span class="price">$${priceTag(item.price)}</span>
                                 <span class="stock" id="stock-badge-${id}">${stockLabel}</span>
                             </div>
                             <div id="btn-container-${id}">${btnHTML}</div>
@@ -1819,7 +1909,6 @@
         // season, so the site is complete even if /api/settings is older
         // than the theme picker and answers 404.
         applyTheme(document.documentElement.getAttribute('data-theme'));
-        renderClip();
 
         loadSiteSettings();
         loadVideos();
