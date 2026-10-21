@@ -594,7 +594,86 @@
             #weather { display: none; }
         }
     </style>
-</head>
+<style>
+
+/* PBM Motion System — progressive enhancement; no layout or data changes */
+@keyframes pbm-arrive {from {opacity:.35;transform:translate3d(0,14px,0)} to {opacity:1;transform:translate3d(0,0,0)}}
+@keyframes pbm-sheen {from {transform:translateX(-150%) skewX(-20deg)} to {transform:translateX(350%) skewX(-20deg)}}
+@supports (animation-delay: calc(sibling-index() * 1ms)) {
+  .pbm-motion-list > * { animation:pbm-arrive .48s cubic-bezier(.2,.8,.2,1) both; animation-delay:calc((sibling-index() - 1) * 65ms); }
+}
+@supports not (animation-delay: calc(sibling-index() * 1ms)) {
+  .pbm-motion-list > * {animation:pbm-arrive .48s cubic-bezier(.2,.8,.2,1) both}
+  .pbm-motion-list > :nth-child(2) {animation-delay:65ms}
+  .pbm-motion-list > :nth-child(3) {animation-delay:130ms}
+  .pbm-motion-list > :nth-child(4) {animation-delay:195ms}
+  .pbm-motion-list > :nth-child(5) {animation-delay:260ms}
+  .pbm-motion-list > :nth-child(6) {animation-delay:325ms}
+}
+.pbm-spotlight {--pbm-x:50%;--pbm-y:50%;position:relative;isolation:isolate}
+.pbm-spotlight::after {content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:1;background:radial-gradient(320px circle at var(--pbm-x) var(--pbm-y),rgba(255,255,255,.075),transparent 70%);opacity:0;transition:opacity .25s}
+@media(hover:hover) and (pointer:fine){.pbm-spotlight:hover::after{opacity:1}}
+@media(prefers-reduced-motion:reduce){.pbm-motion-list > *{animation:none!important}.pbm-spotlight::after{transition:none!important}}
+</style>
+<style>
+
+/* PBM EXPERIENCE 4.0 — progressive enhancement */
+#pbm-progress{position:fixed;top:0;left:0;height:3px;width:0;background:linear-gradient(90deg,var(--accent-cyan,#00fff2),var(--accent-purple,#d500ff),var(--accent-gold,#ffd700));z-index:99999;pointer-events:none}
+#pbm-tools{position:fixed;right:clamp(12px,2vw,24px);bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:800;display:flex;flex-direction:column;gap:10px}
+.pbm-fab{width:48px;height:48px;border-radius:50%;border:1px solid rgba(255,255,255,.28);background:rgba(10,10,26,.92);color:#fff;box-shadow:0 7px 26px #0009,0 0 16px rgba(0,255,242,.12);font-size:21px;cursor:pointer;display:grid;place-items:center;backdrop-filter:blur(12px)}
+.pbm-fab:hover,.pbm-fab:focus-visible{border-color:var(--accent-cyan,#00fff2);transform:translateY(-2px)}
+#pbm-search-overlay[hidden]{display:none!important}
+#pbm-search-overlay{position:fixed;inset:0;z-index:99990;background:rgba(0,0,8,.85);backdrop-filter:blur(15px);padding:clamp(15px,6vh,65px) 14px;overflow:auto}
+.pbm-search-dialog{max-width:660px;margin:0 auto;background:#101024;border:1px solid #66638b;border-radius:22px;padding:22px;box-shadow:0 20px 100px #000b}
+.pbm-search-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.pbm-search-head h2{margin:0;font:800 clamp(19px,3vw,26px) Inter,system-ui;color:#fff}
+.pbm-close{background:#29283e;color:#fff;border:1px solid #59566f;border-radius:10px;padding:9px 13px;cursor:pointer}
+#pbm-search-input{display:block;width:100%;padding:17px;border-radius:12px;background:#070714;color:#fff;border:1px solid #646185;font:600 16px Inter,system-ui;outline:none}
+#pbm-search-input:focus{border-color:#00fff2}
+#pbm-search-results{display:grid;gap:9px;margin-top:14px;max-height:55vh;overflow:auto}
+.pbm-result{display:flex;align-items:center;gap:12px;text-decoration:none;color:#fff;background:#1b1b32;border:1px solid #393952;padding:12px 14px;border-radius:12px;font:600 14px Inter,system-ui}
+.pbm-result:hover{border-color:#00fff2}
+.pbm-result small{display:block;color:#aab0d8;font-weight:500;margin-top:4px}
+.pbm-hint{color:#aab0d8;font:500 13px Inter,system-ui;line-height:1.5;margin-top:13px}
+.pbm-heart{position:absolute;top:10px;right:10px;z-index:5;border:1px solid #ffffff70;border-radius:50%;background:#080817dd;color:#fff;width:37px;height:37px;cursor:pointer;font-size:21px;line-height:1}
+.pbm-heart[aria-pressed=true]{color:#ff5b99;border-color:#ff5b99}
+.pbm-saved-toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#17172b;color:#fff;border:1px solid #00fff2;border-radius:30px;padding:12px 20px;z-index:99995;font:700 13px Inter,system-ui;box-shadow:0 10px 35px #000a;pointer-events:none}
+.pbm-card-sheen{position:relative;isolation:isolate}
+@media(hover:hover) and (pointer:fine){.pbm-card-sheen:after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;background:radial-gradient(260px circle at var(--pbm-x,50%) var(--pbm-y,50%),rgba(255,255,255,.11),transparent 75%);opacity:0;transition:opacity .2s}.pbm-card-sheen:hover:after{opacity:1}}
+@media(prefers-reduced-motion:reduce){.pbm-fab,.pbm-card-sheen:after{transition:none!important}}
+
+</style>
+<style>
+/* PBM LEGENDARY EDITION */
+.pbm-legendary-bar{max-width:1100px;margin:16px auto 24px;padding:18px;border:1px solid rgba(var(--glow-rgb,0,255,242),.4);border-radius:22px;background:linear-gradient(115deg,rgba(12,13,32,.94),rgba(38,16,57,.88));box-shadow:0 12px 50px #0007,inset 0 1px #ffffff24;color:#fff}
+.pbm-legendary-top{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}
+.pbm-legendary-top strong{font:900 clamp(18px,2.5vw,27px) Inter,system-ui;letter-spacing:.03em}
+.pbm-legendary-top span{color:#bdbad4;font:600 12px Inter,system-ui}
+.pbm-legendary-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}
+.pbm-action{border:1px solid #625e89;border-radius:12px;padding:11px 14px;background:#24203b;color:#fff;font:800 13px Inter,system-ui;cursor:pointer}
+.pbm-action:hover,.pbm-action:focus-visible{border-color:#00fff2;box-shadow:0 0 18px #00fff22b}
+.pbm-action.pbm-featured{background:linear-gradient(115deg,#7331b4,#146c8a);border-color:#b68ff2}
+.pbm-count{font:700 12px Inter,system-ui;color:#bdbad4;margin-top:12px}
+.pbm-legendary-overlay[hidden]{display:none!important}
+.pbm-legendary-overlay{position:fixed;inset:0;z-index:99998;background:#03030beF;display:grid;place-items:center;padding:16px;overflow-y:auto;backdrop-filter:blur(18px)}
+.pbm-reveal-stage{width:min(100%,520px);text-align:center;background:radial-gradient(ellipse at 50% 35%,#45205e 0%,#131127 55%,#090914 100%);border:1px solid #7b5aa2;border-radius:28px;padding:22px;box-shadow:0 0 90px #a532db4a}
+.pbm-reveal-heading{color:#fff;font:900 clamp(21px,4vw,31px) Inter,system-ui;margin:0 0 8px}
+.pbm-reveal-sub{color:#c5bdd7;font:500 13px/1.5 Inter,system-ui;margin-bottom:15px}
+.pbm-reveal-art{height:min(47vh,340px);display:grid;place-items:center;perspective:900px;position:relative;overflow:hidden}
+.pbm-reveal-card{width:min(68%,230px);height:90%;max-height:310px;border:3px solid #e7cb79;border-radius:17px;background:linear-gradient(135deg,#342166,#0c5470,#68258d,#271245);box-shadow:0 20px 50px #000b,0 0 35px #b74bff80;display:grid;place-items:center;overflow:hidden;transform:rotateY(0);transition:transform .7s cubic-bezier(.2,.8,.2,1),filter .5s}
+.pbm-reveal-card img{width:100%;height:100%;object-fit:contain;background:#0c0c19}
+.pbm-reveal-card:not(.revealed):before{content:'✦';font-size:90px;color:#ffe19a;text-shadow:0 0 25px #d55aff}
+.pbm-reveal-card:not(.revealed){transform:rotateY(12deg) rotate(-5deg)}
+.pbm-reveal-card.revealed{animation:pbm-reveal-in .85s cubic-bezier(.2,.8,.2,1) both}
+@keyframes pbm-reveal-in{0%{transform:rotateY(95deg) scale(.7);filter:brightness(3)}65%{transform:rotateY(-10deg) scale(1.06)}100%{transform:rotateY(0) scale(1);filter:brightness(1)}}
+.pbm-reveal-name{font:900 18px Inter,system-ui;color:#fff;margin:10px 0}
+.pbm-reveal-controls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.pbm-reveal-controls button{padding:12px 17px;border-radius:12px;background:#282441;color:#fff;border:1px solid #78699d;font:800 13px Inter,system-ui;cursor:pointer}
+.pbm-reveal-controls button:first-child{background:linear-gradient(110deg,#7135a9,#117e8c)}
+.pbm-filter-hidden{display:none!important}
+.pbm-empty-filter{color:#bcb9d4;text-align:center;padding:20px;font:600 14px Inter,system-ui}
+@media(prefers-reduced-motion:reduce){.pbm-reveal-card,.pbm-reveal-card.revealed{animation:none!important;transition:none!important}}
+</style></head>
 <body>
     <div class="grain"></div>
     <canvas id="weather" aria-hidden="true"></canvas>
@@ -1243,5 +1322,168 @@
         applyNeon();
         loadVault();
     </script>
-</body>
+<script>
+
+/* Enhanced micro-interactions, safely layered over existing application logic. */
+(()=>{
+  const selectors=['.product-grid','.products-grid','.tier-grid','.tier-grid-store','.tab-container','.list','.pop-list','.top-nav','.inventory-grid','.card-grid','.items-grid'];
+  const enhance=()=>{
+    for(const selector of selectors){
+      document.querySelectorAll(selector).forEach(el=>{
+        if(el.dataset.pbmMotion)return;
+        el.dataset.pbmMotion='1';el.classList.add('pbm-motion-list');
+      });
+    }
+    if(matchMedia('(hover:hover) and (pointer:fine)').matches){
+      document.querySelectorAll('.product-card,.item,.tier-tile,.glass-panel,.card').forEach(el=>{
+        if(el.dataset.pbmSpotlight)return;
+        el.dataset.pbmSpotlight='1';el.classList.add('pbm-spotlight');
+      });
+    }
+  };
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',enhance,{once:true});else enhance();
+  let raf=0,target=null;
+  document.addEventListener('pointermove',e=>{
+    if(e.pointerType!=='mouse')return;
+    const card=e.target.closest('.pbm-spotlight');if(!card)return;
+    target={card,x:e.clientX,y:e.clientY};
+    if(raf)return;
+    raf=requestAnimationFrame(()=>{raf=0;if(!target)return;const {card,x,y}=target;const r=card.getBoundingClientRect();card.style.setProperty('--pbm-x',(x-r.left)+'px');card.style.setProperty('--pbm-y',(y-r.top)+'px');});
+  },{passive:true});
+  // New inventory items are animated without reinitializing the original app.
+  let queued=false;
+  const observer=new MutationObserver(()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;enhance()})});
+  const start=()=>observer.observe(document.body,{childList:true,subtree:true});
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+})();
+</script>
+<script>
+
+/* PBM EXPERIENCE 4.0 — standalone, does not alter API or checkout */
+(()=>{'use strict';
+const PUBLIC=!/^(admin|stock)\.html$/i.test(location.pathname.split('/').pop()||'index.html');
+const $=(s,root=document)=>root.querySelector(s);
+const $$=(s,root=document)=>Array.from(root.querySelectorAll(s));
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const progress=document.createElement('div');progress.id='pbm-progress';progress.setAttribute('aria-hidden','true');document.body.append(progress);
+let ticking=false;function updateProgress(){if(ticking)return;ticking=true;requestAnimationFrame(()=>{ticking=false;const d=document.documentElement;progress.style.width=(100*Math.min(1,scrollY/Math.max(1,d.scrollHeight-innerHeight)))+'%'})}
+addEventListener('scroll',updateProgress,{passive:true});updateProgress();
+if(!PUBLIC)return;
+let saved=[];try{saved=JSON.parse(localStorage.getItem('pbm-saved-v1')||'[]');if(!Array.isArray(saved))saved=[]}catch(e){}
+const persist=()=>{try{localStorage.setItem('pbm-saved-v1',JSON.stringify(saved.slice(0,100)))}catch(e){}};
+const tools=document.createElement('div');tools.id='pbm-tools';tools.innerHTML='<button class="pbm-fab" id="pbm-open-search" aria-label="Search this page" title="Search (/)">⌕</button><button class="pbm-fab" id="pbm-open-saved" aria-label="Saved favorites" title="Favorites">♡</button><button class="pbm-fab" id="pbm-to-top" aria-label="Back to top" title="Back to top">↑</button>';document.body.append(tools);
+const overlay=document.createElement('div');overlay.id='pbm-search-overlay';overlay.hidden=true;overlay.innerHTML='<section class="pbm-search-dialog" role="dialog" aria-modal="true" aria-labelledby="pbm-search-title"><div class="pbm-search-head"><h2 id="pbm-search-title">Explore the Crystal League</h2><button type="button" class="pbm-close" id="pbm-search-close">✕ Close</button></div><input id="pbm-search-input" type="search" placeholder="Search breaks, cards, products…" autocomplete="off" aria-label="Search products"><div id="pbm-search-results" aria-live="polite"></div><p class="pbm-hint">Press / to search · Esc to close · ♡ saves favorites on this device</p></section>';document.body.append(overlay);
+const input=$('#pbm-search-input'),results=$('#pbm-search-results');
+let mode='search',previousFocus=null;
+function getItems(){
+const scope=$('#store-sections')||$('main')||document.body;
+const selectors=['.product-card','.store-card','.item-card','.vault-card','.card-item','.product','.inventory-item','.glass-card','.item'];
+let nodes=$$(selectors.join(','),scope).filter(el=>el.offsetWidth>0&&el.offsetHeight>0);
+if(!nodes.length)nodes=$$('main a',scope).filter(a=>a.textContent.trim().length>8);
+return nodes.filter((el,i)=>!nodes.some((p,j)=>j!==i&&p.contains(el))).slice(0,250).map((el,i)=>{
+const heading=el.querySelector('h2,h3,h4,.product-title,.item-title,.card-title,.name,.title');
+const name=(heading?.textContent||el.textContent||'').replace(/\s+/g,' ').trim().slice(0,100);
+const link=el.matches('a[href]')?el:el.querySelector('a[href]');
+if(!el.id)el.id='pbm-item-'+i;
+return {el,name,href:link?.getAttribute('href')||('#'+el.id),key:(name||'item-'+i).toLowerCase()};
+}).filter(o=>o.name.length>2);
+}
+function render(){
+const items=getItems();
+const q=input.value.trim().toLocaleLowerCase();
+const filtered=mode==='saved'?items.filter(x=>saved.includes(x.key)):items.filter(x=>x.name.toLocaleLowerCase().includes(q));
+results.replaceChildren();
+if(!filtered.length){results.innerHTML='<p class="pbm-hint">'+(mode==='saved'?'No saved items currently visible on this page. Tap ♡ on a product to save it.':'No matching items yet. Try a different name.')+'</p>';return}
+filtered.slice(0,40).forEach(o=>{
+const a=document.createElement('a');a.className='pbm-result';a.href=o.href;
+a.innerHTML='<span aria-hidden="true">'+(saved.includes(o.key)?'♥':'✦')+'</span><span>'+esc(o.name)+'</span>';
+a.addEventListener('click',e=>{if(o.href.startsWith('#')){e.preventDefault();close();o.el.scrollIntoView({behavior:reduced?'instant':'smooth',block:'center'})}else close()});
+results.append(a);
+});
+}
+function open(which){mode=which;previousFocus=document.activeElement;overlay.hidden=false;document.body.style.overflow='hidden';$('#pbm-search-title').textContent=mode==='saved'?'Your saved favorites':'Explore the Crystal League';input.placeholder=mode==='saved'?'Filter saved favorites…':'Search breaks, cards, products…';input.value='';render();input.focus()}
+function close(){overlay.hidden=true;document.body.style.overflow='';previousFocus?.focus?.()}
+$('#pbm-open-search').onclick=()=>open('search');$('#pbm-open-saved').onclick=()=>open('saved');$('#pbm-search-close').onclick=close;$('#pbm-to-top').onclick=()=>scrollTo({top:0,behavior:reduced?'instant':'smooth'});
+overlay.addEventListener('click',e=>{if(e.target===overlay)close()});input.addEventListener('input',render);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!overlay.hidden)close();if(e.key==='/'&&overlay.hidden&&!/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName||'')&&!document.activeElement?.isContentEditable){e.preventDefault();open('search')}if(e.key==='Tab'&&!overlay.hidden){const focusable=$$('button,input,a[href]',overlay).filter(x=>x.offsetParent!==null);if(!focusable.length)return;const first=focusable[0],last=focusable[focusable.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}});
+function toast(message){document.querySelector('.pbm-saved-toast')?.remove();const el=document.createElement('div');el.className='pbm-saved-toast';el.setAttribute('role','status');el.textContent=message;document.body.append(el);setTimeout(()=>el.remove(),1900)}
+let pending=false;
+function enhance(){
+pending=false;const items=getItems();
+for(const o of items){
+const el=o.el;
+if(el.dataset.pbmEnhanced)return;
+el.dataset.pbmEnhanced='1';
+el.classList.add('pbm-card-sheen');
+if(getComputedStyle(el).position==='static')el.style.position='relative';
+const b=document.createElement('button');b.type='button';b.className='pbm-heart';b.textContent=saved.includes(o.key)?'♥':'♡';b.setAttribute('aria-label','Save '+o.name);b.setAttribute('aria-pressed',String(saved.includes(o.key)));b.title='Save to favorites';
+b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();const index=saved.indexOf(o.key);if(index>=0)saved.splice(index,1);else saved.push(o.key);persist();b.textContent=index>=0?'♡':'♥';b.setAttribute('aria-pressed',String(index<0));toast(index>=0?'Removed from favorites':'Saved to favorites ♥')});
+el.append(b);
+}
+}
+function schedule(){if(!pending){pending=true;requestAnimationFrame(enhance)}}
+schedule();const target=$('#store-sections')||$('main');if(target)new MutationObserver(schedule).observe(target,{childList:true,subtree:true});
+document.addEventListener('pointermove',e=>{if(e.pointerType!=='mouse')return;const card=e.target.closest('.pbm-card-sheen');if(!card)return;const r=card.getBoundingClientRect();card.style.setProperty('--pbm-x',e.clientX-r.left+'px');card.style.setProperty('--pbm-y',e.clientY-r.top+'px')},{passive:true});
+})();
+
+</script>
+<script>
+/* PBM LEGENDARY EDITION — opt-in visual showcase, never an actual pack opening */
+(()=>{
+'use strict';
+if(/^(admin|stock)\.html$/i.test(location.pathname.split('/').pop()||'index.html'))return;
+const container=document.getElementById('store-sections');
+if(!container)return;
+const isVault=/vault\.html$/i.test(location.pathname);
+const bar=document.createElement('section');bar.className='pbm-legendary-bar';bar.setAttribute('aria-label','Collector experience');
+bar.innerHTML='<div class="pbm-legendary-top"><strong>✦ THE COLLECTOR EXPERIENCE</strong><span>Discover • Explore • Collect</span></div><div class="pbm-legendary-actions"><button class="pbm-action pbm-featured" id="pbm-showcase">✦ Mystery reveal preview</button><button class="pbm-action" id="pbm-sort-name">A–Z</button><button class="pbm-action" id="pbm-sort-price">Price: low to high</button><button class="pbm-action" id="pbm-filter-stock">Available only</button><button class="pbm-action" id="pbm-clear-filters">Reset view</button></div><div class="pbm-count" id="pbm-view-count">Loading collection…</div>';
+container.parentElement.insertBefore(bar,container);
+const overlay=document.createElement('div');overlay.className='pbm-legendary-overlay';overlay.hidden=true;
+overlay.innerHTML='<section class="pbm-reveal-stage" role="dialog" aria-modal="true" aria-labelledby="pbm-reveal-heading"><h2 class="pbm-reveal-heading" id="pbm-reveal-heading">✦ MYSTERY REVEAL ✦</h2><p class="pbm-reveal-sub">An interactive preview featuring an item currently displayed on this page. No purchase, pack opening or prize is involved.</p><div class="pbm-reveal-art"><div class="pbm-reveal-card" id="pbm-reveal-card"></div></div><p class="pbm-reveal-name" id="pbm-reveal-name">Ready to reveal?</p><div class="pbm-reveal-controls"><button id="pbm-reveal-next">Reveal an item</button><button id="pbm-reveal-close">Close</button></div></section>';
+document.body.append(overlay);
+let lastFocus=null,sort='default',available=false,original=new WeakMap(),counter=0;
+const cards=()=>Array.from(container.querySelectorAll('.neon-card-wrapper')).filter(el=>el.querySelector('.item-card'));
+function details(card){
+const heading=card.querySelector('.item-card h3,.item-card h2,.item-title,.card-name,.item-name,h3,h2');
+const name=(heading?.textContent||card.querySelector('.item-card')?.textContent||'Collectible').replace(/\s+/g,' ').trim().slice(0,95);
+const img=card.querySelector('.item-card img');
+const text=card.textContent||'';
+const priceMatch=text.match(/(?:[$€£]\s*\d[\d,.]*|\d[\d,.]*\s*(?:DKK|USD|EUR|kr))/i);
+const price=priceMatch?Number((priceMatch[0].match(/[\d,.]+/)||[''])[0].replace(/,/g,'')):Infinity;
+const out=/sold\s*out|out\s*of\s*stock|unavailable/i.test(text)||card.classList.contains('sold-out')||card.querySelector('[disabled].buy-btn,[disabled].purchase-btn');
+return {card,name,img,price,out};
+}
+function apply(){
+const all=cards();all.forEach((c,i)=>{if(!original.has(c))original.set(c,c.style.order||String(i))});
+const arr=all.map(details);
+if(sort==='name')arr.sort((a,b)=>a.name.localeCompare(b.name));
+if(sort==='price')arr.sort((a,b)=>a.price-b.price);
+arr.forEach((o,i)=>{o.card.style.order=sort==='default'?original.get(o.card):String(i);o.card.classList.toggle('pbm-filter-hidden',available&&!!o.out)});
+const count=arr.filter(o=>!available||!o.out).length;
+document.getElementById('pbm-view-count').textContent=count+' of '+arr.length+' items shown'+(available?' · Available filter on':'');
+}
+document.getElementById('pbm-sort-name').onclick=()=>{sort='name';apply()};
+document.getElementById('pbm-sort-price').onclick=()=>{sort='price';apply()};
+document.getElementById('pbm-filter-stock').onclick=e=>{available=!available;e.currentTarget.setAttribute('aria-pressed',String(available));apply()};
+document.getElementById('pbm-clear-filters').onclick=()=>{sort='default';available=false;document.getElementById('pbm-filter-stock').setAttribute('aria-pressed','false');apply()};
+function reveal(){
+const all=cards().filter(c=>!c.classList.contains('pbm-filter-hidden')).map(details);
+if(!all.length){document.getElementById('pbm-reveal-name').textContent='No items are currently available to preview.';return}
+const chosen=all[Math.floor(Math.random()*all.length)];
+const el=document.getElementById('pbm-reveal-card');el.classList.remove('revealed');el.replaceChildren();
+const name=document.getElementById('pbm-reveal-name');name.textContent='Revealing…';
+requestAnimationFrame(()=>requestAnimationFrame(()=>{if(chosen.img?.src){const img=document.createElement('img');img.src=chosen.img.src;img.alt=chosen.name;el.append(img)}else el.textContent='✦';el.classList.add('revealed');name.textContent=chosen.name}));
+}
+function close(){overlay.hidden=true;document.body.style.overflow='';lastFocus?.focus?.()}
+document.getElementById('pbm-showcase').onclick=()=>{lastFocus=document.activeElement;overlay.hidden=false;document.body.style.overflow='hidden';reveal();document.getElementById('pbm-reveal-next').focus()};
+document.getElementById('pbm-reveal-next').onclick=reveal;
+document.getElementById('pbm-reveal-close').onclick=close;
+overlay.addEventListener('click',e=>{if(e.target===overlay)close()});
+document.addEventListener('keydown',e=>{if(overlay.hidden)return;if(e.key==='Escape')close();if(e.key==='Tab'){const a=[document.getElementById('pbm-reveal-next'),document.getElementById('pbm-reveal-close')];if(e.shiftKey&&document.activeElement===a[0]){e.preventDefault();a[1].focus()}else if(!e.shiftKey&&document.activeElement===a[1]){e.preventDefault();a[0].focus()}}});
+let scheduled=false;
+new MutationObserver(()=>{if(scheduled)return;scheduled=true;requestAnimationFrame(()=>{scheduled=false;apply()})}).observe(container,{childList:true,subtree:false});
+apply();
+})();
+</script></body>
 </html>
