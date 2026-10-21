@@ -194,30 +194,63 @@ header #site-title{animation:pbm-wordmark-in .8s cubic-bezier(.2,.8,.2,1) both}
 }
 
 
-/* Upcoming slider: manual previous/next, progress dots and touch swipe. */
-.hero-upcoming-carousel{min-width:0;display:flex;flex-direction:column;gap:7px}
-.hero-upcoming-carousel .hero-status-card{flex:1;min-height:100px}
-.hero-carousel-controls{display:flex;align-items:center;justify-content:center;gap:11px;padding:1px 9px 0}
-.hero-carousel-arrow{
-  display:grid;place-items:center;flex:none;width:29px;height:29px;
-  border:1px solid rgba(255,207,127,.34);border-radius:50%;
-  background:rgba(39,28,34,.8);color:#ffe0ae;cursor:pointer;
-  font:700 23px/1 Inter,system-ui,sans-serif;
-  transition:background .2s,border-color .2s,transform .2s;
+/* Premium in-card upcoming break navigation: no controls below the card. */
+.hero-status-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));align-items:stretch;gap:14px}
+.hero-status-row>.hero-live{min-height:160px}
+.hero-status-row>.hero-live .hero-status-title{font-size:clamp(17px,1.55vw,20px)}
+.hero-upcoming-carousel{position:relative;min-width:0;display:flex;align-items:stretch}
+.hero-upcoming-frame{position:relative;display:flex;flex:1;min-width:0}
+.hero-upcoming-shell.hero-status-card{
+  min-height:160px;height:100%;flex:1;
+  padding:17px 59px 42px 60px;justify-content:flex-start;
+  border-radius:21px;
+  background:linear-gradient(135deg,rgba(36,25,28,.91),rgba(17,16,33,.95) 55%,rgba(9,10,24,.97));
+  border:1px solid rgba(255,205,127,.3);
+  box-shadow:0 16px 36px #0007,inset 0 1px 0 #ffffff15,0 0 25px #ffc16f0d;
 }
-.hero-carousel-arrow:hover{background:rgba(117,68,36,.35);border-color:#ffd087;transform:scale(1.06)}
-.hero-carousel-arrow:focus-visible,.hero-carousel-dot:focus-visible{outline:2px solid #ffda9f;outline-offset:3px}
-.hero-carousel-position{font:700 10px/1 Inter,system-ui,sans-serif;color:#cfbca5;letter-spacing:.06em;font-variant-numeric:tabular-nums}
-.hero-carousel-dots{display:flex;align-items:center;gap:6px}
+.hero-upcoming-shell .hero-status-label{margin-bottom:10px;letter-spacing:.12em}
+.hero-upcoming-shell .hero-status-title{font-size:clamp(17px,1.55vw,20px);line-height:1.28;margin-bottom:5px}
+.hero-upcoming-shell .hero-status-sub{font-size:12px;line-height:1.45;color:#d9c5aa}
+.hero-upcoming-shell .hero-countdown{color:#ffe0aa}
+.hero-upcoming-arrow{
+  position:absolute;top:50%;transform:translateY(-50%);z-index:4;
+  display:grid;place-items:center;width:34px;height:42px;
+  border:1px solid rgba(255,218,162,.24);border-radius:12px;
+  background:rgba(255,255,255,.055);color:#fff2d8;
+  font:700 27px/1 Inter,system-ui,sans-serif;
+  cursor:pointer;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  transition:background .2s,border-color .2s,box-shadow .2s;
+}
+.hero-upcoming-arrow.left{left:13px}
+.hero-upcoming-arrow.right{right:13px}
+.hero-upcoming-arrow:hover{background:rgba(255,219,158,.18);border-color:rgba(255,223,170,.7);box-shadow:0 0 17px #ffd69828}
+.hero-upcoming-arrow:focus-visible,.hero-carousel-dot:focus-visible{outline:2px solid #ffd59a;outline-offset:3px}
+.hero-upcoming-meta{
+  position:absolute;bottom:12px;left:60px;right:59px;z-index:3;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  pointer-events:none;
+}
+.hero-upcoming-count{color:#d7c3a3;font:800 10px/1.3 Inter,system-ui,sans-serif;letter-spacing:.08em;font-variant-numeric:tabular-nums;white-space:nowrap}
+.hero-carousel-dots{display:flex;align-items:center;justify-content:flex-end;gap:6px;pointer-events:auto}
 .hero-carousel-dot{
   display:block;flex:none;width:7px;height:7px;border:0;padding:0;
-  border-radius:99px;background:rgba(255,215,160,.33);cursor:pointer;
-  transition:width .22s ease,background .22s ease,box-shadow .22s ease;
+  border-radius:100px;background:rgba(255,219,172,.3);cursor:pointer;
+  transition:width .2s,background .2s,box-shadow .2s;
 }
-.hero-carousel-dot.selected{width:21px;background:#ffce83;box-shadow:0 0 12px #ffbd746a}
+.hero-carousel-dot.selected{width:20px;background:#ffce83;box-shadow:0 0 11px #ffce8361}
 @media(max-width:768px){
-  .hero-upcoming-carousel .hero-status-card{min-height:92px}
-  .hero-carousel-controls{padding-top:2px}
+ .hero-status-row>.hero-live,.hero-upcoming-shell.hero-status-card{min-height:146px}
+ .hero-upcoming-shell.hero-status-card{padding:15px 48px 39px}
+ .hero-upcoming-meta{left:48px;right:48px;bottom:10px}
+ .hero-upcoming-arrow{width:29px;height:38px;border-radius:10px}
+ .hero-upcoming-arrow.left{left:9px}
+ .hero-upcoming-arrow.right{right:9px}
 }
-@media(max-width:480px){.hero-upcoming-carousel .hero-status-card{min-height:79px}}
-@media(prefers-reduced-motion:reduce){.hero-carousel-arrow,.hero-carousel-dot{transition:none!important}}
+@media(max-width:480px){
+ .hero-status-row{grid-template-columns:1fr;gap:10px}
+ .hero-status-row>.hero-live,.hero-upcoming-shell.hero-status-card{min-height:128px}
+ .hero-upcoming-shell.hero-status-card{padding:14px 47px 36px}
+ .hero-upcoming-meta{left:47px;right:47px;bottom:9px}
+ .hero-upcoming-shell .hero-status-title{font-size:17px}
+}
+@media(prefers-reduced-motion:reduce){.hero-upcoming-arrow,.hero-carousel-dot{transition:none!important}}
