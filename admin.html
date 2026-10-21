@@ -295,6 +295,18 @@
         .th.on.th-christmas { border-color: #ff3b47; box-shadow: 0 0 22px rgba(255,59,71,0.45); }
         @media(max-width: 420px) { .themegrid { grid-template-columns: 1fr; } }
 
+        /* Exact browser-tab favicon shown in the corresponding theme picker. */
+        .themegrid .th-sky {
+            display:flex;align-items:center;justify-content:center;
+            position:relative;isolation:isolate;
+        }
+        .themegrid .theme-favicon-preview {
+            display:block;width:43px;height:43px;object-fit:contain;
+            border-radius:11px;box-shadow:0 7px 20px rgba(0,0,0,.45),0 0 18px rgba(255,255,255,.10);
+            transition:transform .2s ease;
+        }
+        .themegrid .th:hover .theme-favicon-preview {transform:translateY(-2px) scale(1.07)}
+        @media(prefers-reduced-motion:reduce){.themegrid .theme-favicon-preview{transition:none}}
         #login-section { display: block; } #admin-section { display: none; }
         .empty-state { color: #888; font-style: italic; font-size: 1rem; padding: 2rem 0; text-align: center; background: rgba(0,0,0,0.3); border-radius: 12px; border: 1px dashed #444; }
         .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(120%); background: rgba(10,10,20,0.95); border: 1px solid var(--accent); color: #fff; padding: 12px 22px; border-radius: 10px; font-weight: 700; box-shadow: 0 0 30px rgba(0,255,242,0.4); z-index: 9999; transition: transform .4s cubic-bezier(0.22,1,0.36,1); max-width: 90%; }
@@ -434,22 +446,26 @@
 
                 <div class="themegrid" id="theme-grid">
                     <button class="th th-crystal" type="button" data-theme="crystal">
-                        <span class="th-sky"></span>
+                        data-theme="crystal">
+                        <span class="th-sky"><img class="theme-favicon-preview" src="favicon-original.svg" width="40" height="40" alt="" loading="lazy"></span>
                         <span class="th-n">PBM Original</span>
                         <span class="th-s">PBM original neon</span>
                     </button>
                     <button class="th th-birthday" type="button" data-theme="birthday">
-                        <span class="th-sky"></span>
+                        data-theme="birthday">
+                        <span class="th-sky"><img class="theme-favicon-preview" src="favicon-birthday.svg" width="40" height="40" alt="" loading="lazy"></span>
                         <span class="th-n">Birthday</span>
                         <span class="th-s">Cake, balloons and bunting</span>
                     </button>
                     <button class="th th-halloween" type="button" data-theme="halloween">
-                        <span class="th-sky"></span>
+                        data-theme="halloween">
+                        <span class="th-sky"><img class="theme-favicon-preview" src="favicon-halloween.svg" width="40" height="40" alt="" loading="lazy"></span>
                         <span class="th-n">Halloween</span>
                         <span class="th-s">Pumpkins, ghosts and bats</span>
                     </button>
                     <button class="th th-christmas" type="button" data-theme="christmas">
-                        <span class="th-sky"></span>
+                        data-theme="christmas">
+                        <span class="th-sky"><img class="theme-favicon-preview" src="favicon-christmas.svg" width="40" height="40" alt="" loading="lazy"></span>
                         <span class="th-n">Christmas</span>
                         <span class="th-s">Tree, sleigh and snow</span>
                     </button>
