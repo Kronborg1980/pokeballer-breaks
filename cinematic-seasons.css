@@ -192,3 +192,32 @@ header #site-title{animation:pbm-wordmark-in .8s cubic-bezier(.2,.8,.2,1) both}
 @media(prefers-reduced-motion:reduce){
   #pbm-scene *,header #site-title,.hero-status-card,.hero-status-dot{animation:none!important;transition:none!important}
 }
+
+
+/* Upcoming slider: manual previous/next, progress dots and touch swipe. */
+.hero-upcoming-carousel{min-width:0;display:flex;flex-direction:column;gap:7px}
+.hero-upcoming-carousel .hero-status-card{flex:1;min-height:100px}
+.hero-carousel-controls{display:flex;align-items:center;justify-content:center;gap:11px;padding:1px 9px 0}
+.hero-carousel-arrow{
+  display:grid;place-items:center;flex:none;width:29px;height:29px;
+  border:1px solid rgba(255,207,127,.34);border-radius:50%;
+  background:rgba(39,28,34,.8);color:#ffe0ae;cursor:pointer;
+  font:700 23px/1 Inter,system-ui,sans-serif;
+  transition:background .2s,border-color .2s,transform .2s;
+}
+.hero-carousel-arrow:hover{background:rgba(117,68,36,.35);border-color:#ffd087;transform:scale(1.06)}
+.hero-carousel-arrow:focus-visible,.hero-carousel-dot:focus-visible{outline:2px solid #ffda9f;outline-offset:3px}
+.hero-carousel-position{font:700 10px/1 Inter,system-ui,sans-serif;color:#cfbca5;letter-spacing:.06em;font-variant-numeric:tabular-nums}
+.hero-carousel-dots{display:flex;align-items:center;gap:6px}
+.hero-carousel-dot{
+  display:block;flex:none;width:7px;height:7px;border:0;padding:0;
+  border-radius:99px;background:rgba(255,215,160,.33);cursor:pointer;
+  transition:width .22s ease,background .22s ease,box-shadow .22s ease;
+}
+.hero-carousel-dot.selected{width:21px;background:#ffce83;box-shadow:0 0 12px #ffbd746a}
+@media(max-width:768px){
+  .hero-upcoming-carousel .hero-status-card{min-height:92px}
+  .hero-carousel-controls{padding-top:2px}
+}
+@media(max-width:480px){.hero-upcoming-carousel .hero-status-card{min-height:79px}}
+@media(prefers-reduced-motion:reduce){.hero-carousel-arrow,.hero-carousel-dot{transition:none!important}}
