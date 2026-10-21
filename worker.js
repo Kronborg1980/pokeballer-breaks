@@ -1132,7 +1132,7 @@ async function fireAlert(env, alert) {
 
 function alertMessage(settings, a) {
   const tpl = settings.alertTemplate || '{name} grabbed {qty} {unit} — {item}';
-  return tpl
+  let message = tpl
     .replace(/\{name\}/g, a.name || 'Someone')
     .replace(/\{qty\}/g, a.qty != null ? a.qty : '')
     .replace(/\{unit\}/g, a.unit || 'packs')
@@ -1140,8 +1140,11 @@ function alertMessage(settings, a) {
     .replace(/\{amount\}/g, a.amount != null ? '$' + a.amount : '')
     .replace(/\{ref\}/g, a.ref || '')
     .replace(/\s+/g, ' ')
-    .trim()
-    .slice(0, 255);
+    .trim();
+  // Keep unique code untouched; always show the break name beside it.
+  if (a.kind === 'order' && a.ref && !message.includes(a.ref)) message += ' · Ref: ' + a.ref;
+  if (a.kind === 'order' && a.itemName && !message.includes(a.itemName)) message += ' · Break: ' + a.itemName;
+  return message.slice(0,255);
 }
 
 /* ============================================================
@@ -1156,12 +1159,12 @@ const DEFAULT_SETTINGS = {
   holdMinutes: 30,
   notifyEmail: 'michael.lorenz.10@gmail.com',
   publicContactEmail: 'pokeballer4free@gmail.com',
-  refInstructions: 'Put this code AND your YouTube username in the Streamlabs tip message so Mike can match your payment to your order.',
+  refInstructions: 'Copy your unique order code and break name into the Streamlabs tip message with your YouTube username.',
   alertsEnabled: false,
   alertToOverlay: true,
   alertToStreamlabs: false,
   alertTitle: 'NEW ORDER',
-  alertTemplate: '{name} grabbed {qty} {unit} — {item}',
+  alertTemplate: '{name} grabbed {qty} {unit} — {item} · Ref: {ref}',
   alertImageUrl: '',
   alertSoundUrl: '',
   overlayToken: '',
@@ -1413,7 +1416,7 @@ function winnerEmailHTML({ breakName, paymentLink, price, message, contact }) {
     <div style="max-width:560px;margin:0 auto;background-color:#12122a;border-radius:16px;overflow:hidden;border:1px solid #2c2c4a;">
       <div style="height:4px;background:#00c9b7;background:linear-gradient(90deg,#00c9b7,#8a2be2,#ffd700);font-size:0;line-height:0;">&nbsp;</div>
       <div style="padding:36px 32px;text-align:center;">
-        <p style="color:#ffd700;letter-spacing:3px;font-size:11px;font-weight:bold;margin:0 0 12px;text-transform:uppercase;">PBM Breaks &middot; The Crystal League</p>
+        <p style="color:#ffd700;letter-spacing:3px;font-size:11px;font-weight:bold;margin:0 0 12px;text-transform:uppercase;">PBM Breaks &middot; Pokeballer Mike</p>
         <h1 style="color:#ffffff;font-size:28px;margin:0 0 18px;">&#127881; You've been picked!</h1>
         <p style="color:#c9c9e8;font-size:15px;line-height:1.6;margin:0 0 6px;">The wheel landed on you for:</p>
         <p style="color:#00e5da;font-size:20px;font-weight:bold;margin:0 0 18px;">${name}</p>
@@ -1448,7 +1451,8 @@ function purchaseEmailHTML(data) {
       <div style="height:4px;background:${bannerColor};font-size:0;line-height:0;">&nbsp;</div>
       <div style="padding:36px 32px;text-align:left;">
         <h1 style="color:${bannerColor};font-size:24px;margin:0 0 6px;">${bannerText}</h1>
-        <p style="color:#ffd700;font-size:16px;font-weight:bold;margin:0 0 20px;letter-spacing:1px;">Ref ${escHtml(data.orderRef)}</p>
+        <p style="color:#ffd700;font-size:16px;font-weight:bold;margin:0 0 8px;letter-spacing:1px;">Ref ${escHtml(data.orderRef)}</p>
+        <p style="color:#fff;font-size:17px;font-weight:bold;margin:0 0 20px;line-height:1.5;">Break: ${escHtml(data.itemName)}</p>
         ${mismatch}
         <p style="color:#c9c9e8;font-size:15px;margin:0 0 8px;"><strong>Item:</strong> <span style="color:#fff;">${escHtml(data.itemName)}</span></p>
         <p style="color:#c9c9e8;font-size:15px;margin:0 0 8px;"><strong>Quantity:</strong> <span style="color:#fff;">${escHtml(data.qty)} ${escHtml(unitLabel)}</span>${limitNote}</p>

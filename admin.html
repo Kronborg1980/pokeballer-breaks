@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PBM Admin · Crystal League</title>
+    <title>PBM Admin · PBM Original</title>
     <link rel="icon" type="image/svg+xml" href="https://upload.wikimedia.org/wikipedia/commons/5/53/Pok%C3%A9_Ball_icon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -435,8 +435,8 @@
                 <div class="themegrid" id="theme-grid">
                     <button class="th th-crystal" type="button" data-theme="crystal">
                         <span class="th-sky"></span>
-                        <span class="th-n">Crystal League</span>
-                        <span class="th-s">Your normal look</span>
+                        <span class="th-n">PBM Original</span>
+                        <span class="th-s">PBM original neon</span>
                     </button>
                     <button class="th th-birthday" type="button" data-theme="birthday">
                         <span class="th-sky"></span>
@@ -1851,7 +1851,7 @@
                     chosenTheme = data.settings.theme || 'crystal';
                     paintTheme();
                 }
-                const names = { crystal: 'Crystal League', birthday: 'Birthday', halloween: 'Halloween', christmas: 'Christmas' };
+                const names = { crystal: 'PBM Original', birthday: 'Birthday', halloween: 'Halloween', christmas: 'Christmas' };
                 setLookStatus(`Saved. The site is wearing ${names[chosenTheme]} now.`);
                 toast('The look is live.');
             } catch (e) {
@@ -1915,7 +1915,7 @@ if(!PUBLIC)return;
 let saved=[];try{saved=JSON.parse(localStorage.getItem('pbm-saved-v1')||'[]');if(!Array.isArray(saved))saved=[]}catch(e){}
 const persist=()=>{try{localStorage.setItem('pbm-saved-v1',JSON.stringify(saved.slice(0,100)))}catch(e){}};
 const tools=document.createElement('div');tools.id='pbm-tools';tools.innerHTML='<button class="pbm-fab" id="pbm-open-search" aria-label="Search this page" title="Search (/)">⌕</button><button class="pbm-fab" id="pbm-open-saved" aria-label="Saved favorites" title="Favorites">♡</button><button class="pbm-fab" id="pbm-to-top" aria-label="Back to top" title="Back to top">↑</button>';document.body.append(tools);
-const overlay=document.createElement('div');overlay.id='pbm-search-overlay';overlay.hidden=true;overlay.innerHTML='<section class="pbm-search-dialog" role="dialog" aria-modal="true" aria-labelledby="pbm-search-title"><div class="pbm-search-head"><h2 id="pbm-search-title">Explore the Crystal League</h2><button type="button" class="pbm-close" id="pbm-search-close">✕ Close</button></div><input id="pbm-search-input" type="search" placeholder="Search breaks, cards, products…" autocomplete="off" aria-label="Search products"><div id="pbm-search-results" aria-live="polite"></div><p class="pbm-hint">Press / to search · Esc to close · ♡ saves favorites on this device</p></section>';document.body.append(overlay);
+const overlay=document.createElement('div');overlay.id='pbm-search-overlay';overlay.hidden=true;overlay.innerHTML='<section class="pbm-search-dialog" role="dialog" aria-modal="true" aria-labelledby="pbm-search-title"><div class="pbm-search-head"><h2 id="pbm-search-title">Explore the PBM Original</h2><button type="button" class="pbm-close" id="pbm-search-close">✕ Close</button></div><input id="pbm-search-input" type="search" placeholder="Search breaks, cards, products…" autocomplete="off" aria-label="Search products"><div id="pbm-search-results" aria-live="polite"></div><p class="pbm-hint">Press / to search · Esc to close · ♡ saves favorites on this device</p></section>';document.body.append(overlay);
 const input=$('#pbm-search-input'),results=$('#pbm-search-results');
 let mode='search',previousFocus=null;
 function getItems(){
@@ -1944,7 +1944,7 @@ a.addEventListener('click',e=>{if(o.href.startsWith('#')){e.preventDefault();clo
 results.append(a);
 });
 }
-function open(which){mode=which;previousFocus=document.activeElement;overlay.hidden=false;document.body.style.overflow='hidden';$('#pbm-search-title').textContent=mode==='saved'?'Your saved favorites':'Explore the Crystal League';input.placeholder=mode==='saved'?'Filter saved favorites…':'Search breaks, cards, products…';input.value='';render();input.focus()}
+function open(which){mode=which;previousFocus=document.activeElement;overlay.hidden=false;document.body.style.overflow='hidden';$('#pbm-search-title').textContent=mode==='saved'?'Your saved favorites':'Explore the PBM Original';input.placeholder=mode==='saved'?'Filter saved favorites…':'Search breaks, cards, products…';input.value='';render();input.focus()}
 function close(){overlay.hidden=true;document.body.style.overflow='';previousFocus?.focus?.()}
 $('#pbm-open-search').onclick=()=>open('search');$('#pbm-open-saved').onclick=()=>open('saved');$('#pbm-search-close').onclick=close;$('#pbm-to-top').onclick=()=>scrollTo({top:0,behavior:reduced?'instant':'smooth'});
 overlay.addEventListener('click',e=>{if(e.target===overlay)close()});input.addEventListener('input',render);
