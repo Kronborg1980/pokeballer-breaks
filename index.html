@@ -1563,9 +1563,48 @@
             const board = document.getElementById('hero-plate');
             if (board) board.innerHTML = html;
         }
+        // Upcoming breaks carousel: rotate through every scheduled break.
+        // Keep one visible, preserve the user's selection across countdown updates,
+        // and never change the fixed live-break card.
+        let heroUpcoming = [];
+        let heroUpcomingIndex = 0;
+        let heroUpcomingSignature = '';
+        let heroUpcomingTimer = null;
+        let heroUpcomingPauseUntil = 0;
+        const heroReduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+        function heroUpcomingSlide() {
+            const board = document.getElementById('hero-plate');
+            const slide = board && board.querySelector('#hero-upcoming-slide');
+            if (!slide || !heroUpcoming.length) return;
+            heroUpcomingIndex = (heroUpcomingIndex + heroUpcoming.length) % heroUpcoming.length;
+            const entry = heroUpcoming[heroUpcomingIndex];
+            const name = esc(entry.i.name);
+            const at = centralClock(entry.i.goLiveTime);
+            const date = formatCloseDate(entry.i.goLiveTime);
+            slide.dataset.target = 'card-' + entry.i.id;
+            slide.setAttribute('aria-label', 'View upcoming break ' + entry.i.name);
+            slide.querySelector('.hero-status-title').textContent = entry.i.name;
+            slide.querySelector('.hero-status-sub').textContent = date + ' · ' + at + ' Central · View break ↗';
+            const countdown = slide.querySelector('.hero-countdown');
+            if (countdown) countdown.textContent = heroDuration(entry.live - Date.now());
+            const indicator = board.querySelector('#hero-upcoming-position');
+            if (indicator) indicator.textContent = (heroUpcomingIndex + 1) + ' / ' + heroUpcoming.length;
+            board.querySelectorAll('.hero-carousel-dot').forEach((dot,i) => {
+                dot.classList.toggle('selected',i === heroUpcomingIndex);
+                dot.setAttribute('aria-pressed',String(i === heroUpcomingIndex));
+            });
+        }
+        function heroUpcomingStep(delta, manual) {
+            if (heroUpcoming.length < 2) return;
+            heroUpcomingIndex = (heroUpcomingIndex + delta + heroUpcoming.length) % heroUpcoming.length;
+            if (manual) heroUpcomingPauseUntil = Date.now() + 14000;
+            heroUpcomingSlide();
+        }
         function updateHeroPlate() {
             const items = (window.storeItems || []).filter(i => i && !i.hidden);
             if (!items.length) {
+                heroUpcoming = [];
+                heroUpcomingSignature = '';
                 setPlate('<div class="hero-status-empty">Fresh breaks from Pokeballer Mike are coming soon.</div>');
                 return;
             }
@@ -1579,6 +1618,23 @@
                 else open.push(i);
             });
             soon.sort((a,b) => a.live - b.live);
+            // Re-render only when the set of live/upcoming breaks changes.
+            // Countdown updates every second without restarting the carousel.
+            const signature = JSON.stringify({
+                live:open.map(i=>[i.id,i.name,i.stock]),
+                upcoming:soon.map(e=>[e.i.id,e.i.name,e.i.goLiveTime])
+            });
+            const board = document.getElementById('hero-plate');
+            if (signature === heroUpcomingSignature && board &&
+                (board.querySelector('#hero-upcoming-slide') || !soon.length)) {
+                heroUpcoming = soon;
+                heroUpcomingSlide();
+                return;
+            }
+            const previousId = heroUpcoming[heroUpcomingIndex]?.i.id;
+            heroUpcoming = soon;
+            heroUpcomingIndex = Math.max(0,soon.findIndex(e=>e.i.id===previousId));
+            heroUpcomingSignature = signature;
             let cards = '';
             if (open.length) {
                 const lead = open[0], left = toInt(lead.stock);
@@ -1591,25 +1647,63 @@
                    + '</button>';
             }
             if (soon.length) {
-                const next = soon[0];
-                const when = formatCloseDate(next.i.goLiveTime);
-                const at = centralClock(next.i.goLiveTime);
-                const more = soon.length > 1 ? ' · +' + (soon.length - 1) + ' scheduled' : '';
-                cards += '<button type="button" class="hero-status-card hero-upcoming" data-target="card-' + esc(next.i.id) + '" aria-label="View upcoming break ' + esc(next.i.name) + '">'
-                   + '<span class="hero-status-label"><span class="hero-status-dot"></span> UP NEXT <span class="hero-countdown">' + heroDuration(next.live-now) + '</span></span>'
-                   + '<span class="hero-status-title">' + esc(next.i.name) + '</span>'
-                   + '<span class="hero-status-sub">' + esc(when) + ' · ' + esc(at) + ' Central' + more + ' · View break ↗</span>'
-                   + '</button>';
+                cards += '<div class="hero-upcoming-carousel" aria-label="Upcoming breaks carousel">'
+                    + '<button type="button" class="hero-status-card hero-upcoming" id="hero-upcoming-slide">'
+                    + '<span class="hero-status-label"><span class="hero-status-dot"></span> UP NEXT <span class="hero-countdown"></span></span>'
+                    + '<span class="hero-status-title"></span><span class="hero-status-sub"></span></button>';
+                if (soon.length > 1) {
+                    cards += '<div class="hero-carousel-controls">'
+                        + '<button type="button" class="hero-carousel-arrow" data-carousel-step="-1" aria-label="Previous upcoming break">‹</button>'
+                        + '<span class="hero-carousel-position" id="hero-upcoming-position"></span>'
+                        + '<span class="hero-carousel-dots" aria-label="Select upcoming break">'
+                        + soon.map((_,i)=>'<button type="button" class="hero-carousel-dot" data-carousel-index="'+i+'" aria-label="Show upcoming break '+(i+1)+'"></button>').join('')
+                        + '</span>'
+                        + '<button type="button" class="hero-carousel-arrow" data-carousel-step="1" aria-label="Next upcoming break">›</button>'
+                        + '</div>';
+                }
+                cards += '</div>';
             }
             setPlate(cards ? '<div class="hero-status-row">' + cards + '</div>' :
                 '<div class="hero-status-empty">All breaks are closed right now — watch for the next drop from Pokeballer Mike.</div>');
+            heroUpcomingSlide();
         }
         document.getElementById('hero-plate').addEventListener('click', e => {
+            const arrow = e.target.closest('[data-carousel-step]');
+            if (arrow) { heroUpcomingStep(Number(arrow.dataset.carouselStep),true); return; }
+            const dot = e.target.closest('[data-carousel-index]');
+            if (dot) {
+                heroUpcomingIndex = Number(dot.dataset.carouselIndex);
+                heroUpcomingPauseUntil = Date.now() + 14000;
+                heroUpcomingSlide();
+                return;
+            }
             const button = e.target.closest('button[data-target]');
             if (!button) return;
             const target = document.getElementById(button.dataset.target);
-            if (target) target.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',block:'center'});
+            if (target) target.scrollIntoView({behavior:heroReduceMotion.matches?'auto':'smooth',block:'center'});
         });
+        const carouselBoard = document.getElementById('hero-plate');
+        carouselBoard.addEventListener('pointerenter',()=>{heroUpcomingPauseUntil=Date.now()+7000});
+        carouselBoard.addEventListener('focusin',()=>{heroUpcomingPauseUntil=Date.now()+14000});
+        // Native-feeling swipe navigation on touchscreens.
+        let heroTouchStart = null;
+        carouselBoard.addEventListener('touchstart',e=>{
+            if (e.touches.length!==1 || !e.target.closest('.hero-upcoming-carousel')) return;
+            heroTouchStart={x:e.touches[0].clientX,y:e.touches[0].clientY};
+        },{passive:true});
+        carouselBoard.addEventListener('touchend',e=>{
+            if (!heroTouchStart || !e.changedTouches.length) return;
+            const dx=e.changedTouches[0].clientX-heroTouchStart.x;
+            const dy=e.changedTouches[0].clientY-heroTouchStart.y;
+            heroTouchStart=null;
+            if (Math.abs(dx)>45 && Math.abs(dx)>Math.abs(dy)*1.3) {
+                heroUpcomingStep(dx<0?1:-1,true);
+            }
+        },{passive:true});
+        heroUpcomingTimer=setInterval(()=>{
+            if (document.hidden || heroReduceMotion.matches || Date.now()<heroUpcomingPauseUntil) return;
+            heroUpcomingStep(1,false);
+        },6500);
 
         function renderSkeletons(container, count) {
             let html = '';
