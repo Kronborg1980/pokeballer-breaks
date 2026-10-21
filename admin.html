@@ -328,7 +328,7 @@
         }
         @keyframes edgeSpin { to { --edge-a: 360deg; } }
 
-        .card, .primary-btn {
+        .card, button.primary-btn {
             --edge-a: 0deg;
             --e1: 0,255,242;
             --e2: 213,0,255;
@@ -347,8 +347,9 @@
         .pay-card  { --e1: 255,201,60; --e2: 255,248,220; animation-duration: 16s; }
         .fold:not([open]) { animation-duration: 26s; }
 
-        .primary-btn {
+        button.primary-btn {
             border: 2px solid transparent;
+            border-radius: 10px;
             background:
                 linear-gradient(90deg, #00fff2, #d500ff) padding-box,
                 conic-gradient(from var(--edge-a),
@@ -358,7 +359,7 @@
         }
 
         @media (prefers-reduced-motion: reduce) {
-            .card, .primary-btn { animation: none; }
+            .card, button.primary-btn { animation: none; }
         }
     </style>
 </head>
@@ -1637,7 +1638,7 @@
                 const data = await res.json();
                 if (!res.ok || data.error) {
                     setSettingsStatus(res.status === 404
-                        ? 'This worker does not have the payments update yet — commit the new worker.js and let it deploy.'
+                        ? 'The worker running pbmbreaks.com is still the old one. Put the new worker.js and wrangler.toml in your GitHub repo, wait for the Cloudflare build to go green, then press this again.'
                         : (data.error || 'Could not load settings.'), true);
                     return;
                 }
@@ -1793,7 +1794,7 @@
                 const data = await res.json();
                 if (!res.ok || data.error) {
                     setLookStatus(res.status === 404
-                        ? 'This worker does not have the look settings yet — commit the new worker.js and let it deploy.'
+                        ? 'The worker running pbmbreaks.com is still the old one. Put the new worker.js and wrangler.toml in your GitHub repo, wait for the Cloudflare build to go green, then press this again.'
                         : (data.error || `Save failed (HTTP ${res.status}).`), true);
                     return;
                 }
