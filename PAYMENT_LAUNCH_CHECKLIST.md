@@ -19,6 +19,15 @@ Do not change the admin payment mode to `stripe` until the merchant is approved 
 - [ ] Verify Stripe-signature failures return 400 and do not change order stock/status.
 - [ ] Verify backend `/api/settings` reports `stripeReady` correctly, restricted API key check passes, and no API credentials appear in public settings.
 
+## Streamlabs / broadcast alert setup (developer)
+
+- [ ] The original Worker used the deprecated Streamlabs v1.0 Alerts API. This branch migrates to **v2.0** with `Authorization: Bearer <token>` instead of placing the token in the form body.
+- [ ] Register/approve a Streamlabs v2 OAuth application and securely obtain the appropriate scoped access token. A legacy v1 token may not work.
+- [ ] Save the v2 token securely in the PBM admin/Worker and enable alerts + Streamlabs destination; never share secrets over messages.
+- [ ] Run the test-alert control and verify a real OBS/Streamlabs on-screen browser source.
+- [ ] Complete one approved **Stripe test-mode** checkout and confirm the custom alert appears once. This is only a display alert, **not** a native Streamlabs tip or evidence of payment.
+- [ ] If custom alerts cannot be made reliable, use the built-in PBM OBS browser source as the fallback. The show must still rely on Stripe's paid status for fulfillment.
+
 ## Payment test matrix — automate where possible
 
 1. Successful card payment: exact amount/currency; order becomes PAID once, stock falls once, owner receives correct break name and order reference.
