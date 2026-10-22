@@ -143,7 +143,9 @@ export class OrderDesk {
       orderRef, email, name, address, qty,
       status: pending ? 'pending' : 'manual',
       at: now,
-      expiresAt: pending ? now + hold * 60000 : null
+      // Stripe session can expire before its signed webhook reaches us.
+      // Retain a short grace window so a paid order is not freed prematurely.
+      expiresAt: pending ? now + hold * 60000 + 5 * 60000 : null
     }, meta || {});
 
     // One atomic write: the buyer lock, the ref index and the new stock all
@@ -441,10 +443,19 @@ export default {
         let event;
         try { event = JSON.parse(raw); } catch (e) { return new Response('Bad JSON', { status: 400 }); }
 
-        // Answer Stripe immediately; do the work after, so a slow email never
-        // makes Stripe think the webhook failed and retry it.
-        ctx.waitUntil(handleStripeEvent(env, event).catch(err => console.error('stripe event', err)));
-        return new Response(JSON.stringify({ received: true }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+        // Do not acknowledge a paid event until the OrderDesk has durably
+        // recorded it. A 500 tells Stripe to retry rather than silently lose
+        // a payment if Cloudflare/Durable Objects have a transient failure.
+        // Confirmation uses the existing idempotent 'paid' transition.
+        try {
+          await handleStripeEvent(env, event);
+          return new Response(JSON.stringify({ received: true }), {
+            status: 200, headers: { 'Content-Type': 'application/json' }
+          });
+        } catch (err) {
+          console.error('Stripe webhook processing failed', err);
+          return new Response('Payment confirmation temporarily unavailable', { status: 500 });
+        }
       }
 
       /* ---------- PUBLIC SETTINGS (what the storefront is allowed to know) ---------- */
@@ -516,7 +527,10 @@ export default {
           cancel_url: `${store}?canceled=1&${q}`,
           customer_email: buyerEmail,
           client_reference_id: reserved.orderRef,
-          expires_at: Math.floor((reserved.expiresAt || (Date.now() + 1800000)) / 1000),
+          // Keep Stripe's own session expiry within its 30-min–24h window.
+          // The OrderDesk retains the reservation for five extra minutes
+          // to cover webhook delivery latency and processing retries.
+          expires_at: Math.floor((Date.now() + Math.min(1440, Math.max(30, toInt(settings.holdMinutes, 30)) + 1) * 60000) / 1000),
           'line_items[0][quantity]': qty,
           'line_items[0][price_data][currency]': settings.currency || 'usd',
           'line_items[0][price_data][unit_amount]': unitAmount,
@@ -1014,12 +1028,19 @@ async function handleStripeEvent(env, event) {
 
 async function confirmPaidOrder(env, itemId, orderRef, payment) {
   const result = await deskCall(env, itemId, { op: 'confirm', orderRef, payment });
-  if (!result || !result.ok || result.already) return;
+  if (!result || !result.ok) {
+    // Do not pretend a payment was reconciled if its order disappeared.
+    // Stripe must retry and the operator must investigate the missing order.
+    throw new Error('Paid Stripe event could not match order ' + orderRef + ' for item ' + itemId);
+  }
+  if (result.already) return;
 
   const rec = result.record || {};
   const settings = await hubCall(env, { op: 'settings.get' });
   const KV = env.POKEBALLER_KV;
 
+  // Stock mirror is display-only; payment remains recorded in OrderDesk even
+  // if a transient KV failure prevents the secondary copy from updating.
   await mirrorStock(env, itemId, result.stock);
 
   if (KV) {
@@ -1038,7 +1059,7 @@ async function confirmPaidOrder(env, itemId, orderRef, payment) {
   }
 
   if (env.RESEND_API_KEY) {
-    await sendEmail(env, {
+    const emailResult = await sendEmail(env, {
       to: [rec.notifyEmail || settings.notifyEmail],
       replyTo: rec.email,
       subject: `✅ PAID ${orderRef}: ${rec.qty}x ${rec.itemName || ''}`,
@@ -1052,6 +1073,9 @@ async function confirmPaidOrder(env, itemId, orderRef, payment) {
         paid: true, paidVia: paidLine
       })
     });
+    if (!emailResult || !emailResult.ok) {
+      console.error('PAID ORDER NOTIFICATION FAILED', orderRef, emailResult && emailResult.status);
+    }
   }
 
   await fireAlert(env, {
@@ -1108,16 +1132,18 @@ async function fireAlert(env, alert) {
       report.streamlabs = 'no Streamlabs token saved';
     } else {
       try {
-        const body = new URLSearchParams();
-        body.append('access_token', token);
-        body.append('type', 'donation');
-        body.append('message', message);
-        if (settings.alertImageUrl) body.append('image_href', settings.alertImageUrl);
-        if (settings.alertSoundUrl) body.append('sound_href', settings.alertSoundUrl);
-        const res = await fetch('https://streamlabs.com/api/v1.0/alerts', {
+        // Streamlabs v2 requires an OAuth2 access token in the Bearer
+        // header. Never send access_token in the request body or URL.
+        const body = { type: 'donation', message };
+        if (settings.alertImageUrl) body.image_href = settings.alertImageUrl;
+        if (settings.alertSoundUrl) body.sound_href = settings.alertSoundUrl;
+        const res = await fetch('https://streamlabs.com/api/v2.0/alerts', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body
+          headers: {
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(body)
         });
         const text = await res.text();
         report.streamlabs = res.ok ? 'sent' : `failed (${res.status}): ${text.slice(0, 200)}`;
