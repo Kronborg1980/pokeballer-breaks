@@ -1132,16 +1132,18 @@ async function fireAlert(env, alert) {
       report.streamlabs = 'no Streamlabs token saved';
     } else {
       try {
-        const body = new URLSearchParams();
-        body.append('access_token', token);
-        body.append('type', 'donation');
-        body.append('message', message);
-        if (settings.alertImageUrl) body.append('image_href', settings.alertImageUrl);
-        if (settings.alertSoundUrl) body.append('sound_href', settings.alertSoundUrl);
-        const res = await fetch('https://streamlabs.com/api/v1.0/alerts', {
+        // Streamlabs v2 requires an OAuth2 access token in the Bearer
+        // header. Never send access_token in the request body or URL.
+        const body = { type: 'donation', message };
+        if (settings.alertImageUrl) body.image_href = settings.alertImageUrl;
+        if (settings.alertSoundUrl) body.sound_href = settings.alertSoundUrl;
+        const res = await fetch('https://streamlabs.com/api/v2.0/alerts', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body
+          headers: {
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(body)
         });
         const text = await res.text();
         report.streamlabs = res.ok ? 'sent' : `failed (${res.status}): ${text.slice(0, 200)}`;
