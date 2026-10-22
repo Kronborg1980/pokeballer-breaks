@@ -1320,6 +1320,8 @@ document.getElementById('pop-done').addEventListener('click', closePop);
 popEl.addEventListener('click', ev => { if (ev.target === popEl) closePop(); });
 
 document.getElementById('pop-list').addEventListener('click', ev => {
+  const refundBtn = ev.target.closest('button[data-refund]');
+  if (refundBtn) { refundBtn.disabled = true; refundStockOrder(refundBtn.dataset.refund).finally(() => { refundBtn.disabled = false; }); return; }
   const btn = ev.target.closest('button[data-purge]');
   if (!btn) return;
   const email = btn.dataset.purge;
