@@ -1487,7 +1487,7 @@
                                 <span class="order-email">${esc(o.email)} ${stateBadge}</span>
                                 <span class="order-meta">${bits.join(' · ')}</span>
                             </div>
-                            ${o.status === 'paid' && o.payment?.provider === 'stripe' ? '<button class="btn-reset" style="border-color:#ffbf66;color:#ffdf9b" onclick="refundBuyer(\'' + esc(o.orderRef) + '\')">Refund card</button>' : ['paid','refunded','refund_pending','refund_processing'].includes(o.status) ? '<span style="font-size:.7rem;color:#afb4cf">Financial record</span>' : '<button class="btn-reset" onclick="resetBuyer(' + JSON.stringify(o.email) + ', ' + qty + ')">Reset</button>'}
+                            ${o.status === 'paid' && o.payment?.provider === 'stripe' ? '<button class="btn-reset" style="border-color:#ffbf66;color:#ffdf9b" onclick="refundBuyer(\'' + esc(o.orderRef) + '\')">Refund card</button>' : ['paid','refunded','refund_pending','refund_processing'].includes(o.status) ? '<span style="font-size:.7rem;color:#afb4cf">Financial record</span>' : '<button class="btn-reset" data-reset-email="' + esc(o.email) + '" data-reset-qty="' + qty + '">Reset</button>'}
                         </div>`;
                 }).join('');
             }
@@ -1496,6 +1496,12 @@
         function retryBtn() {
             return ' <button class="btn-edit" style="border:none;padding:6px 14px;border-radius:6px;cursor:pointer;color:#fff;font-weight:800;margin-left:8px;" onclick="loadOrders()">Retry</button>';
         }
+
+        // Delegated click prevents email values from being interpreted as JavaScript.
+        document.getElementById('om-list').addEventListener('click', event => {
+            const button = event.target.closest('[data-reset-email]');
+            if (button) resetBuyer(button.dataset.resetEmail, Number(button.dataset.resetQty));
+        });
 
         async function refundBuyer(orderRef) {
             if (!ordersItem || !orderRef) return;
