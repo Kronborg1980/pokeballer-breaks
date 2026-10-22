@@ -423,6 +423,33 @@
 @media(prefers-reduced-motion:reduce){.pbm-fab,.pbm-card-sheen:after{transition:none!important}}
 
 </style>
+<style>
+/* PBM SIMPLE MODE — interface-only; no changes to payments or saved data. */
+#pbm-admin-nav{position:sticky;top:6px;z-index:90;margin:12px 0 18px;display:flex;gap:8px;flex-wrap:wrap;
+ padding:10px;border:1px solid #ffffff30;border-radius:16px;background:rgba(10,12,28,.95);box-shadow:0 12px 30px #0007;backdrop-filter:blur(18px)}
+#pbm-admin-nav button{flex:1 1 115px;min-height:43px;padding:10px 9px;border:1px solid #ffffff22;border-radius:11px;
+ background:#16182c;color:#c8cde6;cursor:pointer;font:800 13px/1.3 Inter,system-ui,sans-serif}
+#pbm-admin-nav button[aria-selected="true"]{background:linear-gradient(130deg,#063c42,#20204d);border-color:#00e5da;color:#fff;box-shadow:inset 0 1px 0 #ffffff18}
+#pbm-admin-nav button:focus-visible,.pbm-help-trigger:focus-visible{outline:2px solid #00e5da;outline-offset:3px}
+#admin-section>[data-pbm-panel][hidden]{display:none!important}
+#pbm-admin-intro{font:500 13px/1.65 Inter,system-ui,sans-serif;color:#c2c8e4;padding:0 8px 14px;margin:0}
+#pbm-admin-intro strong{color:#fff}
+.pbm-help{display:inline-flex;align-items:center;position:relative;margin-left:7px;vertical-align:middle;font-style:normal;text-transform:none;letter-spacing:normal;z-index:10}
+.pbm-help-trigger{width:22px;height:22px;min-width:22px;display:inline-grid;place-items:center;padding:0;
+ border:1px solid #9c9fb8;border-radius:50%;background:#222640;color:#f9f5ff;
+ font:bold 12px/1 Inter,system-ui,sans-serif;cursor:pointer}
+.pbm-help-pop{display:none;position:absolute;left:50%;top:calc(100% + 8px);transform:translateX(-50%);
+ width:max-content;max-width:min(270px,80vw);white-space:normal;padding:11px 13px;text-align:left;
+ background:#101326;color:#f6f8ff;border:1px solid #00d6cd88;border-radius:11px;
+ font:500 12px/1.55 Inter,system-ui,sans-serif;box-shadow:0 12px 38px #000c;z-index:9999}
+.pbm-help:hover .pbm-help-pop,.pbm-help:focus-within .pbm-help-pop,.pbm-help.open .pbm-help-pop{display:block}
+.pbm-setup-guide{border:1px solid #5c648d;border-radius:14px;background:#11172b;margin:4px 0 17px;padding:12px 15px;color:#e4eaff}
+.pbm-setup-guide>summary{cursor:pointer;font:800 14px Inter,system-ui,sans-serif;color:#95e9ef;list-style:revert}
+.pbm-setup-guide ol{padding-left:22px;margin:12px 0;line-height:1.7;font-size:13px}
+.pbm-setup-guide li{margin:6px 0}.pbm-setup-guide a{color:#94eaf0}
+.pbm-risk-note{padding:12px;border:1px solid #d4a15f88;border-radius:11px;background:#4a341922;color:#ffdda7;font:600 12px/1.6 Inter,system-ui,sans-serif;margin:12px 0}
+@media(max-width:650px){#pbm-admin-nav{gap:5px;padding:6px;top:0}#pbm-admin-nav button{flex:1 1 46%;padding:10px 4px} .pbm-help-pop{left:auto;right:-8px;transform:none}}
+</style>
 </head>
 <body>
     <div class="led-topbar"></div>
@@ -446,25 +473,21 @@
 
                 <div class="themegrid" id="theme-grid">
                     <button class="th th-crystal" type="button" data-theme="crystal">
-                        data-theme="crystal">
                         <span class="th-sky"><img class="theme-favicon-preview" src="favicon-original.svg" width="40" height="40" alt="" loading="lazy"></span>
                         <span class="th-n">PBM Original</span>
                         <span class="th-s">PBM original neon</span>
                     </button>
                     <button class="th th-birthday" type="button" data-theme="birthday">
-                        data-theme="birthday">
                         <span class="th-sky"><img class="theme-favicon-preview" src="favicon-birthday.svg" width="40" height="40" alt="" loading="lazy"></span>
                         <span class="th-n">Birthday</span>
                         <span class="th-s">Cake, balloons and bunting</span>
                     </button>
                     <button class="th th-halloween" type="button" data-theme="halloween">
-                        data-theme="halloween">
                         <span class="th-sky"><img class="theme-favicon-preview" src="favicon-halloween.svg" width="40" height="40" alt="" loading="lazy"></span>
                         <span class="th-n">Halloween</span>
                         <span class="th-s">Pumpkins, ghosts and bats</span>
                     </button>
                     <button class="th th-christmas" type="button" data-theme="christmas">
-                        data-theme="christmas">
                         <span class="th-sky"><img class="theme-favicon-preview" src="favicon-christmas.svg" width="40" height="40" alt="" loading="lazy"></span>
                         <span class="th-n">Christmas</span>
                         <span class="th-s">Tree, sleigh and snow</span>
@@ -1986,5 +2009,138 @@ document.addEventListener('pointermove',e=>{if(e.pointerType!=='mouse')return;co
 })();
 
 </script>
+
+<script>
+/* PBM Guided Admin: presentation and inline explanations only. */
+(function(){
+  'use strict';
+  const root=document.getElementById('admin-section');
+  if(!root)return;
+  const panels=[
+    ['inventory','📦 Inventory','Your products, stock, prices and order lists.'],
+    ['add','➕ Add product','Create a break or a Vault listing. Fill in the details, then publish.'],
+    ['appearance','🎨 Appearance','Pick a season and save it. The same look appears on the site and Vault.'],
+    ['payments','💳 Payments & alerts','Advanced setup only. Leave your current payment mode unchanged until testing is complete.']
+  ];
+  const nav=document.createElement('nav');
+  nav.id='pbm-admin-nav';
+  nav.setAttribute('aria-label','Admin sections');
+  const intro=document.createElement('p');
+  intro.id='pbm-admin-intro';
+  const labeled=[];
+  const selectors={
+    appearance:[root.querySelector(':scope > .look-card')],
+    payments:[root.querySelector(':scope > #pay-fold')],
+    add:[root.querySelector(':scope > .card:not(.look-card):not(.pay-card)')],
+    inventory:[root.querySelector(':scope > h2'),root.querySelector(':scope > .inventory-controls'),root.querySelector(':scope > #inventory-list')]
+  };
+  Object.entries(selectors).forEach(([section,nodes])=>nodes.forEach(node=>{
+    if(node){node.dataset.pbmPanel=section;labeled.push(node);}
+  }));
+  function selectPanel(name){
+    if(!selectors[name])name='inventory';
+    labeled.forEach(node=>{node.hidden=node.dataset.pbmPanel!==name;});
+    nav.querySelectorAll('button[data-panel]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.panel===name)));
+    intro.textContent='';
+    const strong=document.createElement('strong');
+    strong.textContent=name==='payments'?'Before switching payment methods: ':'Tip: ';
+    intro.append(strong,document.createTextNode(panels.find(p=>p[0]===name)[2]));
+    if(name==='payments'){
+      const fold=document.getElementById('pay-fold');
+      if(fold)fold.open=true;
+    }
+  }
+  panels.forEach(([id,label])=>{
+    const b=document.createElement('button');b.type='button';
+    b.dataset.panel=id;b.textContent=label;b.setAttribute('aria-selected','false');
+    b.addEventListener('click',()=>{selectPanel(id);try{history.replaceState(null,'','#'+id);}catch(e){}});
+    nav.append(b);
+  });
+  root.prepend(intro);root.prepend(nav);
+  selectPanel((location.hash||'').slice(1));
+  window.addEventListener('hashchange',()=>selectPanel((location.hash||'').slice(1)));
+  // Keep the order manager modal reachable via the inventory controls.
+  const pay=document.getElementById('pay-fold');
+  if(pay){
+    const guide=document.createElement('details');
+    guide.className='pbm-setup-guide';
+    guide.innerHTML='<summary>New here? Open the safe payment setup checklist</summary>'+
+      '<ol>'+
+      '<li><strong>First:</strong> Ask Stripe to approve your actual physical card-pack and live-break business model. Do not take card payments before it is approved.</li>'+
+      '<li><strong>Then:</strong> Create and verify your Stripe business account. Never email or share secret keys.</li>'+
+      '<li><strong>Testing:</strong> Have the website developer use a test environment and Stripe test keys. Test successful, canceled, and failed payments, expired holds, and refunds.</li>'+
+      '<li><strong>Webhooks:</strong> Paste the webhook URL into Stripe and enable the checkout and refund events required by the payment code.</li>'+
+      '<li><strong>Alerts:</strong> Turn on alerts, choose your OBS overlay or Streamlabs, then send a test alert and verify it appears on your stream.</li>'+
+      '<li><strong>Live:</strong> Only after approval and successful testing, add live keys and deliberately select Stripe checkout and Save.</li>'+
+      '</ol><p class="pbm-risk-note">Do not use the Save button to switch to Stripe just to try it. A real customer could reach the checkout before it has been tested.</p>';
+    const fold=pay.querySelector('.fold-body');
+    if(fold)fold.prepend(guide);
+  }
+  // Tooltips are friendly, accessible and never contain actual passwords/keys.
+  const help={
+    'login-username':'The admin username you were given for PBM Breaks.',
+    'login-password':'Your private admin password. Never share it in messages or screenshots.',
+    'set-tip-url':'Your current Streamlabs tip-page address. Customers use this when manual Streamlabs payment is selected.',
+    'set-ref-instructions':'Text the buyer sees after reserving. Tell them to include the order code, break name and YouTube username.',
+    'set-stripe-key':'A private restricted Stripe API key. Test keys are for testing only; never paste keys into chat or GitHub.',
+    'set-webhook-secret':'Private whsec_ key from the specific Stripe webhook endpoint. It verifies real Stripe payment messages.',
+    'set-webhook-url':'Copy this address into the matching Stripe webhook configuration. This URL receives verified payment events.',
+    'set-currency':'Currency used for card charges. Ensure prices on your site match the amount customers expect.',
+    'set-hold-minutes':'How long unpaid checkouts reserve packs. Unpaid reservations must expire and return stock.',
+    'set-store-url':'Website address Stripe returns buyers to after payment or canceling. Usually https://pbmbreaks.com.',
+    'set-streamlabs-token':'Secret Streamlabs API access token for custom on-screen alerts. Never share it. The current integration needs testing against Streamlabs API v2.',
+    'set-overlay-url':'Copy into OBS as a Browser source to display PBM custom alerts during a live stream.',
+    'set-alert-template':'Use {name}, {qty}, {unit}, {item}, {amount} and {ref} as placeholders for the alert message.',
+    'set-notify-email':'Private email address that receives paid-order notifications.',
+    'set-public-contact':'Email customers can use when they need help with an order.',
+    'item-condition':'Choose the actual physical card condition. Only for ungraded singles.',
+    'item-grader':'Which company graded the card, such as PSA or CGC. Use only for graded slabs.',
+    'item-min-buy':'Smallest number of packs or bundles a buyer may order.',
+    'item-max-buy':'Largest number of packs or bundles a buyer may order in one order.',
+    'golive-date':'Optional US Central opening date. A future date keeps a break listed as upcoming until then.',
+    'close-date':'US Central closing date. The break stops accepting purchases after this time.',
+    'item-name':'The product name customers see. Include the set and type, such as Destined Celebrations Bundles.',
+    'item-description':'Exactly what the customer receives, whether the packs are opened live, and what will be shipped.',
+    'item-price':'Price for ONE pack, bundle, or spot. The customer total is this price times the quantity.',
+    'item-stock':'How many units are actually for sale. Enter zero to mark sold out.',
+    'stock-label-type':'Choose Packs, Bundles or Spots to match what the quantity number represents.',
+    'item-google-form-link':'Used for product types that send customers to an external form or payment page. Standard pack checkout uses its own flow.',
+    'item-image':'Upload product pictures. The first picture is used as the main image.',
+    'inventory-search':'Search products to edit them or open their order list.',
+    'wm-link':'Where a winner pays after receiving their winner email. Make sure it is the correct payment page.',
+    'wm-emails':'Email addresses of winners. Double-check each address before sending.',
+    'wm-message':'Optional personal text added to the winner email.',
+    'om-restore':'CAUTION: adds units back to available stock when resetting. Do not use for payments or opened packs.'
+  };
+  const generic=label=>label.replace(/\s+/g,' ').trim().replace(/\?$/,'')+'. Check the value before saving; the site may update immediately.';
+  const appendHelp=(el,tip)=>{
+    if(el.querySelector('.pbm-help'))return;
+    const wrapper=document.createElement('span');wrapper.className='pbm-help';
+    const button=document.createElement('button');button.type='button';button.className='pbm-help-trigger';button.textContent='?';button.setAttribute('aria-label','Help: '+el.textContent.trim().slice(0,70));button.setAttribute('aria-expanded','false');
+    const pop=document.createElement('span');pop.className='pbm-help-pop';pop.setAttribute('role','tooltip');pop.textContent=tip;
+    button.addEventListener('click',e=>{e.stopPropagation();e.preventDefault();const active=wrapper.classList.toggle('open');button.setAttribute('aria-expanded',String(active));});
+    button.addEventListener('pointerdown',e=>e.stopPropagation());
+    wrapper.append(button,pop);el.append(wrapper);
+  };
+  document.querySelectorAll('#login-section label, #admin-section label, #winner-modal label, #orders-modal label').forEach(label=>{
+    if(label.matches('.switch')||label.querySelector('input,select,textarea'))return;
+    const id=label.getAttribute('for')||'';
+    const value=help[id]||generic(label.textContent);
+    appendHelp(label,value);
+  });
+  // Explain unlabeled/advanced toggles without modifying what they save.
+  document.querySelectorAll('.toggle-row strong').forEach(el=>{
+    const word=el.textContent.toLowerCase();
+    let tip=word.includes('every paid order')?'Master switch: no payment alerts appear unless this is on.':word.includes('streamlabs')?'Send a custom alert to the Streamlabs alert box (not a native tip). Requires a working API token and a test.':'Send alerts to a PBM browser source in OBS. Copy the overlay URL and test it.';
+    appendHelp(el,tip);
+  });
+  document.addEventListener('click',event=>{
+    if(event.target.closest('.pbm-help'))return;
+    document.querySelectorAll('.pbm-help.open').forEach(x=>{x.classList.remove('open');x.querySelector('button')?.setAttribute('aria-expanded','false');});
+  });
+  document.addEventListener('keydown',event=>{if(event.key==='Escape')document.querySelectorAll('.pbm-help.open').forEach(x=>x.classList.remove('open'));});
+})();
+</script>
+
 </body>
 </html>
