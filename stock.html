@@ -1222,6 +1222,9 @@ async function loadEmails() {
 
       let chip = '';
       if (o.status === 'paid') chip = '<span class="estatus paid">Paid</span>';
+      else if (o.status === 'refunded') chip = '<span class="estatus paid">Refunded</span>';
+      else if (o.status === 'refund_pending') chip = '<span class="estatus waiting">Refund pending</span>';
+      else if (o.status === 'refund_processing') chip = '<span class="estatus waiting">Check Stripe refund</span>';
       else if (o.status === 'pending') chip = '<span class="estatus waiting">Waiting to pay</span>';
 
       const safe = esc(o.email || '');
@@ -1229,12 +1232,36 @@ async function loadEmails() {
         <div class="erow ${o.status === 'pending' ? 'pending' : ''}" data-row="${safe}">
           <div class="emailtxt">${safe}${chip}</div>
           <div class="emeta">${bits.join(' · ')}</div>
-          <button class="purge-btn" type="button" data-purge="${safe}">Purge this email</button>
+          ${o.status === 'paid' && o.payment?.provider === 'stripe' ? '<button class="purge-btn" type="button" data-refund="' + esc(o.orderRef) + '" style="color:#ffe0a2;border-color:#c99854">Refund Stripe payment</button>' : ['paid','refunded','refund_pending','refund_processing'].includes(o.status) ? '<span class="emeta">Financial record retained</span>' : '<button class="purge-btn" type="button" data-purge="' + safe + '">Purge this email</button>'}
         </div>`;
     }).join('');
   } catch (e) {
     listBox.innerHTML = '';
     setPopMsg('No internet, or the server did not answer.', 'bad');
+  }
+}
+
+async function refundStockOrder(orderRef) {
+  if (!popItem || !orderRef) return;
+  if (!confirm('Issue a FULL Stripe refund for ' + orderRef + '?\n\nNo stock will automatically be restored.')) return;
+  const typed = prompt('Type the exact order reference ' + orderRef + ' to confirm the refund:');
+  if (typed !== orderRef) { setPopMsg('Refund cancelled: reference did not match.', 'bad'); return; }
+  setPopMsg('Submitting Stripe refund…', 'info');
+  try {
+    const res = await fetch(`${API_URL}/purchases/refund`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: getToken(), itemId: popItem.id, orderRef, confirmOrderRef: typed })
+    });
+    if (res.status === 401) { closePop(); logout('Session expired.'); return; }
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.ok) {
+      setPopMsg(data.error || 'Refund failed. Verify in the Stripe dashboard.', 'bad');
+      return;
+    }
+    await loadEmails();
+    setPopMsg(data.status === 'refunded' ? 'Full refund submitted. Stock was not restored.' : 'Stripe refund pending. Check Stripe dashboard.', 'ok');
+  } catch (e) {
+    setPopMsg('Request status uncertain. Verify in Stripe before retrying.', 'bad');
   }
 }
 
@@ -1294,6 +1321,8 @@ document.getElementById('pop-done').addEventListener('click', closePop);
 popEl.addEventListener('click', ev => { if (ev.target === popEl) closePop(); });
 
 document.getElementById('pop-list').addEventListener('click', ev => {
+  const refundBtn = ev.target.closest('button[data-refund]');
+  if (refundBtn) { refundBtn.disabled = true; refundStockOrder(refundBtn.dataset.refund).finally(() => { refundBtn.disabled = false; }); return; }
   const btn = ev.target.closest('button[data-purge]');
   if (!btn) return;
   const email = btn.dataset.purge;
