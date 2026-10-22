@@ -38,6 +38,8 @@ export class OrderDesk {
     switch (body.op) {
       case 'reserve': result = await this.reserve(body); break;
       case 'confirm': result = await this.confirm(body); break;
+      case 'refund.inspect': result = await this.refundInspect(body); break;
+      case 'refund.record': result = await this.refundRecord(body); break;
       case 'release': result = await this.release(body); break;
       case 'lookup':  result = await this.lookup(body); break;
       case 'sync':    result = await this.sync(body); break;
@@ -180,6 +182,39 @@ export class OrderDesk {
     await this.state.storage.put(key, rec);
 
     return { ok: true, already: false, record: rec, stock };
+  }
+
+  // Refund state is stored with the order under its item-scoped Durable Object.
+  // Never restore inventory automatically after a card refund: packs may already
+  // have been opened, and refunds do not imply that physical goods are resellable.
+  async refundInspect({ orderRef }) {
+    const email = await this.state.storage.get('ref:' + orderRef);
+    if (!email) return { ok: false, error: 'Order reference not found.' };
+    const rec = await this.state.storage.get('buyer:' + email);
+    if (!rec || rec.orderRef !== orderRef) return { ok: false, error: 'Order not found.' };
+    if (rec.status === 'refunded' || rec.status === 'refund_pending') {
+      return { ok: true, already: true, status: rec.status, refund: rec.refund || null };
+    }
+    if (rec.status !== 'paid' || !rec.payment || rec.payment.provider !== 'stripe' || !rec.payment.paymentIntent) {
+      return { ok: false, error: 'Only paid Stripe orders with a payment intent can be refunded here.' };
+    }
+    return { ok: true, paymentIntent: rec.payment.paymentIntent, orderRef: rec.orderRef, status: rec.status };
+  }
+  async refundRecord({ orderRef, refund }) {
+    const email = await this.state.storage.get('ref:' + orderRef);
+    if (!email) return { ok: false, error: 'Order no longer exists.' };
+    const key = 'buyer:' + email;
+    const rec = await this.state.storage.get(key);
+    if (!rec || rec.orderRef !== orderRef) return { ok: false, error: 'Order mismatch.' };
+    if (rec.status === 'refunded' || rec.status === 'refund_pending') {
+      return { ok: true, already: true, status: rec.status, refund: rec.refund };
+    }
+    if (rec.status !== 'paid') return { ok: false, error: 'Order is no longer paid.' };
+    if (!refund || !refund.id) return { ok: false, error: 'Refund receipt missing.' };
+    rec.status = refund.status === 'succeeded' ? 'refunded' : 'refund_pending';
+    rec.refund = { id: refund.id, status: refund.status, amount: refund.amount, currency: refund.currency, at: Date.now() };
+    await this.state.storage.put(key, rec);
+    return { ok: true, status: rec.status, refund: rec.refund };
   }
 
   async release({ orderRef, email, restoreStock = true, onlyIfPending = false }) {
@@ -856,6 +891,73 @@ export default {
         return new Response(JSON.stringify(records), { headers });
       }
 
+      /* ---------- ADMIN: FULL STRIPE REFUND ---------- */
+      if (path === '/api/purchases/refund' && method === 'POST') {
+        const body = await request.json().catch(() => ({}));
+        if (!await requireAdmin(body.token)) {
+          return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers });
+        }
+        const itemId = String(body.itemId || '').trim();
+        const orderRef = String(body.orderRef || '').trim();
+        if (!itemId || !/^PBM-[A-Z0-9]{6}$/.test(orderRef) || body.confirmOrderRef !== orderRef) {
+          return new Response(JSON.stringify({ error: 'Re-enter the exact order reference to confirm the full refund.' }), { status: 400, headers });
+        }
+        const check = await deskCall(env, itemId, { op: 'refund.inspect', orderRef });
+        if (!check || !check.ok) {
+          return new Response(JSON.stringify({ error: check?.error || 'Order not eligible for card refund.' }), { status: 409, headers });
+        }
+        if (check.already) {
+          return new Response(JSON.stringify({ ok: true, already: true, status: check.status, refund: check.refund }), { headers });
+        }
+        const secrets = await hubCall(env, { op: 'secrets.get' });
+        const key = env.STRIPE_SECRET_KEY || secrets.stripeSecretKey;
+        if (!key) return new Response(JSON.stringify({ error: 'Stripe key is not configured.' }), { status: 503, headers });
+
+        // Stripe idempotency is permanent at PBM's reference level: retries of
+        // the same refund request cannot create multiple card refunds.
+        const refundBody = new URLSearchParams({
+          payment_intent: check.paymentIntent,
+          reason: 'requested_by_customer',
+          'metadata[pbmOrderRef]': orderRef,
+          'metadata[pbmItemId]': itemId
+        });
+        let refundResponse;
+        try {
+          const response = await fetch('https://api.stripe.com/v1/refunds', {
+            method: 'POST',
+            headers: {
+              Authorization: 'Bearer ' + key,
+              'Content-Type': 'application/x-www-form-urlencoded',
+              'Idempotency-Key': 'pbm-full-refund-' + orderRef
+            },
+            body: refundBody
+          });
+          refundResponse = { ok: response.ok, json: await response.json().catch(() => null), status: response.status };
+        } catch (e) {
+          return new Response(JSON.stringify({ error: 'Stripe request status unknown. Check the Stripe dashboard before retrying.', detail: String(e) }), { status: 502, headers });
+        }
+        if (!refundResponse.ok || !refundResponse.json?.id) {
+          return new Response(JSON.stringify({
+            error: 'Stripe did not accept the refund. Verify permissions and refund balance.',
+            detail: refundResponse.json?.error?.message || 'HTTP ' + refundResponse.status
+          }), { status: 502, headers });
+        }
+        const refund = refundResponse.json;
+        const recorded = await deskCall(env, itemId, {
+          op: 'refund.record', orderRef,
+          refund: { id: refund.id, status: refund.status, amount: refund.amount, currency: refund.currency }
+        });
+        if (!recorded?.ok) {
+          return new Response(JSON.stringify({
+            error: 'Stripe accepted the refund but PBM could not update the order record. Reconcile this refund in Stripe.',
+            refundId: refund.id
+          }), { status: 500, headers });
+        }
+        // The original inventory remains consumed. Any restock must be handled
+        // separately only after checking physical packs and fulfillment.
+        return new Response(JSON.stringify({ ok: true, status: recorded.status, refund: recorded.refund }), { headers });
+      }
+
       /* ---------- ADMIN: CLEAR AN ORDER LOCK ---------- */
       if (path === '/api/purchases/clear' && method === 'POST') {
         const { token, itemId, email, restoreStock } = await request.json();
@@ -864,6 +966,20 @@ export default {
         }
         if (!itemId) return new Response(JSON.stringify({ error: 'itemId is required' }), { status: 400, headers });
 
+        // Never erase financial evidence by resetting a Stripe-paid/refunded order.
+        // Reset controls are for pending/manual buyer locks, not financial refunds.
+        if (email) {
+          const existing = await deskCall(env, itemId, { op: 'orders' });
+          const match = (existing.orders || []).find(x => String(x.email).toLowerCase() === String(email).trim().toLowerCase());
+          if (match && ['paid', 'refunded', 'refund_pending'].includes(match.status)) {
+            return new Response(JSON.stringify({ error: 'Paid/refunded Stripe orders cannot be cleared. Keep the audit record; use Refund instead.' }), { status: 409, headers });
+          }
+        } else {
+          const existing = await deskCall(env, itemId, { op: 'orders' });
+          if ((existing.orders || []).some(x => ['paid', 'refunded', 'refund_pending'].includes(x.status))) {
+            return new Response(JSON.stringify({ error: 'Bulk reset is blocked for items with paid/refunded orders.' }), { status: 409, headers });
+          }
+        }
         const res = await deskCall(env, itemId, { op: 'clear', email, restoreStock: !!restoreStock });
         if (email) await KV.delete(`purchase:${itemId}:${String(email).trim().toLowerCase()}`);
         return new Response(JSON.stringify(res), { headers });
