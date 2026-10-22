@@ -441,10 +441,19 @@ export default {
         let event;
         try { event = JSON.parse(raw); } catch (e) { return new Response('Bad JSON', { status: 400 }); }
 
-        // Answer Stripe immediately; do the work after, so a slow email never
-        // makes Stripe think the webhook failed and retry it.
-        ctx.waitUntil(handleStripeEvent(env, event).catch(err => console.error('stripe event', err)));
-        return new Response(JSON.stringify({ received: true }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+        // Do not acknowledge a paid event until the OrderDesk has durably
+        // recorded it. A 500 tells Stripe to retry rather than silently lose
+        // a payment if Cloudflare/Durable Objects have a transient failure.
+        // Confirmation uses the existing idempotent 'paid' transition.
+        try {
+          await handleStripeEvent(env, event);
+          return new Response(JSON.stringify({ received: true }), {
+            status: 200, headers: { 'Content-Type': 'application/json' }
+          });
+        } catch (err) {
+          console.error('Stripe webhook processing failed', err);
+          return new Response('Payment confirmation temporarily unavailable', { status: 500 });
+        }
       }
 
       /* ---------- PUBLIC SETTINGS (what the storefront is allowed to know) ---------- */
@@ -1014,12 +1023,19 @@ async function handleStripeEvent(env, event) {
 
 async function confirmPaidOrder(env, itemId, orderRef, payment) {
   const result = await deskCall(env, itemId, { op: 'confirm', orderRef, payment });
-  if (!result || !result.ok || result.already) return;
+  if (!result || !result.ok) {
+    // Do not pretend a payment was reconciled if its order disappeared.
+    // Stripe must retry and the operator must investigate the missing order.
+    throw new Error('Paid Stripe event could not match order ' + orderRef + ' for item ' + itemId);
+  }
+  if (result.already) return;
 
   const rec = result.record || {};
   const settings = await hubCall(env, { op: 'settings.get' });
   const KV = env.POKEBALLER_KV;
 
+  // Stock mirror is display-only; payment remains recorded in OrderDesk even
+  // if a transient KV failure prevents the secondary copy from updating.
   await mirrorStock(env, itemId, result.stock);
 
   if (KV) {
@@ -1038,7 +1054,7 @@ async function confirmPaidOrder(env, itemId, orderRef, payment) {
   }
 
   if (env.RESEND_API_KEY) {
-    await sendEmail(env, {
+    const emailResult = await sendEmail(env, {
       to: [rec.notifyEmail || settings.notifyEmail],
       replyTo: rec.email,
       subject: `✅ PAID ${orderRef}: ${rec.qty}x ${rec.itemName || ''}`,
@@ -1052,6 +1068,9 @@ async function confirmPaidOrder(env, itemId, orderRef, payment) {
         paid: true, paidVia: paidLine
       })
     });
+    if (!emailResult || !emailResult.ok) {
+      console.error('PAID ORDER NOTIFICATION FAILED', orderRef, emailResult && emailResult.status);
+    }
   }
 
   await fireAlert(env, {
