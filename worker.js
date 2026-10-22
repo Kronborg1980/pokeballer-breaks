@@ -39,6 +39,7 @@ export class OrderDesk {
       case 'reserve': result = await this.reserve(body); break;
       case 'confirm': result = await this.confirm(body); break;
       case 'refund.inspect': result = await this.refundInspect(body); break;
+      case 'refund.claim': result = await this.refundClaim(body); break;
       case 'refund.record': result = await this.refundRecord(body); break;
       case 'release': result = await this.release(body); break;
       case 'lookup':  result = await this.lookup(body); break;
@@ -192,7 +193,7 @@ export class OrderDesk {
     if (!email) return { ok: false, error: 'Order reference not found.' };
     const rec = await this.state.storage.get('buyer:' + email);
     if (!rec || rec.orderRef !== orderRef) return { ok: false, error: 'Order not found.' };
-    if (rec.status === 'refunded' || rec.status === 'refund_pending') {
+    if (rec.status === 'refunded' || rec.status === 'refund_pending' || rec.status === 'refund_processing') {
       return { ok: true, already: true, status: rec.status, refund: rec.refund || null };
     }
     if (rec.status !== 'paid' || !rec.payment || rec.payment.provider !== 'stripe' || !rec.payment.paymentIntent) {
@@ -200,16 +201,30 @@ export class OrderDesk {
     }
     return { ok: true, paymentIntent: rec.payment.paymentIntent, orderRef: rec.orderRef, status: rec.status };
   }
+  async refundClaim({ orderRef }) {
+    const checked = await this.refundInspect({ orderRef });
+    if (!checked.ok || checked.already) return checked;
+    const email = await this.state.storage.get('ref:' + orderRef);
+    const key = 'buyer:' + email;
+    const rec = await this.state.storage.get(key);
+    if (!rec || rec.status !== 'paid') return { ok: false, error: 'Order status changed.' };
+    // Once-only durable claim, even beyond Stripe's API idempotency window.
+    // An uncertain refund must be reconciled manually rather than repeated.
+    rec.status = 'refund_processing';
+    rec.refundStartedAt = Date.now();
+    await this.state.storage.put(key, rec);
+    return { ok: true, paymentIntent: rec.payment.paymentIntent };
+  }
   async refundRecord({ orderRef, refund }) {
     const email = await this.state.storage.get('ref:' + orderRef);
     if (!email) return { ok: false, error: 'Order no longer exists.' };
     const key = 'buyer:' + email;
     const rec = await this.state.storage.get(key);
     if (!rec || rec.orderRef !== orderRef) return { ok: false, error: 'Order mismatch.' };
-    if (rec.status === 'refunded' || rec.status === 'refund_pending') {
+    if (rec.status === 'refunded' || rec.status === 'refund_pending' || rec.status === 'refund_processing') {
       return { ok: true, already: true, status: rec.status, refund: rec.refund };
     }
-    if (rec.status !== 'paid') return { ok: false, error: 'Order is no longer paid.' };
+    if (rec.status !== 'refund_processing') return { ok: false, error: 'Refund request was not claimed.' };
     if (!refund || !refund.id) return { ok: false, error: 'Refund receipt missing.' };
     rec.status = refund.status === 'succeeded' ? 'refunded' : 'refund_pending';
     rec.refund = { id: refund.id, status: refund.status, amount: refund.amount, currency: refund.currency, at: Date.now() };
@@ -902,7 +917,7 @@ export default {
         if (!itemId || !/^PBM-[A-Z0-9]{6}$/.test(orderRef) || body.confirmOrderRef !== orderRef) {
           return new Response(JSON.stringify({ error: 'Re-enter the exact order reference to confirm the full refund.' }), { status: 400, headers });
         }
-        const check = await deskCall(env, itemId, { op: 'refund.inspect', orderRef });
+        const check = await deskCall(env, itemId, { op: 'refund.claim', orderRef });
         if (!check || !check.ok) {
           return new Response(JSON.stringify({ error: check?.error || 'Order not eligible for card refund.' }), { status: 409, headers });
         }
@@ -971,12 +986,12 @@ export default {
         if (email) {
           const existing = await deskCall(env, itemId, { op: 'orders' });
           const match = (existing.orders || []).find(x => String(x.email).toLowerCase() === String(email).trim().toLowerCase());
-          if (match && ['paid', 'refunded', 'refund_pending'].includes(match.status)) {
+          if (match && ['paid', 'refunded', 'refund_pending', 'refund_processing'].includes(match.status)) {
             return new Response(JSON.stringify({ error: 'Paid/refunded Stripe orders cannot be cleared. Keep the audit record; use Refund instead.' }), { status: 409, headers });
           }
         } else {
           const existing = await deskCall(env, itemId, { op: 'orders' });
-          if ((existing.orders || []).some(x => ['paid', 'refunded', 'refund_pending'].includes(x.status))) {
+          if ((existing.orders || []).some(x => ['paid', 'refunded', 'refund_pending', 'refund_processing'].includes(x.status))) {
             return new Response(JSON.stringify({ error: 'Bulk reset is blocked for items with paid/refunded orders.' }), { status: 409, headers });
           }
         }
