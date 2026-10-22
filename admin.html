@@ -502,7 +502,7 @@
             <details class="card pay-card fold" id="pay-fold">
                 <summary>
                     <span class="fold-title">💳 Payments &amp; alerts</span>
-                    <span class="fold-note">Not switched on yet</span>
+                    <span class="fold-note">Advanced setup • change only after testing</span>
                     <span class="fold-chev" aria-hidden="true">▾</span>
                 </summary>
                 <div class="fold-body">
@@ -620,8 +620,7 @@
                 <div id="streamlabs-token-block" style="display:none;">
                     <label for="set-streamlabs-token">Streamlabs API token <span class="key-state" id="state-streamlabs-token">not set</span></label>
                     <input type="password" id="set-streamlabs-token" placeholder="Leave blank to keep the saved one" autocomplete="off" spellcheck="false">
-                    <p class="hint">Streamlabs → Settings → API Settings → API Tokens. This one is
-                        experimental — use the test button below and read the exact response.</p>
+                    <p class="hint">Streamlabs → Settings → API Settings → API Tokens. The current PBM Worker still uses the legacy Streamlabs v1 Alerts API. Streamlabs now documents v2 OAuth access tokens. Use the PBM OBS overlay or have the Worker upgraded and tested before depending on Streamlabs alerts.</p>
                 </div>
 
                 <label for="set-alert-template">Alert wording</label>
@@ -2082,10 +2081,10 @@ document.addEventListener('pointermove',e=>{if(e.pointerType!=='mouse')return;co
     'login-password':'Your private admin password. Never share it in messages or screenshots.',
     'set-tip-url':'Your current Streamlabs tip-page address. Customers use this when manual Streamlabs payment is selected.',
     'set-ref-instructions':'Text the buyer sees after reserving. Tell them to include the order code, break name and YouTube username.',
-    'set-stripe-key':'A private restricted Stripe API key. Test keys are for testing only; never paste keys into chat or GitHub.',
+    'set-stripe-key':'A private restricted Stripe API key. Test keys are for testing only. Refunds also need Refunds: write permission. Never paste keys into chat or GitHub.',
     'set-webhook-secret':'Private whsec_ key from the specific Stripe webhook endpoint. It verifies real Stripe payment messages.',
     'set-webhook-url':'Copy this address into the matching Stripe webhook configuration. This URL receives verified payment events.',
-    'set-currency':'Currency used for card charges. Ensure prices on your site match the amount customers expect.',
+    'set-currency':'Currency used for card charges. Keep USD while PBM price labels show $; do not change currencies until website labels and prices are reviewed.',
     'set-hold-minutes':'How long unpaid checkouts reserve packs. Unpaid reservations must expire and return stock.',
     'set-store-url':'Website address Stripe returns buyers to after payment or canceling. Usually https://pbmbreaks.com.',
     'set-streamlabs-token':'Secret Streamlabs API access token for custom on-screen alerts. Never share it. The current integration needs testing against Streamlabs API v2.',
