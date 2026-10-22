@@ -1224,6 +1224,7 @@ async function loadEmails() {
       if (o.status === 'paid') chip = '<span class="estatus paid">Paid</span>';
       else if (o.status === 'refunded') chip = '<span class="estatus paid">Refunded</span>';
       else if (o.status === 'refund_pending') chip = '<span class="estatus waiting">Refund pending</span>';
+      else if (o.status === 'refund_processing') chip = '<span class="estatus waiting">Check Stripe refund</span>';
       else if (o.status === 'pending') chip = '<span class="estatus waiting">Waiting to pay</span>';
 
       const safe = esc(o.email || '');
@@ -1231,7 +1232,7 @@ async function loadEmails() {
         <div class="erow ${o.status === 'pending' ? 'pending' : ''}" data-row="${safe}">
           <div class="emailtxt">${safe}${chip}</div>
           <div class="emeta">${bits.join(' · ')}</div>
-          ${o.status === 'paid' && o.payment?.provider === 'stripe' ? '<button class="purge-btn" type="button" data-refund="' + esc(o.orderRef) + '" style="color:#ffe0a2;border-color:#c99854">Refund Stripe payment</button>' : ['paid','refunded','refund_pending'].includes(o.status) ? '<span class="emeta">Financial record retained</span>' : '<button class="purge-btn" type="button" data-purge="' + safe + '">Purge this email</button>'}
+          ${o.status === 'paid' && o.payment?.provider === 'stripe' ? '<button class="purge-btn" type="button" data-refund="' + esc(o.orderRef) + '" style="color:#ffe0a2;border-color:#c99854">Refund Stripe payment</button>' : ['paid','refunded','refund_pending','refund_processing'].includes(o.status) ? '<span class="emeta">Financial record retained</span>' : '<button class="purge-btn" type="button" data-purge="' + safe + '">Purge this email</button>'}
         </div>`;
     }).join('');
   } catch (e) {
