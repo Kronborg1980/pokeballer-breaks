@@ -193,7 +193,7 @@ export class OrderDesk {
     if (!email) return { ok: false, error: 'Order reference not found.' };
     const rec = await this.state.storage.get('buyer:' + email);
     if (!rec || rec.orderRef !== orderRef) return { ok: false, error: 'Order not found.' };
-    if (rec.status === 'refunded' || rec.status === 'refund_pending' || rec.status === 'refund_processing') {
+    if (['refunded', 'refund_pending', 'refund_processing', 'refund_failed'].includes(rec.status)) {
       return { ok: true, already: true, status: rec.status, refund: rec.refund || null };
     }
     if (rec.status !== 'paid' || !rec.payment || rec.payment.provider !== 'stripe' || !rec.payment.paymentIntent) {
@@ -221,12 +221,12 @@ export class OrderDesk {
     const key = 'buyer:' + email;
     const rec = await this.state.storage.get(key);
     if (!rec || rec.orderRef !== orderRef) return { ok: false, error: 'Order mismatch.' };
-    if (rec.status === 'refunded' || rec.status === 'refund_pending' || rec.status === 'refund_processing') {
+    if (['refunded', 'refund_pending', 'refund_processing', 'refund_failed'].includes(rec.status)) {
       return { ok: true, already: true, status: rec.status, refund: rec.refund };
     }
-    if (rec.status !== 'refund_processing') return { ok: false, error: 'Refund request was not claimed.' };
+    if (!['refund_processing', 'refund_pending', 'refunded'].includes(rec.status)) return { ok: false, error: 'Refund request was not claimed.' };
     if (!refund || !refund.id) return { ok: false, error: 'Refund receipt missing.' };
-    rec.status = refund.status === 'succeeded' ? 'refunded' : 'refund_pending';
+    rec.status = refund.status === 'succeeded' ? 'refunded' : refund.status === 'failed' || refund.status === 'canceled' ? 'refund_failed' : 'refund_pending';
     rec.refund = { id: refund.id, status: refund.status, amount: refund.amount, currency: refund.currency, at: Date.now() };
     await this.state.storage.put(key, rec);
     return { ok: true, status: rec.status, refund: rec.refund };
@@ -1104,6 +1104,18 @@ async function handleStripeEvent(env, event) {
   const type = event && event.type;
   const obj = event && event.data && event.data.object;
   if (!obj) return;
+  // Stripe can report refund status transitions asynchronously.
+  if (type === 'refund.updated' || type === 'refund.failed') {
+    const orderRef = obj.metadata && obj.metadata.pbmOrderRef;
+    const itemId = obj.metadata && obj.metadata.pbmItemId;
+    if (!orderRef || !itemId) return;
+    const r = await deskCall(env, itemId, {
+      op: 'refund.record', orderRef,
+      refund: { id: obj.id, status: obj.status, amount: obj.amount, currency: obj.currency }
+    });
+    if (!r || !r.ok) throw new Error('Could not reconcile Stripe refund ' + obj.id);
+    return;
+  }
 
   const orderRef = (obj.metadata && obj.metadata.orderRef) || obj.client_reference_id;
   const itemId = obj.metadata && obj.metadata.itemId;
