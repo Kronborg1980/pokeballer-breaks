@@ -143,7 +143,9 @@ export class OrderDesk {
       orderRef, email, name, address, qty,
       status: pending ? 'pending' : 'manual',
       at: now,
-      expiresAt: pending ? now + hold * 60000 : null
+      // Stripe session can expire before its signed webhook reaches us.
+      // Retain a short grace window so a paid order is not freed prematurely.
+      expiresAt: pending ? now + hold * 60000 + 5 * 60000 : null
     }, meta || {});
 
     // One atomic write: the buyer lock, the ref index and the new stock all
@@ -525,7 +527,10 @@ export default {
           cancel_url: `${store}?canceled=1&${q}`,
           customer_email: buyerEmail,
           client_reference_id: reserved.orderRef,
-          expires_at: Math.floor((reserved.expiresAt || (Date.now() + 1800000)) / 1000),
+          // Keep Stripe's own session expiry within its 30-min–24h window.
+          // The OrderDesk retains the reservation for five extra minutes
+          // to cover webhook delivery latency and processing retries.
+          expires_at: Math.floor((Date.now() + Math.max(30, Math.min(1440, toInt(settings.holdMinutes, 30))) * 60000) / 1000),
           'line_items[0][quantity]': qty,
           'line_items[0][price_data][currency]': settings.currency || 'usd',
           'line_items[0][price_data][unit_amount]': unitAmount,
