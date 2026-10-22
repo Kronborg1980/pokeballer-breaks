@@ -537,6 +537,26 @@
 @media(prefers-reduced-motion:reduce){.pbm-fab,.pbm-card-sheen:after{transition:none!important}}
 
 </style>
+<style>
+/* PBM SIMPLE STOCK HELP — pure presentation, no changes to saving logic. */
+.pbm-mini-guide{border:1px solid #3b5777;background:rgba(13,24,49,.89);padding:10px 14px;border-radius:13px;text-align:left;margin:12px auto;max-width:560px;color:#e4ecff}
+.pbm-mini-guide>summary{cursor:pointer;font:800 13px Inter,system-ui,sans-serif;color:#87f1e8}
+.pbm-mini-guide p{margin:9px 0 4px;color:#c2cde9;font:500 12px/1.6 Inter,system-ui,sans-serif}
+.pbm-mini-guide strong{color:#fff}
+.pbm-simple-tip{font:700 12px/1.6 Inter,system-ui,sans-serif;color:#99b2cf;margin:8px 0 10px}
+.pbm-help{display:inline-flex;align-items:center;position:relative;margin-left:7px;vertical-align:middle;z-index:9}
+.pbm-help-trigger{display:grid;place-items:center;width:22px;height:22px;min-width:22px;padding:0;
+ border:1px solid #8bbcc6;border-radius:50%;background:#22364e;color:#fff;
+ cursor:pointer;font:800 12px Inter,system-ui,sans-serif}
+.pbm-help-trigger:focus-visible{outline:2px solid #3ee79b;outline-offset:3px}
+.pbm-help-pop{display:none;position:absolute;left:50%;top:calc(100% + 7px);transform:translateX(-50%);
+ width:max-content;max-width:min(275px,80vw);white-space:normal;padding:11px 13px;text-align:left;
+ border-radius:11px;background:#0b1425;color:#eef5ff;border:1px solid #61cbc999;
+ box-shadow:0 14px 35px #000c;font:500 12px/1.55 Inter,system-ui,sans-serif;z-index:1000}
+.pbm-help.open .pbm-help-pop,.pbm-help:hover .pbm-help-pop,.pbm-help:focus-within .pbm-help-pop{display:block}
+.pbm-order-warning{padding:12px;border:1px solid #efbd6288;background:#35240d66;color:#ffdd9c;border-radius:11px;font:600 12px/1.6 Inter,system-ui,sans-serif;margin:8px 0 13px}
+@media(max-width:600px){.pbm-help-pop{left:auto;right:0;transform:none}}
+</style>
 </head>
 <body>
 
@@ -1161,7 +1181,7 @@ function openPop(id) {
   armedPurge = {};
 
   document.getElementById('pop-title').textContent = item.name || 'This item';
-  document.getElementById('pop-sub').textContent = 'Emails that have already ordered it';
+  document.getElementById('pop-sub').textContent = 'Orders for this product. Unlocking a buyer is NOT a refund.';
   document.getElementById('restore-label').textContent =
     'Also put their ' + unitFor(item, 2) + ' back in stock';
   document.getElementById('pop-restore').checked = false;
@@ -2103,5 +2123,102 @@ document.addEventListener('pointermove',e=>{if(e.pointerType!=='mouse')return;co
 })();
 
 </script>
+
+<script>
+/* Help for Stock basic and advanced modes. No API or save-handler changes. */
+(function(){
+  'use strict';
+  const main=document.querySelector('#app header');
+  if(!main)return;
+  const guide=document.createElement('details');guide.className='pbm-mini-guide';
+  guide.innerHTML='<summary>❔ New here? Tap for a 30-second guide</summary>'+
+    '<p><strong>Basic:</strong> find the item, tap + or −, and the new quantity saves automatically. Enter <strong>0</strong> only when it is truly sold out.</p>'+
+    '<p><strong>Advanced:</strong> edit the name, description, price, pictures, timing or visibility. Review carefully before saving.</p>'+
+    '<p><strong>Buyers:</strong> shows existing orders. <strong>Unlock</strong> is not a refund. Never put units back in stock if packs have been opened or shipped.</p>'+
+    '<p><strong>Refunds:</strong> only available for paid Stripe orders once the separate refund feature has been tested and deployed.</p>';
+  const sub=document.getElementById('mode-sub');
+  if(sub)sub.after(guide);else main.append(guide);
+
+  const tips={
+    'gate-user':'The username you use on the PBM Admin page.',
+    'gate-pass':'Your private admin password. Never share it with viewers.',
+    'find':'Search by product name to find it faster.',
+    'pop-restore':'Danger: adds a buyer’s packs or bundles back into stock when their email lock is removed. Do not use for opened or shipped packs. A refund is a separate action.',
+    'ed-name':'The exact name buyers see on the website.',
+    'ed-desc':'Explain what buyers receive, what gets opened on stream, and what will be shipped.',
+    'ed-price':'Price per one pack, bundle or spot. Customers are charged this price times quantity.',
+    'ed-stock':'How many units you still have available. 0 means sold out. Stock changes save when you save the item.',
+    'ed-labeltype':'Choose whether visitors see the quantity as packs, bundles or spots.',
+    'golive-date':'Optional date when the listing starts accepting orders; time is US Central.',
+    'close-date':'Last date/time to accept orders. US Central timezone.',
+    'ed-min':'Minimum quantity the customer must buy in a single order.',
+    'ed-max':'Maximum quantity allowed per buyer.',
+    'ed-link':'External page for this item’s payment or entry form. Regular pack checkout has its own checkout flow.',
+    'ed-cond':'Condition of an ungraded trading card. Check the card carefully.',
+    'ed-grader':'Grading company printed on the slab label, such as PSA or CGC.',
+    'ed-files':'Select product pictures. The first picture becomes the main thumbnail.'
+  };
+  const createHelp=(target,text)=>{
+    if(target.querySelector('.pbm-help'))return;
+    const node=document.createElement('span');node.className='pbm-help';
+    const btn=document.createElement('button');btn.type='button';btn.className='pbm-help-trigger';btn.textContent='?';
+    btn.setAttribute('aria-label','Explain '+target.textContent.replace(/\s+/g,' ').trim().slice(0,80));
+    btn.setAttribute('aria-expanded','false');
+    const tip=document.createElement('span');tip.className='pbm-help-pop';tip.setAttribute('role','tooltip');tip.textContent=text;
+    btn.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();const v=node.classList.toggle('open');btn.setAttribute('aria-expanded',String(v));});
+    btn.addEventListener('pointerdown',event=>event.stopPropagation());
+    node.append(btn,tip);target.append(node);
+  };
+  document.querySelectorAll('#gate label[for], #editor label[for]').forEach(label=>{
+    if(label.querySelector('input,textarea,select'))return;
+    const id=label.getAttribute('for')||'';
+    createHelp(label,tips[id]||'This setting controls '+label.textContent.trim()+'. Double-check it before saving.');
+  });
+  // The checkbox in this label should remain clickable; put help outside it.
+  const restore=document.querySelector('#pop label.restore');
+  if(restore){
+    const explain=document.createElement('p');explain.className='pbm-order-warning';
+    explain.textContent='Important: unlocking a buyer or restoring stock does NOT refund their payment. For Stripe refunds use the Refund action after it has been enabled and tested.';
+    restore.after(explain);
+  }
+  const title=document.getElementById('pop-sub');
+  if(title)title.textContent='Buyers and orders for this product';
+  const purgeAll=document.getElementById('purge-all');
+  if(purgeAll)purgeAll.textContent='Unlock all buyer emails (not a refund)';
+  const fieldTitles={'ed-stock':'Current units remaining, not the number initially ordered','ed-price':'Price per ONE unit','find':'Search inventory','gate-user':'Admin login username','gate-pass':'Admin login password'};
+  Object.entries(fieldTitles).forEach(([id,title])=>{const input=document.getElementById(id);if(input&&!input.title)input.title=title;});
+  document.querySelectorAll('#editor [data-sec]').forEach(section=>{
+    const top=section.querySelector('.sec-head');
+    if(top)top.title=top.textContent.replace(/\s+/g,' ').trim()+' — tap to expand this part of the editor.';
+  });
+  const applyOrderLabels=()=>{
+    document.querySelectorAll('#pop-list button[data-purge]').forEach(btn=>{
+      if(btn.textContent==='Purge this email')btn.textContent='Unlock buyer';
+      btn.title='Only removes this buyer’s order lock. It does not refund or change payment status.';
+    });
+  };
+  // Stock count fields are rendered after loading and re-rendered on edits.
+  // Keep their help text available without crowding the +/- touch controls.
+  const decorateCounts=()=>{
+    document.querySelectorAll('#list input.count').forEach(input=>{
+      input.setAttribute('aria-label','Available units for this item');
+      input.title='Units remaining for sale. 0 means sold out. Changes save automatically.';
+    });
+  };
+  const inventoryList=document.getElementById('list');
+  if(inventoryList){
+    decorateCounts();
+    new MutationObserver(decorateCounts).observe(inventoryList,{childList:true,subtree:true});
+  }
+  const popList=document.getElementById('pop-list');
+  if(popList)new MutationObserver(applyOrderLabels).observe(popList,{childList:true,subtree:true});
+  document.addEventListener('click',event=>{
+    if(event.target.closest('.pbm-help'))return;
+    document.querySelectorAll('.pbm-help.open').forEach(node=>{node.classList.remove('open');node.querySelector('button')?.setAttribute('aria-expanded','false');});
+  });
+  document.addEventListener('keydown',event=>{if(event.key==='Escape')document.querySelectorAll('.pbm-help.open').forEach(el=>el.classList.remove('open'));});
+})();
+</script>
+
 </body>
 </html>
