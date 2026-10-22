@@ -1474,6 +1474,8 @@
                     // itself when the hold expires.
                     let stateBadge = '';
                     if (o.status === 'paid') stateBadge = '<span class="badge b-paid">PAID</span>';
+                    else if (o.status === 'refunded') stateBadge = '<span class="badge b-paid">REFUNDED</span>';
+                    else if (o.status === 'refund_pending') stateBadge = '<span class="badge b-pending">REFUND PENDING</span>';
                     else if (o.status === 'pending') stateBadge = '<span class="badge b-pending">AWAITING PAYMENT</span>';
                     if (o.status === 'pending' && o.expiresAt) bits.push('hold ends ' + esc(fmtWhen(o.expiresAt)));
 
@@ -1483,7 +1485,7 @@
                                 <span class="order-email">${esc(o.email)} ${stateBadge}</span>
                                 <span class="order-meta">${bits.join(' · ')}</span>
                             </div>
-                            <button class="btn-reset" onclick="resetBuyer('${esc(o.email)}', ${qty})">Reset</button>
+                            ${o.status === 'paid' && o.payment?.provider === 'stripe' ? '<button class="btn-reset" style="border-color:#ffbf66;color:#ffdf9b" onclick="refundBuyer(' + JSON.stringify(o.orderRef) + ')">Refund card</button>' : ['paid','refunded','refund_pending'].includes(o.status) ? '<span style="font-size:.7rem;color:#afb4cf">Financial record</span>' : '<button class="btn-reset" onclick="resetBuyer(' + JSON.stringify(o.email) + ', ' + qty + ')">Reset</button>'}
                         </div>`;
                 }).join('');
             }
@@ -1491,6 +1493,23 @@
 
         function retryBtn() {
             return ' <button class="btn-edit" style="border:none;padding:6px 14px;border-radius:6px;cursor:pointer;color:#fff;font-weight:800;margin-left:8px;" onclick="loadOrders()">Retry</button>';
+        }
+
+        async function refundBuyer(orderRef) {
+            if (!ordersItem || !orderRef) return;
+            if (!confirm('Issue a FULL Stripe refund for order ' + orderRef + '?\n\nThis sends money back to the customer. Stock will NOT be restored automatically.')) return;
+            const typed = prompt('For security, enter the exact reference ' + orderRef + ' to confirm this FULL refund:');
+            if (typed !== orderRef) { toast('Refund cancelled: order reference did not match.', true); return; }
+            try {
+                const res = await fetch(`${API_URL}/purchases/refund`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token: localStorage.getItem('adminToken') || '', itemId: ordersItem.id, orderRef, confirmOrderRef: typed })
+                });
+                const data = await res.json();
+                if (!res.ok || !data.ok) { toast(data.error || 'Refund could not be processed. Check Stripe dashboard.', true); return; }
+                toast(data.status === 'refunded' ? 'Refund submitted and marked refunded in PBM.' : 'Refund created; status pending. Confirm settlement in Stripe.');
+                await loadOrders();
+            } catch (e) { toast('Refund request uncertain. Check Stripe dashboard before trying again.', true); }
         }
 
         async function resetBuyer(email, qty) {
