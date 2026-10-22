@@ -530,7 +530,7 @@ export default {
           // Keep Stripe's own session expiry within its 30-min–24h window.
           // The OrderDesk retains the reservation for five extra minutes
           // to cover webhook delivery latency and processing retries.
-          expires_at: Math.floor((Date.now() + Math.max(30, Math.min(1440, toInt(settings.holdMinutes, 30))) * 60000) / 1000),
+          expires_at: Math.floor((Date.now() + Math.min(1440, Math.max(30, toInt(settings.holdMinutes, 30)) + 1) * 60000) / 1000),
           'line_items[0][quantity]': qty,
           'line_items[0][price_data][currency]': settings.currency || 'usd',
           'line_items[0][price_data][unit_amount]': unitAmount,
