@@ -511,7 +511,7 @@
                     <div class="key-note">
                         <strong>Use a restricted key, not your full secret key.</strong>
                         In Stripe go to Developers → API keys → Create restricted key, and allow only
-                        <em>Checkout Sessions: write</em> and <em>Balance: read</em>. It starts with
+                        <em>Checkout Sessions: write</em>, <em>Refunds: write</em> and <em>Balance: read</em>. It starts with
                         <code>rk_live_</code>. If it ever leaked, nobody could move your money with it.
                     </div>
 
@@ -530,6 +530,7 @@
                         <code>checkout.session.completed</code>, <code>checkout.session.expired</code>,
                         <code>checkout.session.async_payment_succeeded</code>,
                         <code>checkout.session.async_payment_failed</code>.
+                         Also subscribe to <code>refund.updated</code> and <code>refund.failed</code> for refund-status updates.
                         Stripe then shows you the signing secret to paste above.</p>
 
                     <div class="flex-row">
