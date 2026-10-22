@@ -1743,6 +1743,22 @@
         }
 
         async function saveSettings() {
+            // Switching to card payments changes the public storefront instantly.
+            // Require a deliberate typed confirmation when leaving Streamlabs;
+            // this does not replace payment-provider approval or staging tests.
+            const switchingToStripe = selectedMode === 'stripe'
+                && (!siteSettings || siteSettings.paymentMode !== 'stripe');
+            if (switchingToStripe) {
+                const response = prompt(
+                    'STOP: This would switch real customers to Stripe checkout immediately.\n\n' +
+                    'Only proceed after Stripe has approved the business, the webhook and refunds have passed staging tests, and the developer has confirmed the production keys.\n\n' +
+                    'Type ENABLE STRIPE exactly to activate card checkout:'
+                );
+                if (response !== 'ENABLE STRIPE') {
+                    setSettingsStatus('No payment method was changed. Keep Streamlabs active until all checks pass.', true);
+                    return;
+                }
+            }
             const btn = document.getElementById('save-settings-btn');
             btn.disabled = true;
             btn.innerText = 'Saving…';
