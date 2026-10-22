@@ -221,10 +221,15 @@ export class OrderDesk {
     const key = 'buyer:' + email;
     const rec = await this.state.storage.get(key);
     if (!rec || rec.orderRef !== orderRef) return { ok: false, error: 'Order mismatch.' };
-    if (['refunded', 'refund_pending', 'refund_processing', 'refund_failed'].includes(rec.status)) {
+    if (!['refund_processing', 'refund_pending', 'refunded', 'refund_failed'].includes(rec.status)) {
+      return { ok: false, error: 'Refund request was not claimed.' };
+    }
+    if (rec.refund && refund && rec.refund.id !== refund.id) {
+      return { ok: false, error: 'Refund ID does not match existing refund.' };
+    }
+    if (rec.status === 'refunded' && refund?.status === 'succeeded') {
       return { ok: true, already: true, status: rec.status, refund: rec.refund };
     }
-    if (!['refund_processing', 'refund_pending', 'refunded'].includes(rec.status)) return { ok: false, error: 'Refund request was not claimed.' };
     if (!refund || !refund.id) return { ok: false, error: 'Refund receipt missing.' };
     rec.status = refund.status === 'succeeded' ? 'refunded' : refund.status === 'failed' || refund.status === 'canceled' ? 'refund_failed' : 'refund_pending';
     rec.refund = { id: refund.id, status: refund.status, amount: refund.amount, currency: refund.currency, at: Date.now() };
