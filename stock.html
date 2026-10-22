@@ -1181,7 +1181,7 @@ function openPop(id) {
   armedPurge = {};
 
   document.getElementById('pop-title').textContent = item.name || 'This item';
-  document.getElementById('pop-sub').textContent = 'Emails that have already ordered it';
+  document.getElementById('pop-sub').textContent = 'Orders for this product. Unlocking a buyer is NOT a refund.';
   document.getElementById('restore-label').textContent =
     'Also put their ' + unitFor(item, 2) + ' back in stock';
   document.getElementById('pop-restore').checked = false;
@@ -2197,6 +2197,19 @@ document.addEventListener('pointermove',e=>{if(e.pointerType!=='mouse')return;co
       btn.title='Only removes this buyer’s order lock. It does not refund or change payment status.';
     });
   };
+  // Stock count fields are rendered after loading and re-rendered on edits.
+  // Keep their help text available without crowding the +/- touch controls.
+  const decorateCounts=()=>{
+    document.querySelectorAll('#list input.count').forEach(input=>{
+      input.setAttribute('aria-label','Available units for this item');
+      input.title='Units remaining for sale. 0 means sold out. Changes save automatically.';
+    });
+  };
+  const inventoryList=document.getElementById('list');
+  if(inventoryList){
+    decorateCounts();
+    new MutationObserver(decorateCounts).observe(inventoryList,{childList:true,subtree:true});
+  }
   const popList=document.getElementById('pop-list');
   if(popList)new MutationObserver(applyOrderLabels).observe(popList,{childList:true,subtree:true});
   document.addEventListener('click',event=>{
