@@ -689,6 +689,18 @@
                     </div>
                 </div>
 
+                <div id="pack-display-container" style="display:none;">
+                    <label for="pack-display-tier">🎨 Single Pack display style / section</label>
+                    <select id="pack-display-tier">
+                        <option value="pack">📦 Orange — Single Packs section</option>
+                        <option value="msrp">✅ Green — MSRP Breaks section</option>
+                        <option value="bundle">💎 Purple — Bundle Breaks section</option>
+                        <option value="baller">👑 Gold — Baller Bundles section</option>
+                    </select>
+                    <div id="pack-display-preview" class="pack-display-preview" aria-live="polite">📦 Single Packs · orange border</div>
+                    <p class="pack-display-desc">Changes only the border, button colours and which section it appears under. It stays a <b>Single Pack</b> with the same quantity checkout and purchase limits.</p>
+                </div>
+
                 <div id="condition-container" style="display:none;">
                     <label for="item-condition" style="color:#00ff9d;">⭐ Card condition (raw cards only)</label>
                     <select id="item-condition" style="border:1px solid #00ff9d;">
@@ -726,18 +738,6 @@
                             <input type="number" id="item-max-buy" value="10" min="1" style="border:1px solid var(--orange);">
                         </div>
                     </div>
-                </div>
-
-                <div id="pack-display-container" style="display:none;">
-                    <label for="pack-display-tier">🎨 Single Pack display style / section</label>
-                    <select id="pack-display-tier">
-                        <option value="pack">📦 Orange — Single Packs section</option>
-                        <option value="msrp">✅ Green — MSRP Breaks section</option>
-                        <option value="bundle">💎 Purple — Bundle Breaks section</option>
-                        <option value="baller">👑 Gold — Baller Bundles section</option>
-                    </select>
-                    <div id="pack-display-preview" class="pack-display-preview" aria-live="polite">📦 Single Packs · orange border</div>
-                    <p class="pack-display-desc">Changes only the border, button colours and which section it appears under. It stays a <b>Single Pack</b> with the same quantity checkout and purchase limits.</p>
                 </div>
 
                 <div class="open-note"><i class="ph-fill ph-broadcast"></i> Breaks are OPEN the moment you save them. They close when the timer below runs out (or stock hits 0).</div>
