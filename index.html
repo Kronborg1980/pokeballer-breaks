@@ -352,6 +352,32 @@
         .yt-open-btn { background: rgba(255,0,64,0.15); border: 1px solid rgba(255,0,64,0.5); color: #fff; padding: 8px 16px; border-radius: 10px; text-decoration: none; font-weight: 800; font-size: 0.8rem; display: flex; align-items: center; gap: 6px; transition: .3s; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 0 15px rgba(255,0,64,0.2); }
         .yt-open-btn:hover { background: rgba(255,0,64,0.8); box-shadow: 0 0 20px rgba(255,0,64,0.6); transform: scale(1.05); }
 
+        /* YouTube owns the 'Notify me' control inside its iframe. Give viewers
+           an accessible first-party link to the actual YouTube watch page. */
+        .yt-feed-actions { display:flex;align-items:center;gap:9px;flex-wrap:wrap;justify-content:flex-end }
+        .yt-remind-btn {
+            display:inline-flex;align-items:center;justify-content:center;gap:7px;
+            min-height:42px;padding:9px 15px;border:1px solid #ffd76b;
+            border-radius:10px;background:linear-gradient(120deg,#46310b,#6a4710);
+            color:#fff5d8;font-size:.78rem;font-weight:900;letter-spacing:.5px;
+            text-decoration:none;text-transform:uppercase;
+            box-shadow:0 0 18px rgba(255,192,50,.20);cursor:pointer;
+            transition:background .18s ease,box-shadow .18s ease,transform .18s ease;
+        }
+        .yt-remind-btn:hover { background:linear-gradient(120deg,#735013,#9c6815);box-shadow:0 0 24px rgba(255,192,50,.5);transform:translateY(-1px) }
+        .yt-remind-btn:focus-visible { outline:3px solid #fff;outline-offset:3px }
+        .yt-remind-hint { margin:0;padding:10px 18px 13px;text-align:center;
+            background:rgba(12,13,27,.95);border-top:1px solid rgba(255,215,70,.18);
+            color:#d7d7e4;font-size:.76rem;font-weight:600;line-height:1.5 }
+        .yt-remind-hint strong { color:#ffdf8a }
+        @media(max-width:600px) {
+            .yt-feed-actions{width:100%;justify-content:center}
+            .yt-remind-btn,.yt-feed-actions>.yt-open-btn{flex:1 1 130px;text-align:center;justify-content:center}
+            .yt-remind-hint{font-size:.72rem;padding:10px 14px}
+        }
+        @media(prefers-reduced-motion:reduce){.yt-remind-btn{transition:none}.yt-remind-btn:hover{transform:none}}
+
+
         .sub-info-panel { display: flex; align-items: center; justify-content: space-between; padding: 2.5rem; gap: 3rem; flex-wrap: wrap; }
         .sub-text { flex: 1; min-width: 300px; }
         .sub-text h3 { display: flex; align-items: center; gap: 10px; font-size: 1.6rem; color: var(--accent-gold); margin-bottom: 0.8rem; text-shadow: 0 0 15px rgba(255,215,0,0.4); }
@@ -1771,13 +1797,22 @@
                     const openBtnHTML = isStream
                         ? `<a href="https://www.youtube.com/watch?v=${encodeURIComponent(v.id)}" target="_blank" rel="noopener" class="yt-open-btn"><i class="ph-fill ph-youtube-logo"></i> OPEN IN YOUTUBE</a>`
                         : `<a href="https://www.youtube.com/watch?v=${encodeURIComponent(v.id)}" target="_blank" rel="noopener" class="yt-open-btn" style="background:rgba(0,238,255,0.15);border-color:rgba(0,238,255,0.5);box-shadow:0 0 15px rgba(0,238,255,0.2);"><i class="ph-fill ph-play-circle"></i> WATCH VIDEO</a>`;
+                    // Direct link to this specific upcoming event. YouTube must
+                    // handle account sign-in and permission to set the reminder.
+                    const reminderBtnHTML = isStream
+                        ? `<a href="https://www.youtube.com/watch?v=${encodeURIComponent(v.id)}" target="_blank" rel="noopener noreferrer" class="yt-remind-btn" title="Open this stream on YouTube, then select Notify me" aria-label="Set a reminder for this stream on YouTube"><i class="ph-fill ph-bell-ringing"></i> SET REMINDER ↗</a>`
+                        : '';
+                    const reminderHintHTML = isStream
+                        ? '<p class="yt-remind-hint"><strong>Want a live alert?</strong> Tap Set Reminder above, then choose <strong>Notify me</strong> on YouTube. You may need to sign in.</p>'
+                        : '';
                     return `
                         <div class="neon-card-wrapper">
                             <div class="yt-card glass-panel" style="overflow:hidden;">
-                                <div style="padding:16px 20px 12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">${badgeHTML}${openBtnHTML}</div>
+                                <div style="padding:16px 20px 12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">${badgeHTML}<div class="yt-feed-actions">${reminderBtnHTML}${openBtnHTML}</div></div>
                                 <div style="aspect-ratio:16/9;width:100%;position:relative;">
                                     <iframe loading="lazy" title="${esc(v.title)}" src="https://www.youtube.com/embed/${encodeURIComponent(v.id)}?autoplay=${isStream ? '1' : '0'}&mute=1&playsinline=1&controls=1&modestbranding=1&rel=0" style="position:absolute;inset:0;width:100%;height:100%;border:none;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                                 </div>
+                                ${reminderHintHTML}
                             </div>
                         </div>`;
                 }).join('');
