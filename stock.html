@@ -558,6 +558,18 @@
 .pbm-order-warning{padding:12px;border:1px solid #efbd6288;background:#35240d66;color:#ffdd9c;border-radius:11px;font:600 12px/1.6 Inter,system-ui,sans-serif;margin:8px 0 13px}
 @media(max-width:600px){.pbm-help-pop{left:auto;right:0;transform:none}}
 </style>
+<style>
+  .ed-display-container{margin:15px 0 2px;padding:12px 14px;border:1px solid #ff990080;border-radius:13px;background:#261b0b}
+  .ed-display-container label{font-size:.86rem!important;color:#ffdca0!important}
+  .ed-display-container select{width:100%;padding:12px;background:#0c1429;border:1px solid #bda169;color:#fff;border-radius:10px;font-weight:700;margin:6px 0 11px}
+  .ed-display-preview{border:2px solid #ff9900;color:#ffbf6a;padding:10px;border-radius:11px;background:#291b09;font-size:.85rem;font-weight:850;box-shadow:0 0 14px #ff990030}
+  .ed-display-preview.is-msrp{border-color:#00ff9d;color:#9effda;background:#102a20;box-shadow:0 0 14px #00ff9d30}
+  .ed-display-preview.is-bundle{border-color:#d500ff;color:#f0b6ff;background:#24102c;box-shadow:0 0 14px #d500ff40}
+  .ed-display-preview.is-baller{border-color:#ffd700;color:#ffe789;background:#2a210d;box-shadow:0 0 18px #ffd70050}
+  .chip.display-msrp{border-color:#00ff9d;color:#a6ffe0}
+  .chip.display-bundle{border-color:#d500ff;color:#e9a7ff}
+  .chip.display-baller{border-color:#ffd700;color:#ffe590}
+</style>
 </head>
 <body>
 
@@ -663,6 +675,17 @@
                 <button class="tt" type="button" data-type="baller"><span class="tt-i">👑</span><span class="tt-n">Baller bundle</span><span class="tt-s">Premium spots</span></button>
                 <button class="tt" type="button" data-type="slab"><span class="tt-i">🔍</span><span class="tt-n">Graded slab</span><span class="tt-s">Vault</span></button>
                 <button class="tt" type="button" data-type="raw"><span class="tt-i">🃏</span><span class="tt-n">Raw card</span><span class="tt-s">Vault</span></button>
+              </div>
+              <div id="ed-pack-display-container" class="ed-display-container" hidden>
+                <label for="ed-display-tier">🎨 Where should this pack appear?</label>
+                <select id="ed-display-tier">
+                  <option value="pack">📦 Single Packs · orange border</option>
+                  <option value="msrp">✅ MSRP Breaks · green border</option>
+                  <option value="bundle">💎 Bundle Breaks · purple border</option>
+                  <option value="baller">👑 Baller Bundles · gold border</option>
+                </select>
+                <div id="ed-display-preview" class="ed-display-preview" aria-live="polite">📦 Single Packs · orange border</div>
+                <p class="fieldnote">This changes only the website section and border. Checkout, stock and purchase limits remain Single Pack.</p>
               </div>
             </div>
           </section>
@@ -1014,6 +1037,10 @@ function setCount(id, next) {
 function chipsFor(item) {
   const stock = toInt(item.stock);
   const out = [`<span class="chip">${esc(typeLabel(item.type))}</span>`];
+  if (item.type === 'pack' && ['msrp', 'bundle', 'baller'].includes(item.displayTier)) {
+    const label = {msrp:'MSRP',bundle:'Bundle',baller:'Baller'}[item.displayTier];
+    out.push('<span class="chip display-' + item.displayTier + '">Shown in ' + label + '</span>');
+  }
   if (item.hidden) out.push('<span class="chip hidden">Hidden</span>');
   else if (stock <= 0) out.push('<span class="chip out">Sold out</span>');
   else out.push('<span class="chip live">On the site</span>');
@@ -1669,6 +1696,7 @@ function openEditor(id) {
   $('ed-price').value = it.price != null ? it.price : '';
   $('ed-stock').value = it.stock != null ? toInt(it.stock) : 1;
   $('ed-labeltype').value = it.stockLabelType || 'packs';
+  $('ed-display-tier').value = ['msrp', 'bundle', 'baller'].includes(it.displayTier) ? it.displayTier : 'pack';
   setWhen('golive', (it.goLiveTime && String(it.goLiveTime).indexOf('T') > -1) ? it.goLiveTime : '');
   setWhen('close', (it.scheduleEnd && String(it.scheduleEnd).indexOf('T') > -1) ? it.scheduleEnd : '');
   $('ed-min').value = it.minBuy || 1;
@@ -1730,6 +1758,7 @@ function paintType() {
     if (el) el.hidden = !on;
   };
   show('limits', PACKY(edType));
+  $('ed-pack-display-container').hidden = !PACKY(edType);
   show('link', !PACKY(edType));
   show('card', VAULTY(edType));
 
@@ -1770,7 +1799,12 @@ function paintHints() {
 // everything at a glance without opening anything.
 function paintSummaries() {
   const t = edType;
-  $('v-type').textContent = typeLabel(t);
+  const displayTier = $('ed-display-tier').value;
+  const displayNames = { pack:'Single Packs', msrp:'MSRP Breaks', bundle:'Bundle Breaks', baller:'Baller Bundles' };
+  $('v-type').textContent = typeLabel(t) + (PACKY(t) ? ' · ' + displayNames[displayTier] : '');
+  const preview = $('ed-display-preview');
+  preview.className = 'ed-display-preview is-' + displayTier;
+  preview.textContent = (displayTier === 'baller' ? '👑' : displayTier === 'bundle' ? '💎' : displayTier === 'msrp' ? '✅' : '📦') + ' ' + displayNames[displayTier] + ' border · still Single Pack checkout';
   $('v-text').textContent = ($('ed-name').value || '').slice(0, 30) || 'no name yet';
   const price = $('ed-price').value;
   $('v-price').textContent = (price !== '' ? '$' + price : 'no price') + ' · ' + toInt($('ed-stock').value) + ' left';
@@ -1807,7 +1841,7 @@ document.querySelectorAll('#ed-types .tt').forEach(b => {
 $('vis-public').addEventListener('click', () => { edHidden = false; paintVis(); paintSummaries(); });
 $('vis-hidden').addEventListener('click', () => { edHidden = true; paintVis(); paintSummaries(); });
 
-['ed-name', 'ed-price', 'ed-stock', 'ed-min', 'ed-max', 'ed-link', 'ed-cond', 'ed-grader', 'ed-labeltype']
+['ed-name', 'ed-price', 'ed-stock', 'ed-min', 'ed-max', 'ed-link', 'ed-cond', 'ed-grader', 'ed-labeltype', 'ed-display-tier']
   .forEach(id => $(id).addEventListener('input', paintSummaries));
 ['golive-date','golive-h','golive-m','golive-ap','close-date','close-h','close-m','close-ap']
   .forEach(id => $(id).addEventListener('change', () => { paintHints(); paintSummaries(); }));
@@ -1883,6 +1917,7 @@ async function saveEditor() {
     price: isFinite(price) ? price : 0,
     stock,
     stockLabelType: PACKY(edType) ? $('ed-labeltype').value : (edItem ? edItem.stockLabelType || 'packs' : 'packs'),
+    displayTier: PACKY(edType) ? $('ed-display-tier').value : 'pack',
     googleFormLink: PACKY(edType) ? '' : link,
     image: edShots[0] || '',
     images: edShots,
@@ -2157,7 +2192,8 @@ document.addEventListener('pointermove',e=>{if(e.pointerType!=='mouse')return;co
     'ed-link':'External page for this item’s payment or entry form. Regular pack checkout has its own checkout flow.',
     'ed-cond':'Condition of an ungraded trading card. Check the card carefully.',
     'ed-grader':'Grading company printed on the slab label, such as PSA or CGC.',
-    'ed-files':'Select product pictures. The first picture becomes the main thumbnail.'
+    'ed-files':'Select product pictures. The first picture becomes the main thumbnail.',
+    'ed-display-tier':'Move this Single Pack to the MSRP, Bundle or Baller section and give it that coloured border. This DOES NOT change the pack checkout or available stock.'
   };
   const createHelp=(target,text)=>{
     if(target.querySelector('.pbm-help'))return;
