@@ -1854,6 +1854,8 @@
 
         function buildCard(item, tier) {
             const t = TIERS[tier];
+            const isPack = item.type === 'pack';
+            const packPerkClass = tier === 'baller' ? 'perk-gold' : tier === 'bundle' ? 'perk-value' : tier === 'msrp' ? 'perk-msrp' : 'perk-orange';
             const id = esc(item.id);
             const now = Date.now();
 
@@ -1884,10 +1886,10 @@
 
             let btnHTML;
             if (isEnded) {
-                btnHTML = tier === 'pack' ? '<div class="buy-btn sold-out">SOLD OUT</div>' : '<div class="buy-btn sold-out">BREAK CLOSED</div>';
+                btnHTML = isPack ? '<div class="buy-btn sold-out">SOLD OUT</div>' : '<div class="buy-btn sold-out">BREAK CLOSED</div>';
             } else if (isFuture) {
                 btnHTML = `<div class="buy-btn upcoming-btn live-countdown" data-live="${esc(item.goLiveTime)}" id="btn-live-${id}"><span>GOING LIVE IN</span><span class="btn-subtext">CALCULATING...</span></div>`;
-            } else if (tier === 'pack') {
+            } else if (isPack) {
                 const lim = limitsFor(item);
                 const u = unitsOf(item);
                 btnHTML = `<button onclick="openCheckout('${id}')" class="${t.btn}" style="border:none; width:100%; cursor:pointer;"><span>${u.btnText}</span><span class="btn-subtext">${u.btnSub}</span></button>`
@@ -1901,10 +1903,10 @@
             const img = item.image || 'https://assets.pokemon.com/assets/cms2/img/misc/trading-card-games/cards/tcg_default_card.png';
             const tagPosClass = isOpen ? '' : ' no-ribbon';
 
-            const stockLabel = tier === 'pack'
+            const stockLabel = isPack
                 ? `${stockNum} ${unitsOf(item).stock}`
                 : `${stockNum} Break Spots`;
-            const tagHTML = tier === 'pack'
+            const tagHTML = isPack
                 ? `<i class="ph-fill ${unitsOf(item).icon}"></i> ${unitsOf(item).tag}`
                 : t.tagHTML;
 
@@ -1922,8 +1924,8 @@
                             ${dateRowHTML}
                             <div class="desc" id="desc-${id}"><p>${esc(item.description)}</p></div>
                             <button type="button" class="desc-more" hidden onclick="toggleDesc('${id}', this)">Read the full details</button>
-                            <div class="perk-row">${tier === 'pack'
-                                ? `<span class="perk perk-orange"><i class="ph-fill ${unitsOf(item).icon}"></i> ${unitsOf(item).perk}</span><span class="perk perk-ship"><i class="ph-fill ph-truck"></i> Shipping included</span>`
+                            <div class="perk-row">${isPack
+                                ? `<span class="perk ${packPerkClass}"><i class="ph-fill ${unitsOf(item).icon}"></i> ${unitsOf(item).perk}</span><span class="perk perk-ship"><i class="ph-fill ph-truck"></i> Shipping included</span>`
                                 : t.perks}</div>
                             <div class="price-row">
                                 <span class="price">$${priceTag(item.price)}</span>
@@ -1958,6 +1960,10 @@
                     const stock = Math.max(0, toInt(latest.stock));
                     item.stock = stock;
                     item.hidden = latest.hidden;
+                    // A changed Single Pack display tier needs its card moved to
+                    // the new section without affecting stock or checkout.
+                    if (item.type === 'pack' && (item.displayTier || 'pack') !== (latest.displayTier || 'pack')) mustReloadCards = true;
+                    item.displayTier = latest.displayTier;
                     item.scheduleEnd = latest.scheduleEnd;
                     item.goLiveTime = latest.goLiveTime;
                     const badge = document.getElementById('stock-badge-' + item.id);
@@ -2012,7 +2018,10 @@
                     if (item.type === 'baller') groups.baller.push(item);
                     else if (item.type === 'bundle') groups.bundle.push(item);
                     else if (item.type === 'msrp') groups.msrp.push(item);
-                    else if (item.type === 'pack') groups.pack.push(item);
+                    else if (item.type === 'pack') {
+                        const displayTier = ['msrp','bundle','baller'].includes(item.displayTier) ? item.displayTier : 'pack';
+                        groups[displayTier].push(item);
+                    }
                 });
 
                 const total = groups.baller.length + groups.bundle.length + groups.msrp.length + groups.pack.length;
