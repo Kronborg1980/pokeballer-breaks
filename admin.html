@@ -450,6 +450,17 @@
 .pbm-risk-note{padding:12px;border:1px solid #d4a15f88;border-radius:11px;background:#4a341922;color:#ffdda7;font:600 12px/1.6 Inter,system-ui,sans-serif;margin:12px 0}
 @media(max-width:650px){#pbm-admin-nav{gap:5px;padding:6px;top:0}#pbm-admin-nav button{flex:1 1 46%;padding:10px 4px} .pbm-help-pop{left:auto;right:-8px;transform:none}}
 </style>
+<style>
+        /* Pack checkout is independent of the section/border visitors see. */
+        #pack-display-container{margin:10px 0 20px;padding:14px 16px;border:1px solid #ffab4f80;border-radius:14px;background:rgba(255,153,0,.06)}
+        #pack-display-container label{font-weight:850;color:#ffe4af}
+        #pack-display-container select{border:1px solid #c8a15b;width:100%;margin:6px 0 10px}
+        .pack-display-preview{border:2px solid #ff9900;color:#ffb45d;background:#241a0d;padding:11px 14px;border-radius:12px;font-weight:850;font-size:.82rem;box-shadow:0 0 14px #ff990040}
+        .pack-display-preview.is-msrp{border-color:#00ff9d;color:#9cffe0;background:#08271c;box-shadow:0 0 16px #00ff9d40}
+        .pack-display-preview.is-bundle{border-color:#d500ff;color:#f3abff;background:#271032;box-shadow:0 0 16px #d500ff50}
+        .pack-display-preview.is-baller{border-color:#ffd700;color:#ffeb95;background:#241a08;box-shadow:0 0 19px #ffd70060}
+        .pack-display-desc{margin:9px 0 0;color:#cdd4e3;font-size:.76rem;line-height:1.55}
+</style>
 </head>
 <body>
     <div class="led-topbar"></div>
@@ -717,6 +728,18 @@
                     </div>
                 </div>
 
+                <div id="pack-display-container" style="display:none;">
+                    <label for="pack-display-tier">🎨 Single Pack display style / section</label>
+                    <select id="pack-display-tier">
+                        <option value="pack">📦 Orange — Single Packs section</option>
+                        <option value="msrp">✅ Green — MSRP Breaks section</option>
+                        <option value="bundle">💎 Purple — Bundle Breaks section</option>
+                        <option value="baller">👑 Gold — Baller Bundles section</option>
+                    </select>
+                    <div id="pack-display-preview" class="pack-display-preview" aria-live="polite">📦 Single Packs · orange border</div>
+                    <p class="pack-display-desc">Changes only the border, button colours and which section it appears under. It stays a <b>Single Pack</b> with the same quantity checkout and purchase limits.</p>
+                </div>
+
                 <div class="open-note"><i class="ph-fill ph-broadcast"></i> Breaks are OPEN the moment you save them. They close when the timer below runs out (or stock hits 0).</div>
 
                 <div id="close-time-container">
@@ -951,6 +974,22 @@
 
         document.getElementById('login-password').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
 
+        function paintPackDisplayPreview() {
+            const select = document.getElementById('pack-display-tier');
+            const preview = document.getElementById('pack-display-preview');
+            if (!select || !preview) return;
+            const style = ['msrp', 'bundle', 'baller'].includes(select.value) ? select.value : 'pack';
+            const details = {
+                pack: '📦 Single Packs · orange border',
+                msrp: '✅ MSRP Breaks · green border',
+                bundle: '💎 Bundle Breaks · purple border',
+                baller: '👑 Baller Bundles · gold border'
+            };
+            preview.className = 'pack-display-preview is-' + style;
+            preview.textContent = details[style] + ' · still uses Single Pack checkout';
+        }
+        document.getElementById('pack-display-tier').addEventListener('change', paintPackDisplayPreview);
+
         function applyTypeUI() {
             document.querySelectorAll('.tier-tile').forEach(t => t.classList.toggle('selected', t.dataset.type === selectedType));
             document.getElementById('condition-container').style.display = selectedType === 'raw' ? 'block' : 'none';
@@ -958,6 +997,8 @@
 
             const isPack = selectedType === 'pack';
             document.getElementById('pack-limits-container').style.display = isPack ? 'block' : 'none';
+            document.getElementById('pack-display-container').style.display = isPack ? 'block' : 'none';
+            paintPackDisplayPreview();
             document.getElementById('payment-link-container').style.display = isPack ? 'none' : 'block';
 
             // Stock wording follows the "Stock Text Display" dropdown
@@ -972,7 +1013,11 @@
             if (!editingId) document.getElementById('submit-btn').innerText = isBreak ? '🚀 Publish break' : '💾 Save to Vault';
         }
         document.querySelectorAll('.tier-tile').forEach(tile => {
-            const pick = () => { selectedType = tile.dataset.type; applyTypeUI(); };
+            const pick = () => {
+                selectedType = tile.dataset.type;
+                if (selectedType === 'pack' && !editingId) document.getElementById('pack-display-tier').value = 'pack';
+                applyTypeUI();
+            };
             tile.addEventListener('click', pick);
             tile.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } });
         });
@@ -1198,6 +1243,7 @@
 
                 const body = {
                     type, name, description: desc,
+                    displayTier: type === 'pack' ? document.getElementById('pack-display-tier').value : 'pack',
                     price: isFinite(price) ? price : 0,
                     stock, stockLabelType, googleFormLink: form, image: img, images: imagesArray,
                     clickCount: editingId ? currentClicks : 0,
@@ -1230,6 +1276,7 @@
             setWhen('close', '');
             document.getElementById('item-stock').value = '1';
             document.getElementById('stock-label-type').value = 'packs';
+            document.getElementById('pack-display-tier').value = 'pack';
             document.getElementById('item-min-buy').value = '1';
             document.getElementById('item-max-buy').value = '10';
             document.getElementById('item-image').value = '';
@@ -1300,6 +1347,8 @@
                 else if (item.type === 'raw') { badgeClass = 'b-raw'; badgeText = '🃏 RAW'; }
 
                 const hiddenBadge = item.hidden ? '<span class="badge b-hidden"><i class="ph-fill ph-eye-slash"></i> HIDDEN</span>' : '';
+                const displayBadge = item.type === 'pack' && ['msrp','bundle','baller'].includes(item.displayTier)
+                    ? '<span class="badge ' + (item.displayTier === 'baller' ? 'b-baller' : item.displayTier === 'bundle' ? 'b-bundle' : 'b-msrp') + '">Shown in ' + (item.displayTier === 'baller' ? 'Baller' : item.displayTier === 'bundle' ? 'Bundle' : 'MSRP') + '</span>' : '';
                 const condBadge = item.type === 'raw' && item.condition ? `<span class="badge b-cond">${esc(item.condition)}</span>` : '';
                 const imgCount = item.images && item.images.length > 1 ? `<span class="badge" style="background:#444;border:1px solid #777;"><i class="ph-fill ph-images"></i> ${item.images.length}</span>` : '';
                 const opacity = item.hidden ? 'opacity:0.6;' : '';
@@ -1332,7 +1381,7 @@
                                 <span class="item-title">${esc(item.name)}</span>
                                 ${statusBadge}${hiddenBadge}
                                 <span class="badge ${badgeClass}">${badgeText}</span>
-                                ${condBadge}${imgCount}
+                                ${displayBadge}${condBadge}${imgCount}
                             </div>
                             <div class="item-meta">${timeBadge}</div>
                             <div class="item-meta">
@@ -1371,6 +1420,7 @@
             document.getElementById('item-price').value = item.price != null ? item.price : '';
             document.getElementById('item-stock').value = toInt(item.stock, 1);
             document.getElementById('stock-label-type').value = item.stockLabelType || 'packs';
+            document.getElementById('pack-display-tier').value = ['msrp','bundle','baller'].includes(item.displayTier) ? item.displayTier : 'pack';
             document.getElementById('item-google-form-link').value = item.googleFormLink || '';
             document.getElementById('item-image').value = '';
             document.getElementById('item-condition').value = item.condition || 'Mint (M)';
@@ -2119,6 +2169,7 @@ document.addEventListener('pointermove',e=>{if(e.pointerType!=='mouse')return;co
     'item-price':'Price for ONE pack, bundle, or spot. The customer total is this price times the quantity.',
     'item-stock':'How many units are actually for sale. Enter zero to mark sold out.',
     'stock-label-type':'Choose Packs, Bundles or Spots to match what the quantity number represents.',
+    'pack-display-tier':'Choose where this Single Pack appears on the main website and which glowing border it uses. Gold puts it in Baller Bundles; checkout still works as a Single Pack.',
     'item-google-form-link':'Used for product types that send customers to an external form or payment page. Standard pack checkout uses its own flow.',
     'item-image':'Upload product pictures. The first picture is used as the main image.',
     'inventory-search':'Search products to edit them or open their order list.',
