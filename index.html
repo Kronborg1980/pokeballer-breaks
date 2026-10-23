@@ -973,7 +973,7 @@
     <footer><p>© 2026 PBM Breaks · Pokeballer Mike · Not affiliated with Nintendo</p></footer>
 
     <div id="myModal" class="image-modal" onclick="if(event.target===this) closeModal()">
-        <button class="close-modal" aria-label="Close image">&times;</button>
+        <button type="button" class="close-modal" aria-label="Close expanded image" title="Close image" onclick="closeModal()">&times;</button>
         <img class="modal-content" id="img01" alt="Expanded item image">
     </div>
 
@@ -2180,8 +2180,20 @@
 
         function trackClick(id) { fetch(`${API_URL}/click`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }), keepalive: true }).catch(() => {}); return true; }
 
-        function openModal(src) { document.getElementById('myModal').style.display = 'flex'; document.getElementById('img01').src = src; }
-        function closeModal() { document.getElementById('myModal').style.display = 'none'; }
+        function openModal(src) {
+            const viewer = document.getElementById('myModal');
+            const image = document.getElementById('img01');
+            if (!viewer || !image) return;
+            image.src = src;
+            viewer.style.display = 'flex';
+            viewer.querySelector('.close-modal')?.focus({ preventScroll: true });
+        }
+        function closeModal() {
+            const viewer = document.getElementById('myModal');
+            if (!viewer || viewer.style.display === 'none') return;
+            viewer.style.display = 'none';
+            document.getElementById('img01')?.removeAttribute('src');
+        }
 
         /* ---------- CHECKOUT ---------- */
         let activeCheckoutItem = null;
