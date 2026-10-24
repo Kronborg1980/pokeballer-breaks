@@ -248,12 +248,12 @@
 
         /* Rotating 3D product carousel: only used when a category has 2+ items.
            Existing product cards keep their checkout, ribbons, and stock IDs. */
-        .pbm-product-carousel {position:relative;width:100%;max-width:1160px;margin:0 auto 26px;--pc-side:68%}
+        .pbm-product-carousel {position:relative;width:100%;max-width:1160px;margin:0 auto 26px;--pc-side:68%;overflow:clip}
         .pbm-carousel-stage {display:grid;grid-template-columns:minmax(0,min(420px,76%));justify-content:center;
             perspective:1300px;perspective-origin:50% 38%;isolation:isolate;min-width:0;padding:24px 0 17px;overflow:visible}
         .pbm-carousel-card {grid-area:1/1;min-width:0;position:relative;transform-origin:center center;
             transition:transform .65s cubic-bezier(.23,.8,.2,1),opacity .5s ease,filter .5s ease;
-            transform:translateX(calc(var(--pc-step,0) * var(--pc-side))) rotateY(var(--pc-rotate,0deg)) scale(var(--pc-scale,1));
+            transform:translateX(var(--pc-offset,0%)) rotateY(var(--pc-rotate,0deg)) scale(var(--pc-scale,1));
             opacity:var(--pc-opacity,1);filter:brightness(var(--pc-light,1));
             z-index:var(--pc-depth,1);pointer-events:none;visibility:hidden;will-change:transform}
         .pbm-carousel-card[data-pos="0"] {pointer-events:auto;visibility:visible}
@@ -2096,14 +2096,16 @@
                 // can still rotate it in either direction.
                 const show = Math.abs(delta) <= 1;
                 card.dataset.pos = show ? String(delta) : 'hidden';
-                card.style.setProperty('--pc-step', String(delta));
+                card.style.setProperty('--pc-offset', (delta * (matchMedia('(max-width:670px)').matches ? 56 : 68)) + '%');
                 card.style.setProperty('--pc-rotate',delta < 0 ? '36deg' : delta > 0 ? '-36deg' : '0deg');
                 card.style.setProperty('--pc-scale',delta ? '.84' : '1');
                 card.style.setProperty('--pc-opacity',show ? (delta ? '.62' : '1') : '0');
                 card.style.setProperty('--pc-light',delta ? '.7' : '1');
                 card.style.setProperty('--pc-depth',delta ? '1' : '6');
                 card.setAttribute('aria-hidden',String(delta !== 0));
-                if ('inert' in card) card.inert = delta !== 0;
+                // Side cards must remain pointer-interactive so tapping them rotates
+                // the ring. Only completely hidden cards become inert.
+                if ('inert' in card) card.inert = !show;
             });
             root.querySelectorAll('.pbm-carousel-dot').forEach((dot,i)=>{
                 dot.setAttribute('aria-current',String(i===index));
