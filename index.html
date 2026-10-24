@@ -245,6 +245,49 @@
         @keyframes dotBlink { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.35; transform: scale(0.7); } }
 
         .store-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 35px; }
+
+        /* Rotating 3D product carousel: only used when a category has 2+ items.
+           Existing product cards keep their checkout, ribbons, and stock IDs. */
+        .pbm-product-carousel {position:relative;width:100%;max-width:1160px;margin:0 auto 26px;--pc-side:68%}
+        .pbm-carousel-stage {display:grid;grid-template-columns:minmax(0,min(420px,76%));justify-content:center;
+            perspective:1300px;perspective-origin:50% 38%;isolation:isolate;min-width:0;padding:24px 0 17px;overflow:visible}
+        .pbm-carousel-card {grid-area:1/1;min-width:0;position:relative;transform-origin:center center;
+            transition:transform .65s cubic-bezier(.23,.8,.2,1),opacity .5s ease,filter .5s ease;
+            transform:translateX(calc(var(--pc-step,0) * var(--pc-side))) rotateY(var(--pc-rotate,0deg)) scale(var(--pc-scale,1));
+            opacity:var(--pc-opacity,1);filter:brightness(var(--pc-light,1));
+            z-index:var(--pc-depth,1);pointer-events:none;visibility:hidden;will-change:transform}
+        .pbm-carousel-card[data-pos="0"] {pointer-events:auto;visibility:visible}
+        .pbm-carousel-card[data-pos="-1"],.pbm-carousel-card[data-pos="1"] {pointer-events:auto;visibility:visible;cursor:pointer}
+        .pbm-carousel-card[data-pos="-1"] .item-card,.pbm-carousel-card[data-pos="1"] .item-card {pointer-events:none}
+        .pbm-carousel-card[data-pos="-1"]:hover,.pbm-carousel-card[data-pos="1"]:hover {filter:brightness(.92)}
+        .pbm-carousel-card[data-pos="-1"] .neon-card-wrapper:hover,.pbm-carousel-card[data-pos="1"] .neon-card-wrapper:hover {transform:none}
+        .pbm-carousel-card[data-pos="-1"] .item-img,.pbm-carousel-card[data-pos="1"] .item-img {transform:none!important}
+        .pbm-carousel-card[data-pos="0"] .neon-card-wrapper:hover {transform:translateY(-3px)}
+        .pbm-carousel-stage .neon-card-wrapper {width:100%;max-width:none;margin:0}
+        .pbm-carousel-controls {position:relative;z-index:30;display:flex;justify-content:center;align-items:center;gap:16px;margin:9px auto 27px}
+        .pbm-carousel-arrow {width:44px;height:44px;border:1px solid rgba(255,255,255,.38);border-radius:50%;
+            background:rgba(12,16,38,.92);color:white;font:900 27px/1 system-ui;cursor:pointer;
+            box-shadow:0 0 18px rgba(var(--glow-rgb),.16);transition:background .2s,transform .2s}
+        .pbm-carousel-arrow:hover {background:rgba(90,57,120,.8);transform:scale(1.07)}
+        .pbm-carousel-arrow:focus-visible,.pbm-carousel-dot:focus-visible {outline:3px solid #fff;outline-offset:3px}
+        .pbm-carousel-dots {display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center}
+        .pbm-carousel-dot {width:12px;height:12px;padding:0;border-radius:50%;border:1px solid #d9d2e3;
+            background:rgba(255,255,255,.14);cursor:pointer;transition:background .2s,transform .2s}
+        .pbm-carousel-dot[aria-current="true"] {background:var(--accent-cyan);transform:scale(1.22);box-shadow:0 0 12px var(--accent-cyan)}
+        .pbm-carousel-count {color:#e6dbee;font-weight:750;font-size:.8rem;white-space:nowrap;min-width:58px;text-align:center}
+        .pbm-carousel-tip {text-align:center;color:#aaa7c3;font-size:.76rem;margin:-15px 0 22px}
+        @media(max-width:670px) {
+            .pbm-product-carousel {--pc-side:56%}
+            .pbm-carousel-stage {grid-template-columns:minmax(0,74%);padding:12px 0 8px}
+            .pbm-carousel-card[data-pos="-1"],.pbm-carousel-card[data-pos="1"] {opacity:calc(var(--pc-opacity,1)*.75)}
+            .pbm-carousel-arrow {width:42px;height:42px}
+            .pbm-carousel-controls {gap:10px;margin-bottom:22px}
+            .pbm-carousel-tip {margin-top:-12px}
+        }
+        @media(prefers-reduced-motion:reduce) {
+            .pbm-carousel-card,.pbm-carousel-arrow,.pbm-carousel-dot{transition:none!important}
+        }
+
         .item-card { display: flex; flex-direction: column; height: 100%; }
         .type-tag { position: absolute; top: 64px; right: 20px; padding: 8px 14px; border-radius: 10px; font-weight: 800; font-size: 0.75rem; z-index: 7; letter-spacing: 1px; text-transform: uppercase; backdrop-filter: blur(10px); display: flex; align-items: center; gap: 6px; }
         .type-tag.no-ribbon { top: 20px; }
@@ -2034,6 +2077,102 @@
         setInterval(refreshHeroStock, 20000);
         window.addEventListener('focus', refreshHeroStock);
 
+
+        // Every product card remains mounted; moving the 3D ring never changes
+        // its actual type, payment handler, stock badge or unique product ID.
+        const productCarouselIndex = new Map();
+        function wrapCarouselIndex(i,length) {return ((i % length) + length) % length;}
+        function paintProductCarousel(root, nextIndex) {
+            const cards = [...root.querySelectorAll('.pbm-carousel-card')];
+            const count = cards.length;
+            if (count < 2) return;
+            const index = wrapCarouselIndex(nextIndex,count);
+            root.dataset.index = String(index);
+            if (root.dataset.carouselKey) productCarouselIndex.set(root.dataset.carouselKey,index);
+            cards.forEach((card,i)=>{
+                let delta = wrapCarouselIndex(i-index,count);
+                if(delta > count/2)delta -= count;
+                // For 2-card rings the other card remains on the right; arrows
+                // can still rotate it in either direction.
+                const show = Math.abs(delta) <= 1;
+                card.dataset.pos = show ? String(delta) : 'hidden';
+                card.style.setProperty('--pc-step', String(delta));
+                card.style.setProperty('--pc-rotate',delta < 0 ? '36deg' : delta > 0 ? '-36deg' : '0deg');
+                card.style.setProperty('--pc-scale',delta ? '.84' : '1');
+                card.style.setProperty('--pc-opacity',show ? (delta ? '.62' : '1') : '0');
+                card.style.setProperty('--pc-light',delta ? '.7' : '1');
+                card.style.setProperty('--pc-depth',delta ? '1' : '6');
+                card.setAttribute('aria-hidden',String(delta !== 0));
+                if ('inert' in card) card.inert = delta !== 0;
+            });
+            root.querySelectorAll('.pbm-carousel-dot').forEach((dot,i)=>{
+                dot.setAttribute('aria-current',String(i===index));
+                dot.setAttribute('aria-label',(i===index?'Viewing':'View')+' item '+(i+1)+' of '+count);
+            });
+            const counter = root.querySelector('.pbm-carousel-count');
+            if (counter) counter.textContent=(index+1)+' / '+count;
+        }
+        function buildProductCarousel(list,tier,key) {
+            if (list.length===1)return '<div class="store-grid solo">'+buildCard(list[0],tier)+'</div>';
+            const id='pbm-ring-'+key;
+            return '<div class="pbm-product-carousel" id="'+id+'" data-carousel-key="'+key+'" data-index="0" role="region" aria-roledescription="carousel" aria-label="'+esc(TIERS[tier].title)+' products">'
+                +'<div class="pbm-carousel-stage">'
+                +list.map((item,i)=>'<div class="pbm-carousel-card" data-card-index="'+i+'">'+buildCard(item,tier)+'</div>').join('')
+                +'</div>'
+                +'<div class="pbm-carousel-controls">'
+                +'<button type="button" class="pbm-carousel-arrow" data-shift="-1" aria-label="Previous product">‹</button>'
+                +'<span class="pbm-carousel-count" aria-live="polite"></span>'
+                +'<div class="pbm-carousel-dots">'+list.map((_,i)=>'<button type="button" class="pbm-carousel-dot" data-jump="'+i+'" aria-label="View item '+(i+1)+'"></button>').join('')+'</div>'
+                +'<button type="button" class="pbm-carousel-arrow" data-shift="1" aria-label="Next product">›</button>'
+                +'</div><p class="pbm-carousel-tip">Swipe or tap a side card to browse products</p></div>';
+        }
+        function initializeProductCarousels() {
+            document.querySelectorAll('.pbm-product-carousel').forEach(root=>{
+                const count=root.querySelectorAll('.pbm-carousel-card').length;
+                const initial=productCarouselIndex.get(root.dataset.carouselKey)||0;
+                paintProductCarousel(root,initial);
+                root.addEventListener('click',event=>{
+                    const arrow=event.target.closest('button[data-shift]');
+                    const dot=event.target.closest('button[data-jump]');
+                    if(arrow){paintProductCarousel(root,Number(root.dataset.index)+Number(arrow.dataset.shift));return;}
+                    if(dot){paintProductCarousel(root,Number(dot.dataset.jump));return;}
+                    const side=event.target.closest('.pbm-carousel-card');
+                    if(side&&side.dataset.pos!=='0'){
+                        event.preventDefault();event.stopPropagation();
+                        paintProductCarousel(root,Number(side.dataset.cardIndex));
+                    }
+                },true);
+                let touch=null;
+                root.addEventListener('touchstart',event=>{
+                    if(event.touches.length!==1)return;
+                    touch={x:event.touches[0].clientX,y:event.touches[0].clientY};
+                },{passive:true});
+                root.addEventListener('touchend',event=>{
+                    if(!touch||!event.changedTouches.length)return;
+                    const dx=event.changedTouches[0].clientX-touch.x;
+                    const dy=event.changedTouches[0].clientY-touch.y;
+                    touch=null;
+                    if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy)*1.25){
+                        paintProductCarousel(root,Number(root.dataset.index)+(dx<0?1:-1));
+                        // Suppress the synthetic click generated by this swipe.
+                        root.dataset.swipeAt=String(Date.now());
+                    }
+                },{passive:true});
+                root.addEventListener('click',event=>{
+                    if(Date.now()-Number(root.dataset.swipeAt||0)<550){
+                        event.preventDefault();event.stopPropagation();
+                    }
+                },true);
+                root.addEventListener('keydown',event=>{
+                    if(event.key==='ArrowLeft'||event.key==='ArrowRight'){
+                        if(event.target.closest('input,textarea,select'))return;
+                        event.preventDefault();
+                        paintProductCarousel(root,Number(root.dataset.index)+(event.key==='ArrowRight'?1:-1));
+                    }
+                });
+            });
+        }
+
         async function loadStore() {
             const sections = document.getElementById('store-sections');
             sections.innerHTML = '<div class="section-header"><span class="section-line"></span><span class="section-title">AVAILABLE BREAKS</span><span class="section-line"></span></div><div class="store-grid" id="store-loading"></div>';
@@ -2085,12 +2224,12 @@
                 // One break on its own gets a wide landscape card instead of a
                 // lonely column; two get a pair; three or more fill the row.
                 const gridClass = list => 'store-grid' + (list.length === 1 ? ' solo' : list.length === 2 ? ' pair' : '');
-                const sectionHTML = (headerClass, icon, title, tagline, list, tier) => `
+                const sectionHTML = (headerClass, icon, title, tagline, list, tier, categoryKey) => `
                         <div class="tier-header ${headerClass}">
                             <div class="tier-title"><i class="ph-fill ${icon}"></i> ${title} <i class="ph-fill ${icon}"></i></div>
                             <div class="tier-tagline">${tagline}</div>
                         </div>
-                        <div class="${gridClass(list)}">${list.map(item => buildCard(item, tier)).join('')}</div>`;
+                        ${buildProductCarousel(list,tier,categoryKey)}`;
 
                 ['baller', 'bundle', 'msrp', 'pack'].forEach(tier => {
                     if (groups[tier].length === 0) return;
@@ -2103,15 +2242,16 @@
                             const list = groups.pack.filter(i => (UNIT_LABELS[i.stockLabelType] ? i.stockLabelType : 'packs') === kind);
                             if (list.length === 0) return;
                             const u = UNIT_LABELS[kind];
-                            html += sectionHTML(t.headerClass, u.icon, u.title, u.tagline, list, tier);
+                            html += sectionHTML(t.headerClass, u.icon, u.title, u.tagline, list, tier, 'pack-'+kind);
                         });
                         return;
                     }
 
-                    html += sectionHTML(t.headerClass, t.icon, t.title, t.tagline, groups[tier], tier);
+                    html += sectionHTML(t.headerClass, t.icon, t.title, t.tagline, groups[tier], tier, tier);
                 });
 
                 sections.innerHTML = html;
+                initializeProductCarousels();
                 applyNeon();
                 trimDescriptions();
                 startCountdownTimer();
