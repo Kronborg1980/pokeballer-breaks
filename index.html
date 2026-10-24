@@ -1065,6 +1065,30 @@
             height:100%;
             border:0;
         }
+        /* The thumbnail is a true 16:9 preview; iframe loads only on Play. */
+        #yt-container .yt-click-to-play {
+            position:absolute;inset:0;width:100%;height:100%;border:0;padding:0;
+            cursor:pointer;overflow:hidden;background:#090b19;color:#fff;display:block;
+        }
+        #yt-container .yt-click-to-play img {
+            width:100%;height:100%;display:block;object-fit:cover;
+        }
+        #yt-container .yt-click-to-play:after {
+            content:'';position:absolute;inset:0;
+            background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.3) 100%);
+            pointer-events:none;
+        }
+        #yt-container .yt-click-play-symbol {
+            position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+            z-index:2;display:grid;place-items:center;width:69px;height:48px;
+            border-radius:15px;background:#f03;color:#fff;
+            font:800 25px/1 system-ui;box-shadow:0 6px 25px #0008;
+            transition:background .18s,transform .18s;
+        }
+        #yt-container .yt-click-to-play:hover .yt-click-play-symbol {background:#f00;transform:translate(-50%,-50%) scale(1.06)}
+        #yt-container .yt-click-play-text {position:absolute;bottom:10px;left:13px;z-index:2;font:750 11px/1.3 system-ui;letter-spacing:1px;text-shadow:0 1px 4px #000}
+        #yt-container .yt-click-to-play:focus-visible {outline:3px solid #fff;outline-offset:-4px}
+        @media(prefers-reduced-motion:reduce) {#yt-container .yt-click-play-symbol{transition:none}}
     </style>
     <link rel="stylesheet" href="cinematic-seasons.css">
 </head>
@@ -1894,6 +1918,24 @@
             container.innerHTML = html;
         }
 
+        // YouTube iframes are created only after an explicit user click.
+        // This avoids unwanted background playback and broken preview sizing.
+        document.getElementById('yt-container').addEventListener('click', event => {
+            const button = event.target.closest('.yt-click-to-play');
+            if (!button) return;
+            const videoId = button.dataset.videoId;
+            if (!/^[A-Za-z0-9_-]{11}$/.test(videoId || '')) return;
+            const frame = button.closest('.yt-video-frame');
+            if (!frame) return;
+            const iframe = document.createElement('iframe');
+            iframe.title = button.dataset.videoTitle || 'YouTube video';
+            iframe.src = 'https://www.youtube.com/embed/' + encodeURIComponent(videoId) + '?autoplay=1&playsinline=1&controls=1&rel=0';
+            iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+            iframe.allowFullscreen = true;
+            iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+            frame.replaceChildren(iframe);
+        });
+        
         async function loadVideos() {
             const container = document.getElementById('yt-container');
             renderSkeletons(container, 2);
@@ -1932,7 +1974,11 @@
                             <div class="yt-card glass-panel" style="overflow:hidden;">
                                 <div class="yt-feed-toolbar" style="padding:13px 17px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">${badgeHTML}<div class="yt-feed-actions">${openBtnHTML}</div></div>
                                 <div class="yt-video-frame">
-                                    <iframe loading="lazy" title="${esc(v.title)}" src="https://www.youtube.com/embed/${encodeURIComponent(v.id)}?autoplay=0&playsinline=1&controls=1&modestbranding=1&rel=0" style="position:absolute;inset:0;width:100%;height:100%;border:none;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                    <button type="button" class="yt-click-to-play" data-video-id="${esc(v.id)}" data-video-title="${esc(v.title)}" aria-label="Play ${esc(v.title)}">
+                                        <img src="https://i.ytimg.com/vi/${encodeURIComponent(v.id)}/hqdefault.jpg" alt="" loading="lazy" decoding="async">
+                                        <span class="yt-click-play-symbol" aria-hidden="true">▶</span>
+                                        <span class="yt-click-play-text">PLAY VIDEO</span>
+                                    </button>
                                 </div>
                                 ${reminderHintHTML}
                             </div>
