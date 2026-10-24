@@ -982,6 +982,57 @@
                 max-width: calc(100% - 20px);
             }
         }
+
+        /* Mobile-first shop: compact cards, legible prices, and clean controls.
+           Only changes appearance; inventory, carousel and checkout stay intact. */
+        @media (max-width: 670px) {
+            .pbm-product-carousel{margin-bottom:15px}
+            .pbm-carousel-stage{grid-template-columns:minmax(0,79%);padding:7px 0 2px}
+            .pbm-carousel-card{align-self:start}
+            .pbm-carousel-card .item-img-box{height:clamp(138px,35vw,186px)}
+            .pbm-carousel-card .item-content{padding:13px 14px 15px;gap:0}
+            .pbm-carousel-card .item-content h3{font-size:1.14rem;line-height:1.24;margin-bottom:7px;letter-spacing:0;text-shadow:none}
+            .pbm-carousel-card .desc{max-height:3.05em;overflow:hidden;line-height:1.4;margin:0 0 6px}
+            .pbm-carousel-card .desc.open{max-height:none;overflow:visible}
+            .pbm-carousel-card .desc p{font-size:.81rem;line-height:1.42;margin:0;flex:none}
+            .pbm-carousel-card .desc-more{font-size:.67rem;letter-spacing:0;margin:4px 0 10px}
+            .pbm-carousel-card .perk-row{gap:5px;margin:1px 0 11px}
+            .pbm-carousel-card .perk{font-size:.58rem;letter-spacing:.1px;padding:5px 7px;gap:4px}
+            .pbm-carousel-card .perk i{font-size:.74rem}
+            .pbm-carousel-card .price-row{margin-bottom:10px;padding-top:10px;gap:6px;flex-wrap:wrap}
+            .pbm-carousel-card .price{font-size:1.58rem;line-height:1.1}
+            .pbm-carousel-card .stock{font-size:.68rem;padding:5px 8px;line-height:1.3}
+            .pbm-carousel-card .buy-btn{padding:11px 8px;font-size:.84rem;letter-spacing:.5px;border-radius:10px;min-height:44px}
+            .pbm-carousel-card .btn-subtext{font-size:.6rem;letter-spacing:0;margin-top:3px}
+            .pbm-carousel-card .limit-note{font-size:.58rem;line-height:1.4;letter-spacing:.05px;margin-top:6px}
+            .pbm-carousel-card .date-row{font-size:.68rem;padding-bottom:7px;margin-bottom:7px}
+            .pbm-carousel-card .live-ribbon{font-size:.66rem;letter-spacing:.3px;padding:5px 10px}
+            .pbm-carousel-card .type-tag{font-size:.55rem;padding:5px 7px;letter-spacing:0}
+            .pbm-carousel-card .time-tag-bottom{font-size:.57rem;padding:5px 7px;letter-spacing:0}
+            .pbm-carousel-controls{margin:7px auto 18px}
+            .pbm-carousel-tip{font-size:.67rem;margin:-12px 0 16px}
+            /* Single-product categories should be equally compact. */
+            .store-grid.solo .item-content{padding:14px 16px}
+            .store-grid.solo .item-img-box{height:190px}
+            .store-grid.solo .item-content p{font-size:.88rem;line-height:1.45}
+            .store-grid.solo .price{font-size:1.85rem}
+            .store-grid.solo .buy-btn{font-size:.95rem;padding:12px}
+            /* Simplify the live-feed masthead to one readable row. */
+            .yt-card .yt-feed-toolbar{padding:12px 13px!important;gap:9px!important}
+            .yt-card .yt-label{font-size:.68rem;padding:8px 10px;letter-spacing:.3px}
+            .yt-card .yt-open-btn{font-size:.7rem;letter-spacing:0;padding:9px 11px;min-height:36px}
+            .yt-card .yt-feed-actions{width:auto;flex:0 0 auto;gap:0}
+            .yt-card .yt-feed-actions>.yt-open-btn{flex:none}
+            .yt-card .yt-remind-btn{display:none!important}
+            .yt-card .yt-remind-hint{display:none!important}
+        }
+        @media (max-width:390px){
+            .pbm-carousel-stage{grid-template-columns:minmax(0,83%)}
+            .pbm-carousel-card .item-img-box{height:136px}
+            .pbm-carousel-card .item-content{padding:11px 12px}
+            .yt-card .yt-feed-toolbar{padding:10px!important}
+            .yt-card .yt-open-btn{font-size:.66rem;padding:8px 9px}
+        }
     </style>
     <link rel="stylesheet" href="cinematic-seasons.css">
 </head>
@@ -1842,16 +1893,12 @@
                         : `<a href="https://www.youtube.com/watch?v=${encodeURIComponent(v.id)}" target="_blank" rel="noopener" class="yt-open-btn" style="background:rgba(0,238,255,0.15);border-color:rgba(0,238,255,0.5);box-shadow:0 0 15px rgba(0,238,255,0.2);"><i class="ph-fill ph-play-circle"></i> WATCH VIDEO</a>`;
                     // Direct link to this specific upcoming event. YouTube must
                     // handle account sign-in and permission to set the reminder.
-                    const reminderBtnHTML = isStream
-                        ? `<a href="https://www.youtube.com/watch?v=${encodeURIComponent(v.id)}" target="_blank" rel="noopener noreferrer" class="yt-remind-btn" title="Open this stream on YouTube, then select Notify me" aria-label="Set a reminder for this stream on YouTube"><i class="ph-fill ph-bell-ringing"></i> SET REMINDER ↗</a>`
-                        : '';
-                    const reminderHintHTML = isStream
-                        ? '<p class="yt-remind-hint"><strong>Want a live alert?</strong> Tap Set Reminder above, then choose <strong>Notify me</strong> on YouTube. You may need to sign in.</p>'
-                        : '';
+                    const reminderBtnHTML = '';
+                    const reminderHintHTML = '';
                     return `
                         <div class="neon-card-wrapper">
                             <div class="yt-card glass-panel" style="overflow:hidden;">
-                                <div style="padding:16px 20px 12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">${badgeHTML}<div class="yt-feed-actions">${reminderBtnHTML}${openBtnHTML}</div></div>
+                                <div class="yt-feed-toolbar" style="padding:13px 17px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">${badgeHTML}<div class="yt-feed-actions">${openBtnHTML}</div></div>
                                 <div style="aspect-ratio:16/9;width:100%;position:relative;">
                                     <iframe loading="lazy" title="${esc(v.title)}" src="https://www.youtube.com/embed/${encodeURIComponent(v.id)}?autoplay=${isStream ? '1' : '0'}&mute=1&playsinline=1&controls=1&modestbranding=1&rel=0" style="position:absolute;inset:0;width:100%;height:100%;border:none;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                                 </div>
