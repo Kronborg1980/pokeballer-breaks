@@ -319,3 +319,48 @@ header #site-title{animation:pbm-wordmark-in .8s cubic-bezier(.2,.8,.2,1) both}
   .hero-status-row > .hero-live .hero-status-sub,
   .hero-upcoming-shell .hero-status-sub {font-size:12px}
 }
+
+/* Consistent, centered break cards (live and carousel) */
+.hero-status-row .hero-status-card {
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  gap:0;
+  padding:18px 22px;
+  min-height:132px;
+}
+.hero-status-row .hero-status-label {
+  justify-content:center;
+  align-self:center;
+  width:100%;
+  margin-bottom:10px;
+  font-size:11px;
+  line-height:1.35;
+}
+.hero-status-row .hero-status-title {
+  text-align:center;
+  font-size:clamp(17px,2vw,22px);
+  line-height:1.25;
+  font-weight:800;
+  max-width:100%;
+}
+.hero-status-row .hero-status-sub {
+  width:100%;
+  text-align:center;
+  font-size:12px;
+  line-height:1.5;
+  margin-top:9px;
+  overflow-wrap:break-word;
+}
+.hero-status-row .hero-upcoming-frame,
+.hero-status-row .hero-upcoming-carousel {min-width:0;width:100%}
+@media(max-width:600px) {
+  .hero-status-row .hero-status-card {
+    min-height:118px;
+    padding:17px 22px;
+    border-radius:18px;
+  }
+  .hero-status-row .hero-status-label {font-size:10px;margin-bottom:8px}
+  .hero-status-row .hero-status-title {font-size:19px}
+  .hero-status-row .hero-status-sub {font-size:12px;margin-top:7px}
+}
