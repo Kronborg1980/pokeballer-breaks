@@ -23,6 +23,7 @@ npm install --prefix /tmp/pbm-browser-tests --no-audit --no-fund playwright@1.64
 /tmp/pbm-browser-tests/node_modules/.bin/playwright install chromium
 NODE_PATH=/tmp/pbm-browser-tests/node_modules node tests/storefront.browser.cjs
 NODE_PATH=/tmp/pbm-browser-tests/node_modules node tests/hybrid-design.browser.cjs
+NODE_PATH=/tmp/pbm-browser-tests/node_modules node tests/video-preview.browser.cjs
 ```
 
 The browser test starts its own local server and uses mock inventory. It never

@@ -1591,6 +1591,23 @@
             frame.replaceChildren(iframe);
         });
         
+        // The public uploads playlist remains playable when the RSS proxy is
+        // unavailable. No API key or Worker update is needed for this fallback.
+        function renderChannelPreview(container) {
+            container.innerHTML = `<div class="neon-card-wrapper"><div class="yt-card glass-panel">
+                <div class="yt-feed-toolbar" style="padding:13px 17px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+                    <div class="yt-label lbl-hunt">CHANNEL VIDEOS</div>
+                    <a class="yt-open-btn" href="https://www.youtube.com/@PokeballerMike" target="_blank" rel="noopener">OPEN IN YOUTUBE</a>
+                </div>
+                <div class="yt-video-frame"><iframe
+                    src="https://www.youtube-nocookie.com/embed/videoseries?list=UUdFYy9uChCNAWbvVhTYwHaQ&amp;autoplay=0&amp;playsinline=1&amp;rel=0"
+                    title="Pokeballer Mike — latest channel videos" loading="lazy"
+                    allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen
+                    referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
+                <div style="padding:10px 17px;display:flex;justify-content:flex-end;"><button type="button" class="yt-open-btn" style="background:transparent;cursor:pointer;" onclick="loadVideos()">Refresh latest previews</button></div>
+            </div></div>`;
+        }
+
         async function loadVideos() {
             const container = document.getElementById('yt-container');
             renderSkeletons(container, 2);
@@ -1601,22 +1618,22 @@
                 if (doc.querySelector('parsererror')) throw new Error('Bad feed');
 
                 const entries = Array.from(doc.querySelectorAll('entry')).slice(0, 20);
-                const getId = e => e.querySelector('videoId') ? e.querySelector('videoId').textContent : '';
+                const getId = e => e.getElementsByTagNameNS('*', 'videoId')[0]?.textContent.trim() || '';
                 const getTitle = e => e.querySelector('title') ? e.querySelector('title').textContent : '';
 
                 let streamVideo = null, huntVideo = null;
-                for (const entry of entries) { const title = getTitle(entry), id = getId(entry); if (id && /stream|live|break/i.test(title)) { streamVideo = { id, title }; break; } }
-                for (const entry of entries) { const title = getTitle(entry), id = getId(entry); if (id && !/stream|live/i.test(title) && (!streamVideo || id !== streamVideo.id)) { huntVideo = { id, title }; break; } }
+                for (const entry of entries) { const title = getTitle(entry), id = getId(entry); if (/^[A-Za-z0-9_-]{11}$/.test(id) && /stream|live|break/i.test(title)) { streamVideo = { id, title }; break; } }
+                for (const entry of entries) { const title = getTitle(entry), id = getId(entry); if (/^[A-Za-z0-9_-]{11}$/.test(id) && !/stream|live/i.test(title) && (!streamVideo || id !== streamVideo.id)) { huntVideo = { id, title }; break; } }
 
                 const videos = [];
                 if (streamVideo) videos.push({ ...streamVideo, type: 'stream' });
                 if (huntVideo) videos.push({ ...huntVideo, type: 'hunt' });
 
-                if (videos.length === 0) { container.innerHTML = '<div class="feed-fallback" style="color:#888;">No videos found right now — catch the next stream soon.</div>'; return; }
+                if (videos.length === 0) { renderChannelPreview(container); return; }
 
                 container.innerHTML = videos.map(v => {
                     const isStream = v.type === 'stream';
-                    const badgeHTML = isStream ? '<div class="yt-label lbl-universal"><i class="ph-fill ph-broadcast"></i> OFFICIAL LIVE FEED</div>' : '<div class="yt-label lbl-hunt"><i class="ph-fill ph-video"></i> LATEST HUNT</div>';
+                    const badgeHTML = isStream ? '<div class="yt-label lbl-universal"><i class="ph-fill ph-broadcast"></i> LATEST STREAM</div>' : '<div class="yt-label lbl-hunt"><i class="ph-fill ph-video"></i> LATEST HUNT</div>';
                     const openBtnHTML = isStream
                         ? `<a href="https://www.youtube.com/watch?v=${encodeURIComponent(v.id)}" target="_blank" rel="noopener" class="yt-open-btn"><i class="ph-fill ph-youtube-logo"></i> OPEN IN YOUTUBE</a>`
                         : `<a href="https://www.youtube.com/watch?v=${encodeURIComponent(v.id)}" target="_blank" rel="noopener" class="yt-open-btn" style="background:rgba(0,238,255,0.15);border-color:rgba(0,238,255,0.5);box-shadow:0 0 15px rgba(0,238,255,0.2);"><i class="ph-fill ph-play-circle"></i> WATCH VIDEO</a>`;
@@ -1642,7 +1659,7 @@
                 applyNeon();
             } catch (e) {
                 console.error('Feed error:', e);
-                container.innerHTML = `<div class="feed-fallback"><a href="https://www.youtube.com/@PokeballerMike" target="_blank" rel="noopener" class="buy-btn" style="max-width:240px;margin:0 auto;">VISIT THE CHANNEL</a></div>`;
+                renderChannelPreview(container);
             }
         }
 
