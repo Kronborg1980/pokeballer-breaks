@@ -252,14 +252,18 @@
         .pbm-carousel-stage {display:grid;grid-template-columns:minmax(0,min(420px,76%));justify-content:center;
             perspective:1300px;perspective-origin:50% 38%;isolation:isolate;min-width:0;padding:24px 0 17px;overflow:visible}
         .pbm-carousel-card {grid-area:1/1;min-width:0;position:relative;transform-origin:center center;
-            transition:transform .65s cubic-bezier(.23,.8,.2,1),opacity .5s ease,filter .5s ease;
+            transition:transform .45s cubic-bezier(.23,.8,.2,1),opacity .35s ease;
             transform:translateX(var(--pc-offset,0%)) rotateY(var(--pc-rotate,0deg)) scale(var(--pc-scale,1));
-            opacity:var(--pc-opacity,1);filter:brightness(var(--pc-light,1));
-            z-index:var(--pc-depth,1);pointer-events:none;visibility:hidden;will-change:transform}
+            opacity:var(--pc-opacity,1);
+            z-index:var(--pc-depth,1);pointer-events:none;visibility:hidden}
+        .pbm-carousel-card[data-wrap="true"] {transition:none}
+        .pbm-carousel-card:not([data-pos="0"]) *,
+        .pbm-carousel-card:not([data-pos="0"]) *::before,
+        .pbm-carousel-card:not([data-pos="0"]) *::after,
+        .pbm-offscreen,.pbm-offscreen *, .pbm-offscreen *::before,.pbm-offscreen *::after {animation-play-state:paused!important}
         .pbm-carousel-card[data-pos="0"] {pointer-events:auto;visibility:visible}
         .pbm-carousel-card[data-pos="-1"],.pbm-carousel-card[data-pos="1"] {pointer-events:auto;visibility:visible;cursor:pointer}
         .pbm-carousel-card[data-pos="-1"] .item-card,.pbm-carousel-card[data-pos="1"] .item-card {pointer-events:none}
-        .pbm-carousel-card[data-pos="-1"]:hover,.pbm-carousel-card[data-pos="1"]:hover {filter:brightness(.92)}
         .pbm-carousel-card[data-pos="-1"] .neon-card-wrapper:hover,.pbm-carousel-card[data-pos="1"] .neon-card-wrapper:hover {transform:none}
         .pbm-carousel-card[data-pos="-1"] .item-img,.pbm-carousel-card[data-pos="1"] .item-img {transform:none!important}
         .pbm-carousel-card[data-pos="0"] .neon-card-wrapper:hover {transform:translateY(-3px)}
@@ -903,17 +907,14 @@
             .p-magikarp { width: 112px; opacity: 0.32; right: 3%; }
         }
 
-        /* ---------- TOUCH ----------
-           Android Chrome repaints the whole stacking context when
-           backdrop-filter sits under moving gradients, which was the old
-           blinking. Solid glass fixes that. The travelling edge stays —
-           it is one background repaint on a small box, and it is the whole
-           look — but it turns more slowly to keep phones cool. */
-        @media (hover: none), (pointer: coarse) {
+        /* Static lighting on small/touch screens: animated gradient angles
+           repaint the full surface even when their duration is slowed down. */
+        @media (max-width: 768px), (hover: none), (pointer: coarse) {
             .grain { display: none; }
 
-            .top-nav .nav-link, main, .glass-panel, .tier-header, .type-tag,
-            .time-tag-bottom, .perk, .image-modal, .stock, .yt-label, .marquee-plate {
+            .top-nav .nav-link, main, .glass-panel, .tier-header, .section-header, .type-tag,
+            .time-tag-bottom, .perk, .image-modal, .stock, .yt-label, .marquee-plate,
+            .sub-info-panel,.bell-btn,.epic-empty-inner {
                 backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
             }
             main {
@@ -923,24 +924,31 @@
                         rgba(var(--e1),0.14) 0deg, rgba(var(--e1),0.14) 120deg,
                         rgba(var(--e1),0.75) 176deg, #ffffff 196deg, rgba(var(--e2),0.75) 216deg,
                         rgba(var(--e1),0.14) 272deg, rgba(var(--e1),0.14) 360deg) border-box;
-                animation-duration: 30s;
             }
             .glass-panel { background: linear-gradient(160deg, rgba(22,22,40,0.98), rgba(9,9,18,0.99)); }
             .card-baller-bundle .glass-panel { background: linear-gradient(160deg, rgba(44,34,8,0.98), rgba(13,9,0,0.99)); }
 
-            .neon-card-wrapper { animation-duration: 13s; }
-            .card-live-now { animation-duration: 9s; }
-            .buy-btn { animation-duration: 10s; }
-            .section-header, .tier-header, .marquee-plate { animation-duration: 16s; }
+            main,.neon-card-wrapper,.card-live-now,.buy-btn,.section-header,
+            .tier-header,.marquee-plate,.sub-info-panel-wrap,.yt-card-wrap,
+            .epic-empty-wrapper,.epic-empty-wrapper::before { animation:none!important; }
+            .pbm-carousel-stage {perspective:none;touch-action:pan-y pinch-zoom}
+            .pbm-carousel-card {
+                transform:translateX(var(--pc-offset,0%)) scale(var(--pc-scale,1));
+                will-change:auto;
+            }
+            .neon-card-wrapper {perspective:none}
+            .poke-bg,.logo-animator {animation:none!important;will-change:auto;filter:none}
+            #weather {display:none}
 
-            .tier-header::after { animation: ledOpacity 3.6s ease-in-out infinite; box-shadow: 0 0 18px currentColor; }
+            .tier-header::after { animation:none; box-shadow: 0 0 18px currentColor; }
             .live-ribbon { animation: none; background-size: 100% 100%; }
             .time-tag-bottom.closing-soon, .lbl-universal { animation: none; }
             .baller-btn, .bundle-btn { background-size: 100% 100% !important; }
 
             .neon-card-wrapper, .glass-panel, .item-img, .logo-animator,
             .buy-btn, .sub-btn, .bell-btn { will-change: auto !important; }
-            .neon-card-wrapper:hover { transform: none; }
+            .neon-card-wrapper:hover,
+            .pbm-carousel-card[data-pos="0"] .neon-card-wrapper:hover { transform: none; }
             .neon-card-wrapper:hover .item-img { transform: none; }
             .buy-btn:hover, .sub-btn:hover, .bell-btn:hover, .nav-link:hover { transform: none; }
             .glass-panel::after { display: none; }
@@ -1090,7 +1098,7 @@
         #yt-container .yt-click-to-play:focus-visible {outline:3px solid #fff;outline-offset:-4px}
         @media(prefers-reduced-motion:reduce) {#yt-container .yt-click-play-symbol{transition:none}}
     </style>
-    <link rel="stylesheet" href="cinematic-seasons.css?v=20261025-centered-cards">
+    <link rel="stylesheet" href="cinematic-seasons.css?v=20261028-seasonal-mobile">
 </head>
 <body>
     <div class="grain"></div>
@@ -1295,7 +1303,9 @@
             halloween: { n: 30, colors: ['#ff7518', '#8f4fff', '#b13b12'], kind: 'leaf' },
             christmas: { n: 52, colors: ['#ffffff', '#dff5ec'], kind: 'snow' }
         };
-        let wxRaf = null, wxParts = [], wxSpec = null, wxCanvas = null, wxCtx = null, wxDpr = 1;
+        const weatherReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+        const weatherStaticScreen = window.matchMedia('(max-width: 768px), (hover: none), (pointer: coarse)');
+        let wxRaf = null, wxParts = [], wxSpec = null, wxCanvas = null, wxCtx = null, wxDpr = 1, wxLastFrame = 0;
 
         function wxResize() {
             if (!wxCanvas) return;
@@ -1329,16 +1339,25 @@
         }
 
         function wxDraw(ts) {
-            if (!wxCtx) return;
+            if (!wxCtx || document.hidden || weatherReducedMotion.matches || weatherStaticScreen.matches) {
+                wxStop();
+                return;
+            }
+            wxRaf = requestAnimationFrame(wxDraw);
+            // The atmosphere runs at 30fps independently of display refresh rate.
+            const elapsed = ts - wxLastFrame;
+            if (elapsed < 1000 / 30) return;
+            const step = Math.min(elapsed / (1000 / 60), 3);
+            wxLastFrame = ts;
             const w = window.innerWidth, h = window.innerHeight;
             wxCtx.setTransform(wxDpr, 0, 0, wxDpr, 0, 0);
             wxCtx.clearRect(0, 0, w, h);
             const t = ts * 0.001;
 
             for (const p of wxParts) {
-                p.y += p.vy;
-                p.x += Math.sin(t * p.drift + p.phase) * 0.55;
-                p.rot += p.spin;
+                p.y += p.vy * step;
+                p.x += Math.sin(t * p.drift + p.phase) * 0.55 * step;
+                p.rot += p.spin * step;
 
                 if (p.vy < 0 && p.y < -12) { p.y = h + 10; p.x = Math.random() * w; }
                 if (p.vy > 0 && p.y > h + 12) { p.y = -10; p.x = Math.random() * w; }
@@ -1366,7 +1385,6 @@
                 }
             }
             wxCtx.globalAlpha = 1;
-            wxRaf = requestAnimationFrame(wxDraw);
         }
 
         function wxStop() { if (wxRaf) { cancelAnimationFrame(wxRaf); wxRaf = null; } }
@@ -1375,16 +1393,19 @@
             wxCanvas = document.getElementById('weather');
             if (!wxCanvas) return;
             wxStop();
-            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            if (weatherReducedMotion.matches || weatherStaticScreen.matches) {
                 wxCanvas.style.display = 'none';
+                wxCtx = null;
                 return;
             }
             wxCanvas.style.display = '';
             wxSpec = WEATHER[theme] || WEATHER.crystal;
             wxCtx = wxCanvas.getContext('2d');
+            if (!wxCtx) return;
             wxResize();
             wxSeed();
-            wxRaf = requestAnimationFrame(wxDraw);
+            wxLastFrame = 0;
+            if (!document.hidden) wxRaf = requestAnimationFrame(wxDraw);
         }
 
         let wxResizeTimer = null;
@@ -1395,8 +1416,11 @@
 
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) wxStop();
-            else if (wxCtx && !wxRaf) wxRaf = requestAnimationFrame(wxDraw);
+            else startWeather(document.documentElement.getAttribute('data-theme'));
         });
+        [weatherReducedMotion, weatherStaticScreen].forEach(query => query.addEventListener('change', () => {
+            startWeather(document.documentElement.getAttribute('data-theme'));
+        }));
 
 
         /* ============================================================
@@ -1758,9 +1782,13 @@
             if (hrs) return hrs + 'h ' + mins + 'm';
             return mins + 'm ' + (sec % 60) + 's';
         }
+        let lastPlateMarkup = null;
         function setPlate(html) {
             const board = document.getElementById('hero-plate');
-            if (board) board.innerHTML = html;
+            if (board && lastPlateMarkup !== html) {
+                board.innerHTML = html;
+                lastPlateMarkup = html;
+            }
         }
         // Upcoming breaks carousel: rotate through every scheduled break.
         // Keep one visible, preserve the user's selection across countdown updates,
@@ -1874,7 +1902,12 @@
                 '<div class="hero-status-empty">All breaks are closed right now — watch for the next drop from Pokeballer Mike.</div>');
             heroUpcomingSlide();
         }
+        let heroSwipeAt = 0;
         document.getElementById('hero-plate').addEventListener('click', e => {
+            if (Date.now() - heroSwipeAt < 550) {
+                e.preventDefault();
+                return;
+            }
             const arrow = e.target.closest('[data-carousel-step]');
             if (arrow) { heroUpcomingStep(Number(arrow.dataset.carouselStep),true); return; }
             const dot = e.target.closest('[data-carousel-index]');
@@ -1887,7 +1920,11 @@
             const button = e.target.closest('button[data-target]');
             if (!button) return;
             const target = document.getElementById(button.dataset.target);
-            if (target) target.scrollIntoView({behavior:heroReduceMotion.matches?'auto':'smooth',block:'center'});
+            if (target) {
+                const card = target.closest('.pbm-carousel-card');
+                if (card) paintProductCarousel(card.closest('.pbm-product-carousel'), Number(card.dataset.cardIndex));
+                target.scrollIntoView({behavior:heroReduceMotion.matches?'auto':'smooth',block:'center'});
+            }
         });
         const carouselBoard = document.getElementById('hero-plate');
         carouselBoard.addEventListener('pointerenter',()=>{heroUpcomingPauseUntil=Date.now()+7000});
@@ -1895,6 +1932,7 @@
         // Native-feeling swipe navigation on touchscreens.
         let heroTouchStart = null;
         carouselBoard.addEventListener('touchstart',e=>{
+            heroTouchStart = null;
             if (e.touches.length!==1 || !e.target.closest('.hero-upcoming-carousel')) return;
             heroTouchStart={x:e.touches[0].clientX,y:e.touches[0].clientY};
         },{passive:true});
@@ -1904,9 +1942,11 @@
             const dy=e.changedTouches[0].clientY-heroTouchStart.y;
             heroTouchStart=null;
             if (Math.abs(dx)>45 && Math.abs(dx)>Math.abs(dy)*1.3) {
+                heroSwipeAt = Date.now();
                 heroUpcomingStep(dx<0?1:-1,true);
             }
         },{passive:true});
+        carouselBoard.addEventListener('touchcancel',()=>{heroTouchStart=null},{passive:true});
         heroUpcomingTimer=setInterval(()=>{
             if (document.hidden || heroReduceMotion.matches || Date.now()<heroUpcomingPauseUntil) return;
             heroUpcomingStep(1,false);
@@ -2206,6 +2246,9 @@
         // Every product card remains mounted; moving the 3D ring never changes
         // its actual type, payment handler, stock badge or unique product ID.
         const productCarouselIndex = new Map();
+        const productVisibilityObserver = 'IntersectionObserver' in window ? new IntersectionObserver(entries => {
+            entries.forEach(entry => entry.target.classList.toggle('pbm-offscreen', !entry.isIntersecting));
+        }, {rootMargin:'100px'}) : null;
         function wrapCarouselIndex(i,length) {return ((i % length) + length) % length;}
         function paintProductCarousel(root, nextIndex) {
             const cards = [...root.querySelectorAll('.pbm-carousel-card')];
@@ -2220,17 +2263,21 @@
                 // For 2-card rings the other card remains on the right; arrows
                 // can still rotate it in either direction.
                 const show = Math.abs(delta) <= 1;
+                const previous = card.dataset.pos;
+                // A card wrapping from left to right must never sweep through
+                // the selected product. Hidden cards enter at the side directly.
+                card.dataset.wrap = String(previous === undefined || previous === 'hidden' || !show || Math.abs(Number(previous) - delta) > 1);
                 card.dataset.pos = show ? String(delta) : 'hidden';
-                card.style.setProperty('--pc-offset', (delta * (matchMedia('(max-width:670px)').matches ? 56 : 68)) + '%');
+                card.style.setProperty('--pc-offset', 'calc(' + delta + ' * var(--pc-side))');
                 card.style.setProperty('--pc-rotate',delta < 0 ? '36deg' : delta > 0 ? '-36deg' : '0deg');
                 card.style.setProperty('--pc-scale',delta ? '.84' : '1');
                 card.style.setProperty('--pc-opacity',show ? (delta ? '.62' : '1') : '0');
-                card.style.setProperty('--pc-light',delta ? '.7' : '1');
                 card.style.setProperty('--pc-depth',delta ? '1' : '6');
                 card.setAttribute('aria-hidden',String(delta !== 0));
-                // Side cards must remain pointer-interactive so tapping them rotates
-                // the ring. Only completely hidden cards become inert.
+                // Keep the side wrapper tappable, but its hidden checkout and
+                // image controls must not remain in keyboard navigation.
                 if ('inert' in card) card.inert = !show;
+                card.firstElementChild.inert = delta !== 0;
             });
             root.querySelectorAll('.pbm-carousel-dot').forEach((dot,i)=>{
                 dot.setAttribute('aria-current',String(i===index));
@@ -2254,11 +2301,20 @@
                 +'</div><p class="pbm-carousel-tip">Swipe or tap a side card to browse products</p></div>';
         }
         function initializeProductCarousels() {
+            productVisibilityObserver?.disconnect();
+            document.querySelectorAll('.pbm-product-carousel,.store-grid.solo .neon-card-wrapper').forEach(surface => {
+                productVisibilityObserver?.observe(surface);
+            });
             document.querySelectorAll('.pbm-product-carousel').forEach(root=>{
                 const count=root.querySelectorAll('.pbm-carousel-card').length;
                 const initial=productCarouselIndex.get(root.dataset.carouselKey)||0;
                 paintProductCarousel(root,initial);
                 root.addEventListener('click',event=>{
+                    // This guard must run before arrows/side cards process the
+                    // synthetic click a browser may dispatch after a swipe.
+                    if(Date.now()-Number(root.dataset.swipeAt||0)<550){
+                        event.preventDefault();event.stopPropagation();return;
+                    }
                     const arrow=event.target.closest('button[data-shift]');
                     const dot=event.target.closest('button[data-jump]');
                     if(arrow){paintProductCarousel(root,Number(root.dataset.index)+Number(arrow.dataset.shift));return;}
@@ -2271,6 +2327,7 @@
                 },true);
                 let touch=null;
                 root.addEventListener('touchstart',event=>{
+                    touch=null;
                     if(event.touches.length!==1)return;
                     touch={x:event.touches[0].clientX,y:event.touches[0].clientY};
                 },{passive:true});
@@ -2285,11 +2342,7 @@
                         root.dataset.swipeAt=String(Date.now());
                     }
                 },{passive:true});
-                root.addEventListener('click',event=>{
-                    if(Date.now()-Number(root.dataset.swipeAt||0)<550){
-                        event.preventDefault();event.stopPropagation();
-                    }
-                },true);
+                root.addEventListener('touchcancel',()=>{touch=null},{passive:true});
                 root.addEventListener('keydown',event=>{
                     if(event.key==='ArrowLeft'||event.key==='ArrowRight'){
                         if(event.target.closest('input,textarea,select'))return;
@@ -2300,11 +2353,20 @@
             });
         }
 
+        let storeLoadBusy = false;
+        let storeOpeningTimer = null;
         async function loadStore() {
+            if (storeLoadBusy) return;
+            storeLoadBusy = true;
             const sections = document.getElementById('store-sections');
-            sections.innerHTML = '<div class="section-header"><span class="section-line"></span><span class="section-title">AVAILABLE BREAKS</span><span class="section-line"></span></div><div class="store-grid" id="store-loading"></div>';
-            renderSkeletons(document.getElementById('store-loading'), 3);
-            applyNeon();
+            const hasCards = !!sections.querySelector('.neon-card-wrapper');
+            // Background refreshes should not blank the shop or flash loading
+            // placeholders when several bundles open at the same time.
+            if (!hasCards) {
+                sections.innerHTML = '<div class="section-header"><span class="section-line"></span><span class="section-title">AVAILABLE BREAKS</span><span class="section-line"></span></div><div class="store-grid" id="store-loading"></div>';
+                renderSkeletons(document.getElementById('store-loading'), 3);
+                applyNeon();
+            }
             try {
                 const res = await fetchWithRetry(`${API_URL}/items`);
                 const items = await res.json();
@@ -2387,6 +2449,8 @@
                 console.error('Store error:', e);
                 setPlate('<div class="hero-status-empty">The board is temporarily offline. Please try again.</div>');
                 sections.innerHTML = `<div class="store-grid"><div class="error-card"><h2>Couldn't load items</h2><p>Connection timed out.</p><button class="retry-btn" onclick="loadStore()">Try again</button></div></div>`;
+            } finally {
+                storeLoadBusy = false;
             }
         }
 
@@ -2435,7 +2499,10 @@
                 if (distance <= 0) {
                     w.classList.remove('live-countdown');
                     w.innerHTML = `<span>OPENING NOW...</span><span class="btn-subtext" style="color:var(--accent-cyan);">Fetching store items</span>`;
-                    setTimeout(loadStore, 1000);
+                    if (!storeOpeningTimer) storeOpeningTimer = setTimeout(() => {
+                        storeOpeningTimer = null;
+                        loadStore();
+                    }, 1000);
                 } else {
                     const d = Math.floor(distance / (1000 * 60 * 60 * 24));
                     const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -2855,6 +2922,6 @@
         loadStore();
         handlePaymentReturn();
     </script>
-    <script src="cinematic-seasons.js" defer></script>
+    <script src="cinematic-seasons.js?v=20261028-seasonal-mobile" defer></script>
 </body>
 </html>

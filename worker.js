@@ -892,7 +892,10 @@ export default {
       }
 
       if (path === '/api/items' && method === 'POST') {
-        const body = await request.json();
+        const { token, ...body } = (await request.json().catch(() => null)) || {};
+        if (!await requireAdmin(token)) {
+          return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers });
+        }
         const itemId = `item:${Date.now()}`;
 
         const finalImages = await processImages(body.images || []);
@@ -921,7 +924,10 @@ export default {
 
       if (path.startsWith('/api/items/') && method === 'PUT') {
         const itemId = path.split('/').pop();
-        const body = await request.json();
+        const { token, ...body } = (await request.json().catch(() => null)) || {};
+        if (!await requireAdmin(token)) {
+          return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers });
+        }
         const existing = await KV.get(itemId, 'json');
         if (!existing) return new Response(JSON.stringify({ error: 'Not found' }), { status: 404, headers });
 
@@ -949,6 +955,10 @@ export default {
       }
 
       if (path.startsWith('/api/items/') && method === 'DELETE') {
+        const { token } = (await request.json().catch(() => null)) || {};
+        if (!await requireAdmin(token)) {
+          return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers });
+        }
         const itemId = path.split('/').pop();
         await KV.delete(itemId);
         const { keys } = await KV.list({ prefix: `purchase:${itemId}:` });

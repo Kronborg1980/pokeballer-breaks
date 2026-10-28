@@ -1080,7 +1080,7 @@ async function save(id) {
 
   // The whole item goes back, with only the number different — that is what
   // keeps the pictures, price and limits exactly as they were.
-  const body = Object.assign({}, item, { stock: target });
+  const body = Object.assign({}, item, { stock: target, token: getToken() });
 
   try {
     // No encodeURIComponent here: the id contains a colon ("item:1758…"), which
@@ -1456,7 +1456,10 @@ async function doDelete() {
   try {
     // Raw id, never encodeURIComponent: the colon in "item:1758…" is legal in
     // a path, and the worker reads the path as it is.
-    const res = await fetch(`${API_URL}/items/${item.id}`, { method: 'DELETE' });
+    const res = await fetch(`${API_URL}/items/${item.id}`, {
+      method: 'DELETE', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: getToken() })
+    });
     if (res.status === 401) { closeConfirm(); logout('Your login ran out. Log in again.'); return; }
     const data = await res.json().catch(() => null);
     if (!res.ok || (data && data.error)) {
@@ -1911,6 +1914,7 @@ async function saveEditor() {
   }
 
   const body = {
+    token: getToken(),
     type: edType,
     name,
     description: $('ed-desc').value.trim(),

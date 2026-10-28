@@ -1242,6 +1242,7 @@
                 const img = imagesArray.length > 0 ? imagesArray[0] : (editingId ? currentImage : '');
 
                 const body = {
+                    token: localStorage.getItem('adminToken') || '',
                     type, name, description: desc,
                     displayTier: type === 'pack' ? document.getElementById('pack-display-tier').value : 'pack',
                     price: isFinite(price) ? price : 0,
@@ -1441,7 +1442,10 @@
         async function deleteItem(id) {
             if (!confirm('Permanently delete this item?')) return;
             try {
-                await fetchWithRetry(`${API_URL}/items/${id}`, { method: 'DELETE' });
+                await fetchWithRetry(`${API_URL}/items/${id}`, {
+                    method: 'DELETE', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token: localStorage.getItem('adminToken') || '' })
+                });
                 toast('Item deleted.');
                 loadItems();
             } catch (e) { toast('Delete failed — try again.', true); }

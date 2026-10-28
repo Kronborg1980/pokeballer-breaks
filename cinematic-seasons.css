@@ -30,60 +30,80 @@ html[data-theme="birthday"]{
   --pbm-aurora-c:rgba(244,160,75,.10);
 }
 
-/* Background only, never covers text or products. Existing Pokémon art remains. */
-#pbm-scene{
-  position:absolute;inset:0 0 auto;height:min(590px,87vh);
+/* The seasonal showcase is confined to the header, so it scrolls away.
+   Local vectors and still gradients keep the atmosphere crisp on phones. */
+#pbm-scene {
+  position:absolute;inset:0 0 auto;height:560px;
   pointer-events:none;overflow:hidden;z-index:0;isolation:isolate;
 }
-#pbm-scene .pbm-sky{
-  position:absolute;inset:-12% -8% 2%;opacity:.96;
+#pbm-scene .pbm-sky {
+  position:absolute;inset:0;
   background:
-    radial-gradient(ellipse 35% 43% at 20% 13%,var(--pbm-aurora-a),transparent 77%),
-    radial-gradient(ellipse 40% 45% at 79% 12%,var(--pbm-aurora-b),transparent 81%),
-    radial-gradient(ellipse 38% 45% at 52% 50%,var(--pbm-aurora-c),transparent 86%);
-  animation:pbm-aura-breathe 14s ease-in-out infinite;
+    radial-gradient(ellipse 40% 58% at 12% 28%,var(--pbm-aurora-a),transparent 78%),
+    radial-gradient(ellipse 40% 58% at 88% 28%,var(--pbm-aurora-b),transparent 78%),
+    radial-gradient(ellipse 50% 45% at 50% 25%,var(--pbm-aurora-c),transparent 82%);
 }
-#pbm-scene .pbm-sky::after{
-  content:"";position:absolute;inset:10% 15% 28%;border-radius:50%;
-  border:1px solid rgba(var(--glow-rgb),.055);
-  box-shadow:0 0 80px rgba(var(--spark-rgb),.055),inset 0 0 55px rgba(var(--glow-rgb),.02);
+#pbm-scene .pbm-orbit {
+  position:absolute;width:510px;height:510px;top:-185px;left:calc(50% - 255px);
+  border:1px solid rgba(var(--glow-rgb),.12);border-radius:50%;
+  box-shadow:0 0 0 19px rgba(var(--glow-rgb),.025),0 0 0 42px rgba(var(--spark-rgb),.03);
+  background:radial-gradient(circle at 50% 50%,transparent 18%,rgba(var(--glow-rgb),.035) 18.2%,transparent 18.8%);
 }
-#pbm-scene .pbm-mist{
-  position:absolute;top:265px;left:12%;width:76%;height:125px;opacity:.45;
-  background:radial-gradient(ellipse,var(--pbm-aurora-a),transparent 72%);
-  filter:blur(35px);animation:pbm-mist-shift 16s ease-in-out infinite;
+#pbm-scene .pbm-stars {position:absolute;inset:0}
+#pbm-scene .pbm-star {
+  position:absolute;width:3px;height:3px;background:#fff1cd;border-radius:50%;opacity:.45;
 }
-#pbm-scene .pbm-stars{position:absolute;inset:0}
-#pbm-scene .pbm-star{
-  position:absolute;width:2px;height:2px;background:rgba(255,255,255,.9);border-radius:50%;
-  box-shadow:0 0 9px 2px var(--pbm-aurora-a);
-  opacity:.32;animation:pbm-glimmer var(--dur,6s) ease-in-out infinite;animation-delay:var(--delay,0s);
+#pbm-scene .pbm-star:nth-child(3n) {
+  width:10px;height:10px;border-radius:0;background:var(--pbm-amber);
+  clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%);
 }
-#pbm-scene .pbm-star:nth-child(8n){width:3px;height:3px;opacity:.45}
-#pbm-scene .pbm-art{
-  position:absolute;top:190px;width:clamp(96px,12vw,175px);opacity:.68;
-  filter:drop-shadow(0 0 22px var(--pbm-aurora-a));
-  transition:opacity .6s ease;
+#pbm-scene .pbm-art {
+  position:absolute;top:100px;width:clamp(150px,19vw,255px);opacity:.94;
 }
-#pbm-scene .pbm-art:empty{display:none}
-#pbm-scene .pbm-left{left:0;animation:pbm-art-left 10s ease-in-out infinite}
-#pbm-scene .pbm-right{right:0;animation:pbm-art-right 12s ease-in-out infinite}
-#pbm-scene svg{display:block;width:100%;height:auto}
-#pbm-scene[data-season="crystal"] .pbm-art{display:none}
-html[data-theme="halloween"] #pbm-scene .pbm-sky::after{border-color:rgba(255,142,69,.055)}
-html[data-theme="christmas"] #pbm-scene .pbm-sky::after{border-color:rgba(83,238,192,.06)}
-html[data-theme="birthday"] #pbm-scene .pbm-sky::after{border-color:rgba(255,119,202,.07)}
+#pbm-scene .pbm-art:empty {display:none}
+#pbm-scene .pbm-art::before {
+  content:"";position:absolute;inset:15% 4%;border-radius:50%;z-index:-1;
+  background:radial-gradient(circle,var(--pbm-aurora-a),transparent 72%);
+  border:1px solid rgba(var(--glow-rgb),.16);
+}
+#pbm-scene .pbm-left {left:clamp(4px,4vw,90px);transform:rotate(-8deg)}
+#pbm-scene .pbm-right {right:clamp(4px,4vw,90px);transform:rotate(8deg)}
+#pbm-scene svg {display:block;width:100%;height:auto}
+#pbm-scene[data-season="crystal"] .pbm-orbit {display:none}
+#pbm-scene[data-season="crystal"] .pbm-art {display:none}
 
-@keyframes pbm-aura-breathe{0%,100%{transform:scale(1);opacity:.7}50%{transform:scale(1.045);opacity:1}}
-@keyframes pbm-mist-shift{0%,100%{transform:translateX(-5%)}50%{transform:translateX(5%)}}
-@keyframes pbm-glimmer{0%,100%{opacity:.1;transform:scale(.7)}50%{opacity:.7;transform:scale(1.5)}}
-@keyframes pbm-art-left{0%,100%{transform:translate3d(0,0,0) rotate(-2deg)}50%{transform:translate3d(5px,-12px,0) rotate(2deg)}}
-@keyframes pbm-art-right{0%,100%{transform:translate3d(0,0,0) rotate(2deg)}50%{transform:translate3d(-5px,-10px,0) rotate(-2deg)}}
+@media(max-width:768px),(hover:none),(pointer:coarse) {
+  #decor {display:none}
+  .garland {animation:none!important;filter:none!important}
+}
 
-/* The brand is the headline. No subtitle/tier tagline is injected beneath it. */
-header .header-wrapper,header #site-title{filter:drop-shadow(0 0 17px var(--pbm-aurora-a))}
-header #site-title{animation:pbm-wordmark-in .8s cubic-bezier(.2,.8,.2,1) both}
-@keyframes pbm-wordmark-in{from{opacity:0;transform:translateY(12px);filter:blur(8px)}to{opacity:1;transform:translateY(0);filter:blur(0)}}
+/* Readable content keeps its normal hierarchy. The season colors the stage. */
+html:is([data-theme="halloween"],[data-theme="christmas"],[data-theme="birthday"]) main {
+  border-color:rgba(var(--glow-rgb),.32);
+  background:linear-gradient(145deg,rgba(var(--spark-rgb),.045),transparent 32%),rgba(5,5,14,.95);
+}
+html:is([data-theme="halloween"],[data-theme="christmas"],[data-theme="birthday"]) .section-header {
+  border-color:rgba(var(--glow-rgb),.4);
+  background:linear-gradient(110deg,rgba(var(--glow-rgb),.11),rgba(var(--spark-rgb),.1));
+  box-shadow:inset 0 1px 0 #ffffff12,0 9px 24px #0003;
+}
+html:is([data-theme="halloween"],[data-theme="christmas"],[data-theme="birthday"]) .hero-status-card {
+  background:linear-gradient(135deg,rgba(var(--glow-rgb),.13),transparent 70%),#0b0d1b;
+}
+html[data-theme="christmas"] .hero-status-card::after {
+  height:3px;background:repeating-linear-gradient(120deg,#e9697b 0 12px,#fff0cc 12px 24px,#65d4b0 24px 36px);
+  box-shadow:none;
+}
+html[data-theme="halloween"] .hero-status-card::after {background:linear-gradient(90deg,transparent,#c8a3ff,#ffad55,transparent)}
+html[data-theme="birthday"] .hero-status-card::after {background:linear-gradient(90deg,#ff9ad8,#ffe094,#98e9ed,#c4a4ff)}
+
+/* Two slow transforms only, and only on desktop. No flashing or blur layers. */
+@media(min-width:1000px) and (hover:hover) and (prefers-reduced-motion:no-preference) {
+  #pbm-scene .pbm-left {animation:pbm-art-left 12s ease-in-out infinite}
+  #pbm-scene .pbm-right {animation:pbm-art-right 14s ease-in-out infinite}
+}
+@keyframes pbm-art-left {0%,100%{transform:translateY(0) rotate(-8deg)}50%{transform:translateY(-8px) rotate(-5deg)}}
+@keyframes pbm-art-right {0%,100%{transform:translateY(0) rotate(8deg)}50%{transform:translateY(-8px) rotate(5deg)}}
 
 /* Dual live + upcoming drop status. Both derive from real storefront items. */
 .hero-status-board{
@@ -169,10 +189,12 @@ header #site-title{animation:pbm-wordmark-in .8s cubic-bezier(.2,.8,.2,1) both}
 @keyframes pbm-live-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.55;transform:scale(.85)}}
 
 @media(max-width:768px){
-  #pbm-scene{height:440px}
-  #pbm-scene .pbm-art{width:110px;top:190px;opacity:.38}
-  #pbm-scene .pbm-left{left:-30px}
-  #pbm-scene .pbm-right{right:-30px}
+  #decor{display:none}
+  #pbm-scene{height:400px}
+  #pbm-scene .pbm-art{width:118px;top:88px;opacity:.58}
+  #pbm-scene .pbm-left{left:-25px}
+  #pbm-scene .pbm-right{right:-25px}
+  #pbm-scene .pbm-orbit{width:360px;height:360px;left:calc(50% - 180px);top:-100px}
   .hero-status-board{width:min(96vw,580px)}
   .hero-status-row{gap:9px}
   .hero-status-card{min-height:92px;padding:13px 15px;border-radius:16px}
@@ -181,7 +203,7 @@ header #site-title{animation:pbm-wordmark-in .8s cubic-bezier(.2,.8,.2,1) both}
   .hero-status-sub{font-size:11px;margin-top:6px}
 }
 @media(max-width:480px){
-  #pbm-scene .pbm-art{width:85px;top:170px;opacity:.22}
+  #pbm-scene .pbm-art{width:104px;top:80px;opacity:.5}
   .hero-status-row{grid-template-columns:1fr;gap:8px}
   .hero-status-card{min-height:79px}
 }
@@ -363,4 +385,10 @@ header #site-title{animation:pbm-wordmark-in .8s cubic-bezier(.2,.8,.2,1) both}
   .hero-status-row .hero-status-label {font-size:10px;margin-bottom:8px}
   .hero-status-row .hero-status-title {font-size:19px}
   .hero-status-row .hero-status-sub {font-size:12px;margin-top:7px}
+}
+
+/* Pause even the small desktop decorations when the page is not visible. */
+#pbm-scene[data-paused] * {animation-play-state:paused!important}
+@media(prefers-reduced-motion:reduce) {
+  #pbm-scene *,header #site-title {animation:none!important;transition:none!important}
 }
