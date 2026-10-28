@@ -382,7 +382,7 @@ export default {
       'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     };
 
     if (method === 'OPTIONS') return new Response(null, { headers });
@@ -402,6 +402,7 @@ export default {
       }
       const KV = env.POKEBALLER_KV;
       const requireAdmin = async token => (token ? await KV.get(`session:${token}`) : null);
+      const inventoryToken = bodyToken => request.headers.get('Authorization')?.match(/^Bearer\s+(\S+)$/i)?.[1] ?? bodyToken;
 
       /* ---------- OVERLAY WEBSOCKET (must come before anything that reads a body) ---------- */
       if (path === '/api/alerts/ws') {
@@ -893,7 +894,7 @@ export default {
 
       if (path === '/api/items' && method === 'POST') {
         const { token, ...body } = (await request.json().catch(() => null)) || {};
-        if (!await requireAdmin(token)) {
+        if (!await requireAdmin(inventoryToken(token))) {
           return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers });
         }
         const itemId = `item:${Date.now()}`;
@@ -925,7 +926,7 @@ export default {
       if (path.startsWith('/api/items/') && method === 'PUT') {
         const itemId = path.split('/').pop();
         const { token, ...body } = (await request.json().catch(() => null)) || {};
-        if (!await requireAdmin(token)) {
+        if (!await requireAdmin(inventoryToken(token))) {
           return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers });
         }
         const existing = await KV.get(itemId, 'json');
@@ -946,6 +947,7 @@ export default {
           minBuy: limits.minBuy,
           maxBuy: limits.maxBuy
         };
+        delete updatedItem.token;
 
         await KV.put(itemId, JSON.stringify(updatedItem));
         if (updatedItem.type === 'pack') {
@@ -956,7 +958,7 @@ export default {
 
       if (path.startsWith('/api/items/') && method === 'DELETE') {
         const { token } = (await request.json().catch(() => null)) || {};
-        if (!await requireAdmin(token)) {
+        if (!await requireAdmin(inventoryToken(token))) {
           return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers });
         }
         const itemId = path.split('/').pop();

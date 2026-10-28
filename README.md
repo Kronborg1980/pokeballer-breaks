@@ -52,8 +52,10 @@ iPhone Safari and real payment-provider transactions remain manual checks.
 
 ## Release
 
-Publish `worker.js`, `admin.html` and `stock.html` together: inventory edits require
-an admin session, and these clients send the login token. A previously opened admin
-or stock page must be refreshed after the update. Public inventory reads remain
-available without login. The storefront and seasonal CSS/JS can be published with
-the other static files, including `collector*.css`, `collector*.js` and `assets/`.
+Deploy `worker.js` before publishing `admin.html` and `stock.html`: inventory edits
+require an admin session, sent in the Authorization header. An older Worker rejects
+the new clients' cross-origin preflight until it is upgraded. Session tokens stay
+out of item payloads during a mixed-version rollout. A previously opened admin or
+stock page must be refreshed after the update. Public inventory reads remain
+available without login. Publish the storefront and all static assets, including
+`collector*.css`, `collector*.js` and `assets/`, with the other static files.

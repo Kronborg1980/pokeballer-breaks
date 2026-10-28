@@ -1242,7 +1242,6 @@
                 const img = imagesArray.length > 0 ? imagesArray[0] : (editingId ? currentImage : '');
 
                 const body = {
-                    token: localStorage.getItem('adminToken') || '',
                     type, name, description: desc,
                     displayTier: type === 'pack' ? document.getElementById('pack-display-tier').value : 'pack',
                     price: isFinite(price) ? price : 0,
@@ -1255,7 +1254,11 @@
 
                 const url = editingId ? `${API_URL}/items/${editingId}` : `${API_URL}/items`;
                 const method = editingId ? 'PUT' : 'POST';
-                await fetchWithRetry(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+                await fetchWithRetry(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (localStorage.getItem('adminToken') || '') },
+                    body: JSON.stringify(body)
+                });
 
                 const wasEditing = !!editingId;
                 resetForm();
@@ -1443,8 +1446,8 @@
             if (!confirm('Permanently delete this item?')) return;
             try {
                 await fetchWithRetry(`${API_URL}/items/${id}`, {
-                    method: 'DELETE', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ token: localStorage.getItem('adminToken') || '' })
+                    method: 'DELETE',
+                    headers: { 'Authorization': 'Bearer ' + (localStorage.getItem('adminToken') || '') }
                 });
                 toast('Item deleted.');
                 loadItems();

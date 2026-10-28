@@ -32,11 +32,12 @@ function fixture() {
       }
     }
   };
-  async function request(method, path, body) {
+  async function request(method, path, body, headers = {}) {
     return worker.fetch(new Request('https://local.test' + path, {
       method,
+      headers: { ...(body === undefined ? {} : { 'Content-Type': 'application/json' }), ...headers },
       ...(body === undefined ? {} : {
-        headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+        body: JSON.stringify(body)
       })
     }), env, {});
   }
@@ -105,4 +106,52 @@ test('login returns a session accepted by inventory mutations', async () => {
   assert.equal(login.status, 200);
   assert.ok(token);
   assert.equal((await request('PUT', '/api/items/item:1', { token, stock: 7, images: [] })).status, 200);
+});
+
+test('Bearer-authenticated CRUD keeps credentials out of item payloads and storage', async () => {
+  const { request, records } = fixture();
+  const headers = { Authorization: 'Bearer valid-session' };
+  const response = await request('POST', '/api/items', {
+    type: 'bundle', name: 'Header-auth bundle', stock: 4, images: []
+  }, headers);
+  assert.equal(response.status, 200);
+  const { item } = await response.json();
+  assert.equal(item.name, 'Header-auth bundle');
+  assert.equal(Object.hasOwn(item, 'token'), false);
+  assert.equal(Object.hasOwn(records.get(item.id), 'token'), false);
+
+  // Also discard a legacy token that a previously deployed Worker stored.
+  records.get('item:1').token = 'legacy-token';
+  const updated = await request('PUT', '/api/items/item:1', { stock: 8, images: [] }, headers);
+  assert.equal(updated.status, 200);
+  assert.equal(records.get('item:1').stock, 8);
+  assert.equal(Object.hasOwn(records.get('item:1'), 'token'), false);
+  assert.equal(Object.hasOwn((await updated.json()).item, 'token'), false);
+
+  assert.equal((await request('DELETE', '/api/items/item:1', undefined, headers)).status, 200);
+  assert.equal(records.has('item:1'), false);
+});
+
+for (const [method, path] of [
+  ['POST', '/api/items'], ['PUT', '/api/items/item:1'], ['DELETE', '/api/items/item:1']
+]) {
+  test(`${method} rejects an invalid Bearer token even when body token is valid`, async () => {
+    const { request, effects } = fixture();
+    const response = await request(method, path, { token: 'valid-session', images: [] }, {
+      Authorization: 'Bearer expired-session'
+    });
+    assert.equal(response.status, 401);
+    assert.deepEqual(effects, []);
+  });
+}
+
+test('CORS preflight permits inventory Authorization headers', async () => {
+  const { request, effects } = fixture();
+  const response = await request('OPTIONS', '/api/items', undefined, {
+    Origin: 'https://store.test', 'Access-Control-Request-Method': 'POST',
+    'Access-Control-Request-Headers': 'content-type, authorization'
+  });
+  assert.equal(response.status, 200);
+  assert.ok(response.headers.get('Access-Control-Allow-Headers').toLowerCase().split(/,\s*/).includes('authorization'));
+  assert.deepEqual(effects, []);
 });
