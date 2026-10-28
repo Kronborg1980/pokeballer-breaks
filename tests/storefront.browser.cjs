@@ -72,7 +72,7 @@ async function fixturePage(browser, origin, count, options = {}, fixture = {}) {
     return route.abort();
   });
   await page.goto(origin + '/index.html');
-  await page.waitForFunction(() => typeof storeLoadBusy !== 'undefined' && !storeLoadBusy && typeof window.PBMDetails !== 'undefined');
+  await page.waitForFunction(() => typeof storeLoadBusy !== 'undefined' && !storeLoadBusy && !!document.querySelector('#collector-world-image')?.dataset.world);
   await page.waitForFunction(theme => document.documentElement.dataset.theme === theme, fixture.theme || 'halloween');
   return { page, context, items, errors, unexpectedApi };
 }
@@ -281,7 +281,7 @@ async function testDesktopMotion(browser, origin) {
     for (const theme of ['crystal', 'halloween', 'christmas', 'birthday']) {
       await page.evaluate(value => applyTheme(value), theme);
       await page.waitForFunction(value => document.querySelector('#collector-world-image')?.getAttribute('src')?.includes(value === 'crystal' ? 'original' : value), theme);
-      assert.equal(await page.locator('canvas').count(), 0, 'The collector design uses still artwork without a full-screen canvas');
+      assert.equal(await page.locator('canvas').count(), 0, 'The hybrid design uses still artwork without a full-screen canvas');
       assert.equal(await page.evaluate(() => document.querySelector('#weather') ? getComputedStyle(document.querySelector('#weather')).display : 'none'), 'none');
     }
     await page.emulateMedia({ reducedMotion: 'reduce' });
