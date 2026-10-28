@@ -12,7 +12,7 @@ const { chromium } = require('playwright');
 const root = path.resolve(__dirname, '..');
 const apiOrigin = 'https://pokeballer-worker.kronborgnielsen.workers.dev';
 const screenshots = process.env.PBM_SCREENSHOT_DIR;
-const mime = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.webp': 'image/webp' };
+const mime = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml' };
 const fixtureItems = count => [
   ...Array.from({ length: count }, (_, i) => ({
     id: `bundle-${i}`, name: `Trainer Bundle ${i + 1}`, type: 'pack',
@@ -41,12 +41,12 @@ async function serve() {
   return { server, origin: `http://127.0.0.1:${server.address().port}` };
 }
 
-async function fixturePage(browser, origin, count, options = {}, fixture = {}) {
+async function fixturePage(browser, origin, count, options = {}) {
   const context = await browser.newContext({ viewport: { width: 390, height: 844 },
     isMobile: true, hasTouch: true, ...options });
   const page = await context.newPage();
   const errors = [], unexpectedApi = [];
-  const items = fixture.items || fixtureItems(count);
+  const items = fixtureItems(count);
   const placeholder = await fs.readFile(path.join(root, 'favicon-original.svg'));
   page.on('pageerror', error => errors.push(error.message));
   // Catch ALL requests before any network operation; even writes are fulfilled
@@ -58,7 +58,7 @@ async function fixturePage(browser, origin, count, options = {}, fixture = {}) {
       let data;
       if (request.method() === 'GET' && url.pathname === '/api/items') data = items;
       else if (request.method() === 'GET' && url.pathname === '/api/settings') {
-        data = { paymentMode: 'streamlabs', theme: fixture.theme || 'halloween', stripeReady: false };
+        data = { paymentMode: 'streamlabs', theme: 'halloween', stripeReady: false };
       } else if (request.method() === 'GET' && url.pathname === '/api/youtube') data = [];
       else { unexpectedApi.push(`${request.method()} ${url.pathname}`); data = { error: 'Unexpected test request' }; }
       return route.fulfill({ json: data, headers: { 'Access-Control-Allow-Origin': '*' } });
@@ -72,8 +72,9 @@ async function fixturePage(browser, origin, count, options = {}, fixture = {}) {
     return route.abort();
   });
   await page.goto(origin + '/index.html');
-  await page.waitForFunction(() => typeof storeLoadBusy !== 'undefined' && !storeLoadBusy && !!document.querySelector('#collector-world-image')?.dataset.world);
-  await page.waitForFunction(theme => document.documentElement.dataset.theme === theme, fixture.theme || 'halloween');
+  await page.waitForFunction(n => document.querySelectorAll('.pbm-carousel-card').length === n,
+    count);
+  await page.waitForFunction(() => document.querySelector('#pbm-scene')?.dataset.season === 'halloween');
   return { page, context, items, errors, unexpectedApi };
 }
 
@@ -207,18 +208,18 @@ async function testThemes(browser, origin) {
     const artwork = new Set();
     for (const theme of ['halloween', 'christmas', 'birthday', 'crystal']) {
       await page.evaluate(value => applyTheme(value), theme);
-      await page.waitForFunction(value => document.querySelector('#collector-world-image')?.getAttribute('src')?.includes(value === 'crystal' ? 'original' : value), theme);
+      await page.waitForFunction(value => document.querySelector('#pbm-scene').dataset.season === value, theme);
       assert.equal(await page.locator('link[rel="icon"]').getAttribute('href'),
         theme === 'crystal' ? 'favicon-original.svg' : `favicon-${theme}.svg`);
-      const worldImage = page.locator('#collector-world-image');
-      assert.equal(await worldImage.count(), 1);
-      if (theme !== 'crystal') artwork.add(await worldImage.getAttribute('src'));
+      const vectorCount = await page.locator('#pbm-scene .pbm-art svg').count();
+      assert.equal(vectorCount, theme === 'crystal' ? 0 : 2);
+      if (theme !== 'crystal') artwork.add(await page.locator('#pbm-scene .pbm-art').first().innerHTML());
       for (const width of [320, 390, 768, 1440]) {
         await page.setViewportSize({ width, height: 900 });
         const metrics = await page.evaluate(() => ({
           width: document.documentElement.clientWidth,
           scroll: document.documentElement.scrollWidth,
-          canvas: document.querySelector('#weather') ? getComputedStyle(document.querySelector('#weather')).display : 'none',
+          canvas: getComputedStyle(document.querySelector('#weather')).display,
           movingEdges: [...document.querySelectorAll('main,.neon-card-wrapper,.buy-btn')]
             .filter(element => getComputedStyle(element).animationName.split(',').some(name => name.trim() === 'edgeSpin')).length
         }));
@@ -235,13 +236,13 @@ async function testThemes(browser, origin) {
     assert.equal(artwork.size, 3, 'Each season must have distinct local artwork');
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.evaluate(() => applyTheme('christmas'));
-    assert.equal(await page.evaluate(() => document.querySelector('#weather') ? getComputedStyle(document.querySelector('#weather')).display : 'none'), 'none');
-    const movingScene = await page.locator('#collector-world-image').evaluate(el =>
-      el.getAnimations().some(animation => animation.playState === 'running'));
+    assert.equal(await page.locator('#weather').evaluate(el => getComputedStyle(el).display), 'none');
+    const movingScene = await page.locator('#pbm-scene').evaluate(el =>
+      [...el.querySelectorAll('*')].some(child => getComputedStyle(child).animationName !== 'none'));
     assert.equal(movingScene, false, 'Reduced motion must stop seasonal decoration animation');
     assert.deepEqual(errors, []);
     assert.deepEqual(unexpectedApi, []);
-    console.log('PASS seasonal switching, responsive widths 320/390/768/1440, static world artwork and reduced motion');
+    console.log('PASS seasonal switching, responsive widths 320/390/768/1440, mobile paint budget and reduced motion');
   } finally { await context.close(); }
 }
 
@@ -253,7 +254,7 @@ async function captureScreenshots(browser, origin) {
     try {
       for (const theme of ['halloween', 'christmas']) {
         await page.evaluate(value => applyTheme(value), theme);
-        await page.waitForFunction(value => document.querySelector('#collector-world-image')?.getAttribute('src')?.includes(value === 'crystal' ? 'original' : value), theme);
+        await page.waitForFunction(value => document.querySelector('#pbm-scene').dataset.season === value, theme);
         const filename = path.join(screenshots, `storefront-${theme}-${device}.png`);
         await page.screenshot({ path: filename });
         console.log(`SCREENSHOT ${filename}`);
@@ -263,7 +264,7 @@ async function captureScreenshots(browser, origin) {
         await page.screenshot({ path: path.join(screenshots, 'storefront-bundles-mobile.png') });
         console.log('MOBILE RENDERING', JSON.stringify(await page.evaluate(() => ({
           animations: document.getAnimations().filter(a => a.playState === 'running').map(a => a.animationName),
-          weatherCanvas: !!document.querySelector('canvas#weather'),
+          weatherRaf: wxRaf,
           perspective: getComputedStyle(document.querySelector('.pbm-carousel-stage')).perspective,
           cardFilter: getComputedStyle(document.querySelector('.pbm-carousel-card')).filter,
           wrapperTransform: getComputedStyle(document.querySelector('.pbm-carousel-card[data-pos="0"] .neon-card-wrapper')).transform
@@ -273,30 +274,32 @@ async function captureScreenshots(browser, origin) {
   }
 }
 
-async function testDesktopMotion(browser, origin) {
+async function testDesktopWeather(browser, origin) {
   const { page, context, errors, unexpectedApi } = await fixturePage(browser, origin, 3, {
     viewport: { width: 1440, height: 1000 }, isMobile: false, hasTouch: false
   });
   try {
-    for (const theme of ['crystal', 'halloween', 'christmas', 'birthday']) {
+    await page.waitForFunction(() => !!wxRaf && getComputedStyle(document.querySelector('#weather')).display !== 'none');
+    for (const theme of ['halloween', 'christmas', 'birthday']) {
       await page.evaluate(value => applyTheme(value), theme);
-      await page.waitForFunction(value => document.querySelector('#collector-world-image')?.getAttribute('src')?.includes(value === 'crystal' ? 'original' : value), theme);
-      assert.equal(await page.locator('canvas').count(), 0, 'The hybrid design uses still artwork without a full-screen canvas');
-      assert.equal(await page.evaluate(() => document.querySelector('#weather') ? getComputedStyle(document.querySelector('#weather')).display : 'none'), 'none');
+      await page.waitForFunction(value => document.querySelector('#pbm-scene').dataset.season === value, theme);
+      assert.equal(await page.locator('#pbm-scene .pbm-art svg').count(), 2);
     }
     await page.emulateMedia({ reducedMotion: 'reduce' });
-    await page.waitForFunction(() => document.getAnimations().every(animation => animation.playState !== 'running'));
+    await page.waitForFunction(() => !wxRaf && getComputedStyle(document.querySelector('#weather')).display === 'none');
     await page.emulateMedia({ reducedMotion: 'no-preference' });
+    await page.waitForFunction(() => !!wxRaf);
     await page.setViewportSize({ width: 768, height: 1000 });
+    await page.waitForFunction(() => !wxRaf && getComputedStyle(document.querySelector('#weather')).display === 'none');
     await page.setViewportSize({ width: 1440, height: 1000 });
-    assert.equal(await page.locator('canvas').count(), 0);
+    await page.waitForFunction(() => !!wxRaf && getComputedStyle(document.querySelector('#weather')).display !== 'none');
     assert.deepEqual(errors, []);
     assert.deepEqual(unexpectedApi, []);
-    console.log('PASS desktop seasonal worlds remain static across viewport and motion preference changes');
+    console.log('PASS desktop themes and weather lifecycle: motion preference and viewport stop/restart');
   } finally { await context.close(); }
 }
 
-async function run() {
+(async () => {
   if (screenshots) await fs.mkdir(screenshots, { recursive: true });
   const { server, origin } = await serve();
   let browser;
@@ -307,12 +310,9 @@ async function run() {
     await captureScreenshots(browser, origin);
     for (const count of [2, 3, 8]) await testCarousel(browser, origin, count);
     await testThemes(browser, origin);
-    await testDesktopMotion(browser, origin);
+    await testDesktopWeather(browser, origin);
   } finally {
     if (browser) await browser.close();
     await new Promise(resolve => server.close(resolve));
   }
-}
-
-module.exports = { serve, fixturePage, fixtureItems };
-if (require.main === module) run().catch(error => { console.error(error); process.exitCode = 1; });
+})().catch(error => { console.error(error); process.exitCode = 1; });
