@@ -1,0 +1,105 @@
+/* The product sheet is a small keepsake: warm paper, quiet ink, one clear action. */
+.collector-details-link {
+  display:inline-flex;align-items:center;justify-content:space-between;gap:18px;
+  padding:10px 0;background:none;border:0;border-bottom:1px solid currentColor;
+  color:var(--collector-ink,#f5f1e8);font:600 12px/1.3 Inter,system-ui,sans-serif;
+  cursor:pointer;text-align:left;
+}
+.collector-details-link span {font-size:18px}
+.collector-details-link:focus-visible {outline:2px solid var(--collector-accent,#b6f0c5);outline-offset:5px}
+.cd-dialog {
+  position:fixed;inset:auto 24px 24px auto;box-sizing:border-box;
+  width:min(1000px,calc(100vw - 48px));max-width:none;max-height:calc(100dvh - 48px);
+  margin:0;padding:0;border:1px solid #fff6;border-radius:22px;
+  background:#f3f0e6;color:#202b2a;overflow:auto;overscroll-behavior:contain;
+  box-shadow:0 32px 100px #020b12aa;font-family:Inter,system-ui,sans-serif;
+  scrollbar-width:thin;scrollbar-color:#647773 #f3f0e6;
+}
+.cd-dialog::backdrop {background:rgba(3,13,19,.78)}
+.cd-dialog[open] {animation:cd-arrive .32s cubic-bezier(.2,.8,.2,1) both}
+.cd-dialog *, .cd-dialog *::before,.cd-dialog *::after {box-sizing:border-box}
+.cd-sheet {padding:22px 28px 32px}
+.cd-topline {position:sticky;top:0;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:20px;background:#f3f0e6}
+.cd-edition {font-size:10px;font-weight:700;letter-spacing:.22em;color:#586763}
+.cd-close {
+  width:38px;height:38px;display:grid;place-items:center;flex:none;
+  border:1px solid #243d3a33;border-radius:50%;background:transparent;color:#263e38;
+  font:400 30px/1 system-ui;cursor:pointer;
+}
+.cd-close:hover {background:#263e3810}
+.cd-dialog button:focus-visible,.cd-dialog a:focus-visible {outline:3px solid #337c66;outline-offset:4px}
+.cd-layout {display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1fr);gap:42px;align-items:start}
+.cd-art-column {padding-top:10px}
+.cd-collectible {
+  padding:13px;background:linear-gradient(145deg,#102e2d,#1a5149 55%,#183a35);
+  color:#e6e8cc;border:1px solid #8b9e6d;border-radius:17px;
+  box-shadow:0 15px 27px #142d2a29,inset 0 0 0 5px #0f2b2a;
+  transform:rotate(-2deg);
+}
+.cd-card-top,.cd-card-bottom {display:flex;align-items:center;justify-content:space-between;gap:15px;padding:5px 4px 14px}
+.cd-tier {font-size:10px;letter-spacing:.13em;font-weight:700}
+.cd-card-mark {color:#d7be7b;font-size:20px}
+.cd-image-wrap {
+  position:relative;display:grid;place-items:center;aspect-ratio:1/1.08;overflow:hidden;
+  background:radial-gradient(ellipse at 30% 10%,#a6c8b8,#d6dbca 55%,#91ada2);
+  border:1px solid #e3deb478;border-radius:8px;
+}
+.cd-image {display:block;width:100%;height:100%;object-fit:contain}
+.cd-no-image::after {content:"✦";position:absolute;font-size:80px;color:#536e61}
+.cd-no-image .cd-image {display:none}
+.cd-card-bottom {padding:15px 4px 3px;font-size:8px;font-weight:700;letter-spacing:.15em}
+.cd-art-caption {display:block;text-align:center;margin-top:25px;font:italic 16px/1.4 Georgia,serif;color:#6c7770}
+.cd-copy {padding-top:7px}
+.cd-status {
+  display:inline-flex;align-items:center;gap:7px;color:#33775e;
+  font-size:9px;font-weight:800;letter-spacing:.15em;
+}
+.cd-status::before {content:"";display:block;width:6px;height:6px;border-radius:50%;background:currentColor}
+.cd-status[data-state="upcoming"] {color:#947334}
+.cd-status[data-state="sold"],.cd-status[data-state="closed"],.cd-status[data-state="unavailable"] {color:#8c635a}
+.cd-dialog #cd-title {margin:15px 0 18px;color:#1b302b;font:400 clamp(28px,3vw,42px)/1.07 Georgia,serif;letter-spacing:-.045em;text-shadow:none;overflow-wrap:anywhere}
+.cd-price-line {display:flex;gap:12px;align-items:baseline}
+.cd-price {font:500 28px/1.15 Inter,system-ui,sans-serif;letter-spacing:-.05em;color:#203e34}
+.cd-price-unit {font-size:11px;color:#6a766e}
+.cd-shipping {margin:10px 0 0;color:#5e6b61;font-size:11px;line-height:1.6}
+.cd-rule {height:1px;margin:23px 0;background:#283d2e26}
+.cd-section-label {font-size:10px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:#586756;margin:0 0 12px}
+.cd-description {margin:0;color:#4b5b51;font-size:13px;line-height:1.8;white-space:pre-line;overflow-wrap:anywhere}
+.cd-facts {margin:22px 0;padding:0;border-top:1px solid #283d2e26}
+.cd-facts>div {display:grid;grid-template-columns:85px minmax(0,1fr);gap:10px;padding:13px 0;border-bottom:1px solid #283d2e26}
+.cd-facts dt {font-size:10px;color:#6b776b;line-height:1.5}
+.cd-facts dd {margin:0;font-size:11px;font-weight:600;line-height:1.5;overflow-wrap:anywhere;color:#344c3d}
+.cd-action {
+  width:100%;min-height:54px;padding:16px 19px;display:flex;align-items:center;justify-content:space-between;gap:18px;
+  border:1px solid #17392f;border-radius:8px;background:#17392f;color:#f1f3df;
+  font:600 12px/1.3 Inter,system-ui,sans-serif;text-decoration:none;cursor:pointer;
+  transition:background .18s;
+}
+.cd-action:hover {background:#295b48}
+.cd-arrow {display:block;flex:none;width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.cd-action:disabled {background:#d6d9ce;border-color:#c5cbbd;color:#697364;cursor:default}
+.cd-action-note {margin:10px 0 0;text-align:center;font-size:10px;color:#73806e;line-height:1.6}
+@keyframes cd-arrive {from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:700px) {
+  .cd-dialog {inset:auto 0 0;width:100%;max-height:94dvh;border-radius:22px 22px 0 0;border-bottom:0}
+  .cd-sheet {padding:16px 22px max(28px,env(safe-area-inset-bottom))}
+  .cd-topline {margin-bottom:10px}
+  .cd-layout {grid-template-columns:minmax(0,1fr);gap:28px}
+  .cd-art-column {max-width:230px;width:72%;margin:0 auto;padding-top:4px}
+  .cd-collectible {transform:rotate(-2deg);padding:10px;border-radius:14px}
+  .cd-card-top {padding:3px 3px 10px}
+  .cd-card-bottom {padding:11px 3px 2px;font-size:7px}
+  .cd-image-wrap {aspect-ratio:1/.85}
+  .cd-art-caption {margin-top:17px;font-size:14px}
+  .cd-copy {padding-top:0}
+  .cd-dialog #cd-title {font-size:32px;margin-top:12px}
+  .cd-rule {margin:19px 0}
+  .cd-description {font-size:13px}
+  .cd-action-zone {position:sticky;bottom:-1px;background:#f3f0e6;padding:13px 0 6px;margin-bottom:-6px;border-top:1px solid #283d2e26}
+  .cd-action {min-height:55px}
+  .cd-facts {margin-bottom:12px}
+}
+@media(prefers-reduced-motion:reduce) {
+  .cd-dialog[open] {animation:none}
+  .cd-action {transition:none}
+}
