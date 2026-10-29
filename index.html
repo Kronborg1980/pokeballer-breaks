@@ -669,7 +669,7 @@
         .tier-header::after { animation: ledOpacity 3.6s ease-in-out infinite; box-shadow: 0 0 16px currentColor; }
         .time-tag-bottom { border-color: rgba(var(--e1),0.6); box-shadow: 0 0 12px rgba(var(--e1),0.25); }
         .time-tag-bottom.closing-soon { animation: none; border-color: var(--accent-live); box-shadow: 0 0 20px rgba(255,0,64,0.65); }
-        .lbl-universal { animation: none; }
+        .lbl-universal { animation: none; border:1px solid transparent; }
         .baller-btn, .bundle-btn { background-size: 100% 100%; }
 
         /* ---------- THE CARD, READ TOP TO BOTTOM ----------
@@ -942,7 +942,7 @@
 
             .tier-header::after { animation:none; box-shadow: 0 0 18px currentColor; }
             .live-ribbon { animation: none; background-size: 100% 100%; }
-            .time-tag-bottom.closing-soon, .lbl-universal { animation: none; }
+            .time-tag-bottom.closing-soon, .lbl-universal { animation: none; border:1px solid transparent; }
             .baller-btn, .bundle-btn { background-size: 100% 100% !important; }
 
             .neon-card-wrapper, .glass-panel, .item-img, .logo-animator,
@@ -1976,21 +1976,25 @@
             frame.replaceChildren(iframe);
         });
         
-        // The public uploads playlist remains playable when the RSS proxy is
-        // unavailable. No API key or Worker update is needed for this fallback.
+        // Keep both original feed slots even when the RSS proxy is down.
+        // YouTube maintains separate public playlists for streams and videos.
         function renderChannelPreview(container) {
-            container.innerHTML = `<div class="neon-card-wrapper"><div class="yt-card glass-panel">
+            const channel = 'dFYy9uChCNAWbvVhTYwHaQ';
+            const previews = [
+                { list: 'UULV' + channel, label: 'STREAMS', title: 'Pokeballer Mike — streams', tab: 'streams', badge: 'lbl-universal' },
+                { list: 'UULF' + channel, label: 'LATEST VIDEOS', title: 'Pokeballer Mike — latest videos', tab: 'videos', badge: 'lbl-hunt' }
+            ];
+            container.innerHTML = previews.map(video => `<div class="neon-card-wrapper"><div class="yt-card glass-panel">
                 <div class="yt-feed-toolbar" style="padding:13px 17px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
-                    <div class="yt-label lbl-hunt">CHANNEL VIDEOS</div>
-                    <a class="yt-open-btn" href="https://www.youtube.com/@PokeballerMike" target="_blank" rel="noopener">OPEN IN YOUTUBE</a>
+                    <div class="yt-label ${video.badge}">${video.label}</div>
+                    <a class="yt-open-btn" href="https://www.youtube.com/@PokeballerMike/${video.tab}" target="_blank" rel="noopener">OPEN IN YOUTUBE</a>
                 </div>
                 <div class="yt-video-frame"><iframe
-                    src="https://www.youtube-nocookie.com/embed/videoseries?list=UUdFYy9uChCNAWbvVhTYwHaQ&amp;autoplay=0&amp;playsinline=1&amp;rel=0"
-                    title="Pokeballer Mike — latest channel videos" loading="lazy"
+                    src="https://www.youtube-nocookie.com/embed/videoseries?list=${video.list}&amp;autoplay=0&amp;playsinline=1&amp;rel=0"
+                    title="${video.title}" loading="lazy"
                     allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen
                     referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
-                <div style="padding:10px 17px;display:flex;justify-content:flex-end;"><button type="button" class="yt-open-btn" style="background:transparent;cursor:pointer;" onclick="loadVideos()">Refresh latest previews</button></div>
-            </div></div>`;
+            </div></div>`).join('');
         }
 
         async function loadVideos() {

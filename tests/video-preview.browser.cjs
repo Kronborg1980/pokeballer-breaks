@@ -38,11 +38,21 @@ const feed = `<feed xmlns="http://www.w3.org/2005/Atom" xmlns:yt="http://www.you
     assert.match(await page.locator('#yt-container iframe').getAttribute('src'),/embed\/abc123DEF_-/);
    }else{
     await page.waitForSelector('#yt-container iframe');
-    const src=await page.locator('#yt-container iframe').getAttribute('src');
-    assert.equal(new URL(src).searchParams.get('list'),'UUdFYy9uChCNAWbvVhTYwHaQ');
-    assert.equal(new URL(src).searchParams.get('autoplay'),'0');
-    assert.equal(await page.locator('#yt-container iframe').getAttribute('loading'),'lazy');
+    const frames=page.locator('#yt-container iframe');
+    assert.equal(await frames.count(),2);
+    for(const [i,list] of ['UULVdFYy9uChCNAWbvVhTYwHaQ','UULFdFYy9uChCNAWbvVhTYwHaQ'].entries()){
+     const frame=frames.nth(i),src=await frame.getAttribute('src');
+     assert.equal(new URL(src).searchParams.get('list'),list);
+     assert.equal(new URL(src).searchParams.get('autoplay'),'0');
+     assert.equal(await frame.getAttribute('loading'),'lazy');
+    }
     assert.equal(await page.locator('#yt-container .yt-open-btn').count(),2);
+    assert.equal(await page.getByText('REFRESH LATEST PREVIEWS',{exact:true}).count(),0);
+    await page.setViewportSize({width:1440,height:1000});
+    const [first,second]=await Promise.all([frames.nth(0).boundingBox(),frames.nth(1).boundingBox()]);
+    assert.ok(second.x>first.x,'Desktop previews must occupy separate columns');
+    assert.ok(Math.abs(second.y-first.y)<2,'Desktop previews must align');
+
    }
    assert.deepEqual(errors,[]);console.log('PASS video preview:',mode);await context.close();
   }
