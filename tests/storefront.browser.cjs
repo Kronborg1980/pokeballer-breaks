@@ -144,22 +144,9 @@ async function testCarousel(browser, origin, count) {
     // suppression window. Wait for that state, rather than a fixed sleep.
     await page.waitForFunction(() => Date.now() - Number(document.querySelector('.pbm-product-carousel').dataset.swipeAt) >= 550);
 
-    // The hero must reveal its named product BEFORE scrolling to it.
-    await page.evaluate(() => {
-      const original = Element.prototype.scrollIntoView;
-      Element.prototype.scrollIntoView = function (...args) {
-        if (this.id.startsWith('card-')) window.__scrollSelection = {
-          target: this.id, position: this.closest('.pbm-carousel-card')?.dataset.pos
-        };
-        return original.apply(this, args);
-      };
-    });
-    const heroDot = page.locator(`.hero-carousel-dot[data-carousel-index="${count - 2}"]`);
-    await heroDot.click();
-    await page.locator('#hero-upcoming-slide').click();
-    assert.deepEqual(await page.evaluate(() => window.__scrollSelection), {
-      target: `card-bundle-${count - 1}`, position: '0'
-    });
+    assert.equal(await page.locator('#hero-plate,.hero-status-card,.hero-upcoming-carousel').count(), 0,
+      'The removed header panels must not return after inventory loads');
+    await carousel.locator(`[data-jump="${count - 1}"]`).click();
     await assertIndex(carousel, count - 1, count);
 
     const selected = items[count - 1];
@@ -198,7 +185,7 @@ async function testCarousel(browser, origin, count) {
     }
     assert.deepEqual(errors, [], 'No browser JavaScript errors');
     assert.deepEqual(unexpectedApi, [], 'No checkout, tracking, or unexpected API requests');
-    console.log(`PASS mobile carousel ${count} products: arrows, dots, keyboard, side tap, swipe/cancel, hero, checkout`);
+    console.log(`PASS mobile carousel ${count} products: arrows, dots, keyboard, side tap, swipe/cancel, no header panels, checkout`);
   } finally { await context.close(); }
 }
 

@@ -1127,9 +1127,6 @@
                 <h1 id="site-title">PBM BREAKS</h1>
                 <div class="logo-animator logo-right"><img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/245.png" class="header-logo guardian" alt=""></div>
             </div>
-            <div class="hero-status-board" id="hero-plate" aria-live="polite" aria-atomic="true">
-                <div class="hero-status-empty" id="hero-line">Checking upcoming breaks…</div>
-            </div>
         </div>
     </header>
 
@@ -1770,188 +1767,6 @@
             return `${h}:${String(mi || 0).padStart(2, '0')} ${ap}`;
         }
 
-        // Two independently sourced status cards: open and upcoming can coexist.
-        // "On air" follows the site's existing open-now logic; it is NOT a claim
-        // that the YouTube stream was independently verified as currently live.
-        function heroDuration(ms) {
-            const sec = Math.max(0, Math.floor(ms / 1000));
-            const days = Math.floor(sec / 86400);
-            const hrs = Math.floor((sec % 86400) / 3600);
-            const mins = Math.floor((sec % 3600) / 60);
-            if (days) return days + 'd ' + hrs + 'h';
-            if (hrs) return hrs + 'h ' + mins + 'm';
-            return mins + 'm ' + (sec % 60) + 's';
-        }
-        let lastPlateMarkup = null;
-        function setPlate(html) {
-            const board = document.getElementById('hero-plate');
-            if (board && lastPlateMarkup !== html) {
-                board.innerHTML = html;
-                lastPlateMarkup = html;
-            }
-        }
-        // Upcoming breaks carousel: rotate through every scheduled break.
-        // Keep one visible, preserve the user's selection across countdown updates,
-        // and never change the fixed live-break card.
-        let heroUpcoming = [];
-        let heroCarouselMode = 'upcoming';
-        let heroUpcomingIndex = 0;
-        let heroUpcomingSignature = '';
-        let heroUpcomingTimer = null;
-        let heroUpcomingPauseUntil = 0;
-        const heroReduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-        function heroUpcomingSlide() {
-            const board = document.getElementById('hero-plate');
-            const slide = board && board.querySelector('#hero-upcoming-slide');
-            if (!slide || !heroUpcoming.length) return;
-            heroUpcomingIndex = (heroUpcomingIndex + heroUpcoming.length) % heroUpcoming.length;
-            const entry = heroUpcoming[heroUpcomingIndex];
-            const isUpcoming = heroCarouselMode === 'upcoming';
-            slide.dataset.target = 'card-' + entry.i.id;
-            slide.setAttribute('aria-label', (isUpcoming ? 'View upcoming break ' : 'View available break ') + entry.i.name);
-            slide.querySelector('.hero-status-title').textContent = entry.i.name;
-            slide.querySelector('.hero-status-sub').textContent = isUpcoming
-                ? formatCloseDate(entry.i.goLiveTime) + ' · ' + centralClock(entry.i.goLiveTime) + ' Central · View break ↗'
-                : toInt(entry.i.stock) + ' ' + (entry.i.type === 'pack' ? unitWord(entry.i,toInt(entry.i.stock)) : (toInt(entry.i.stock) === 1 ? 'spot' : 'spots')) + ' remaining · View break ↗';
-            const countdown = slide.querySelector('.hero-countdown');
-            if (countdown) countdown.textContent = isUpcoming ? heroDuration(entry.live - Date.now()) : '';
-            const indicator = board.querySelector('#hero-upcoming-position');
-            if (indicator) indicator.textContent = (heroUpcomingIndex + 1) + ' of ' + heroUpcoming.length;
-            board.querySelectorAll('.hero-carousel-dot').forEach((dot,i) => {
-                dot.classList.toggle('selected',i === heroUpcomingIndex);
-                dot.setAttribute('aria-pressed',String(i === heroUpcomingIndex));
-            });
-        }
-        function heroUpcomingStep(delta, manual) {
-            if (heroUpcoming.length < 2) return;
-            heroUpcomingIndex = (heroUpcomingIndex + delta + heroUpcoming.length) % heroUpcoming.length;
-            if (manual) heroUpcomingPauseUntil = Date.now() + 14000;
-            heroUpcomingSlide();
-        }
-        function updateHeroPlate() {
-            const items = (window.storeItems || []).filter(i => i && !i.hidden);
-            if (!items.length) {
-                heroUpcoming = [];
-                heroUpcomingSignature = '';
-                setPlate('<div class="hero-status-empty">Fresh breaks from Pokeballer Mike are coming soon.</div>');
-                return;
-            }
-            const now = Date.now(), open = [], soon = [];
-            items.forEach(i => {
-                const end = centralToMs(i.scheduleEnd);
-                const live = centralToMs(i.goLiveTime);
-                const stock = toInt(i.stock);
-                if (stock <= 0 || (end && now >= end)) return;
-                if (live && now < live) soon.push({i,live});
-                else open.push(i);
-            });
-            soon.sort((a,b) => a.live - b.live);
-            // Re-render only when the set of live/upcoming breaks changes.
-            // Countdown updates every second without restarting the carousel.
-            // If nothing is scheduled for the future, keep the carousel
-            // alive with all other purchasable breaks instead of showing one.
-            const carouselMode = soon.length ? 'upcoming' : 'available';
-            const slides = soon.length ? soon : open.slice(1).map(i => ({i,live:null}));
-            const signature = JSON.stringify({
-                live:open.map(i=>[i.id,i.name,i.stock]),
-                upcoming:soon.map(e=>[e.i.id,e.i.name,e.i.goLiveTime]),
-                mode:carouselMode
-            });
-            const board = document.getElementById('hero-plate');
-            if (signature === heroUpcomingSignature && board &&
-                (board.querySelector('#hero-upcoming-slide') || !slides.length)) {
-                heroUpcoming = slides;
-                heroCarouselMode = carouselMode;
-                heroUpcomingSlide();
-                return;
-            }
-            const previousId = heroUpcoming[heroUpcomingIndex]?.i.id;
-            heroUpcoming = slides;
-            heroCarouselMode = carouselMode;
-            heroUpcomingIndex = Math.max(0,slides.findIndex(e=>e.i.id===previousId));
-            heroUpcomingSignature = signature;
-            let cards = '';
-            if (open.length) {
-                const lead = open[0], left = toInt(lead.stock);
-                const unit = lead.type === 'pack' ? unitWord(lead,left) : (left === 1 ? 'spot' : 'spots');
-                const more = open.length > 1 ? ' · ' + (open.length - 1) + ' other breaks available' : '';
-                cards += '<button type="button" class="hero-status-card hero-live" data-target="card-' + esc(lead.id) + '" aria-label="View available break ' + esc(lead.name) + '">'
-                   + '<span class="hero-status-label"><span class="hero-status-dot"></span> AVAILABLE NOW</span>'
-                   + '<span class="hero-status-title">' + esc(lead.name) + '</span>'
-                   + '<span class="hero-status-sub">' + left + ' ' + esc(unit) + ' remaining' + more + ' · View break ↗</span>'
-                   + '</button>';
-            }
-            if (slides.length) {
-                cards += '<div class="hero-upcoming-carousel" aria-label="Browse more breaks carousel">'
-                    + '<div class="hero-upcoming-frame">'
-                    + '<button type="button" class="hero-status-card hero-upcoming hero-upcoming-shell" id="hero-upcoming-slide">'
-                    + '<span class="hero-status-label"><span class="hero-status-dot"></span> ' + (carouselMode === 'upcoming' ? 'UP NEXT' : 'MORE BREAKS') + ' <span class="hero-countdown"></span></span>'
-                    + '<span class="hero-status-title"></span><span class="hero-status-sub"></span></button>';
-                if (slides.length > 1) {
-                    cards += '<button type="button" class="hero-upcoming-arrow left" data-carousel-step="-1" aria-label="Previous upcoming break">‹</button>'
-                        + '<button type="button" class="hero-upcoming-arrow right" data-carousel-step="1" aria-label="Next upcoming break">›</button>'
-                        + '<div class="hero-upcoming-meta">'
-                        + '<span class="hero-upcoming-count" id="hero-upcoming-position"></span>'
-                        + '<div class="hero-carousel-dots" aria-label="Select upcoming break">'
-                        + slides.map((_,i)=>'<button type="button" class="hero-carousel-dot" data-carousel-index="'+i+'" aria-label="Show upcoming break '+(i+1)+'"></button>').join('')
-                        + '</div></div>';
-                }
-                cards += '</div></div>';
-            }
-            setPlate(cards ? '<div class="hero-status-row">' + cards + '</div>' :
-                '<div class="hero-status-empty">All breaks are closed right now — watch for the next drop from Pokeballer Mike.</div>');
-            heroUpcomingSlide();
-        }
-        let heroSwipeAt = 0;
-        document.getElementById('hero-plate').addEventListener('click', e => {
-            if (Date.now() - heroSwipeAt < 550) {
-                e.preventDefault();
-                return;
-            }
-            const arrow = e.target.closest('[data-carousel-step]');
-            if (arrow) { heroUpcomingStep(Number(arrow.dataset.carouselStep),true); return; }
-            const dot = e.target.closest('[data-carousel-index]');
-            if (dot) {
-                heroUpcomingIndex = Number(dot.dataset.carouselIndex);
-                heroUpcomingPauseUntil = Date.now() + 14000;
-                heroUpcomingSlide();
-                return;
-            }
-            const button = e.target.closest('button[data-target]');
-            if (!button) return;
-            const target = document.getElementById(button.dataset.target);
-            if (target) {
-                const card = target.closest('.pbm-carousel-card');
-                if (card) paintProductCarousel(card.closest('.pbm-product-carousel'), Number(card.dataset.cardIndex));
-                target.scrollIntoView({behavior:heroReduceMotion.matches?'auto':'smooth',block:'center'});
-            }
-        });
-        const carouselBoard = document.getElementById('hero-plate');
-        carouselBoard.addEventListener('pointerenter',()=>{heroUpcomingPauseUntil=Date.now()+7000});
-        carouselBoard.addEventListener('focusin',()=>{heroUpcomingPauseUntil=Date.now()+14000});
-        // Native-feeling swipe navigation on touchscreens.
-        let heroTouchStart = null;
-        carouselBoard.addEventListener('touchstart',e=>{
-            heroTouchStart = null;
-            if (e.touches.length!==1 || !e.target.closest('.hero-upcoming-carousel')) return;
-            heroTouchStart={x:e.touches[0].clientX,y:e.touches[0].clientY};
-        },{passive:true});
-        carouselBoard.addEventListener('touchend',e=>{
-            if (!heroTouchStart || !e.changedTouches.length) return;
-            const dx=e.changedTouches[0].clientX-heroTouchStart.x;
-            const dy=e.changedTouches[0].clientY-heroTouchStart.y;
-            heroTouchStart=null;
-            if (Math.abs(dx)>45 && Math.abs(dx)>Math.abs(dy)*1.3) {
-                heroSwipeAt = Date.now();
-                heroUpcomingStep(dx<0?1:-1,true);
-            }
-        },{passive:true});
-        carouselBoard.addEventListener('touchcancel',()=>{heroTouchStart=null},{passive:true});
-        heroUpcomingTimer=setInterval(()=>{
-            if (document.hidden || heroReduceMotion.matches || Date.now()<heroUpcomingPauseUntil) return;
-            heroUpcomingStep(1,false);
-        },6500);
-
         function renderSkeletons(container, count) {
             let html = '';
             for (let i = 0; i < count; i++) html += '<div class="skeleton"></div>';
@@ -1975,7 +1790,7 @@
             iframe.referrerPolicy = 'strict-origin-when-cross-origin';
             frame.replaceChildren(iframe);
         });
-        
+
         // Keep both original feed slots even when the RSS proxy is down.
         // YouTube maintains separate public playlists for streams and videos.
         function renderChannelPreview(container) {
@@ -2249,7 +2064,7 @@
                     if (stock > 0 && priorStock <= 0) mustReloadCards = true;
                 });
                 // React immediately to sold-out stock and schedule changes.
-                updateHeroPlate();
+
                 // Newly restocked products require their original purchase controls.
                 // Only refresh the card markup for that less common transition.
                 if (mustReloadCards) await loadStore();
@@ -2426,7 +2241,7 @@
                         </div>
                         </div>`;
                     applyNeon();
-                    updateHeroPlate();
+
                     return;
                 }
 
@@ -2465,10 +2280,9 @@
                 applyNeon();
                 trimDescriptions();
                 startCountdownTimer();
-                updateHeroPlate();
+
             } catch (e) {
                 console.error('Store error:', e);
-                setPlate('<div class="hero-status-empty">The board is temporarily offline. Please try again.</div>');
                 sections.innerHTML = `<div class="store-grid"><div class="error-card"><h2>Couldn't load items</h2><p>Connection timed out.</p><button class="retry-btn" onclick="loadStore()">Try again</button></div></div>`;
             } finally {
                 storeLoadBusy = false;
@@ -2502,7 +2316,7 @@
                         if (ribbon) ribbon.remove();
                     }
                     w.classList.remove('close-watch');
-                    updateHeroPlate();
+
                     // If the buyer has this item open in the checkout, shut it down.
                     if (activeCheckoutItem && String(activeCheckoutItem.id) === String(itemId)) {
                         showCheckoutError('This drop just closed.');
@@ -2548,7 +2362,7 @@
         function startCountdownTimer() {
             if (timerInterval) clearInterval(timerInterval);
             updateTimers();
-            timerInterval = setInterval(() => { updateTimers(); updateHeroPlate(); }, 1000);
+            timerInterval = setInterval(updateTimers, 1000);
         }
         /* ---------- LONG DESCRIPTIONS ----------
            Mike writes proper sell copy, and a paragraph of it turns a card
@@ -2915,7 +2729,7 @@
                     const card = document.getElementById(`card-${item.id}`);
                     if (card) { card.classList.remove('card-live-now'); card.classList.add('card-closed'); }
                 }
-                updateHeroPlate();
+
             }
 
             document.getElementById('co-ref').textContent = result.orderRef || '—';
