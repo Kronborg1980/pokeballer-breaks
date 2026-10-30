@@ -12,6 +12,7 @@ Inventory authentication tests need only Node.js 24:
 
 ```sh
 node tests/inventory-auth.test.mjs
+node tests/catalog-quota.test.mjs
 ```
 
 Browser regression tests use Playwright and Chromium. Install the test tools outside
@@ -41,6 +42,22 @@ therefore demonstrate the design, not live inventory or a real payment. Actual
 iPhone Safari and real payment-provider transactions remain manual checks.
 
 ## Release
+
+The product catalogue uses a persistent ID index in the existing SiteHub Durable
+Object. Its first access migrates existing `item:` keys with a paginated KV scan;
+normal browsing and stock refreshes perform no KV List calls afterward, including
+after a SiteHub restart. Authenticated item edits maintain the index. Item content
+is cached in SiteHub for five minutes; edits patch that cache immediately and pack
+stock is still read live from OrderDesk. Use the admin/stock pages to create or
+delete items; adding new KV keys directly does not update the catalogue index.
+
+KV listing remains for the infrequent all-orders admin view and purchase-archive
+cleanup when deleting an item. Durable Object `storage.list()` calls are separate
+from the Workers KV List quota. Stock polling now runs at most once a minute per
+visible storefront tab. Existing daily usage is not reset by this change.
+
+Deploy the updated Worker to activate the index. If KV List is already blocked by
+the quota, the initial migration must wait until listing is available again.
 
 Deploy `worker.js` before publishing `admin.html` and `stock.html`: inventory edits
 require an admin session, sent in the Authorization header. An older Worker rejects

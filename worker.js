@@ -295,6 +295,9 @@ export class SiteHub {
 
     let result;
     switch (body.op) {
+      case 'catalog.get': result = await this.catalog('get'); break;
+      case 'catalog.put': result = await this.catalog('put', body.item); break;
+      case 'catalog.delete': result = await this.catalog('delete', null, body.itemId); break;
       case 'settings.get': result = await this.getSettings(); break;
       case 'settings.put': result = await this.putSettings(body.settings); break;
       case 'secrets.get':  result = await this.getSecrets(); break;
@@ -304,6 +307,70 @@ export class SiteHub {
       default:             result = { error: 'Unknown op' };
     }
     return new Response(JSON.stringify(result), { headers: { 'Content-Type': 'application/json' } });
+  }
+
+  // One persistent index, shared by every visitor and edge location. Only
+  // the initial migration scans KV. A failed migration never saves a partial index.
+  async catalog(op, item, itemId) {
+    return this.state.blockConcurrencyWhile(async () => {
+      let ids = await this.state.storage.get('catalog:ids');
+      if (ids === undefined) {
+        const found = new Set();
+        let cursor;
+        do {
+          const page = await this.env.POKEBALLER_KV.list({ prefix: 'item:', ...(cursor ? { cursor } : {}) });
+          for (const key of page.keys) found.add(key.name);
+          if (page.list_complete !== false) break;
+          if (!page.cursor || page.cursor === cursor) throw new Error('Incomplete catalogue migration');
+          cursor = page.cursor;
+        } while (true);
+        ids = [...found];
+        await this.state.storage.put('catalog:ids', ids);
+      }
+      if (!Array.isArray(ids)) throw new Error('Invalid catalogue index');
+      if (op === 'put') {
+        if (!item || typeof item.id !== 'string' || !item.id.startsWith('item:')) throw new Error('Invalid catalogue item');
+        if (!ids.includes(item.id)) {
+          ids = [...ids, item.id];
+          await this.state.storage.put('catalog:ids', ids);
+        }
+        // Patch a warm snapshot directly: don't wait for KV propagation.
+        if (this.catalogItems) {
+          this.catalogItems = this.catalogItems.filter(value => value.id !== item.id);
+          const clean = { ...item }; delete clean.token;
+          this.catalogItems.push(clean);
+          this.catalogLoadedAt = Date.now();
+        } else {
+          this.catalogOverrides ||= new Map();
+          this.catalogOverrides.set(item.id, { ...item });
+        }
+        return { ok: true };
+      }
+      if (op === 'delete') {
+        await this.state.storage.put('catalog:ids', ids.filter(id => id !== itemId));
+        if (this.catalogItems) this.catalogItems = this.catalogItems.filter(value => value.id !== itemId);
+        this.catalogOverrides?.delete(itemId);
+        return { ok: true };
+      }
+      // Cache item content for five minutes in the singleton, not separately at
+      // each edge. Pack stock is still fetched live from OrderDesk by the caller.
+      if (!this.catalogItems || Date.now() - this.catalogLoadedAt >= 300000) {
+        const items = [];
+        for (let offset = 0; offset < ids.length; offset += 16) {
+          const batch = await Promise.all(ids.slice(offset, offset + 16).map(id => this.env.POKEBALLER_KV.get(id, 'json')));
+          for (const value of batch) if (value) { delete value.token; items.push(value); }
+        }
+        for (const [id, value] of this.catalogOverrides || []) {
+          const position = items.findIndex(entry => entry.id === id);
+          const clean = { ...value }; delete clean.token;
+          if (position < 0) items.push(clean); else items[position] = clean;
+        }
+        this.catalogOverrides = new Map();
+        this.catalogItems = items;
+        this.catalogLoadedAt = Date.now();
+      }
+      return { items: this.catalogItems };
+    });
   }
 
   async getSettings() {
@@ -872,12 +939,9 @@ export default {
 
       /* ---------- ITEMS ---------- */
       if (path === '/api/items' && method === 'GET') {
-        const { keys } = await KV.list({ prefix: 'item:' });
-        const items = [];
-        for (const key of keys) {
-          const item = await KV.get(key.name, 'json');
-          if (item) items.push(item);
-        }
+        const catalogue = await hubCall(env, { op: 'catalog.get' });
+        if (!Array.isArray(catalogue.items)) throw new Error('Catalogue unavailable');
+        const items = catalogue.items;
         const packs = items.filter(i => i.type === 'pack');
         await Promise.all(packs.map(async p => {
           try {
@@ -917,6 +981,7 @@ export default {
         };
 
         await KV.put(itemId, JSON.stringify(newItem));
+        await hubCall(env, { op: 'catalog.put', item: newItem });
         if (newItem.type === 'pack') {
           await deskCall(env, itemId, { op: 'sync', type: 'pack', stock: newItem.stock, minBuy: limits.minBuy, maxBuy: limits.maxBuy });
         }
@@ -950,6 +1015,7 @@ export default {
         delete updatedItem.token;
 
         await KV.put(itemId, JSON.stringify(updatedItem));
+        await hubCall(env, { op: 'catalog.put', item: updatedItem });
         if (updatedItem.type === 'pack') {
           await deskCall(env, itemId, { op: 'sync', type: 'pack', stock: updatedItem.stock, minBuy: limits.minBuy, maxBuy: limits.maxBuy });
         }
@@ -963,6 +1029,7 @@ export default {
         }
         const itemId = path.split('/').pop();
         await KV.delete(itemId);
+        await hubCall(env, { op: 'catalog.delete', itemId });
         const { keys } = await KV.list({ prefix: `purchase:${itemId}:` });
         for (const key of keys) await KV.delete(key.name);
         try { await deskCall(env, itemId, { op: 'wipe' }); } catch (e) { /* nothing to wipe */ }

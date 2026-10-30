@@ -2020,11 +2020,13 @@
         // may buy the last bundle without triggering any local checkout event.
         // Use /api/items, which reads the authoritative OrderDesk stock for packs.
         let stockRefreshBusy = false;
+        let lastStockRefreshAt = 0;
         async function refreshHeroStock() {
-            if (stockRefreshBusy || document.hidden || !window.storeItems.length) return;
+            if (stockRefreshBusy || document.hidden || !window.storeItems.length || Date.now() - lastStockRefreshAt < 60000) return;
+            lastStockRefreshAt = Date.now();
             stockRefreshBusy = true;
             try {
-                const response = await fetch(API_URL + '/items?stockRefresh=' + Date.now(), {
+                const response = await fetch(API_URL + '/items', {
                     cache: 'no-store'
                 });
                 if (!response.ok) return;
@@ -2075,7 +2077,7 @@
                 stockRefreshBusy = false;
             }
         }
-        setInterval(refreshHeroStock, 20000);
+        setInterval(refreshHeroStock, 60000);
         window.addEventListener('focus', refreshHeroStock);
 
 

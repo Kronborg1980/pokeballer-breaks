@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import worker from '../worker.js';
+import worker, { SiteHub } from '../worker.js';
+import { hubState } from './support/hub-state.mjs';
 
 function fixture() {
   const records = new Map([
@@ -31,6 +32,11 @@ function fixture() {
         } };
       }
     }
+  };
+  const hub = new SiteHub(hubState(), env);
+  env.SITE_HUB = {
+    idFromName: name => name,
+    get: () => ({ fetch: (url, options) => hub.fetch(new Request(url, options)) })
   };
   async function request(method, path, body, headers = {}) {
     return worker.fetch(new Request('https://local.test' + path, {
